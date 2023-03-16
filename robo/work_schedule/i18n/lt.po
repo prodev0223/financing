@@ -1,0 +1,3052 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* work_schedule
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-29 13:10+0000\n"
+"PO-Revision-Date: 2022-03-29 13:10+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:520
+#, python-format
+msgid "\n"
+"                        Sveiki,\n"
+"                        jūsų {} m. {} mėn. grafikas Robo platformoje buvo pakeistas.\n"
+"\n"
+"\n"
+"                        <a href=\"{}\" style=\"padding: 8px 12px; font-size: 12px; color: #FFFFFF; \n"
+"                        text-decoration: none !important; font-weight: 400; background-color: #3498DB; \n"
+"                        border: 0px solid #3498DB; border-radius:3px; margin-top: 10px;\">Atidaryti</a>\n"
+"\n"
+"                        "
+msgstr "\n"
+"                        Sveiki,\n"
+"                        jūsų {} m. {} mėn. grafikas Robo platformoje buvo pakeistas.\n"
+"\n"
+"\n"
+"                        <a href=\"{}\" style=\"padding: 8px 12px; font-size: 12px; color: #FFFFFF; \n"
+"                        text-decoration: none !important; font-weight: 400; background-color: #3498DB; \n"
+"                        border: 0px solid #3498DB; border-radius:3px; margin-top: 10px;\">Atidaryti</a>\n"
+"\n"
+"                        "
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/hr_contract.py:62
+#, python-format
+msgid "\n"
+"        Reikia pateikti darbuotojų, su kuriais baigiasi darbo santykiai, darbo grafiką, \n"
+"        prieš darbo sutarties nutraukimą. Darbuotojai:<br>\n"
+"                     "
+msgstr "\n"
+"        Reikia pateikti darbuotojų, su kuriais baigiasi darbo santykiai, darbo grafiką, \n"
+"        prieš darbo sutarties nutraukimą. Darbuotojai:<br>\n"
+"                     "
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:352
+#, python-format
+msgid "Hello,\n"
+"        <br> \n"
+"        We kindly inform you that according to section 2 of article 115 of the labour code of the Republic of Lithuania, \n"
+"        it is mandatory to inform employees of their schedule 7 days in advance.\n"
+"        <br><br>\n"
+"        Work schedules should be filled in such a way that they are as close to an employee's work norm as possible. The \n"
+"        deadline to fill in work schedules for next month is the last day of the current month.\n"
+"        <br><br>\n"
+"        If you have already filled in the work schedules for next month - please ignore this email.\n"
+"        <br><br>\n"
+"        If you wish to no longer receive such emails - you can unsubscribe from the work schedule fill in mail channel \n"
+"        on the RoboLabs platform by clicking \"My Profile\".\n"
+"        "
+msgstr "Sveiki,\n"
+"        <br> \n"
+"        Primename, jog pagal LR Darbo kodekso 115 str. 2 d. turite pateikti kito mėnesio darbo laiko grafikus. \n"
+"        Darbo laiko grafikai turi būti užpildyti kiekvienam darbuotojui už visą mėnesį ir bendra darbo laiko norma \n"
+"        turėtų būti lygi arba artima tam darbuotojui darbo sutartyje nustatytai darbo laiko normai. Darbo grafikų \n"
+"        užpildymo terminas Robolabs sistemoje – iki šio mėnesio paskutinės dienos. \n"
+"        <br><br>\n"
+"        Jei grafikus jau užpildėte ir neplanuojate jų keisti, pranešimą ignoruokite.\n"
+"        <br><br>\n"
+"        Jei daugiau nebenorite gauti šių pranešimų, juos galite išjungi nuėjus į \"Mano profilis\".\n"
+"        "
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:26
+#, python-format
+msgid " min."
+msgstr " min."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:24
+#, python-format
+msgid " val."
+msgstr " val."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:593
+#, python-format
+msgid "%s darbuotojas neturi laisvo sekmadienio"
+msgstr "%s darbuotojas neturi laisvo sekmadienio"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+msgid "<span attrs=\"{'invisible': [('show_break_text', '=', False)]}\">\n"
+"                                Nustatant ilgesnį nei 5 valandų įprastą darbo laiką - darbuotojam turi būti suteikiama pertrauka pavalgyti ir pailsėti.\n"
+"                                Nenustačius šios pertraukos laiko, darbuotojui turi būti suteikiama galimybė į šią pertrauką darbo metu, o šios pertraukos laikas - turi būti apmokamas.\n"
+"                            </span>"
+msgstr "<span attrs=\"{'invisible': [('show_break_text', '=', False)]}\">\n"
+"                                Nustatant ilgesnį nei 5 valandų įprastą darbo laiką - darbuotojam turi būti suteikiama pertrauka pavalgyti ir pailsėti.\n"
+"                                Nenustačius šios pertraukos laiko, darbuotojui turi būti suteikiama galimybė į šią pertrauką darbo metu, o šios pertraukos laikas - turi būti apmokamas.\n"
+"                            </span>"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+msgid "<span attrs=\"{'invisible':['|', ('free_day', '=', True), '|', ('lunch_break', '!=', True), ('setter_type', '!=', 'simple')]}\" col=\"2\" colspan=\"2\">Pertraukos laikas\n"
+"                                </span>"
+msgstr "<span attrs=\"{'invisible':['|', ('free_day', '=', True), '|', ('lunch_break', '!=', True), ('setter_type', '!=', 'simple')]}\" col=\"2\" colspan=\"2\">Pertraukos laikas\n"
+"                                </span>"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+msgid "<span class=\"oe_inline\">Komandiruotė</span>"
+msgstr "<span class=\"oe_inline\">Komandiruotė</span>"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+msgid "<span class=\"oe_inline\">Pertrauka</span>"
+msgstr "<span class=\"oe_inline\">Pertrauka</span>"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+msgid "<span class=\"oe_inline\">Poilsio diena</span>"
+msgstr "<span class=\"oe_inline\">Poilsio diena</span>"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+msgid "<span col=\"2\" colspan=\"2\" attrs=\"{'invisible':['|',('free_day', '=', True),('setter_type', '!=', 'simple')]}\">Darbo laikas</span>"
+msgstr "<span col=\"2\" colspan=\"2\" attrs=\"{'invisible':['|',('free_day', '=', True),('setter_type', '!=', 'simple')]}\">Darbo laikas</span>"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_e_doc_business_trip_extra_days_worked_override
+msgid "<span colspan=\"4\" style=\"font-weight: bold; margin-top: 20px !important;\">Darbo laikas komandiruotės metu nustatomas darbo grafike</span>"
+msgstr "<span colspan=\"4\" style=\"font-weight: bold; margin-top: 20px !important;\">Darbo laikas komandiruotės metu nustatomas darbo grafike</span>"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.holidays_schedule_setter_form
+msgid "<strong>Atostogų periodas</strong>"
+msgstr "<strong>Atostogų periodas</strong>"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/e_document.py:44
+#, python-format
+msgid "Absence time has to be between the planned schedule time for the date ({}-{})"
+msgstr "Pravaikštos laikas privalo būti tarp suplanuoto darbo laiką nurodytai datai ({}-{})"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:327
+#, python-format
+msgid "Aktyvus budėjimas negali trukti ilgiau nei %s"
+msgstr "Aktyvus budėjimas negali trukti ilgiau nei %s"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:80
+#, python-format
+msgid "Algalapių suvestinė"
+msgstr "Algalapių suvestinė"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:173
+#, python-format
+msgid "Antr."
+msgstr "Antr."
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1142
+#, python-format
+msgid "April"
+msgstr "Balandis"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1415
+#, python-format
+msgid "Ar tikrai norite ištrinti pasirinktus įrašus?"
+msgstr "Ar tikrai norite ištrinti pasirinktus įrašus?"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:126
+#, python-format
+msgid "Ar tikrai norite ištrinti šį įrašą?"
+msgstr "Ar tikrai norite ištrinti šį įrašą?"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:670
+#, python-format
+msgid "Atitvirtinti eilutę"
+msgstr "Atitvirtinti eilutę"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:59
+#: code:addons/work_schedule/wizard/robo_company_settings.py:25
+#: selection:res.company,update_planned_schedule_on_holiday_set:0
+#: selection:robo.company.settings,update_planned_schedule_on_holiday_set:0
+#, python-format
+msgid "Atnaujinti"
+msgstr "Atnaujinti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:54
+#, python-format
+msgid "Atnaujinti duomenis"
+msgstr "Atnaujinti duomenis"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_update_planned_schedule_on_holiday_set
+#: model:ir.model.fields,field_description:work_schedule.field_robo_company_settings_update_planned_schedule_on_holiday_set
+msgid "Atnaujinti planuojamus grafikus atsiradus neatvykimam"
+msgstr "Atnaujinti planuojamus grafikus atsiradus neatvykimam"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:24
+#: model:ir.actions.act_window,name:work_schedule.action_open_holidays_schedule_setter
+#: model:ir.ui.menu,name:work_schedule.menu_work_schedule_day_lines
+#: model:ir.ui.view,arch_db:work_schedule.holidays_schedule_setter_form
+#, python-format
+msgid "Atostogos"
+msgstr "Atostogos"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/holiday_schedule_setter.py:48
+#, python-format
+msgid "Atostogos turi būti nustatomos vienam darbuotojui"
+msgstr "Atostogos turi būti nustatomos vienam darbuotojui"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_holidays_schedule_setter_work_schedule_code_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_holiday_status_id
+msgid "Atostogų tipas"
+msgstr "Atostogų tipas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:33
+#, python-format
+msgid "Atstatyti į juodraštį"
+msgstr "Atstatyti į juodraštį"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:68
+#, python-format
+msgid "Atstatyti į juodraščio būseną"
+msgstr "Atstatyti į juodraščio būseną"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:28
+#: model:ir.ui.view,arch_db:work_schedule.go_to_date_wizard_form
+#: model:ir.ui.view,arch_db:work_schedule.holidays_schedule_setter_form
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+#: model:ir.ui.view,arch_db:work_schedule.overtime_schedule_setter_form
+#: model:ir.ui.view,arch_db:work_schedule.schedule_export_wizard_form
+#, python-format
+msgid "Atšaukti"
+msgstr "Atšaukti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:78
+#, python-format
+msgid "Atšaukti priimtus grafikus"
+msgstr "Atšaukti priimtus grafikus"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1142
+#, python-format
+msgid "August"
+msgstr "Rugpjūtis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:890
+#, python-format
+msgid "Backup day could not be created"
+msgstr "Atsarginė diena negali būti sukurta"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:213
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:22
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Balandis"
+msgstr "Balandis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:215
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:24
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Birželis"
+msgstr "Birželis"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_state
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_state
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_state
+msgid "Būsena"
+msgstr "Būsena"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_holidays.py:143
+#, python-format
+msgid "Can not create work schedule holidays for the selected days because a system leave already exists."
+msgstr "Negalima sukurti neatvykimo pasirinktoms dienoms, nes šiomis dienomis jau egzistuoja patvirtintas dalinis neatvykimas."
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_res_company
+msgid "Companies"
+msgstr "Įmonės"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.constraints_are_being_checked_notification_view_form
+msgid "Close"
+msgstr "Uždaryti"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_busy
+msgid "Computations are running"
+msgstr "Skaičiavimai vykdomi"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:470
+#, python-format
+msgid "Constraint check is in progress"
+msgstr "Vykdomas apribojimų tikrinimas"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.constraints_are_being_checked_notification_view_form
+msgid "<span>\n"
+"                            Constraints are being checked for the selected lines. If there are any issues with the\n"
+"                            lines a warning will appear next to each line individually.\n"
+"                        </span>"
+msgstr "<span>\n"
+"                            Darbo laiko apribojimai yra tikrinami pasirinktoms eilutėms. Rasti dirbto laiko neatitikimai\n"
+"                            bus parodyti prie kiekvienos eilutės atskirai.\n"
+"                        </span>"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_show_constraints_are_being_checked_notification
+msgid "Constraints are being checked"
+msgstr "Apribojimų tikrinimas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:1025
+#, python-format
+msgid "Constraints for some lines are still being checked. Please wait and check the failed constraints later for the following employees: {}\n"
+""
+msgstr "Darbo laiko apribojimai vis dar tikrinami. Prašome palaukti ir kiek vėliau peržiūrėti rastus apribojimus šiems darbuotojams: {}\n"
+""
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_contract_appointment
+msgid "Contract Appointment"
+msgstr "Contract Appointment"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.constraints_are_being_checked_notification_view_form
+msgid "Create an Opportunity"
+msgstr "Sukurti užklausą"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_create_uid
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_create_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_create_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_create_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_create_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_create_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_create_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_create_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_create_uid
+msgid "Created by"
+msgstr "Sukūrė"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_create_date
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_create_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_create_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_create_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_create_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_create_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_create_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_create_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_create_date
+msgid "Created on"
+msgstr "Sukurta"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_current_user_department_line
+msgid "Current user department line"
+msgstr "Current user department line"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_work_schedules
+#: model:ir.ui.menu,name:work_schedule.menu_work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedules_tree
+msgid "Darbo grafikai"
+msgstr "Darbo grafikai"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_main_work_schedule_view
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_work_schedule_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_work_schedule_id
+msgid "Darbo grafikas"
+msgstr "Darbo grafikas"
+
+#. module: work_schedule
+#: model:res.groups,name:work_schedule.group_schedule_menu_visible
+msgid "Darbo grafikas rodomas"
+msgstr "Darbo grafikas rodomas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:144
+#, python-format
+msgid "Darbo grafikas:"
+msgstr "Darbo grafikas:"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_work_schedule_codes
+msgid "Darbo grafiko kodai"
+msgstr "Darbo grafiko kodai"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_company_settings
+msgid "Darbo grafiko nustatymai"
+msgstr "Darbo grafiko nustatymai"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_hr_employee_robo_work_schedule_group
+#: model:ir.ui.view,arch_db:work_schedule.change_work_schedule_group_access
+msgid "Darbo grafiko teisių grupė"
+msgstr "Darbo grafiko teisių grupė"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.change_work_schedule_group_access
+msgid "Darbo grafiko tvarkymas"
+msgstr "Darbo grafiko tvarkymas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_work_schedule_labour_code_bypass
+#: model:ir.model.fields,field_description:work_schedule.field_robo_company_settings_work_schedule_labour_code_bypass
+msgid "Darbo grafiko tvirtinimas, nepaisant darbo kodekso apribojimų"
+msgstr "Darbo grafiko tvirtinimas, nepaisant darbo kodekso apribojimų"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_work_schedule_holidays
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_holidays_tree
+msgid "Darbo grafikų atostogos"
+msgstr "Darbo grafikų atostogos"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_work_schedule_days
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_day_tree
+msgid "Darbo grafikų dienos"
+msgstr "Darbo grafikų dienos"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_work_schedule_day_lines
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_day_line_tree
+msgid "Darbo grafikų dienų eilutės"
+msgstr "Darbo grafikų dienų eilutės"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_work_schedule_lines
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_tree
+msgid "Darbo grafikų eilutės"
+msgstr "Darbo grafikų eilutės"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_codes_tree
+msgid "Darbo grafikų žymėjimo kodai"
+msgstr "Darbo grafikų žymėjimo kodai"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:9
+#: model:ir.model.fields,field_description:work_schedule.field_main_schedule_setter_line_ids
+#: model:ir.ui.view,arch_db:work_schedule.overtime_schedule_setter_form
+#, python-format
+msgid "Darbo laikas"
+msgstr "Darbo laikas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:292
+#, python-format
+msgid "Darbo laikas per pamainą negali viršyti %s"
+msgstr "Darbo laikas per pamainą negali viršyti %s"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_schedule_setter_expected_work_hours
+msgid "Darbo norma"
+msgstr "Darbo norma"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day_line.py:170
+#: code:addons/work_schedule/wizard/main_schedule_setter.py:378
+#: code:addons/work_schedule/wizard/overtime_schedule_setter.py:34
+#, python-format
+msgid "Darbo pradžia turi būti prieš darbo pabaigą"
+msgstr "Darbo pradžia turi būti prieš darbo pabaigą"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day_line.py:167
+#, python-format
+msgid "Darbo pradžios ir pabaigos laikas turi būti tarp 00:00 ir 24:00"
+msgstr "Darbo pradžios ir pabaigos laikas turi būti tarp 00:00 ir 24:00"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_contract_id
+msgid "Darbo sutartis"
+msgstr "Darbo sutartis"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/model/hr_employee.py:13
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:580
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:907
+#: selection:hr.employee,robo_work_schedule_group:0
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_employee_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_employee_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_employee_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_employee_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_employee_id
+#, python-format
+msgid "Darbuotojas"
+msgstr "Darbuotojas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:191
+#, python-format
+msgid "Darbuotojo %s darbo laikas datai %s negali būti nustatytas.\n"
+"Šis darbuotojas neturi aktyvių darbo sutarties priedų."
+msgstr "Darbuotojo %s darbo laikas datai %s negali būti nustatytas.\n"
+"Šis darbuotojas neturi aktyvių darbo sutarties priedų."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:477
+#, python-format
+msgid "Darbuotojo grafike datai {0} nustatytas budėjimas namuose"
+msgstr "Darbuotojo grafike datai {0} nustatytas budėjimas namuose"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:494
+#, python-format
+msgid "Darbuotojo grafike datai {0} nustatytas darbas naktį"
+msgstr "Darbuotojo grafike datai {0} nustatytas darbas naktį"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:525
+#, python-format
+msgid "Darbuotojo grafike datai {0} nustatytas darbas ryte"
+msgstr "Darbuotojo grafike datai {0} nustatytas darbas ryte"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/new_schedule_line_wizard.py:42
+#, python-format
+msgid "Darbuotojo skyriaus eilute nurodytam periodui jau egzistuoja"
+msgstr "Darbuotojo skyriaus eilute nurodytam periodui jau egzistuoja"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:134
+#, python-format
+msgid "Darbuotojui %s negalima nustatyti šio darbo laiko, nes darbo laikas kertasi su jau nustatytu laiku."
+msgstr "Darbuotojui %s negalima nustatyti šio darbo laiko, nes darbo laikas kertasi su jau nustatytu laiku."
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_date
+msgid "Data"
+msgstr "Data"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_constraint_check_data
+msgid "Data after checking constraints"
+msgstr "Duomenys po apribojimų tikrinimo"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_datetime_to
+msgid "Data ir laikas iki"
+msgstr "Data ir laikas iki"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_datetime_from
+msgid "Data ir laikas nuo"
+msgstr "Data ir laikas nuo"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_date
+msgid "Data nuo"
+msgstr "Data nuo"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company_extended_schedule_period.py:30
+#, python-format
+msgid "Data nuo negali būti vėliau, nei data iki"
+msgstr "Data nuo negali būti vėliau, nei data iki"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1143
+#, python-format
+msgid "December"
+msgstr "Gruodis"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_day_id
+msgid "Diena"
+msgstr "Diena"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_day_ids
+#: model:ir.ui.menu,name:work_schedule.menu_work_schedule_days
+msgid "Dienos"
+msgstr "Dienos"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:28
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_ids
+#, python-format
+msgid "Dienos eilutės"
+msgstr "Dienos eilutės"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_worked_time_minutes
+msgid "Dirbta minučių"
+msgstr "Dirbta minučių"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_worked_time_hours
+msgid "Dirbta valandų"
+msgstr "Dirbta valandų"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_worked_time_total
+msgid "Dirbtas laikas"
+msgstr "Dirbtas laikas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_display_name
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_display_name
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_display_name
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_display_name
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_display_name
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_display_name
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_display_name
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_display_name
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_display_name
+msgid "Display Name"
+msgstr "Vaizduojamas pavadinimas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:362
+#, python-format
+msgid "Duomenų apdorojimas leidžiamas tik vienam periodui vienu metu"
+msgstr "Duomenų apdorojimas leidžiamas tik vienam periodui vienu metu"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:354
+#, python-format
+msgid "Egzistuojant pilnai prastovai privaloma nurodyti prastovos laiką"
+msgstr "Egzistuojant pilnai prastovai privaloma nurodyti prastovos laiką"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_show_user_who_exported_info
+#: model:ir.model.fields,field_description:work_schedule.field_robo_company_settings_show_user_who_exported_info
+msgid "Eksportuojant grafiką rodyti duomenis, kas sudarė grafiką"
+msgstr "Eksportuojant grafiką rodyti duomenis, kas sudarė grafiką"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:62
+#, python-format
+msgid "Eksportuoti"
+msgstr "Eksportuoti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:102
+#, python-format
+msgid "Eksportuoti grafikus"
+msgstr "Eksportuoti grafikus"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:67
+#, python-format
+msgid "Eksportuoti pasirinktinai"
+msgstr "Eksportuoti pasirinktinai"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_employee
+msgid "Employee"
+msgstr "Darbuotojas"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_contract
+msgid "Employee Contract"
+msgstr "Employee Contract"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:305
+#, python-format
+msgid "Esant budėjimui, kuris trunka ilgiau nei 11 valandų, negali būti papildomai nustatomas darbo laikas"
+msgstr "Esant budėjimui, kuris trunka ilgiau nei 11 valandų, negali būti papildomai nustatomas darbo laikas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:608
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:912
+#, python-format
+msgid "Etatas"
+msgstr "Post"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedules_search
+#: selection:schedule.export.wizard,work_schedule_to_use:0
+msgid "Factual"
+msgstr "Faktinis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:69
+#: selection:work.schedule,schedule_type:0
+#, python-format
+msgid "Faktinis"
+msgstr "Faktinis"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1142
+#, python-format
+msgid "February"
+msgstr "Vasaris"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_can_only_be_set_by_accountants
+msgid "Gali būti nustatoma tik buhalterio"
+msgstr "Gali būti nustatoma tik buhalterio"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_hr_employee_can_fill_own_schedule
+msgid "Gali pildyti savo grafiką"
+msgstr "Gali pildyti savo grafiką"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/base_schedule_setter.py:23
+#, python-format
+msgid "Galima keisti tik vieno grafiko dienas vienu metu."
+msgstr "Galima keisti tik vieno grafiko dienas vienu metu."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:214
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:23
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Gegužė"
+msgstr "Gegužė"
+
+#. module: work_schedule
+#: model:ir.ui.menu,name:work_schedule.menu_work_schedules
+msgid "Grafikai"
+msgstr "Grafikai"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:41
+#, python-format
+msgid "Grafikai iš pradžių tvirtinami skyriaus lygiu"
+msgstr "Grafikai iš pradžių tvirtinami skyriaus lygiu"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:40
+#, python-format
+msgid "Grafikai tvirtinami iš karto kompanijos lygiu"
+msgstr "Grafikai tvirtinami iš karto kompanijos lygiu"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_schedule_id
+#: model:ir.ui.menu,name:work_schedule.menu_work_schedule_main
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_view
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+msgid "Grafikas"
+msgstr "Grafikas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:72
+#, python-format
+msgid "Grafiko apribojimų tikrinimas yra išjungtas, todėl grafikai nebus tikrinami.\n"
+"Grafikus galima patikrinti paspaudus mygtuką 'Patikrinti grafikus'.\n"
+"\n"
+"Patvirtinkite, jog norite patvirtinti grafiką nepaisant apribojimų\n"
+"(Tvirtindami grafikus prisiimate atsakomybę už nekorektiškai sudarytus grafikus)"
+msgstr "Grafiko apribojimų tikrinimas yra išjungtas, todėl grafikai nebus tikrinami.\n"
+"Grafikus galima patikrinti paspaudus mygtuką 'Patikrinti grafikus'.\n"
+"\n"
+"Patvirtinkite, jog norite patvirtinti grafiką nepaisant apribojimų\n"
+"(Tvirtindami grafikus prisiimate atsakomybę už nekorektiškai sudarytus grafikus)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:25
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_work_schedule_line_id
+#, python-format
+msgid "Grafiko eilutė"
+msgstr "Grafiko eilutė"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_schedule_line_ids
+msgid "Grafiko eilutės"
+msgstr "Grafiko eilutės"
+
+#. module: work_schedule
+#: code:addons/work_schedule/report/export_xls.py:313
+#, python-format
+msgid "Grafiko eksportavimas leidžiamas tik vienam periodui"
+msgstr "Grafiko eksportavimas leidžiamas tik vienam periodui"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_schedule_setter_len_day_ids_selected
+msgid "Grafiko keičiamų dienų skaičius"
+msgstr "Grafiko keičiamų dienų skaičius"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_main_schedule_setter
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+msgid "Grafiko koregavimas"
+msgstr "Grafiko koregavimas"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_new_schedule_line_wizard
+msgid "Grafiko sukūrimas"
+msgstr "Grafiko sukūrimas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_schedule_type
+msgid "Grafiko tipas"
+msgstr "Grafiko tipas"
+
+#. module: work_schedule
+#: model:ir.ui.menu,name:work_schedule.menu_work_schedule_lines
+msgid "Grafikų eilutės"
+msgstr "Grafikų eilutės"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_schedule_export_wizard
+#: model:ir.ui.view,arch_db:work_schedule.schedule_export_wizard_form
+msgid "Grafikų eksportavimas"
+msgstr "Grafikų eksportavimas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1453
+#, python-format
+msgid "Graifiko apribojimų tikrinimas yra išjungtas, todėl grafikai nebus tikrinami.\n"
+"Grafikus galima patikrinti paspaudus mygtuką 'Patikrinti grafikus'.\n"
+"\n"
+"Patvirtinkite, jog norite patvirtinti grafiką, nepaisant apribojimų\n"
+"(Tvirtindami grafikus prisiimate atsakomybę už nekorektiškai sudarytus grafikus)"
+msgstr "Graifiko apribojimų tikrinimas yra išjungtas, todėl grafikai nebus tikrinami.\n"
+"Grafikus galima patikrinti paspaudus mygtuką 'Patikrinti grafikus'.\n"
+"\n"
+"Patvirtinkite, jog norite patvirtinti grafiką, nepaisant apribojimų\n"
+"(Tvirtindami grafikus prisiimate atsakomybę už nekorektiškai sudarytus grafikus)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:221
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:30
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Gruodis"
+msgstr "Gruodis"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:73
+#, python-format
+msgid "Grąžinti pateiktus grafikus"
+msgstr "Grąžinti pateiktus grafikus"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_base_schedule_setter_id
+#: model:ir.model.fields,field_description:work_schedule.field_holidays_schedule_setter_id
+#: model:ir.model.fields,field_description:work_schedule.field_jump_to_date_wizard_id
+#: model:ir.model.fields,field_description:work_schedule.field_main_schedule_setter_id
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_id
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_id
+msgid "ID"
+msgstr "ID"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:64
+#: code:addons/work_schedule/wizard/robo_company_settings.py:30
+#: selection:res.company,inform_employees_about_schedule_changes:0
+#: selection:robo.company.settings,inform_employees_about_schedule_changes:0
+#, python-format
+msgid "Informuoti"
+msgstr "Informuoti"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_inform_employees_about_schedule_changes
+#: model:ir.model.fields,field_description:work_schedule.field_robo_company_settings_inform_employees_about_schedule_changes
+msgid "Informuoti darbuotojus, kuomet jų darbo grafikas būna pakeistas"
+msgstr "Informuoti darbuotojus, kuomet jų darbo grafikas būna pakeistas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/hr_contract.py:61
+#, python-format
+msgid "Išeinančio darbuotojo darbo grafiko pateikimas"
+msgstr "Išeinančio darbuotojo darbo grafiko pateikimas"
+
+#. module: work_schedule
+#: model:ir.actions.act_window,name:work_schedule.action_open_company_extended_work_schedule_period
+msgid "Išplėstinio grafiko naudojimo intervalai"
+msgstr "Išplėstinio grafiko naudojimo intervalai"
+
+#. module: work_schedule
+#: model:ir.ui.menu,name:work_schedule.menu_extended_work_schedule_settings_search
+#: model:ir.ui.view,arch_db:work_schedule.company_settings_form
+msgid "Išplėstinio grafiko periodai"
+msgstr "Išplėstinio grafiko periodai"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/main_schedule_setter.py:43
+#: selection:main.schedule.setter,setter_type:0
+#, python-format
+msgid "Išplėstinis"
+msgstr "Išplėstinis"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:101
+#, python-format
+msgid "Išplėstinis rodinys"
+msgstr "Išplėstinis rodinys"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.holidays_schedule_setter_form
+msgid "Ištrinti atostogas"
+msgstr "Ištrinti atostogas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1142
+#, python-format
+msgid "January"
+msgstr "Sausis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:85
+#, python-format
+msgid "Jau egzistuoja %s grafikas šiai kompanijai"
+msgstr "Jau egzistuoja %s grafikas šiai kompanijai"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:227
+#, python-format
+msgid "Jei betkurią savaitę dirbama daugiau nei 8 val. viršvalandžių, per 3 mėnesius vidutis savaitės darbo laikas negali viršyti 48 val."
+msgstr "Jei betkurią savaitę dirbama daugiau nei 8 val. viršvalandžių, per 3 mėnesius vidutis savaitės darbo laikas negali viršyti 48 val."
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1142
+#, python-format
+msgid "July"
+msgstr "Liepa"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1142
+#, python-format
+msgid "June"
+msgstr "Birželis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:10
+#: selection:work.schedule.line,state:0
+#, python-format
+msgid "Juodraštis"
+msgstr "Juodraštis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:531
+#, python-format
+msgid "Jūsų darbo grafikas buvo pakeistas"
+msgstr "Jūsų darbo grafikas buvo pakeistas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_work_schedule_state_to_check_constraints
+#: model:ir.model.fields,field_description:work_schedule.field_robo_company_settings_work_schedule_state_to_check_constraints
+msgid "Kada tikrinami darbo kodekso apribojimai darbo grafike"
+msgstr "Kada tikrinami darbo kodekso apribojimai darbo grafike"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:69
+#, python-format
+msgid "Kadangi turite buhalterio teises, grafiko apribojimai nebus tikrinami.\n"
+"Juos galima patikrinti paspaudus mygtuką 'Patikrinti grafikus'\n"
+"\n"
+"Patvirtinkite, jog norite patvirtinti grafiką nepaisant apribojimų"
+msgstr "Kadangi turite buhalterio teises, grafiko apribojimai nebus tikrinami.\n"
+"Juos galima patikrinti paspaudus mygtuką 'Patikrinti grafikus'\n"
+"\n"
+"Patvirtinkite, jog norite patvirtinti grafiką nepaisant apribojimų"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1450
+#, python-format
+msgid "Kadangi turite buhalterio teises, grafiko apribojimai nebus tikrinami.\n"
+"Juos galima patikrinti paspaudus mygtuką 'Patikrinti grafikus'\n"
+"\n"
+"Patvirtinkite, jog norite patvirtinti grafiką, nepaisant apribojimų"
+msgstr "Kadangi turite buhalterio teises, grafiko apribojimai nebus tikrinami.\n"
+"Juos galima patikrinti paspaudus mygtuką 'Patikrinti grafikus'\n"
+"\n"
+"Patvirtinkite, jog norite patvirtinti grafiką, nepaisant apribojimų"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1390
+#, python-format
+msgid "Kaikurie įrašai yra atostogos"
+msgstr "Kaikurie įrašai yra atostogos"
+
+#. module: work_schedule
+#: model:ir.model.fields,help:work_schedule.field_work_schedule_day_line_prevent_deletion
+msgid "Kaikurios eilutės gali būti sukuriamos iš atostogų įrašų, todėl neturėtų būti ištrinamos"
+msgstr "Kaikurios eilutės gali būti sukuriamos iš atostogų įrašų, todėl neturėtų būti ištrinamos"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:173
+#, python-format
+msgid "Ketv."
+msgstr "Ketv."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:70
+#: selection:work.schedule,schedule_type:0
+#, python-format
+msgid "Kitas"
+msgstr "Kitas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:85
+#, python-format
+msgid "Kiti veiksmai"
+msgstr "Kiti veiksmai"
+
+#. module: work_schedule
+#: model:ir.ui.menu,name:work_schedule.menu_work_schedule_codes
+msgid "Kodai"
+msgstr "Kodai"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_code
+msgid "Kodas"
+msgstr "Kodas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_business_trip
+msgid "Komandiruotė"
+msgstr "Komandiruotė"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_company_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_company_id
+msgid "Kompanija"
+msgstr "Įmonė"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_users_kodas
+msgid "Kompanijos/fizinio asmens kodas"
+msgstr "Kompanijos/fizinio asmens kodas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:212
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:21
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Kovas"
+msgstr "Kovas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_time_to
+msgid "Laikas iki"
+msgstr "Laikas iki"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_time_from
+msgid "Laikas nuo"
+msgstr "Laikas nuo"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_time_total
+msgid "Laiko suma"
+msgstr "Laiko suma"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+msgid "Laikosi darbo laiko apribojimų"
+msgstr "Laikosi darbo laiko apribojimų"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:615
+#, python-format
+msgid "Laikotarpiu %s - %s darbuotojas dirba %s per savaitę. (Daugiausia leidžiama dirbti %s val.)"
+msgstr "Laikotarpiu %s - %s darbuotojas dirba %s per savaitę. (Daugiausia leidžiama dirbti %s val.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:584
+#, python-format
+msgid "Laikotarpiu %s - %s darbuotojas neturi pakankamai laisvų dienų"
+msgstr "Laikotarpiu %s - %s darbuotojas neturi pakankamai laisvų dienų"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:228
+#, python-format
+msgid "Laikotarpiu %s-%s dirbama vidutiniškai %s per savaitę"
+msgstr "Laikotarpiu %s-%s dirbama vidutiniškai %s per savaitę"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:183
+#, python-format
+msgid "Laikotarpiu budima %s"
+msgstr "Laikotarpiu budima %s"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:129
+#, python-format
+msgid "Laikotarpiu nuo %s iki %s dirbta 7 dienas"
+msgstr "Laikotarpiu nuo %s iki %s dirbta 7 dienas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:96
+#, python-format
+msgid "Laikotarpiu nuo %s iki %s nustatyta %s"
+msgstr "Laikotarpiu nuo %s iki %s nustatyta %s"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:59
+#: code:addons/work_schedule/model/dk_constraints.py:108
+#, python-format
+msgid "Laikotarpiu nuo %s iki %s nustatyta %s viršvalandžių"
+msgstr "Laikotarpiu nuo %s iki %s nustatyta %s viršvalandžių"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:167
+#, python-format
+msgid "Laikotarpiu nuo %s iki %s nėra suteikiama pakankamai ilga pertrauka"
+msgstr "Laikotarpiu nuo %s iki %s nėra suteikiama pakankamai ilga pertrauka"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:220
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:29
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Lapkritis"
+msgstr "Lapkritis"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line___last_update
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard___last_update
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule___last_update
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes___last_update
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day___last_update
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line___last_update
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays___last_update
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line___last_update
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters___last_update
+msgid "Last Modified on"
+msgstr "Paskutinį kartą keista"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_write_uid
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_write_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_write_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_write_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_write_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_write_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_write_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_write_uid
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_write_uid
+msgid "Last Updated by"
+msgstr "Paskutinį kartą atnaujino"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_write_date
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_write_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_write_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_write_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_write_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_write_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_write_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_write_date
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_write_date
+msgid "Last Updated on"
+msgstr "Paskutinį kartą atnaujinta"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_name
+msgid "Laukelis"
+msgstr "Laukelis"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_holidays
+msgid "Leave"
+msgstr "Neatvykimas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:44
+#: code:addons/work_schedule/wizard/robo_company_settings.py:10
+#: selection:res.company,work_schedule_labour_code_bypass:0
+#: selection:robo.company.settings,work_schedule_labour_code_bypass:0
+#, python-format
+msgid "Leidžiama"
+msgstr "Leidžiama"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:49
+#, python-format
+msgid "Lentelė"
+msgstr "Lentelė"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:216
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:25
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Liepa"
+msgstr "Liepa"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_max_overtime_per_year
+msgid "Maksimali viršvalandžių trukmė per metus (h.)"
+msgstr "Maksimali viršvalandžių trukmė per metus (h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:18
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_maximum_active_budejimas_time
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Maksimalus aktyvaus budejimo laikas (h.)"
+msgstr "Maksimalus aktyvaus budejimo laikas (h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:19
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_maximum_work_time_to_break
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Maksimalus darbo laikas iki pertraukos (h.)"
+msgstr "Maksimalus darbo laikas iki pertraukos (h.)"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_max_7_day_time
+msgid "Maksimalus darbo laikas per 7 dienas (h.)"
+msgstr "Maksimalus darbo laikas per 7 dienas (h.)"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_max_7_day_sumine_apskaita_time
+msgid "Maksimalus darbo laikas per 7 dienas dirbant sumine darbo laiko apskaita (h.)"
+msgstr "Maksimalus darbo laikas per 7 dienas dirbant sumine darbo laiko apskaita (h.)"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_quarterly_weekly_max_hours
+msgid "Maksimalus darbo laikas per 7 dienas skaičiuojant ketvirčiais (h.)"
+msgstr "Maksimalus darbo laikas per 7 dienas skaičiuojant ketvirčiais (h.)"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_max_7_day_including_extra_time
+msgid "Maksimalus darbo laikas per 7 dienas įskaitant papildomą darbą (h.)"
+msgstr "Maksimalus darbo laikas per 7 dienas įskaitant papildomą darbą (h.)"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_max_daily_time
+msgid "Maksimalus darbo laikas per dieną (h.)"
+msgstr "Maksimalus darbo laikas per dieną (h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:11
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Maksimalus dienos laikas (h.)"
+msgstr "Maksimalus dienos laikas (h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:10
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Maksimalus laikas per ketvirtį(h.)"
+msgstr "Maksimalus laikas per ketvirtį(h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:16
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_maximum_time_between_breaks
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Maksimalus pertraukos laikas (h.)"
+msgstr "Maksimalus pertraukos laikas (h.)"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_max_7_day_overtime_time
+msgid "Maksimalus viršvalandžių laikas per 7 dienas (h.)"
+msgstr "Maksimalus viršvalandžių laikas per 7 dienas (h.)"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+msgid "Mano skyrius"
+msgstr "Mano skyrius"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1142
+#, python-format
+msgid "March"
+msgstr "Kovas"
+
+#. module: work_schedule
+#: model:res.groups,front_help:work_schedule.group_schedule_menu_visible
+msgid "Matomas darbo grafiko meniu"
+msgstr "Matomas darbo grafiko meniu"
+
+#. module: work_schedule
+#: model:res.groups,front_help:work_schedule.group_schedule_user
+msgid "Matomas darbuotojo darbo grafikas"
+msgstr "Matomas darbuotojo darbo grafikas"
+
+#. module: work_schedule
+#: model:res.groups,front_help:work_schedule.group_schedule_manager
+msgid "Matomas departamento darbo grafikas"
+msgstr "Matomas departamento darbo grafikas"
+
+#. module: work_schedule
+#: model:res.groups,front_help:work_schedule.group_schedule_see_colleague_schedules
+msgid "Matomas kolegų darbo grafikas"
+msgstr "Matomas kolegų darbo grafikas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1142
+#, python-format
+msgid "May"
+msgstr "Gegužė"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_year
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_year
+msgid "Metai"
+msgstr "Metai"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:37
+#, python-format
+msgid "Metai turi būti nuo 2000-ūjų iki 2100-ūjų"
+msgstr "Metai turi būti nuo 2000-ūjų iki 2100-ūjų"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:9
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_min_dn_time
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Minimalus DN laikas (h.)"
+msgstr "Minimalus DN laikas (h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:20
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_main_7_day_break_length
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Minimalus ilgosios pertraukos tarp pamainų kartą per 7 dienas laikas (h.)"
+msgstr "Minimalus ilgosios pertraukos tarp pamainų kartą per 7 dienas laikas (h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:17
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_minimum_time_between_breaks
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Minimalus pertraukos laikas (h.)"
+msgstr "Minimalus pertraukos laikas (h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:13
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_minimum_time_between_shifts_higher
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Minimalus poilsio laikas tarp pamainų dirbant daugiau valandų (h.)"
+msgstr "Minimalus poilsio laikas tarp pamainų dirbant daugiau valandų (h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:12
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_minimum_time_between_shifts_lower
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Minimalus poilsio laikas tarp pamainų dirbant mažiau valandų (h.)"
+msgstr "Minimalus poilsio laikas tarp pamainų dirbant mažiau valandų (h.)"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_users_mokesciu_institucija
+msgid "Mokesčių institucija"
+msgstr "Mokesčių institucija"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/schedule_export_wizard.py:27
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_month
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_month
+#, python-format
+msgid "Mėnuo"
+msgstr "Mėnuo"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:8
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_dn_end_time
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Nakties pabaiga"
+msgstr "Nakties pabaiga"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:7
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_dn_start_time
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Nakties pradžia"
+msgstr "Nakties pradžia"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_is_holiday
+msgid "Naudojamas žymėti atostogas"
+msgstr "Naudojamas žymėti atostogas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_is_absence
+msgid "Naudojamas žymėti neatvykimus"
+msgstr "Naudojamas žymėti neatvykimus"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_is_overtime
+msgid "Naudojamas žymėti papildomus darbus"
+msgstr "Naudojamas žymėti papildomus darbus"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_used_as_planned_schedule_in_calculations
+msgid "Naudojmas darbo užmokęsčio paskaičiavimui"
+msgstr "Naudojmas darbo užmokęsčio paskaičiavimui"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:92
+#, python-format
+msgid "Naudoti planuojamus grafikus"
+msgstr "Naudoti planuojamus grafikus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:67
+#, python-format
+msgid "Naujas Grafikas"
+msgstr "Naujas Grafikas"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.new_schedule_line_wizard_form
+msgid "Naujas grafikas"
+msgstr "Naujas grafikas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:645
+#, python-format
+msgid "Neatitikimai darbuotojo %s grafike:\n"
+""
+msgstr "Neatitikimai darbuotojo %s grafike:\n"
+""
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:60
+#: code:addons/work_schedule/wizard/robo_company_settings.py:26
+#: selection:res.company,update_planned_schedule_on_holiday_set:0
+#: selection:robo.company.settings,update_planned_schedule_on_holiday_set:0
+#, python-format
+msgid "Neatnaujinti"
+msgstr "Neatnaujinti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:19
+#, python-format
+msgid "Neatvykimai"
+msgstr "Neatvykimai"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:128
+#, python-format
+msgid "Negalima dirbti daugiau nei 6 dienas iš eilės"
+msgstr "Negalima dirbti daugiau nei 6 dienas iš eilės"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:304
+#, python-format
+msgid "Negalima ištrinti grafiko dienų, kurios nėra juodraščio būsenos."
+msgstr "Negalima ištrinti grafiko dienų, kurios nėra juodraščio būsenos."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_holidays.py:102
+#: code:addons/work_schedule/model/work_schedule_holidays.py:114
+#, python-format
+msgid "Negalima ištrinti patvirtintų atostogų"
+msgstr "Negalima ištrinti patvirtintų atostogų"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:331
+#, python-format
+msgid "Negalima keisti suplanuoto grafiko būsenos"
+msgstr "Negalima keisti suplanuoto grafiko būsenos"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_norm.py:55
+#, python-format
+msgid "Negalima nustatyti datos, iki kurios skaičiuoti darbo normą"
+msgstr "Negalima nustatyti datos, iki kurios skaičiuoti darbo normą"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_norm.py:53
+#, python-format
+msgid "Negalima nustatyti datos, nuo kurios skaičiuoti darbo normą"
+msgstr "Negalima nustatyti datos, nuo kurios skaičiuoti darbo normą"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_norm.py:47
+#, python-format
+msgid "Negalima nustatyti maksimalaus darbo laiko."
+msgstr "Negalima nustatyti maksimalaus darbo laiko."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:152
+#, python-format
+msgid "Negalima pakeisti, jog diena nėra komandiruotė, nes tai jau patvirtinta"
+msgstr "Negalima pakeisti, jog diena nėra komandiruotė, nes tai jau patvirtinta"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:278
+#, python-format
+msgid "Negalima patvirtinti darbuotojo %s grafiko, nes nerasti neatvykimų įrašai patvirtinantys šiuos grafiko neatvykimus:\n"
+""
+msgstr "Negalima patvirtinti darbuotojo %s grafiko, nes nerasti neatvykimų įrašai patvirtinantys šiuos grafiko neatvykimus:\n"
+""
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_holidays.py:70
+#, python-format
+msgid "Negalima turėti persidengiančių atostogų"
+msgstr "Negalima turėti persidengiančių atostogų"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:93
+#: code:addons/work_schedule/model/schedule_line_view.py:107
+#, python-format
+msgid "Negalima įvykdyti tolimesnio grafiko tvirtinimo"
+msgstr "Negalima įvykdyti tolimesnio grafiko tvirtinimo"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:138
+#: code:addons/work_schedule/model/work_schedule.py:219
+#, python-format
+msgid "Negalite atlikti šio veiksmo, nes vykdomas atlyginimų skaičiavimas"
+msgstr "Negalite atlikti šio veiksmo, nes vykdomas atlyginimų skaičiavimas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:38
+#, python-format
+msgid "Negalite ištrinti eilučių, nes negalite keisti visų skyrių eilučių"
+msgstr "Negalite ištrinti eilučių, nes negalite keisti visų skyrių eilučių"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day_line.py:179
+#, python-format
+msgid "Negalite ištrinti kai kurių eilučių, nes jos sukurtos pagal įsakymus arba neatvykimo įrašus"
+msgstr "Negalite ištrinti kai kurių eilučių, nes jos sukurtos pagal įsakymus arba neatvykimo įrašus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:68
+#, python-format
+msgid "Negalite ištrinti šios eilutės, nes yra įrašų kurie nėra juodraščio būsenos."
+msgstr "Negalite ištrinti šios eilutės, nes yra įrašų kurie nėra juodraščio būsenos."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:97
+#, python-format
+msgid "Negalite keisti pasirinkto grafiko, nes yra įrašų, kurie jau patvirtinti"
+msgstr "Negalite keisti pasirinkto grafiko, nes yra įrašų, kurie jau patvirtinti"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:66
+#, python-format
+msgid "Negalite keisti šio vartotojo grafiko"
+msgstr "Negalite keisti šio vartotojo grafiko"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:73
+#, python-format
+msgid "Negalite nustatyti grafiko atlyginimo skaičiavimui, nes jis nėra planuojamas grafikas"
+msgstr "Negalite nustatyti grafiko atlyginimo skaičiavimui, nes jis nėra planuojamas grafikas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:109
+#, python-format
+msgid "Negalite pridėti eilutės į skyrių, kurio jūs neadministruojate."
+msgstr "Negalite pridėti eilutės į skyrių, kurio jūs neadministruojate."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:340
+#, python-format
+msgid "Nei viena iš pasirinktų eilučių nepriklauso jūsų padaliniui, todėl negalite keisti šių eilučių būsenos"
+msgstr "Nei viena iš pasirinktų eilučių nepriklauso jūsų padaliniui, todėl negalite keisti šių eilučių būsenos"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:64
+#: code:addons/work_schedule/wizard/robo_company_settings.py:30
+#: selection:res.company,inform_employees_about_schedule_changes:0
+#: selection:robo.company.settings,inform_employees_about_schedule_changes:0
+#, python-format
+msgid "Neinformuoti"
+msgstr "Neinformuoti"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:45
+#: code:addons/work_schedule/wizard/robo_company_settings.py:11
+#: selection:res.company,work_schedule_labour_code_bypass:0
+#: selection:robo.company.settings,work_schedule_labour_code_bypass:0
+#, python-format
+msgid "Neleidžiama"
+msgstr "Neleidžiama"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:112
+#, python-format
+msgid "Neleisti buhalterių pakeitimų"
+msgstr "Neleisti buhalterių pakeitimų"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_prevent_deletion
+msgid "Neleisti ištrinti"
+msgstr "Neleisti ištrinti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:97
+#, python-format
+msgid "Nenaudoti planuojamų grafikų"
+msgstr "Nenaudoti planuojamų grafikų"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:237
+#, python-format
+msgid "Nenumatyta klaida, grafiko data neatitinka formato"
+msgstr "Nenumatyta klaida, grafiko data neatitinka formato"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:232
+#, python-format
+msgid "Nenumatyta klaida, neįmanoma nustatyti grafiko datos"
+msgstr "Nenumatyta klaida, neįmanoma nustatyti grafiko datos"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:897
+#, python-format
+msgid "Nenumatyta klaida, prašome perkrauti puslapį."
+msgstr "Nenumatyta klaida, prašome perkrauti puslapį."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:32
+#, python-format
+msgid "Nenumatyta sistemos klaida sukuriant duomenis. Kreipkitės į sistemos administratorių."
+msgstr "Nenumatyta sistemos klaida sukuriant duomenis. Kreipkitės į sistemos administratorių."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:140
+#, python-format
+msgid "Nenumatyta sistemos klaida, prašome perkrauti puslapį."
+msgstr "Nenumatyta sistemos klaida, prašome perkrauti puslapį."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:14
+#, python-format
+msgid "Nenumatyta sistemos klaida. Prašome susisiekti su sistemos administratoriumi"
+msgstr "Nenumatyta sistemos klaida. Prašome susisiekti su sistemos administratoriumi"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:112
+#, python-format
+msgid "Nenurodytas periodas"
+msgstr "Nenurodytas periodas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/base_schedule_setter.py:20
+#: code:addons/work_schedule/wizard/base_schedule_setter.py:35
+#, python-format
+msgid "Nepasirinkote jokių dienų"
+msgstr "Nepasirinkote jokių dienų"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+msgid "Nepateikta"
+msgstr "Nepateikta"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+msgid "Nepatvirtinta"
+msgstr "Nepatvirtinta"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:476
+#, python-format
+msgid "Nepilnametis darbuotojas negali būti skiriamas budėjimui namuose"
+msgstr "Nepilnametis darbuotojas negali būti skiriamas budėjimui namuose"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:493
+#, python-format
+msgid "Nepilnametis darbuotojas negali būti skiriamas darbui naktį"
+msgstr "Nepilnametis darbuotojas negali būti skiriamas darbui naktį"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:524
+#, python-format
+msgid "Nepilnametis darbuotojas negali būti skiriamas dirbti tarp {0} val. ir {1} val. mokslo dienomis"
+msgstr "Nepilnametis darbuotojas negali būti skiriamas dirbti tarp {0} val. ir {1} val. mokslo dienomis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:583
+#, python-format
+msgid "Nepilnametis darbuotojas privalo turėti bent 2 laisvas dienas per savaitę"
+msgstr "Nepilnametis darbuotojas privalo turėti bent 2 laisvas dienas per savaitę"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:592
+#, python-format
+msgid "Nepilnametis darbuotojas privalo turėti laisvus sekmadienius"
+msgstr "Nepilnametis darbuotojas privalo turėti laisvus sekmadienius"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:614
+#, python-format
+msgid "Nepilnametis darbuotojas viršija savaitės dirbtų valandų skaičių"
+msgstr "Nepilnametis darbuotojas viršija savaitės dirbtų valandų skaičių"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:556
+#, python-format
+msgid "Nepilnametis darbuotojas šiomis dienomis dirba daugiau, nei leidžia įstatymai"
+msgstr "Nepilnametis darbuotojas šiomis dienomis dirba daugiau, nei leidžia įstatymai"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:631
+#, python-format
+msgid "Nepilnamečio darbuotojo poilsio laikas tarp pamainų turi trukti ilgiau nei %s"
+msgstr "Nepilnamečio darbuotojo poilsio laikas tarp pamainų turi trukti ilgiau nei %s"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+msgid "Nepriimta"
+msgstr "Nepriimta"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:55
+#: code:addons/work_schedule/wizard/robo_company_settings.py:21
+#: selection:res.company,show_user_who_exported_info:0
+#: selection:robo.company.settings,show_user_who_exported_info:0
+#, python-format
+msgid "Nerodyti"
+msgstr "Nerodyti"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:356
+#, python-format
+msgid "Neteisingai nurodytas veiksmas"
+msgstr "Neteisingai nurodytas veiksmas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:70
+#, python-format
+msgid "Neturite pakankamai teisių nustatyti grafiką atlyginimo skaičiavimui"
+msgstr "Neturite pakankamai teisių nustatyti grafiką atlyginimo skaičiavimui"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:183
+#, python-format
+msgid "Neturite prieigos teisių modifikuoti grafiką"
+msgstr "Neturite prieigos teisių modifikuoti grafiką"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_holidays.py:95
+#, python-format
+msgid "Neturite teisės ištrinti atostogų iš visų skyrių"
+msgstr "Neturite teisės ištrinti atostogų iš visų skyrių"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:43
+#, python-format
+msgid "Neturite teisės ištrinti eilučių."
+msgstr "Neturite teisės ištrinti eilučių."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_holidays.py:127
+#, python-format
+msgid "Neturite teisės ištrinti šio neatvykimo"
+msgstr "Neturite teisės ištrinti šio neatvykimo"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:285
+#: code:addons/work_schedule/model/schedule_line_view.py:325
+#, python-format
+msgid "Neturite teisės matyti eilučių dirbto laiko sumų"
+msgstr "Neturite teisės matyti eilučių dirbto laiko sumų"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:160
+#, python-format
+msgid "Norėdami pakeisti darbo laiką - atstatykite skyriaus darbo grafiką į juodraščio būseną!"
+msgstr "Norėdami pakeisti darbo laiką - atstatykite skyriaus darbo grafiką į juodraščio būseną!"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:126
+#, python-format
+msgid "Norėdami pridėti eilutę - nueikite į darbo laiko apskaitos žiniaraštį ir paspauskite mygtuką \"Atstatyti į juodraštį\". Šis veiksmas neatšauks jau patvirtintų žiniaraščių."
+msgstr "Norėdami pridėti eilutę - nueikite į darbo laiko apskaitos žiniaraštį ir paspauskite mygtuką \"Atstatyti į juodraštį\". Šis veiksmas neatšauks jau patvirtintų žiniaraščių."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:336
+#, python-format
+msgid "Norėdami užstatyti atostogas, turite pasirinkti tik pirmą atostogų dieną"
+msgstr "Norėdami užstatyti atostogas, turite pasirinkti tik pirmą atostogų dieną"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1143
+#, python-format
+msgid "November"
+msgstr "Lapkritis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/ziniarastis_day.py:116
+#, python-format
+msgid "Nustatytų laiko reikšmių suma %s datai viršija 24 valandų limitą"
+msgstr "Nustatytų laiko reikšmių suma %s datai viršija 24 valandų limitą"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:343
+#, python-format
+msgid "Nėra eilučių, kurias būtų galima keisti"
+msgstr "Nėra eilučių, kurias būtų galima keisti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1143
+#, python-format
+msgid "October"
+msgstr "Spalis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:135
+#, python-format
+msgid "Operacija neleidžiama, nes neturite buhalterio teisių"
+msgstr "Operacija neleidžiama, nes neturite buhalterio teisių"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:272
+#, python-format
+msgid "Operacija neleidžiama, nes neturite teisės atlikti tolimesnius grafiko pakeitimus"
+msgstr "Operacija neleidžiama, nes neturite teisės atlikti tolimesnius grafiko pakeitimus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:266
+#, python-format
+msgid "Operacija neleidžiama, nes neturite teisės keisti grafiko būsenos"
+msgstr "Operacija neleidžiama, nes neturite teisės keisti grafiko būsenos"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:768
+#, python-format
+msgid "Operacija neleidžiama, nes neturite teisės kurti žiniaraščių"
+msgstr "Operacija neleidžiama, nes neturite teisės kurti žiniaraščių"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:259
+#, python-format
+msgid "Operacija neleidžiama, nes neturite teisės peržiūrėti grafikų apribojumus"
+msgstr "Operacija neleidžiama, nes neturite teisės peržiūrėti grafikų apribojumus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:239
+#, python-format
+msgid "Operacija neleidžiama, tik vyr. buhalteriai gali įjungti grafikų keitimą"
+msgstr "Operacija neleidžiama, tik vyr. buhalteriai gali įjungti grafikų keitimą"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedules_search
+msgid "Other"
+msgstr "Kita"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.schedule_export_wizard_form
+msgid "PDF Formatu"
+msgstr "PDF Formatu"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_date_to
+msgid "Pabaigos data"
+msgstr "Pabaigos data"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_time_to
+msgid "Pabaigos laikas"
+msgstr "Pabaigos laikas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:649
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:894
+#: model:ir.model.fields,field_description:work_schedule.field_new_schedule_line_wizard_department_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_department_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_department_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_department_id
+#, python-format
+msgid "Padalinys"
+msgstr "Padalinys"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/schedule_export_wizard.py:119
+#, python-format
+msgid "Pagal pasirinktus kriterijus nėra grafikų, kuriuos būtų galima eksportuoti"
+msgstr "Pagal pasirinktus kriterijus nėra grafikų, kuriuos būtų galima eksportuoti"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:328
+#, python-format
+msgid "Pamainą %s - %s budėjimas trunka %s"
+msgstr "Pamainą %s - %s budėjimas trunka %s"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:293
+#, python-format
+msgid "Pamainą %s - %s darbuotojas dirba %s"
+msgstr "Pamainą %s - %s darbuotojas dirba %s"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:306
+#, python-format
+msgid "Pamainą %s - %s darbuotojui nustatytas papildomas darbo laikas"
+msgstr "Pamainą %s - %s darbuotojui nustatytas papildomas darbo laikas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:29
+#, python-format
+msgid "Panaikinti"
+msgstr "Panaikinti"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_schedule_export_extra_text_1
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_schedule_export_extra_text_2
+#: model:ir.model.fields,field_description:work_schedule.field_robo_company_settings_schedule_export_extra_text_1
+#: model:ir.model.fields,field_description:work_schedule.field_robo_company_settings_schedule_export_extra_text_2
+msgid "Papildomas tekstas eksportuojant grafikus"
+msgstr "Papildomas tekstas eksportuojant grafikus"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:14
+#: model:ir.actions.act_window,name:work_schedule.action_open_overtime_schedule_setter
+#: model:ir.ui.view,arch_db:work_schedule.overtime_schedule_setter_form
+#, python-format
+msgid "Papildomi darbai"
+msgstr "Papildomi darbai"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/main_schedule_setter.py:43
+#: selection:main.schedule.setter,setter_type:0
+#, python-format
+msgid "Paprastas"
+msgstr "Paprastas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:649
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:894
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_line_employee_job_id
+#, python-format
+msgid "Pareigos"
+msgstr "Pareigos"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_e_doc_business_trip_extra_days_worked_override
+msgid "Pasirinkite dienas, už kurias mokėti dienpinigius"
+msgstr "Pasirinkite dienas, už kurias mokėti dienpinigius"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/holiday_schedule_setter.py:42
+#, python-format
+msgid "Pasirinktuose dienų įrašuose egzistuoja keli atostogų įrašai, prašome pasirinkti kiekvieno atostogų įrašo dienas atskirai."
+msgstr "Pasirinktuose dienų įrašuose egzistuoja keli atostogų įrašai, prašome pasirinkti kiekvieno atostogų įrašo dienas atskirai."
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.overtime_schedule_setter_form
+msgid "Pasirinkus šį žymėjimą - bus žymima visa diena"
+msgstr "Pasirinkus šį žymėjimą - bus žymima visa diena"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_hr_employee_confirm_department_ids
+msgid "Pateikiami grafiko skyriai"
+msgstr "Pateikiami grafiko skyriai"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:50
+#: code:addons/work_schedule/wizard/robo_company_settings.py:16
+#: selection:res.company,work_schedule_state_to_check_constraints:0
+#: selection:robo.company.settings,work_schedule_state_to_check_constraints:0
+#, python-format
+msgid "Pateikiant grafiką"
+msgstr "Pateikiant grafiką"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:550
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+#, python-format
+msgid "Pateikta"
+msgstr "Pateikta"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:12
+#: selection:work.schedule.line,state:0
+#, python-format
+msgid "Pateikta buhalterijai"
+msgstr "Pateikta buhalterijai"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:57
+#, python-format
+msgid "Pateikti"
+msgstr "Pateikti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:41
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:22
+#, python-format
+msgid "Patikrinti"
+msgstr "Patikrinti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:34
+#, python-format
+msgid "Patvirtinimas"
+msgstr "Patvirtinimas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/model/work_schedule.py:11
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:549
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_is_confirmed
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+#: selection:work.schedule.line,state:0
+#, python-format
+msgid "Patvirtinta"
+msgstr "Patvirtinta"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:52
+#: model:ir.ui.view,arch_db:work_schedule.holidays_schedule_setter_form
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+#: model:ir.ui.view,arch_db:work_schedule.overtime_schedule_setter_form
+#, python-format
+msgid "Patvirtinti"
+msgstr "Patvirtinti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:666
+#, python-format
+msgid "Patvirtinti eilutę"
+msgstr "Patvirtinti eilutę"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:17
+#, python-format
+msgid "Patvirtinti pasirinktus"
+msgstr "Patvirtinti pasirinktus"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:11
+#, python-format
+msgid "Patvirtinti visus"
+msgstr "Patvirtinti visus"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_name
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_name
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_name
+msgid "Pavadinimas"
+msgstr "Pavadinimas"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_payslip
+msgid "Pay Slip"
+msgstr "Algalapis"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:599
+#, python-format
+msgid "Pašalinti"
+msgstr "Pašalinti"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+msgid "Pažeidžia darbo laiko apribojimus"
+msgstr "Pažeidžia darbo laiko apribojimus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:173
+#, python-format
+msgid "Penk."
+msgstr "Penk."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:166
+#, python-format
+msgid "Per betkurias 7 paeiliui einančias dienas turi būti suteikta %s pertrauka"
+msgstr "Per betkurias 7 paeiliui einančias dienas turi būti suteikta %s pertrauka"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:182
+#, python-format
+msgid "Per mėnesį negalima budėti daugiau, nei %s"
+msgstr "Per mėnesį negalima budėti daugiau, nei %s"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.go_to_date_wizard_form
+msgid "Pereiti"
+msgstr "Pereiti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:117
+#: model:ir.actions.act_window,name:work_schedule.action_go_to_date_wizard
+#: model:ir.ui.view,arch_db:work_schedule.go_to_date_wizard_form
+#, python-format
+msgid "Pereiti į datą"
+msgstr "Pereiti į datą"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:75
+#, python-format
+msgid "Pereiti į grafikus"
+msgstr "Pereiti į grafikus"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:122
+#, python-format
+msgid "Pereiti į žiniaraštį"
+msgstr "Pereiti į žiniaraštį"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:355
+#, python-format
+msgid "Periode %s - %s nenurodytas prastovos laikas"
+msgstr "Periode %s - %s nenurodytas prastovos laikas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:366
+#, python-format
+msgid "Periode %s - %s nustatytas darbo laikas, kurio neturėtų būti, nes šiame periode yra paskelbta prastova"
+msgstr "Periode %s - %s nustatytas darbo laikas, kurio neturėtų būti, nes šiame periode yra paskelbta prastova"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:102
+#, python-format
+msgid "Perjungti rodinį"
+msgstr "Perjungti rodinį"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:198
+#, python-format
+msgid "Persidengia darbo laikas datomis"
+msgstr "Persidengia darbo laikas datomis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/main_schedule_setter.py:383
+#, python-format
+msgid "Pertrauka turi pasibaigti prieš darbo pabaigą"
+msgstr "Pertrauka turi pasibaigti prieš darbo pabaigą"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/main_schedule_setter.py:385
+#, python-format
+msgid "Pertrauka turi prasidėti prieš pertraukos pabaigą"
+msgstr "Pertrauka turi prasidėti prieš pertraukos pabaigą"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:46
+#, python-format
+msgid "Peržiūrėti eilučių apribojimus"
+msgstr "Peržiūrėti eilučių apribojimus"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_hr_employee_fill_department_ids
+msgid "Pildomi grafiko skyriai"
+msgstr "Pildomi grafiko skyriai"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_schedule_setter_setter_type
+msgid "Pildymo būdas"
+msgstr "Pildymo būdas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:365
+#, python-format
+msgid "Pilnos prastovos periode nustatytas darbo laikas"
+msgstr "Pilnos prastovos periode nustatytas darbo laikas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:173
+#, python-format
+msgid "Pirm."
+msgstr "Pirm."
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedules_search
+#: selection:schedule.export.wizard,work_schedule_to_use:0
+msgid "Planned"
+msgstr "Suplanuotas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:603
+#, python-format
+msgid "Planuojamas grafikas naudojamas"
+msgstr "Planuojamas grafikas naudojamas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:605
+#, python-format
+msgid "Planuojamas grafikas nenaudojamas"
+msgstr "Planuojamas grafikas nenaudojamas"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:139
+#, python-format
+msgid "Please confirm that you really want to change the planned line usage in payroll calculations"
+msgstr "Prašome patvirtinti, kad norite pakeisti šios eilutės naudojimą darbo užmokesčio paskaičiavimuose"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1492
+#, python-format
+msgid "Please confirm that you really want to set all planned lines not to be used in payroll calculations"
+msgstr "Prašome patvirtinti, kad norite įgalinti visų eilučių naudojimą darbo užmokesčio paskaičiavimuose"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1480
+#, python-format
+msgid "Please confirm that you really want to set all planned lines to be used in payroll calculations"
+msgstr "Prašome patvirtinti, kad norite išjungti visų eilučių naudojimą darbo užmokesčio paskaičiavimuose"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_schedule_setter_sum_after_changes
+msgid "Po pakeitimų"
+msgstr "Po pakeitimų"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_free_day
+msgid "Poilsio diena"
+msgstr "Poilsio diena"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:318
+#, python-format
+msgid "Poilsio laikas tarp pamainų turi trukti ilgiau nei %s"
+msgstr "Poilsio laikas tarp pamainų turi trukti ilgiau nei %s"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_date_from
+msgid "Pradžios data"
+msgstr "Pradžios data"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_time_from
+msgid "Pradžios laikas"
+msgstr "Pradžios laikas"
+
+#. module: work_schedule
+#: model:mail.channel,name:work_schedule.warn_about_leaving_employees_schedule_submission_mail_channel
+msgid "Pranešimai apie nepateiktus darbą paliekančių asmenų darbo tvarkaraščius"
+msgstr "Pranešimai apie nepateiktus darbą paliekančių asmenų darbo tvarkaraščius"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1390
+#, python-format
+msgid "Prašome pirma pakeisti atostogas į darbo laiką ir tuomet nustatyti viršvalandžius"
+msgstr "Prašome pirma pakeisti atostogas į darbo laiką ir tuomet nustatyti viršvalandžius"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:49
+#: code:addons/work_schedule/wizard/robo_company_settings.py:15
+#: selection:res.company,work_schedule_state_to_check_constraints:0
+#: selection:robo.company.settings,work_schedule_state_to_check_constraints:0
+#, python-format
+msgid "Preliminariai tvirtinant grafiką"
+msgstr "Preliminariai tvirtinant grafiką"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:51
+#, python-format
+msgid "Pridėti eilutę"
+msgstr "Pridėti eilutę"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:42
+#, python-format
+msgid "Pridėti neįtrauktus kontraktus"
+msgstr "Pridėti neįtrauktus kontraktus"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_schedule_setter_sum_before_changes
+msgid "Prieš pakeitimus"
+msgstr "Prieš pakeitimus"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/model/work_schedule.py:13
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:551
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+#: selection:work.schedule.line,state:0
+#, python-format
+msgid "Priimta"
+msgstr "Priimta"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:62
+#, python-format
+msgid "Priimti"
+msgstr "Priimti"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:519
+#, python-format
+msgid "Rastos darbuotojų sutartys, tačiau šių darbuotojų grafike nėra:"
+msgstr "Rastos darbuotojų sutartys, tačiau šių darbuotojų grafike nėra:"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_parameters_value
+msgid "Reikšmė"
+msgstr "Reikšmė"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_holiday_id
+msgid "Related holiday id"
+msgstr "Susijusios atostogos"
+
+#. module: work_schedule
+#: model:mail.channel,name:work_schedule.fill_schedule_reminder_mail_channel
+msgid "Reminder to fill in work schedules"
+msgstr "Priminimai pateikti darbo grafikus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:367
+#, python-format
+msgid "RoboLabs reminder to fill in work schedules for next month"
+msgstr "RoboLabs priminimas pateikti darbo grafikus už ateinantį mėnesį"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company.py:54
+#: code:addons/work_schedule/wizard/robo_company_settings.py:20
+#: selection:res.company,show_user_who_exported_info:0
+#: selection:robo.company.settings,show_user_who_exported_info:0
+#, python-format
+msgid "Rodyti"
+msgstr "Rodyti"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:217
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:26
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Rugpjūtis"
+msgstr "Rugpjūtis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:218
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:27
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Rugsėjis"
+msgstr "Rugsėjis"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/model/schedule_line_view.py:210
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:858
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:19
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Sausis"
+msgstr "Sausis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/schedule_export_wizard.py:28
+#, python-format
+msgid "Savaitė"
+msgstr "Savaitė"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:475
+#, python-format
+msgid "Schedule does not meet the constraints"
+msgstr "Grafikas neatitinka darbo laiko apribojimų"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:465
+#, python-format
+msgid "Schedule meets the constraints"
+msgstr "Grafikas atitinka darbo laiko apribojimus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:1037
+#, python-format
+msgid "Schedule meets the requirements"
+msgstr "Grafikas atitinka darbo laiko apribojimus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:173
+#, python-format
+msgid "Sekm."
+msgstr "Sekm."
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_holidays_schedule_setter_selected_existing_holidays
+msgid "Selected existing holidays"
+msgstr "Selected existing holidays"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:1143
+#, python-format
+msgid "September"
+msgstr "Rugsėjis"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_schedule_setter_show_break_text
+msgid "Show break text"
+msgstr "Show break text"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:129
+#, python-format
+msgid "Skaičiuojama"
+msgstr "Skaičiuojama"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/hr_employee.py:14
+#: selection:hr.employee,robo_work_schedule_group:0
+#, python-format
+msgid "Skyriaus administratorius"
+msgstr "Skyriaus administratorius"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:411
+#, python-format
+msgid "Some truancy time has been set in work schedule for the following employees: {}. You should review this truancy time, ensure a corresponding act exists and submit the necessary info to SoDra."
+msgstr "Darbo grafike buvo nustatytas pravaikštos laikas šiems darbuotojams: {}. Patikrinkite nustatytą pravaikštos laiką, įsitikinkite, kad egzistuoja pravaikštos aktas ir pateikite reikiamus duomenis SoDrai."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:219
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:28
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Spalis"
+msgstr "Spalis"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:48
+#, python-format
+msgid "Sukurti grafikus"
+msgstr "Sukurti grafikus"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.main_work_schedule_setter_form
+msgid "Suma"
+msgstr "Suma"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_schedule_setter_sumine_text
+msgid "Sumine text"
+msgstr "Sumine text"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:68
+#: selection:work.schedule,schedule_type:0
+#, python-format
+msgid "Suplanuotas"
+msgstr "Suplanuotas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_res_users_parent_id
+msgid "Susijusi įmonė"
+msgstr "Susijusi įmonė"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:837
+#, python-format
+msgid "Susijusi žiniaraščio eilutė jau patvirtinta, norėdami atšaukti - pirmiausia atšaukite žiniaraščio eilutę (%s)"
+msgstr "Susijusi žiniaraščio eilutė jau patvirtinta, norėdami atšaukti - pirmiausia atšaukite žiniaraščio eilutę (%s)"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_schedule_holiday_id
+msgid "Susijusios atostogos"
+msgstr "Susijusios atostogos"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_holidays_day_ids
+msgid "Susijusios dienos"
+msgstr "Susijusios dienos"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_appointment_id
+msgid "Sutarties priedas"
+msgstr "Sutarties priedas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_tabelio_zymejimas_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_tabelio_zymejimas_id
+msgid "Tabelio Žymėjimas"
+msgstr "Tabelio Žymėjimas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_code
+msgid "Tabelio žymėjimo kodas"
+msgstr "Tabelio žymėjimo kodas"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_name
+msgid "Tabelio žymėjimo pavadinimas"
+msgstr "Tabelio žymėjimo pavadinimas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:319
+#: code:addons/work_schedule/model/dk_constraints.py:632
+#, python-format
+msgid "Tarp pamainos %s - %s ir %s - %s nustatytas %s poilsio laikas"
+msgstr "Tarp pamainos %s - %s ir %s - %s nustatytas %s poilsio laikas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:29
+#: sql_constraint:work.schedule.parameters:0
+#, python-format
+msgid "Tas pats parametras negali įgyti dviejų reikšmių tą pačią dieną"
+msgstr "Tas pats parametras negali įgyti dviejų reikšmių tą pačią dieną"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:677
+#, python-format
+msgid "This action can only be performed by accountants!"
+msgstr "Šį veiksmą gali atlikti tik buhalteriai!"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:77
+#: code:addons/work_schedule/model/work_schedule_line.py:824
+#: code:addons/work_schedule/model/work_schedule_line.py:845
+#, python-format
+msgid "Tik buhalteriai gali atlikti šią operaciją"
+msgstr "Tik buhalteriai gali atlikti šią operaciją"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.work_schedule_line_search_view
+msgid "Tikrinama"
+msgstr "Tikrinama"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:173
+#, python-format
+msgid "Treč."
+msgstr "Treč."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:410
+#, python-format
+msgid "Truancy time has been set in work schedule"
+msgstr "Grafike buvo nustatytas pravaikštos laikas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:317
+#, python-format
+msgid "Trūksta darbuotojo {} pravaikštos akto datai {}\n"
+""
+msgstr "Trūksta darbuotojo {} pravaikštos akto datai {}\n"
+""
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/res_company_extended_schedule_period.py:28
+#, python-format
+msgid "Turite pasirinkti bent vieną datą"
+msgstr "Turite pasirinkti bent vieną datą"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/ziniarastis_header.xml:96
+#, python-format
+msgid "Tvirtinama..."
+msgstr "Tvirtinama..."
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_hr_employee_validate_department_ids
+msgid "Tvirtinami grafiko skyriai"
+msgstr "Tvirtinami grafiko skyriai"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_res_users
+msgid "Users"
+msgstr "Naudotojai"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/hr_employee.py:15
+#: selection:hr.employee,robo_work_schedule_group:0
+#, python-format
+msgid "Vadovas"
+msgstr "Vadovas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_parameters.py:15
+#: model:ir.model.fields,field_description:work_schedule.field_res_company_shift_break_threshold
+#: selection:work.schedule.parameters,name:0
+#, python-format
+msgid "Valandų skaičius pagal kurį nustatoma ar privalomas ilgesnis laikas tarp pamainų (h.)"
+msgstr "Valandų skaičius pagal kurį nustatoma ar privalomas ilgesnis laikas tarp pamainų (h.)"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:211
+#: code:addons/work_schedule/wizard/jump_to_date_wizard.py:20
+#: selection:new.schedule.line.wizard,month:0
+#, python-format
+msgid "Vasaris"
+msgstr "Vasaris"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_main_schedule_setter_id
+msgid "Vedlys"
+msgstr "Vedlys"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:25
+#: sql_constraint:work.schedule.line:0
+#, python-format
+msgid "Vienas darbuotojas gali turėti tik vieną eilutę viename skyriuje vienam periodui"
+msgstr "Vienas darbuotojas gali turėti tik vieną eilutę viename skyriuje vienam periodui"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:21
+#: sql_constraint:work.schedule.day:0
+#, python-format
+msgid "Vienoje skyriaus eilutėje negali egzistuoti keli įrašai su ta pačia data"
+msgstr "Vienoje skyriaus eilutėje negali egzistuoti keli įrašai su ta pačia data"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:95
+#, python-format
+msgid "Viršyta %s val. darbo norma per 7 dienas"
+msgstr "Viršyta %s val. darbo norma per 7 dienas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:107
+#, python-format
+msgid "Viršyta %s val. viršvalandžių norma per 7 dienas"
+msgstr "Viršyta %s val. viršvalandžių norma per 7 dienas"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:58
+#, python-format
+msgid "Viršytas %s val. viršvalandžių limitas per metus"
+msgstr "Viršytas %s val. viršvalandžių limitas per metus"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:933
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:939
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:941
+#, python-format
+msgid "Viso"
+msgstr "Viso"
+
+#. module: work_schedule
+#: model:res.groups,front_help:work_schedule.group_schedule_super
+msgid "Viso darbo grafiko administratorius: pilna prieiga prie grafiko"
+msgstr "Viso darbo grafiko administratorius: pilna prieiga prie grafiko"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_overtime_schedule_setter_whole_day
+msgid "Whole day"
+msgstr "Visa diena"
+
+#. module: work_schedule
+#: model:ir.module.category,name:work_schedule.work_schedule_category
+msgid "Work Schedule"
+msgstr "Darbo grafikas"
+
+#. module: work_schedule
+#: model:res.groups,name:work_schedule.group_schedule_manager
+msgid "Work Schedule Manager"
+msgstr "Darbo grafiko pildytojas"
+
+#. module: work_schedule
+#: model:ir.module.category,name:work_schedule.work_schedule_menu_category
+msgid "Work Schedule Menu"
+msgstr "Darbo grafiko meniu"
+
+#. module: work_schedule
+#: model:res.groups,name:work_schedule.group_schedule_super
+msgid "Work Schedule Super"
+msgstr "Darbo grafiko administratorius"
+
+#. module: work_schedule
+#: model:res.groups,name:work_schedule.group_schedule_user
+msgid "Work Schedule User"
+msgstr "Darbo grafiko vartotojas"
+
+#. module: work_schedule
+#: model:res.groups,name:work_schedule.group_schedule_see_colleague_schedules
+msgid "Work Schedule see colleague schedule"
+msgstr "Mato kolegų, dirbančių tame pačiame skyriuje, grafikus"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_schedule_export_wizard_work_schedule_to_use
+msgid "Work schedule to use"
+msgstr "Darbo grafikas"
+
+#. module: work_schedule
+#: model:ir.ui.view,arch_db:work_schedule.schedule_export_wizard_form
+msgid "XLS Formatu"
+msgstr "XLS Formatu"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:47
+#, python-format
+msgid "You can not delete the selected records since there's an approved leave for the selected days"
+msgstr "Negalite ištrinti pasirinktų įrašų, nes sistemoje egzistuoja patvirtintas neatvykimas nurodytomis dienomis"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_day.py:302
+#: code:addons/work_schedule/model/work_schedule_day.py:826
+#: code:addons/work_schedule/model/work_schedule_day_line.py:133
+#: code:addons/work_schedule/model/work_schedule_day_line.py:175
+#: code:addons/work_schedule/model/work_schedule_day_line.py:199
+#: code:addons/work_schedule/model/work_schedule_line.py:902
+#, python-format
+msgid "You can not modify confirmed planned schedule lines"
+msgstr "Negalite keisti patvirtintų suplanuotų eilučių"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_base_schedule_setter
+msgid "base.schedule.setter"
+msgstr "base.schedule.setter"
+
+#. module: work_schedule
+#: model:ir.ui.menu,tags:work_schedule.menu_work_schedule_main
+msgid "darbo,grafikas"
+msgstr "darbo,grafikas"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_e_document
+msgid "e.document"
+msgstr "e.document"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_holidays_schedule_setter
+msgid "holidays.schedule.setter"
+msgstr "holidays.schedule.setter"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_contract_create
+msgid "hr.contract.create"
+msgstr "hr.contract.create"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_employee_compensation
+msgid "hr.employee.compensation"
+msgstr "hr.employee.compensation"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_employee_forced_work_time
+msgid "hr.employee.forced.work.time"
+msgstr "hr.employee.forced.work.time"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_employee_overtime
+msgid "hr.employee.overtime"
+msgstr "hr.employee.overtime"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_hr_employee_overtime_time_line
+msgid "hr.employee.overtime.time.line"
+msgstr "hr.employee.overtime.time.line"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_ir_actions_act_window_view
+msgid "ir.actions.act_window.view"
+msgstr "ir.actions.act_window.view"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_ir_ui_view
+msgid "ir.ui.view"
+msgstr "ir.ui.view"
+
+#. module: work_schedule
+#: model:ir.ui.menu,tags:work_schedule.menu_extended_work_schedule_settings_search
+msgid "išplėstinio,grafiko,periodai"
+msgstr "išplėstinio,grafiko,periodai"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_jump_to_date_wizard
+msgid "jump.to.date.wizard"
+msgstr "jump.to.date.wizard"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_main_schedule_setter
+msgid "main.schedule.setter"
+msgstr "main.schedule.setter"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_main_setter_worked_time_line
+msgid "main.setter.worked.time.line"
+msgstr "main.setter.worked.time.line"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_new_schedule_line_wizard
+msgid "new.schedule.line.wizard"
+msgstr "new.schedule.line.wizard"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_overtime_schedule_setter
+msgid "overtime.schedule.setter"
+msgstr "overtime.schedule.setter"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_res_company_extended_schedule_period
+msgid "res.company.extended.schedule.period"
+msgstr "res.company.extended.schedule.period"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_robo_company_settings
+msgid "robo.company.settings"
+msgstr "robo.company.settings"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_schedule_export_wizard
+msgid "schedule.export.wizard"
+msgstr "schedule.export.wizard"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_schedule_template
+msgid "schedule.template"
+msgstr "schedule.template"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_work_schedule
+msgid "work.schedule"
+msgstr "work.schedule"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_work_schedule_codes
+msgid "work.schedule.codes"
+msgstr "work.schedule.codes"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_work_schedule_day
+msgid "work.schedule.day"
+msgstr "work.schedule.day"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_work_schedule_day_line
+msgid "work.schedule.day.line"
+msgstr "work.schedule.day.line"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_work_schedule_holidays
+msgid "work.schedule.holidays"
+msgstr "work.schedule.holidays"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_work_schedule_line
+msgid "work.schedule.line"
+msgstr "work.schedule.line"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_work_schedule_parameters
+msgid "work.schedule.parameters"
+msgstr "work.schedule.parameters"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_ziniarastis_day
+msgid "ziniarastis.day"
+msgstr "ziniarastis.day"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_ziniarastis_period
+msgid "ziniarastis.period"
+msgstr "ziniarastis.period"
+
+#. module: work_schedule
+#: model:ir.model,name:work_schedule.model_ziniarastis_period_line
+msgid "ziniarastis.period.line"
+msgstr "ziniarastis.period.line"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/xml/schedule_view.xml:107
+#, python-format
+msgid "Įgalinti buhalterių pakeitimus"
+msgstr "Įgalinti buhalterių pakeitimus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:557
+#, python-format
+msgid "Įstatymai datai {0} šiam darbuotojui leidžia dirbti {1} val., o šis darbuotojas dirba {2} val."
+msgstr "Įstatymai datai {0} šiam darbuotojui leidžia dirbti {1} val., o šis darbuotojas dirba {2} val."
+
+#. module: work_schedule
+#: code:addons/work_schedule/wizard/schedule_export_wizard.py:64
+#, python-format
+msgid "Įvyko sistemos klaida, prašome perkrauti puslapį."
+msgstr "Įvyko sistemos klaida, prašome perkrauti puslapį."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/schedule_line_view.py:173
+#, python-format
+msgid "Šešt."
+msgstr "Šešt."
+
+#. module: work_schedule
+#: model:ir.actions.act_window,robo_help:work_schedule.action_open_company_extended_work_schedule_period
+msgid "Ši jūsų užklausa negrąžino jokių rezultatų"
+msgstr "Ši jūsų užklausa negrąžino jokių rezultatų"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:168
+#, python-format
+msgid "Šio periodo žiniaraštis dar nesukurtas, pirmiausia sukurkite žiniaraštį."
+msgstr "Šio periodo žiniaraštis dar nesukurtas, pirmiausia sukurkite žiniaraštį."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule.py:124
+#, python-format
+msgid "Šio periodo žiniaraštis jau patvirtintas, pridėti eilučių nebegalima."
+msgstr "Šio periodo žiniaraštis jau patvirtintas, pridėti eilučių nebegalima."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_holidays.py:112
+#, python-format
+msgid "Šios atostogos buvo sukurtos iš sistemos, todėl negalima jų ištrinti"
+msgstr "Šios atostogos buvo sukurtos iš sistemos, todėl negalima jų ištrinti"
+
+#. module: work_schedule
+#. openerp-web
+#: code:addons/work_schedule/static/src/js/schedule_grid.js:160
+#, python-format
+msgid "Šios dienos darbuotojo darbo laikas jau patvirtintas"
+msgstr "Šios dienos darbuotojo darbo laikas jau patvirtintas"
+
+#. module: work_schedule
+#: model:ir.model.fields,help:work_schedule.field_hr_employee_confirm_department_ids
+msgid "Šis darbuotojas gaus teisę pateikti šių skyrių grafikus"
+msgstr "Šis darbuotojas gaus teisę pateikti šių skyrių grafikus"
+
+#. module: work_schedule
+#: model:ir.model.fields,help:work_schedule.field_hr_employee_validate_department_ids
+msgid "Šis darbuotojas gaus teisę patvirtinti šių skyrių grafikus"
+msgstr "Šis darbuotojas gaus teisę patvirtinti šių skyrių grafikus"
+
+#. module: work_schedule
+#: model:ir.model.fields,help:work_schedule.field_hr_employee_fill_department_ids
+msgid "Šis darbuotojas gaus teisę pildyti šių skyrių grafikus"
+msgstr "Šis darbuotojas gaus teisę pildyti šių skyrių grafikus"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:350
+#, python-format
+msgid "Šiuo metu tikrinami eilučių apribojimai. Prašome palaukti."
+msgstr "Šiuo metu tikrinami eilučių apribojimai. Prašome palaukti."
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/work_schedule_line.py:364
+#, python-format
+msgid "Šiuo metu vykdomas atlyginimų skaičiavimas, todėl negalite atlikti šio veiksmo"
+msgstr "Šiuo metu vykdomas atlyginimų skaičiavimas, todėl negalite atlikti šio veiksmo"
+
+#. module: work_schedule
+#: code:addons/work_schedule/model/dk_constraints.py:375
+#, python-format
+msgid "Šių apribojimų tikrinimas galimas tik vieno periodo eilutėm"
+msgstr "Šių apribojimų tikrinimas galimas tik vieno periodo eilutėm"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_codes_is_whole_day
+msgid "Žymima visa diena"
+msgstr "Žymima visa diena"
+
+#. module: work_schedule
+#: model:ir.model.fields,field_description:work_schedule.field_main_setter_worked_time_line_work_schedule_code_id
+#: model:ir.model.fields,field_description:work_schedule.field_overtime_schedule_setter_work_schedule_code_id
+#: model:ir.model.fields,field_description:work_schedule.field_work_schedule_day_line_work_schedule_code_id
+msgid "Žymėjimas"
+msgstr "Žymėjimas"

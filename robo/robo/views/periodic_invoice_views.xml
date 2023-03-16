@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="periodic_invoice_tree" model="ir.ui.view">
+            <field name="name">periodic.invoice.tree</field>
+            <field name="model">periodic.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0" editable="bottom" decoration-muted="not running">
+                    <field name="invoice_number" required="1"/>
+                    <field name="invoice_id" invisible="1" readonly="1"/>
+                    <field name="use_most_recent_as_template" string="Naudoti naujausią SF kaip šabloną"/>
+                    <field name="partner_id"/>
+                    <field name="date"/>
+                    <field name="interval_number"/>
+                    <field name="payment_term_days"/>
+                    <field name="action"/>
+                    <field name="create_einvoice"/>
+                    <field name="date_stop"/>
+                    <field name="running" invisible="1"/>
+                    <button name="open_invoices" type="object" string="Sukurtos sąskaitos" icon="icon-register one_and_half_size"/>
+                    <button name="stop" type="object" string="Sustabdyti" icon="fa-stop one_and_half_size"
+                            confirm="Ar tikrai norite sustabdyti šią sąskaitą?"/>
+                </tree>
+            </field>
+        </record>
+        <record id="periodic_invoice_kanban" model="ir.ui.view">
+            <field name="name">periodic.invoice.kanban</field>
+            <field name="model">periodic.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false" create="false">
+                    <field name="invoice_number" required="1"/>
+                    <field name="partner_id"/>
+                    <field name="date"/>
+                    <field name="interval_number"/>
+                    <field name="action"/>
+                    <field name="create_einvoice"/>
+                    <field name="date_stop"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.invoice_number.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <t t-esc="record.date.value"/>
+                                            <t t-esc="record.action.value"/>
+                                        </span>
+                                        <span groups="robo.group_robo_e_invoice">
+                                            <t t-if="record.create_einvoice.value" >eSąskaita</t>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="action_periodic_invoice" model="ir.actions.act_window">
+            <field name="name">Periodinės sąskaitos</field>
+            <field name="res_model">periodic.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,kanban</field>
+            <field name="context">{'robo_header': {}}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('periodic_invoice_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('periodic_invoice_kanban')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <menuitem id="menu_periodic" parent="menu_start" name="Periodiniai įrašai" sequence="65"
+                  robo_extended="1"
+                  force_web_icon="icon-refresh,none,none"
+                  robo_front="True"
+                  groups="robo_basic.group_robo_periodic,robo_basic.group_robo_periodic_front_statement"
+        />
+        <menuitem id="menu_periodic_invoice"
+                  parent="menu_periodic"
+                  name="Periodinės sąskaitos"
+                  sequence="20"
+                  groups="robo_basic.group_robo_periodic"
+                  force_web_icon="icon-register,none,none"
+                  robo_front="True"
+                  action="action_periodic_invoice"
+                  searchable="True"
+                  tags="periodinės,sąskaitos"
+        />
+        <record model="ir.ui.view" id="search_periodic_invoices">
+            <field name="name">Periodinių sąskaitų paieška</field>
+            <field name="model">periodic.invoice</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id" string="Partneris"/>
+                    <field name="invoice_number" string="Sąskaitos numeris"
+                           filter_domain="['|', ('invoice_number', 'ilike', self), ('invoice_ids.number', 'ilike', self)]"/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

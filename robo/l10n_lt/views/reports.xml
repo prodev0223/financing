@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report.internal_layout">
+            <!-- Multicompany -->
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id"/>
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+            <div class="header">
+                <div class="row"
+                     style="font-size: 80%; padding: 0 10px 0 10px; display:block; clear:both; width:auto; height:auto;">
+                    <div id="left_block" style="float:left">
+                        <div>
+                            <span t-esc="company.display_name"/>
+                            <br/>
+                            <span t-esc="company.partner_id.contact_address.replace(company.display_name,'')"/>
+                        </div>
+                    </div>
+                    <div style="float:right" id="right_block">
+                        <div style="float:left; text-align:left">
+                            <t t-if="company.company_registry">
+                                <span>Įmonės kodas:</span>
+                                <br/>
+                            </t>
+                            <t t-if="company.vat">
+                                <span>PVM kodas:</span>
+                            </t>
+                        </div>
+                        <div style="float:right; text-align:right">
+                            <span t-esc="company.company_registry"/>
+                            <br/>
+                            <t t-if="company.vat">
+                                <span t-esc="company.vat"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template id="report.simple_page_number_footer">
+            <div class="footer">
+                <ul class="list-inline" style="float:right; font-size: 9px; position:relative">
+                    <li style="vertical-align: bottom;"><span class="page"/></li>
+                    <li>/</li>
+                    <li><span class="topage"/></li>
+                </ul>
+            </div>
+        </template>
+        <record id="account.action_account_report_bs" model="ir.actions.act_window">
+            <field name="name">Balansas</field>
+            <field name="res_model">accounting.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.accounting_report_view"/>
+            <field name="target">new</field>
+            <field name="context" eval="{'report_type': 'BL', 'balansas': True}"/>
+        </record>
+        <record id="account.action_account_report_pl" model="ir.actions.act_window">
+            <field name="name">Pelnas (Nuostolis)</field>
+            <field name="res_model">accounting.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.accounting_report_view"/>
+            <field name="target">new</field>
+            <field name="context" eval="{'report_type': 'PL'}"/>
+        </record>
+    </data>
+</openerp>

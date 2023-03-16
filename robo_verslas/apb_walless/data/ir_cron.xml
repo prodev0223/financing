@@ -1,0 +1,18 @@
+<odoo>
+    <data noupdate="1">
+        <!--Cron-jobs-->
+        <record id="ir_cron_prepare_royalty_sheet" model="ir.cron">
+            <field name="name">Prepare Walless royalty sheet</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">walless.royalty.sheet</field>
+            <field name="function">cron_prepare_royalty_sheet</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=23,
+                                          minute=30, second=00, months=1, day=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="active" eval="True"/>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

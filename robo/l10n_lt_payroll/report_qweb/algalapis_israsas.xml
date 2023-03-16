@@ -1,0 +1,1053 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <report
+                id="report_algalapis_israsas"
+                model="hr.payslip"
+                string="Atsiskaitymo lapelis"
+                report_type="qweb-pdf"
+                name="l10n_lt_payroll.report_algalapis_israsas_sl"
+                file="l10n_lt_payroll.report_algalapis_israsas_sl"
+        />
+        <record id="report_algalapis_israsas" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="report.paperformat_a4_landscape_narrow"/>
+        </record>
+        <template id="report_algalapis_israsas_sl">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-lang="o.company_id.partner_id.lang"
+                       t-call="l10n_lt_payroll.report_algalapis_israsas_sl_document"/>
+                </t>
+            </t>
+        </template>
+        <template id="report_algalapis_israsas_sl_document">
+            <style type="text/css">
+                h3 {
+                text-align: center;
+                }
+                .centras{
+                text-align: center;
+                margin-left:auto;
+                margin-right:auto;
+                }
+                .virsus{
+                border-top: 1px solid black;
+                }
+                .desine{
+                float: right;
+                width: 300px;
+                text-align: justify
+                }
+                .lentele{
+                border: 1px solid black;
+                page-break-inside: avoid;
+                }
+                tr{
+                padding-left: 5px;
+                border: 1px solid black;
+                }
+                th{
+                padding-left: 5px;
+                border: 1px solid black;
+                }
+                td{
+                padding-left: 5px;
+                border: 1px solid black;
+                }
+
+            </style>
+            <t t-call="report.html_container">
+                <!--<t t-esc="setLang(docs[0].company_id.partner_id.lang)"/>-->
+                <div class="page">
+                    <t t-if="o.line_ids">
+                        <t t-call="report.internal_layout"/>
+                        <table style="page-break-inside: avoid">
+                            <td style="white-space: nowrap; page-break-inside: avoid; border: 0px white !important">
+                                <table class="centras" align="center" style="border-style:none" width="35%">
+                                    <tr style="font-weight:bold; border-style:none">
+                                        <td style="border-style:none">ATSISKAITYMO LAPELIS</td>
+                                    </tr>
+                                </table>
+                                <br/>
+
+                                <table class="centras" align="center" width="60%">
+                                    <td style="border-style:none">
+                                        <span style="padding-left: 5px; margin-bottom: 10px; white-space: nowrap"/>
+                                        Laikotarpis:
+                                        <span style="padding-left: 5px; padding-right: 5px; white-space: nowrap;font-weight:bold"
+                                              t-esc="periodas(o)"/>
+                                    </td>
+                                    <tr>
+                                    </tr>
+                                </table>
+                                <p/>
+                                <table class="centras" align="center" width="60%">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">Gavėjo vardas ir pavardė
+                                            <span style="font-weight:bold" t-field="o.employee_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    </tr>
+                                </table>
+                                <p/>
+                                <div class="col-md-12">
+                                    <table width="100%" class="lentele" style="padding:5px; border: 1px solid black;">
+                                        <tr style="border: 1px solid black;">
+                                            <div align="left">
+                                                <td rowspan="2" align="left" valign="top" scope="col"
+                                                    style="padding:5px; border: 1px solid black;">
+                                                    Dirbtas laikas dienomis ir valandomis per mėnesį
+                                                </td>
+                                                <td rowspan="2" align="left" valign="top" scope="col"
+                                                    style="padding:5px; border: 1px solid black;">
+                                                    Ligų trukmė dienomis ir valandomis per mėnesį
+                                                </td>
+                                                <td rowspan="2" align="left" valign="top" scope="col"
+                                                    style="padding:5px; border: 1px solid black;">
+                                                    Kasmetinės atostogos dienomis ir valandomis per mėnesį
+                                                </td>
+                                            </div>
+                                            <td height="24" colspan="7" align="left" valign="top" scope="col"
+                                                style="padding:5px; border: 1px solid black;">
+                                                <div align="left">Einam. mėn. priskaičiuota, Eur</div>
+                                                <div align="left"/>
+                                                <div align="left"/>
+                                            </td>
+                                            <td colspan="6" align="left" valign="top" scope="col"
+                                                style="padding:5px; border: 1px solid black;">
+                                                Einam. mėn. išskaičiuota, Eur
+                                            </td>
+                                            <td colspan="1" rowspan="2" align="left" valign="middle" scope="col"
+                                                style="padding:5px; border: 1px solid black;">Mokėtinas atlyginimas
+                                            </td>
+                                            <td colspan="4" align="left" valign="top" scope="col"
+                                                style="padding:5px; border: 1px solid black;">
+                                                Išmokėta, Eur
+                                            </td>
+                                            <td colspan="1" align="left" valign="top" scope="col"
+                                                style="padding:5px; border: 1px solid black;">
+                                                Viso, Eur
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid black;">
+                                            <td style="padding:5px; border: 1px solid black;">Priskaičiuotas atlyginimas
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Priskaičiuoti
+                                                atostoginiai
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Dienpinigiai
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Priedas už
+                                                darbą polisio dienomis
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Premijos
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Kitos priemokos
+                                                <br/>
+                                                ir
+                                                kompensacijos
+                                            </td>
+                                            <td style="padding:5px; border: 1px solid black;">Iš viso per mėnesį</td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Dienpinigiai
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Pajamų mokestis
+                                            </td>
+                                            <td style="padding:5px; border: 1px solid black;">Soc. draudimo įmokos</td>
+                                            <td style="padding:5px; border: 1px solid black;">Papildoma savanoriška soc.
+                                                draudimo įmoka
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Kiti
+                                                išskaičiavimai
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Iš viso per
+                                                mėnesį
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Išmokėtas
+                                                avansas
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Išmokėtas atlyginimas
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Išskaitos
+                                            </td>
+                                            <td style="padding:5px; border: 1px solid black;">Mokėtino atlyginimo
+                                                likutis
+                                                <br/>
+                                                (21=17-18-19-20)
+                                            </td>
+                                            <td width="1%" style="padding:5px; border: 1px solid black;">Darbo vietos kaštai
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid black;">
+                                            <td style="text-align: center; padding-top: 5px; padding-bottom: 5px; border: 1px solid black;">
+                                                1
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">2</td>
+                                            <td style="text-align: center; border: 1px solid black;">3</td>
+                                            <td style="text-align: center; border: 1px solid black;">4</td>
+                                            <td style="text-align: center; border: 1px solid black;">5</td>
+                                            <td style="text-align: center; border: 1px solid black;">6</td>
+                                            <td style="text-align: center; border: 1px solid black;">7</td>
+                                            <td style="text-align: center; border: 1px solid black;">8</td>
+                                            <td style="text-align: center; border: 1px solid black;">9</td>
+                                            <td style="text-align: center; border: 1px solid black;">10</td>
+                                            <td style="text-align: center; border: 1px solid black;">11</td>
+                                            <td style="text-align: center; border: 1px solid black;">12</td>
+                                            <td style="text-align: center; border: 1px solid black;">13</td>
+                                            <td style="text-align: center; border: 1px solid black;">14</td>
+                                            <td style="text-align: center; border: 1px solid black;">15</td>
+                                            <td style="text-align: center; border: 1px solid black;">16</td>
+                                            <td style="text-align: center; border: 1px solid black;">17</td>
+                                            <td style="text-align: center; border: 1px solid black;">18</td>
+                                            <td style="text-align: center; border: 1px solid black;">19</td>
+                                            <td style="text-align: center; border: 1px solid black;">20</td>
+                                            <td style="text-align: center; border: 1px solid black;">21</td>
+                                            <td style="text-align: center; border: 1px solid black;">22</td>
+                                        </tr>
+                                        <tr style="page-break-inside: avoid; border: 1px solid black;">
+                                            <td style="white-space: nowrap; text-align: center; padding-top: 5px; padding-bottom: 5px; border: 1px solid black;">
+                                                <span t-esc="str(remove(dirbtas_laikas_d(o))) + ' d.d. '"/>
+                                                <br/>
+                                                <span t-esc="str(round_time(dirbtas_laikas_h(o))) + ' val.'"/>
+                                            </td>
+                                            <t t-if="ligos_d(o)">
+                                                <td style="white-space: nowrap; text-align: center; padding-top: 5px; padding-bottom: 5px; border: 1px solid black;">
+                                                    <span t-esc="str(remove(ligos_d(o))) + ' d.d. '"/>
+                                                    <br/>
+                                                    <span t-esc="str(round_time(ligos_h(o))) + ' val.'"/>
+                                                </td>
+                                            </t>
+                                            <t t-if="not ligos_d(o)">
+                                                <td style="text-align: center; padding-top: 5px; padding-bottom: 5px; border: 1px solid black;">
+                                                    <span/>
+                                                </td>
+                                            </t>
+                                            <t t-if="kasmetines_atostogos_d(o)">
+                                                <td style="white-space: nowrap; text-align: center; padding-top: 5px; padding-bottom: 5px; border: 1px solid black;">
+                                                    <span t-esc="str(remove(kasmetines_atostogos_d(o))) + ' d.d. '"/>
+                                                    <br/>
+                                                    <span t-esc="str(round_time(kasmetines_atostogos_h(o))) + ' val.'"/>
+                                                </td>
+                                            </t>
+                                            <t t-if="not kasmetines_atostogos_d(o)">
+                                                <td style="text-align: center; padding-top: 5px; padding-bottom: 5px; border: 1px solid black;">
+                                                    <span/>
+                                                </td>
+                                            </t>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['BM','BV', 'BUD']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['A']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['KM']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['DP']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['PR', 'PD', 'PRI', 'PDN', 'PDNM']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['L','P','PNVDU','KR','MA','NTR','INV','IST','AK','VD','VDN','VSS','DN','SNV', 'NDL', 'VDL', 'T', 'V', 'KOMP', 'KKPD']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span style="padding-left: 5px; padding-right: 5px; white-space: nowrap"
+                                                      t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['BM', 'BUD','BV','A','L','P','PNVDU','KR','MA','NTR','INV','IST','AK','KM','VD','VDN','VSS','DN','SNV','NDL', 'VDL', 'T', 'V', 'DP', 'PR', 'PD', 'PRI', 'PDN', 'PDNM', 'KOMP', 'KKPD']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['KM']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['GPM']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['SDB']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['SDP']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['NTR']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span style="padding-left: 5px; padding-right: 5px; white-space: nowrap"
+                                                      t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['GPM','SDB','SDP', 'KM', 'NTR']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+                                            <t t-set="moketinas_atlyginimas" t-value="sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['NET', 'AM', 'KM']),('slip_id','=',o.id)]) or [0.0])"/>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(moketinas_atlyginimas)"/>
+                                            </td>
+                                            <t t-set="avansas" t-value="sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['AVN']),('slip_id','=',o.id)]) or [0.0])"/>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(avansas)"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(o.amount_paid)"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <span t-esc="replace(o.amount_isskaitos)"/>
+                                            </td>
+                                            <td style="text-align: center; border: 1px solid black;">
+                                                <t t-set="likutis" t-value="moketinas_atlyginimas - avansas - o.amount_paid - o.amount_isskaitos"/>
+                                                <t t-if="likutis != 0 ">
+                                                    <span t-esc="replace(formatLang(likutis, digits=2))"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-esc="replace(formatLang(abs(likutis), digits=2))"/>
+                                                </t>
+                                            </td>
+                                           <td style="text-align: center; border: 1px solid black;">
+                                            <span t-esc="replace(sum(gen.total if gen else gen for gen in o.line_ids.search([('code','in',['SDD', 'BM', 'BUD','BV','A','L','P', 'KR','MA','NTR','INV','IST','AK','VD','VDN','VSS','DN','SNV','NDL', 'VDL', 'T', 'V', 'DP', 'KM', 'PR', 'PD', 'PRI', 'PDN', 'PDNM', 'KOMP', 'KKPD']),('slip_id','=',o.id)]) or [0.0]))"/>
+                                            </td>
+
+                                        </tr>
+                                    </table>
+                                </div>
+                                <br/>
+                            </td>
+                        </table>
+                        <t t-if="o.ismoketi_kompensacija">
+                            Nepanaudotų kasmetinių atostogų likutis: 0 d.
+                        </t>
+                        <t t-if="not o.ismoketi_kompensacija">
+                            <t t-set="employee" t-value="o.employee_id"/>
+                            <t t-set="leaves_accumulation_type" t-value="employee.with_context(date=o.date_to).leaves_accumulation_type"/>
+                            Nepanaudotų kasmetinių atostogų likutis:
+                            <span t-esc="replace(o.atostogu_likutis)"/>
+                            <t t-if="leaves_accumulation_type =='calendar_days'">
+                                Kalendorinių d.
+                            </t>
+                            <t t-else="">
+                                Darbo d.
+                            </t>
+                        </t>
+                    </t>
+                </div>
+            </t>
+        </template>
+        <report
+                id="report_algalapis_israsas_v2"
+                model="hr.payslip"
+                string="Atsiskaitymo lapelis (Naujas)"
+                report_type="qweb-pdf"
+                name="l10n_lt_payroll.report_algalapis_israsas_v2_sl"
+                file="l10n_lt_payroll.report_algalapis_israsas_v2_sl"
+        />
+        <record id="paperformat_a4_narrow_payslip" model="report.paperformat">
+            <field name="name">European A4 narrow (payslip)</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top" eval="15"/>
+            <field name="header_spacing" eval="5"/>
+            <field name="margin_left" eval="7"/>
+            <field name="margin_right" eval="7"/>
+            <field name="margin_bottom" eval="20"/>
+        </record>
+
+        <record id="report_algalapis_israsas_v2" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="paperformat_a4_narrow_payslip"/>
+        </record>
+
+        <template id="report_algalapis_israsas_v2_sl">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="report.internal_layout" t-lang="force_lang or o.company_id.partner_id.lang or 'lt_LT'"/>
+                    <t t-lang="force_lang or o.company_id.partner_id.lang or 'lt_LT'"
+                       t-call="l10n_lt_payroll.report_algalapis_israsas_v2_sl_document"/>
+                </t>
+            </t>
+        </template>
+         <template id="report_algalapis_israsas_v2_sl_document">
+            <t t-set="amounts" t-value="payslip_amounts(o)"/>
+            <t t-call="report.html_container">
+                <div class="page mt16">
+                    <t t-if="o.line_ids">
+                                <div class="report_invoice_reference" style="font-size: 10px !important;">
+                                    <h5 style="border-style:none; text-align: center;">ATSISKAITYMO LAPELIS</h5>
+                                    <p style="text-align: center;">Laikotarpis: <span t-esc="periodas(o)"/></p>
+                                    <p style="text-align: center;">Gavėjo vardas ir pavardė <span style="font-weight:bold;" t-field="o.employee_id"/></p>
+                                </div>
+<div class="mt8" style="font-size: 9px;">
+    <table class="table table-condensed invoice_lines">
+        <thead>
+            <tr>
+                <th>Aprašymas</th>
+                <th class="text-right">Dienos</th>
+                <th class="text-right">Valandos</th>
+            </tr>
+        </thead>
+        <tbody class="invoice_tbody">
+            <tr style="border-top: 2px solid black;">
+                <td>
+                    <span>Dirbtas laikas</span>
+                </td>
+                <td class="text-right">
+                    <t t-if="worked_time_actual_d(o)">
+                        <span t-esc="str(remove(worked_time_actual_d(o)))"/>
+                        <span> d.d.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+                <td class="text-right">
+                    <t t-if="worked_time_actual_h(o)">
+                        <span t-esc="str(worked_time_actual_h(o))"/>
+                        <span> val.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Dirbtas laikas naktį</span>
+                </td>
+                <td class="text-right">
+                    <t t-if="darbas_nakti_d(o)">
+                        <span t-esc="str(remove(darbas_nakti_d(o)))"/>
+                        <span> d.d.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+                <td class="text-right">
+                    <t t-if="darbas_nakti_h(o)">
+                        <span t-esc="str(round_time(darbas_nakti_h(o)))"/>
+                        <span> val.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Dirbtas laikas šventinėmis dienomis</span>
+                </td>
+                <td class="text-right">
+                    <t t-if="darbas_poilsio_d(o)">
+                        <span t-esc="str(remove(darbas_poilsio_d(o)))"/>
+                        <span> d.d.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+                <td class="text-right">
+                    <t t-if="darbas_poilsio_h(o)">
+                        <span t-esc="str(round_time(darbas_poilsio_h(o)))"/>
+                        <span> val.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Dirbtas laikas naktį šventinėmis dienomis</span>
+                </td>
+                <td class="text-right">
+                    <t t-if="darbas_poilsio_nakti_d(o)">
+                        <span t-esc="str(remove(darbas_poilsio_nakti_d(o)))"/>
+                        <span> d.d.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+                <td class="text-right">
+                    <t t-if="darbas_poilsio_nakti_h(o)">
+                        <span t-esc="str(round_time(darbas_poilsio_nakti_h(o)))"/>
+                        <span> val.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Viršvalandinis darbas</span>
+                </td>
+                <td class="text-right">
+                    <t t-if="virsvalandziai_d(o)">
+                        <span t-esc="str(remove(virsvalandziai_d(o)))"/>
+                        <span> d.d.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+                <td class="text-right">
+                    <t t-if="virsvalandziai_h(o)">
+                        <span t-esc="str(round_time(virsvalandziai_h(o)))"/>
+                        <span> val.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Nustatytas darbo laikas</span>
+                </td>
+                <td class="text-right">
+                    <t t-if="visas_laikas_d(o)">
+                        <span t-esc="str(remove(visas_laikas_d(o)))"/>
+                        <span> d.d.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+                <td class="text-right">
+                    <t t-if="regular_hours(o)">
+                        <span t-esc="str(regular_hours(o))"/>
+                        <span> val.</span>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+            </tr>
+            <t t-if="neivykdyta_norma_d(o) or neivykdyta_norma_h(o)">
+                <tr>
+                    <td>
+                        <span>Neįvykdyta darbo laiko norma</span>
+                    </td>
+                    <td class="text-right">
+                        <t t-if="neivykdyta_norma_d(o)">
+                            <span t-esc="'-'"/>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="'-'"/>
+                        </t>
+                    </td>
+                    <td class="text-right">
+                        <t t-if="neivykdyta_norma_h(o)">
+                            <span t-esc="str(round_time(neivykdyta_norma_h(o)))"/>
+                            <span> val.</span>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="'-'"/>
+                        </t>
+                    </td>
+                </tr>
+            </t>
+            <t t-if="virsyta_norma_d(o) or virsyta_norma_h(o)">
+                <tr>
+                    <td>
+                        <span>Viršyta darbo laiko norma</span>
+                    </td>
+                    <td class="text-right">
+                        <t t-if="virsyta_norma_d(o)">
+                            <span t-esc="'-'"/>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="'-'"/>
+                        </t>
+                    </td>
+                    <td class="text-right">
+                        <t t-if="virsyta_norma_h(o)">
+                            <span t-esc="str(round_time(virsyta_norma_h(o)))"/>
+                            <span> val.</span>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="'-'"/>
+                        </t>
+                    </td>
+                </tr>
+            </t>
+            <t t-if="kvalifikacija_d(o)">
+                <tr>
+                    <td>
+                        <span>Kvalifikacijos kėlimas</span>
+                    </td>
+                    <td class="text-right">
+                        <t t-if="kvalifikacija_d(o)">
+                            <span t-esc="str(remove(kvalifikacija_d(o)))"/>
+                            <span> d.d.</span>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="'-'"/>
+                        </t>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="'-'"/>
+                    </td>
+                </tr>
+            </t>
+            <tr>
+                <td>
+                    <span>Ligų trukmė</span>
+                </td>
+                <td class="text-right">
+                    <t t-if="ligos_d(o)">
+                        <span t-esc="str(remove(ligos_d(o))) + str(remaining_leaves_label(o))"/>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+                <td class="text-right">
+                </td>
+            </tr>
+            <t t-if="neapmokamas_nedarbingumas_d(o) or neapmokamas_nedarbingumas_h(o)">
+                <tr>
+                    <td>
+                        <span>Neapmokamas nedarbingumas</span>
+                    </td>
+                    <td class="text-right">
+                        <t t-if="neapmokamas_nedarbingumas_d(o)">
+                            <span t-esc="str(remove(neapmokamas_nedarbingumas_d(o)))"/>
+                            <span> d.d.</span>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="'-'"/>
+                        </t>
+                    </td>
+                    <td class="text-right">
+                        <t t-if="neapmokamas_nedarbingumas_h(o)">
+                            <span t-esc="str(round_time(neapmokamas_nedarbingumas_h(o)))"/>
+                            <span> val.</span>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="'-'"/>
+                        </t>
+                    </td>
+                </tr>
+            </t>
+            <t t-if="mamadieniai_tevadieniai_d(o)">
+                <tr>
+                    <td>
+                        <span>Mamadienių (tėvadienių) trukmė</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="str(remove(mamadieniai_tevadieniai_d(o)))"/>
+                        <span> d.d.</span>
+                    </td>
+                    <td class="text-right">
+                    </td>
+                </tr>
+            </t>
+            <t t-if="nemokamos_atostogos_d(o)">
+                <tr>
+                    <td>
+                        <span>Nemokamų atostogų trukmė</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="str(remove(nemokamos_atostogos_d(o)))"/>
+                        <span> d.d.</span>
+                    </td>
+                    <td class="text-right">
+                    </td>
+                </tr>
+            </t>
+            <t t-if="kitos_atostogos_d(o)">
+                <t t-set="kasmetiniu_atostogu_style" t-value="''" />
+            </t>
+            <t t-else="">
+                <t t-set="kasmetiniu_atostogu_style" t-value="'border-bottom: 2px solid black;'" />
+            </t>
+            <tr t-att-style="kasmetiniu_atostogu_style">
+                <td>
+                    <span>Kasmetinių atostogų trukmė</span>
+                </td>
+                <td class="text-right">
+                    <t t-if="kasmetines_atostogos_d(o)">
+                        <span t-esc="str(remove(kasmetines_atostogos_d(o))) + str(remaining_leaves_label(o))"/>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="'-'"/>
+                    </t>
+                </td>
+                <td class="text-right">
+                </td>
+            </tr>
+            <t t-if="kitos_atostogos_d(o)">
+                <tr style="border-bottom: 2px solid black;">
+                    <td>
+                        <span>Kitų atostogų trukmė</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="str(remove(kitos_atostogos_d(o)))"/>
+                        <span> d.d.</span>
+                    </td>
+                    <td class="text-right">
+                    </td>
+                </tr>
+            </t>
+        </tbody>
+    </table>
+
+    <table class="table table-condensed invoice_lines">
+        <thead>
+            <tr>
+                <th>Priskaičiuota</th>
+                <th class="text-right">Suma</th>
+            </tr>
+        </thead>
+        <tbody class="invoice_tbody">
+            <tr style="border-top: 2px solid black;">
+                <td>
+                    <span>Priskaičiuotas atlyginimas</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['regular_amount']-amounts['qualification_training_amount']))"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Priskaičiuoti atostoginiai</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['holidays_amount']))"/>
+                </td>
+            </tr>
+            <t t-if="amounts['untaxed_business_trip_amount'] != 0">
+                <tr>
+                    <td>
+                        <span>Neapmokestinami dienpinigiai</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="replace(formatLang(amounts['untaxed_business_trip_amount']))"/>
+                    </td>
+                </tr>
+            </t>
+            <t t-if="amounts['business_trip_amount'] != amounts['untaxed_business_trip_amount']">
+                <tr>
+                    <td>
+                        <span>Apmokestinami dienpinigiai</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="replace(formatLang(amounts['business_trip_amount'] - amounts['untaxed_business_trip_amount']))"/>
+                    </td>
+                </tr>
+            </t>
+            <t t-if="amounts['free_day_work_amount'] != 0">
+                <tr>
+                    <td>
+                        <span>Priedas už darbą poilsio dienomis</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="replace(formatLang(amounts['free_day_work_amount']))"/>
+                    </td>
+                </tr>
+            </t>
+            <t t-if="amounts['bonuses_amount'] != 0">
+            <tr>
+                <td>
+                    <span>Premijos</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['bonuses_amount']))"/>
+                </td>
+            </tr>
+            </t>
+            <t t-if="amounts['night_amount'] != 0">
+            <tr>
+                <td>
+                    <span>Priemokos už darbą naktį</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['night_amount']))"/>
+                </td>
+            </tr>
+            </t>
+            <t t-if="amounts['holiday_nights_amount'] != 0">
+                <tr>
+                    <td>
+                        <span>Priemokos už darbą švenčių naktimis</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="replace(formatLang(amounts['holiday_nights_amount']))"/>
+                    </td>
+                </tr>
+            </t>
+            <t t-if="amounts['overtime_amount'] != 0">
+                <tr>
+                    <td>
+                        <span>Priemokos už viršvalandžius</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="replace(formatLang(amounts['overtime_amount']))"/>
+                    </td>
+                </tr>
+            </t>
+            <t t-if="amounts['qualification_training_amount'] != 0">
+            <tr>
+                <td>
+                    <span>Kvalifikacijos kėlimo išmokos</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['qualification_training_amount']))"/>
+                </td>
+            </tr>
+            </t>
+            <t t-if="amounts['holidays_compensation_amount'] != 0">
+            <tr>
+                <td>
+                    <span>Kompensacija už sukauptas atostogas</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['holidays_compensation_amount']))"/>
+                </td>
+            </tr>
+            </t>
+            <t t-if="amounts['tevystes_amount'] != 0">
+            <tr>
+                <td>
+                    <span>Kompensacija už papildomą poilsio laiką tėvams</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['tevystes_amount']))"/>
+                </td>
+            </tr>
+            </t>
+            <t t-if="amounts['downtime_amount'] != 0">
+            <tr>
+                <td>
+                    <span>Prastovos išmokos</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['downtime_amount']))"/>
+                </td>
+            </tr>
+            </t>
+            <t t-if="amounts['liga_amount'] != 0">
+            <tr>
+                <td>
+                    <span>Nedarbingumo išmokos</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['liga_amount']))"/>
+                </td>
+            </tr>
+            </t>
+            <t t-if="amounts['work_norm_adjustment_amount'] != 0">
+                <tr>
+                    <td>
+                        <span>Neįvykdyta/viršyta darbo laiko norma</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="replace(formatLang(amounts['work_norm_adjustment_amount']))"/>
+                    </td>
+                </tr>
+            </t>
+            <t t-if="amounts['other_addition_amount'] != 0">
+                <tr>
+                    <td>
+                        <span>Kitos išmokos</span>
+                    </td>
+                    <td class="text-right">
+                        <span t-esc="replace(formatLang(amounts['other_addition_amount']))"/>
+                    </td>
+                </tr>
+            </t>
+            <tr style="border-bottom: 2px solid black;">
+                <td>
+                    <span>Iš viso per mėnesį</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['total_additions_amount']+amounts['business_trip_amount']))"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-condensed invoice_lines">
+        <thead>
+            <tr>
+                <th>Paskaičiuota</th>
+                <th class="text-right">Suma</th>
+            </tr>
+        </thead>
+        <tbody class="invoice_tbody">
+            <tr style="border-bottom: 2px solid black;">
+                <td>
+                    <span>Neapmokestinamasis pajamų dydis</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['npd_amount']))"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-condensed invoice_lines">
+        <thead>
+            <tr>
+                <th>Išskaičiuota</th>
+                <th class="text-right">Suma</th>
+            </tr>
+        </thead>
+        <tbody class="invoice_tbody">
+            <tr>
+                <td>
+                    <span>Pajamų mokestis</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['gpm_amount']))"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Soc. draudimo įmokos</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['SODRA_employee_amount']))"/>
+                </td>
+            </tr>
+            <t t-if="amounts['SODRA_employee_extra_amount'] != 0">
+            <tr>
+                <td>
+                    <span>Papildoma savanoriška soc. draudimo įmoka</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['SODRA_employee_extra_amount']))"/>
+                </td>
+            </tr>
+            </t>
+            <t t-if="amounts['other_deductions_amount'] != 0">
+            <tr>
+                <td>
+                    <span>Kiti išskaičiavimai</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['other_deductions_amount']))"/>
+                </td>
+            </tr>
+            </t>
+            <tr style="border-bottom: 2px solid black;">
+                <td>
+                    <span>Iš viso per mėnesį</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['total_deductions_amount']))"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-condensed invoice_lines">
+        <thead>
+            <tr>
+                <th>Išmokėta</th>
+                <th class="text-right">Suma</th>
+            </tr>
+        </thead>
+        <tbody class="invoice_tbody">
+            <tr style="border-top: 2px solid black;">
+                <td>
+                    <span>Mokėtinas atlyginimas</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['should_payout_amount'] + amounts['holiday_already_paid_amount'] - amounts['dynamic_workplace_compensation_amount']))"/>
+                </td>
+            </tr>
+            <tr style="border-top: 2px solid black;">
+                <td>
+                    <span>Išmokėtas avansas</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['advance_payment_amount']))"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Išmokėti atostoginiai</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['holiday_already_paid_amount'], digits=2))"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Išmokėtas atlyginimas</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(max(o.amount_paid-amounts['holiday_already_paid_amount'], 0.0), digits=2))"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Išskaitos</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(o.amount_isskaitos, digits=2))"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Mokėtino atlyginimo likutis</span>
+                </td>
+                <t t-set="likutis"
+                   t-value="amounts['should_payout_amount'] + amounts['holiday_already_paid_amount'] - amounts['advance_payment_amount'] - o.amount_paid - o.amount_isskaitos - amounts['dynamic_workplace_compensation_amount']"/>
+                <t t-if="not float_is_zero(likutis)">
+                    <td class="text-right">
+                        <span t-esc="replace(formatLang(likutis, digits=2))"/>
+                    </td>
+                </t>
+                <t t-else="">
+                    <td class="text-right">
+                        <span t-esc="replace(formatLang(abs(likutis), digits=2))"/>
+                    </td>
+                </t>
+
+            </tr>
+            <tr style="border-bottom: 2px solid black;">
+                <td>
+                    <span>Darbo vietos kaštai</span>
+                </td>
+                <td class="text-right">
+                    <span t-esc="replace(formatLang(amounts['labor_costs_amount']))"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+                        <div style="font-size: 12px;">
+                        <!--<t t-if="o.ismoketi_kompensacija">-->
+                            <!--Nepanaudotų kasmetinių atostogų likutis: 0 d.-->
+                        <!--</t>-->
+                        <!--<t t-if="not o.ismoketi_kompensacija">-->
+                            <!--<t t-set="employee" t-value="o.employee_id"/>-->
+                            <!--<t t-set="leaves_accumulation_type" t-value="employee.with_context(date=o.date_to).leaves_accumulation_type"/>-->
+                            <!--Nepanaudotų kasmetinių atostogų likutis:-->
+                            <!--<span t-esc="replace(o.atostogu_likutis)"/>-->
+                            <!--<t t-if="leaves_accumulation_type =='calendar_days'">-->
+                                <!--k. d.-->
+                            <!--</t>-->
+                            <!--<t t-else="">-->
+                                <!--d. d.-->
+                            <!--</t>-->
+                        <!--</t>-->
+                            <t t-set="employee" t-value="o.employee_id"/>
+                            <t t-set="leaves_accumulation_type" t-value="employee.with_context(date=o.date_to).leaves_accumulation_type"/>
+                            Nepanaudotų kasmetinių atostogų likutis:
+                            <!--<t t-if="o.ismoketi_kompensacija">-->
+                                <!--(prieš išmokant kompensaciją už sukauptas atostogas):-->
+                            <!--</t>-->
+                            <!--<t t-else="">:</t>-->
+                            <!--TODO MAYBE (Commented stuff above)-->
+                            <span t-esc="replace(o.atostogu_likutis_based_on_contract_end)"/>
+                            <t t-if="leaves_accumulation_type =='calendar_days'">
+                                k. d.
+                            </t>
+                            <t t-else="">
+                                d. d.
+                            </t>
+                        </div>
+                    </t>
+
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

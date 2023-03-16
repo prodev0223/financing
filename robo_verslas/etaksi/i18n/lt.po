@@ -1,0 +1,149 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* etaksi
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-01-30 13:49+0000\n"
+"PO-Revision-Date: 2020-01-30 13:49+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: etaksi
+#: model:mail.template,report_name:etaksi.email_template_edi_invoice
+msgid "${(object.number or object.proforma_number or 'isankstine').replace('/','_')}"
+msgstr "${(object.number or object.proforma_number or 'isankstine').replace('/','_')}"
+
+#. module: etaksi
+#: model:mail.template,subject:etaksi.email_template_edi_invoice
+msgid "${object.company_id.name|safe} ${'invoice' if object.partner_lang in ['en_US'] else 'sąskaita'|safe} ${object.number or ''|safe}"
+msgstr "${object.company_id.name|safe} ${'invoice' if object.partner_lang in ['en_US'] else 'sąskaita'|safe} ${object.number or ''|safe}"
+
+#. module: etaksi
+#: model:ir.ui.view,arch_db:etaksi.report_invoice_document
+msgid "<span class=\"account_nr\">A/s. Nr.</span>"
+msgstr "<span class=\"account_nr\">IBAN </span>"
+
+#. module: etaksi
+#: model:ir.ui.view,arch_db:etaksi.report_invoice_document
+msgid "<span class=\"comp_bank\">Bankas:</span>"
+msgstr "<span class=\"comp_bank\">Bankas:</span>"
+
+#. module: etaksi
+#: model:ir.ui.view,arch_db:etaksi.report_invoice_document
+msgid "<span class=\"comp_bic\">BIC:</span>"
+msgstr "<span class=\"comp_bic\">BIC:</span>"
+
+#. module: etaksi
+#: model:ir.model.fields,field_description:etaksi.field_account_journal_bank_journal_ids
+msgid "Banko sąskaitos"
+msgstr "Banko sąskaitos"
+
+#. module: etaksi
+#: model:ir.model.fields,field_description:etaksi.field_account_invoice_date_invoice_month
+msgid "Date invoice month"
+msgstr "Sąskaitos faktūros mėnuo"
+
+#. module: etaksi
+#: model:ir.model.fields,field_description:etaksi.field_account_invoice_date_invoice_year
+msgid "Date invoice year"
+msgstr "Sąskaitos faktūros metai"
+
+#. module: etaksi
+#: model:ir.model,name:etaksi.model_account_invoice
+msgid "Invoice"
+msgstr "Sąskaita faktūra"
+
+#. module: etaksi
+#: model:ir.model,name:etaksi.model_account_journal
+msgid "Journal"
+msgstr "Žurnalas"
+
+#. module: etaksi
+#: model:ir.model.fields,field_description:etaksi.field_account_journal_mail_server_id
+msgid "SMTP serveris"
+msgstr "SMTP serveris"
+
+#. module: etaksi
+#: model:res.groups,name:etaksi.group_robo_analytic_see_journal_t
+msgid "See invoices of code T"
+msgstr "Matyti T serijos sąskaitas"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:16
+#, python-format
+msgid "balandžio"
+msgstr "balandžio"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:18
+#, python-format
+msgid "birželio"
+msgstr "birželio"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:17
+#, python-format
+msgid "gegužės"
+msgstr "gegužės"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:24
+#, python-format
+msgid "gruodžio"
+msgstr "gruodžio"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:15
+#, python-format
+msgid "kovo"
+msgstr "kovo"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:23
+#, python-format
+msgid "lapkričio"
+msgstr "lapkričio"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:19
+#, python-format
+msgid "liepos"
+msgstr "liepos"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:20
+#, python-format
+msgid "rugpjūčio"
+msgstr "rugpjūčio"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:21
+#, python-format
+msgid "rugsėjo"
+msgstr "rugsėjo"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:13
+#, python-format
+msgid "sausio"
+msgstr "sausio"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:22
+#, python-format
+msgid "spalio"
+msgstr "spalio"
+
+#. module: etaksi
+#: code:addons/etaksi/models/account_invoice.py:14
+#, python-format
+msgid "vasario"
+msgstr "vasario"
+

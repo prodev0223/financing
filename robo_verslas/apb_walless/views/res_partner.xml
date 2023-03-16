@@ -1,0 +1,30 @@
+<odoo>
+    <data>
+        <record id="new_clients_customer_form" model="ir.ui.view">
+            <field name="name">form.res.partner.apb.walless</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="robo.new_clients_customer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="after">
+                    <group string="Walless honorarai (darbuotojams)" groups="robo_basic.group_robo_premium_manager">
+                       <field name="vsd_with_royalty"/>
+                        <field name="sodra_royalty_percentage"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">form.res.partner.back.apb.walless</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[2]" position="after">
+                    <group string="Walless honorarai (darbuotojams)">
+                       <field name="vsd_with_royalty"/>
+                        <field name="sodra_royalty_percentage"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="robo.debt_banner"
+                  inherit_id="robo_theme_v10.webclient_bootstrap"
+                  name="Debt banner">
+            <xpath expr="//header[1]" position="after">
+                <t t-if="show_debt_banner">
+                    <header role="debt_banner" groups="robo_basic.group_robo_premium_manager">
+                        <div class="debt_banner">
+                            Vėluojate apmokėti
+                            <span>
+                                <t t-esc="debt_residual_total"/>
+                                <t t-esc="currency_symbol"/>
+                            </span>
+                            sumą 'UAB, Robolabs'. Spauskite mygtuką, kad peržiūrėtumėte skolų sąrašą.
+                            <a t-attf-href="{{action_id}}"
+                               class="btn btn-sm oe_edit_only fa fa-external-link btn btn-link"/>
+                        </div>
+                    </header>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//table[contains(@class, 'invoice_amount_words')]" position="after">
+                <div t-if="o.robo_accounting_usage" class="col-xs-12" style="margin-top: -30px">
+                    <table class="table table-condensed" style="margin-top:30px">
+                        <thead>
+                            <tr style=" white-space: nowrap;page-break-inside: avoid">
+                                <th>Operacija</th>
+                                <th class="text-right">Kiekis</th>
+                                <th class="text-right">Įskaičiuota į planą, vnt.</th>
+                                <th class="text-right">Apmokestinama, vnt.</th>
+                                <th class="text-right">Papildomas mokestis</th>
+                            </tr>
+                        </thead>
+                        <tbody class="invoice_tbody">
+                            <tr t-foreach="o.robo_accounting_usage" t-as="usage"
+                                style=" white-space: nowrap;page-break-inside: avoid; font-size: 10px;">
+                                <td>
+                                    <span t-field="usage.name"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="usage.quantity"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="usage.quantity_free"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="usage.quantity_paid"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="usage.amount_paid"
+                                          t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="font-weight: bold">Viso</span>
+                                </td>
+                                <td class="text-right">
+                                    <!--<span style="font-weight: bold" t-esc="str(sum(o.robo_accounting_usage.mapped('quantity'))).replace('.',',')"/>-->
+                                </td>
+                                <td class="text-right">
+                                    <!--<span style="font-weight: bold" t-esc="str(sum(o.robo_accounting_usage.mapped('quantity_free'))).replace('.',',')"/>-->
+                                </td>
+                                <td class="text-right">
+                                    <!--<span style="font-weight: bold" t-esc="str(sum(o.robo_accounting_usage.mapped('quantity_paid'))).replace('.',',')"/>-->
+                                </td>
+                                <td class="text-right">
+                                    <span style="font-weight: bold"
+                                          t-esc="sum(o.robo_accounting_usage.mapped('amount_paid'))"
+                                          t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

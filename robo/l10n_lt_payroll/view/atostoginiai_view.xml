@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record forcecreate="1" id="atostoginiai_seq_id" model="ir.sequence">
+            <field name="name">ATOSTOGINIAI</field>
+            <field name="code">ATOSTOGINIAI</field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">ATOSTOGINIAI</field>
+        </record>
+    </data>
+    <data>
+        <record id="hr_employee_payment_form_view" model="ir.ui.view">
+            <field name="name">hr.employee.payment.form</field>
+            <field name="model">hr.employee.payment</field>
+            <field name="arch" type="xml">
+                <form string="Holiday pay">
+                    <header>
+                        <field name="has_contract" invisible="1"/>
+                        <button name="set_to_draft" string="Atstatyti į juodraštį" states="cancel" type="object"/>
+                        <button name="atsaukti" type="object" states="done" string="Atstatyti į juodraštį"
+                                confirm="Ar tikrai norite atšaukti? Bus atšauktas susijęs išmokėjimo apskaitos įrašas."/>
+
+                        <!--IF PARTNER IS NOT EMPLOYEE OR HAS CONTRACT-->
+                        <button name="atlikti" string="Patvirtinti" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('has_contract', '=', False), ('state', '!=', 'ready')]}"/>
+                        <button name="atlikti" string="Patvirtinti" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('has_contract', '=', False), ('state', '!=', 'draft')]}"
+                                confirm="Įrašas dar preliminarus. Ar tikrai norite jį patvirtinti?"/>
+
+                        <!--ONLY IF PARTNER IS EMPLOYEE AND NO ACTIVE CONTRACT-->
+                        <button name="atlikti" string="Patvirtinti" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('has_contract', '=', True), ('state', '!=', 'ready')]}"
+                                confirm="Darbuotojas nustatytam periodui neturi aktyvios darbo sutarties. Ar tikrai norite patvirtinti šį įrašą?" />
+                        <button name="atlikti" string="Patvirtinti" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('has_contract', '=', True), ('state', '!=', 'draft')]}"
+                                confirm="Darbuotojas nustatytam periodui neturi aktyvios darbo sutarties, o įrašas dar preliminarus. Ar tikrai norite jį patvirtinti?"/>
+
+
+                        <field name="has_periodic_ids" groups="robo_basic.group_robo_periodic" invisible="1"/>
+                        <button name="make_periodic" type="object" string="Padaryti periodiniu"
+                                attrs="{'invisible': ['|', '|', ('type', 'in', ('holidays', 'allowance')),
+                                                                               ('has_periodic_ids', '=', True),
+                                                                               ('state', 'not in', ['done'])]}"/>
+                        <button name="stop_periodic" type="object" string="Sustabdyti periodinį kūrimą"
+                                attrs="{'invisible': ['|', '|', ('type', 'in', ('holidays', 'allowance')),
+                                                                               ('has_periodic_ids', '=', False),
+                                                                               ('state', 'not in', ['done'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"
+                               statusbar_colors='{"draft":"blue"}'/>
+                    </header>
+                    <sheet string="Holiday pay">
+                        <div class=" oe_right oe_button_box">
+                            <field name="account_move_id" invisible="1"/>
+                            <field name="account_move_ids" invisible="1"/>
+                            <field name="holidays_ids" invisible="1"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="dk_irasai" string="DK įrašai"
+                                    help="Nueiti į DK įrašus" type="object"
+                                    attrs="{'invisible':[('account_move_id','=',False), ('account_move_ids','=',[])]}"
+                                    icon="fa-bars" widget="statinfo"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="dk_irasai_tree" string="DK įrašų eilutės"
+                                    help="Nueiti į DK įrašų eilutes" type="object"
+                                    attrs="{'invisible':[('account_move_id','=',False), ('account_move_ids','=',[])]}"
+                                    icon="fa-bars" widget="statinfo"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_holiday_ids" string="Atostogos"
+                                    help="Nueiti į susijusias atostogas" type="object"
+                                    attrs="{'invisible':[('holidays_ids','=',[])]}"
+                                    icon="fa-sun-o" widget="statinfo"/>
+                        </div>
+                        <h1 class="mt0">
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="description"/>
+                                <field name="contract_id"/>
+                                <field name="employee_id"/>
+                                <field name="partner_id"/>
+                                <field name="date"/>
+                                <field name="date_payment"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="amount_paid" widget="monetary" options="{'currency_field':'currency_id'}"
+                                       attrs="{'readonly': ['|', ('type', '=', 'holidays'), ('state', '=', 'done')],
+                                               'required': True}"/>
+                                <field name="amount_bruto" widget="monetary" options="{'currency_field':'currency_id'}"
+                                       attributes="{'readonly': [('type', '=', 'holidays')]}"/>
+                                <!--todo use new variable witch to ues: lines or main?-->
+                                <field name="amount_gpm" attrs="{'invisible':[('type', '=', 'holidays')]}"
+                                       widget="monetary" options="{'currency_field':'currency_id'}"/>
+                                <field name="amount_sdb"
+                                       attrs="{'invisible':[('type', 'in', ['holidays', 'allowance'])]}"
+                                       widget="monetary" options="{'currency_field':'currency_id'}"/>
+                                <field name="amount_sdd"
+                                       attrs="{'invisible':[('type', 'in', ['holidays', 'allowance'])]}"
+                                       widget="monetary" options="{'currency_field':'currency_id'}"/>
+
+                            </group>
+                            <group>
+                                <field name="type"/>
+                                <field name="code"/>
+                                <field name="a_klase_kodas_id"/>
+                                <field name="b_klase_kodas_id"/>
+                                <field name="account_analytic_id"/>
+                                <field name="structured_payment_ref"
+                                       attrs="{'readonly':[('state', '=', 'done')]}"/>
+                                <field name="advanced_settings"
+                                       attrs="{'readonly':[('state', '=', 'done')]}"/>
+                                <field name="journal_id" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                                <field name="saskaita_debetas"
+                                       attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                                <field name="saskaita_kreditas"
+                                       attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                                <field name="saskaita_gpm" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                                <field name="saskaita_sodra" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                            </group>
+                        </group>
+                        <field name="payment_line_ids" attrs="{'invisible':[('type', '!=', 'holidays')]}">
+                            <tree editable="bottom">
+                                <field name="state" invisible="1"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="amount_bruto"/>
+                                <field name="amount_npd"/>
+                                <field name="amount_gpm"/>
+                                <field name="amount_sodra"/>
+                                <field name="amount_paid"/>
+                                <field name="vdu"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_employee_payment_tree" model="ir.ui.view">
+            <field name="name">hr.employee.payment.tree</field>
+            <field name="model">hr.employee.payment</field>
+            <field name="arch" type="xml">
+                <tree string="Kiti išmokėjimai" colors="blue:state=='draft'">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="type"/>
+                    <field name="date"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="amount_paid" sum="suma"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_employee_payment_search" model="ir.ui.view">
+            <field name="name">hr.employee.payment.search</field>
+            <field name="model">hr.employee.payment</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Paieška">
+                    <filter name="holidays" string="Atostoginiai" domain="[('type','=','holidays')]"/>
+                    <filter name="allowance" string="Dienpinigiai" domain="[('type','=','allowance')]"/>
+                    <filter name="other" string="Kiti" domain="[('type','=','other')]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="['&amp;',('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['&amp;',('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <field name="employee_id"/>
+                    <field name="partner_id"/>
+                    <filter name="not_done" string="Nepatvirtinta" domain="[('state','!=','done')]" help="Nepatvirtinti išmokėjimai"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_employee" string="Darbuotojas" context="{'group_by':'employee_id'}"/>
+                        <filter name="group_by_periodas" string="Pradžios periodas" context="{'group_by':'date_from'}"/>
+                        <filter name="group_by_type" string="Tipas" context="{'group_by':'type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_holiday_pay">
+            <field name="name">Išmokėjimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_id" ref="hr_employee_payment_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Spausk čia, kad sukurtum išmokėjimą darbuotojui.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_holiday_pay"
+                  name="Kiti mokėjimai"
+                  parent="l10n_lt_payroll.menu_payment_employee"
+                  sequence="120"
+                  action="action_holiday_pay"/>
+
+        <act_window id="holidays_stop_wizard_action"
+                    name="Atostogų nutraukimas"
+                    src_model="hr.holidays"
+                    res_model="holidays.change.wizard"
+                    view_type="form" view_mode="form"
+                    key2="client_action_multi" target="new"
+                    groups="base.group_partner_manager"/>
+
+        <record id="holidays_change_wizard_form" model="ir.ui.view">
+            <field name="name">holidays.change.wizard.form</field>
+            <field name="model">holidays.change.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Atostogų nutraukimas">
+                    <sheet>
+                        <group>
+                            <field name="holiday_id" invisible="1"/>
+                            <field name="date"/>
+                            <field name="show_force_shorten" invisible="1"/>
+                            <field name="force_shorten" attrs="{'invisible':[('show_force_shorten','=',False)]}"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Patvirtinti" type="object" name="confirm" class="oe_highlight"/>
+                        <button string="Atšaukti" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_holiday_stop_wizard" model="ir.actions.act_window">
+            <field name="name">Atostogų nutraukimas</field>
+            <field name="res_model">holidays.change.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <record id="periodic_payment_tree" model="ir.ui.view">
+            <field name="name">periodic.payment.tree</field>
+            <field name="model">hr.employee.payment.periodic</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0" editable="bottom">
+                    <field name="payment_id" options="{'no_open': False, 'no_create': True}"/>
+                    <field name="partner_id"/>
+                    <field name="date"/>
+                    <field name="action"/>
+                    <field name="skip_payment_reconciliation"/>
+                    <field name="split_amount_in_proportion"/>
+                    <field name="amount_base"/>
+                    <field name="date_stop"/>
+                    <button name="open_payments" type="object" string="Sukurti mokėjimai" icon="icon-register one_and_half_size"/>
+                    <button name="delete" type="object" string="Ištrinti" icon="fa-remove one_and_half_size"/>
+                </tree>
+            </field>
+        </record>
+        <record id="periodic_payment_kanban" model="ir.ui.view">
+            <field name="name">periodic.payment.kanban</field>
+            <field name="model">hr.employee.payment.periodic</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false" create="false">
+                    <field name="payment_id"/>
+                    <field name="date"/>
+                    <field name="action"/>
+                    <field name="date_stop"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.payment_id.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <t t-esc="record.date.value"/>
+                                            <t t-esc="record.action.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="action_periodic_payment" model="ir.actions.act_window">
+            <field name="name">Periodiniai mokėjimai</field>
+            <field name="res_model">hr.employee.payment.periodic</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('periodic_payment_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('periodic_payment_kanban')})]"/>
+        </record>
+        <menuitem id="menu_periodic_payments"
+                  name="Periodiniai mokėjimai"
+                  parent="l10n_lt_payroll.menu_payment_employee"
+                  sequence="121"
+                  action="action_periodic_payment"/>
+
+        <record id="cron_periodic_payments" model="ir.cron">
+            <field name="name">Create periodic payments</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">hr.employee.payment.periodic</field>
+            <field name="function">cron_create_periodic_payments</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

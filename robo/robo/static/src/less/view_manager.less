@@ -1,0 +1,88 @@
+.o_view_manager_content{
+  &.robo_header {
+    .o_form_view {
+      header {
+        margin-right: auto;
+        margin-left: auto;
+        padding-left: 15px;
+        padding-right: 15px;
+        @media (min-width: 768px) {
+          width: 750px;
+        }
+        @media (min-width: 992px) {
+          width: 970px;
+        }
+        @media (min-width: 1200px) {
+          width: 1170px;
+        }
+      }
+    }
+  }
+  &.robo_header, &.robo_header_fit
+  {
+    .oe_view_nocontent{
+      display: none;
+    }
+
+    @robo_nocontent_heigh: 300px;
+    @robo_nocontent_heigh_mobile: 150px;
+
+    .oe_view_robo_nocontent{
+      position: relative;
+      height: @robo_nocontent_heigh;
+      @media(max-width: @screen-xs-max){
+        height: @robo_nocontent_heigh_mobile;
+      }
+      &:before {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        width: @robo_nocontent_heigh;
+        height: @robo_nocontent_heigh;
+        left: 40%;
+        background: transparent url(/robo/static/src/img/robolabs.png) no-repeat 0px;
+        background-size: contain;
+        z-index: 0;
+        @media(max-width: @screen-xs-max){
+          left: 25%;
+          top: 0%;
+          width: @robo_nocontent_heigh_mobile;
+          height: @robo_nocontent_heigh_mobile;
+        }
+      }
+      &:after{
+        content:"";
+        display: inline-block;
+        position: absolute;
+        width:100%;
+        height:@robo_nocontent_heigh;
+        @media(max-width: @screen-xs-max){
+          height: @robo_nocontent_heigh_mobile;
+        }
+        background:#f8f9fa;
+        opacity: 0.9;
+        right:0;
+        top:0;
+        z-index: 0;
+      }
+      .oe_view_robo_nocontent_search{
+        color:#8394a1;
+        position: absolute;
+        left: 10%;
+        font-size: 21px;
+        z-index: 1;
+        top: 5%;
+      }
+    }
+
+  }
+  //&.robo_header_fit{
+  //  margin: 0 8px;
+  //}
+}
+
+.oe_form_field_html_text {
+    & .note-editor .note-editing-area .note-editable {
+        padding: 0 !important;
+    }
+}

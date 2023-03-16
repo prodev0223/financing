@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="account_bank_statement_import_revolut_wizard" model="ir.ui.view">
+            <field name="name">account.bank.statement.import.revolut.wizard</field>
+            <field name="model">account.revolut.import</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Importuoti Revolut išrašą">
+                    <group>
+                        <field name="journal_id" options="{'no_open': True, 'no_create': True}"/>
+                    </group>
+                    <group col="4">
+                        <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;" colspan="4"
+                             attrs="{'invisible': [('show_api_warning_message', '=', False)]}">
+                            Šis žurnalas naudoja API integraciją, įsitikinkite, jog į failą kurį importuojate yra
+                            įtraukiami transakcijų identifikavimo parametrai, kadangi nėra prevencijos nuo duomenų duplikavimosi.
+                            <field name="show_api_warning_message" invisible="1"/>
+                        </div>
+                        <separator string="Pasirinkite Revolut išrašų failą:" colspan="4"/>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;" colspan="4">
+                            Please pay attention to CSV and decimal separators selected.
+                            You may check them by opening the file using a text editor (not Excel).
+                        </div>
+                        <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;" colspan="4"
+                             attrs="{'invisible': [('file_not_csv', '=', False)]}">
+                            Panašu, kad pasirinkote ne CSV tipo failą. Išrašų importavimas gali nepavykti.
+                            <field name="file_not_csv" invisible="1"/>
+                        </div>
+                        <newline/>
+                        <field name="csv_data" filename="csv_fname"/>
+                        <field name="csv_fname" invisible="1"/>
+                        <newline/>
+                        <field name="csv_separator"/>
+                        <field name="decimal_separator"/>
+                        <field name="codepage"/>
+                        <field name="force_date_format"/>
+                        <newline/>
+                        <field name="apply_import_rules"/>
+                        <field name="skip_import_rules_error"
+                               attrs="{'invisible': [('apply_import_rules', '=', False)]}"/>
+                    </group>
+                    <footer>
+                        <button name="csv_import" confirm="The import will happen in the background. You will get a notification when the file is imported or if there is an error. If you import multiple files, they will be processed one by one." string="Importuoti Revolut" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="account_bank_statement_import_revolut" model="ir.actions.act_window">
+            <field name="name">Importuoti Revolut</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.revolut.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="account_bank_statement_import_revolut_wizard"/>
+        </record>
+    </data>
+</odoo>

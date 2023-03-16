@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+       <record id="robo_crm_reports" model="res.groups">
+            <field name="name">Robo CRM Reports</field>
+        </record>
+
+        <record id="robo_basic.group_robo_free_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_crm.robo_crm_reports'))]"/>
+        </record>
+        <record id="robo_basic.group_robo_premium_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_crm.robo_crm_reports'))]"/>
+        </record>
+
+       <record id="robo_basic.group_robo_free_manager" model="res.groups">
+           <field name="implied_ids"
+                  eval="[(4, ref('sales_team.group_sale_manager'))]"
+           />
+        </record>
+        <record id="robo_basic.group_robo_premium_manager" model="res.groups">
+            <field name="implied_ids"
+                  eval="[(4, ref('sales_team.group_sale_manager'))]"
+            />
+        </record>
+    </data>
+</odoo>

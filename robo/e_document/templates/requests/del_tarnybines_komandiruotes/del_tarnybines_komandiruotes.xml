@@ -1,0 +1,313 @@
+<odoo>
+    <data>
+        <record id="prasymas_del_tarnybines_komandiruotes_form" model="ir.ui.view">
+            <field name="name">Prašymas dėl tarnybinės komandiruotės</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_request_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="job_id1" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) pareigos" required="0" invisible="1"/>
+                        <field name="country_allowance_id" options="{'no_create': True, 'no_open': True}"
+                               string="Į kur važiuojama" required="1" />
+                        <field name="date_from" string="Data nuo" required="1" />
+                        <field name="date_to" string="Data iki" required="1" />
+                        <field name="text_8" string="Komandiruotės tikslas" required="1" />
+                    </group>
+                    <group>
+                        <field name="allow_choose_extra_work_days" invisible="1"/>
+                        <field name="business_trip_request_wish_to_work_extra_days" attrs="{
+                            'invisible': [('allow_choose_extra_work_days','=',False)],
+                            'required': [('allow_choose_extra_work_days','=', True)]
+                        }"/>
+                        <field name="business_trip_request_overtime_compensation"
+                               attrs="{
+                                    'invisible': [
+                                        '|',
+                                        ('business_trip_request_wish_to_work_extra_days', '=', 'false'),
+                                        ('allow_choose_extra_work_days','=',False)
+                                    ],
+                                    'required': [
+                                        ('allow_choose_extra_work_days','=',True)
+                                    ]
+                               }"/>
+                        <field name="business_trip_request_journey_compensation"/>
+                    </group>
+                    <group colspan="4" col="4">
+                        <field colspan="4" col="4" name="business_trip_request_extra_worked_day_ids"
+                               string="Poilsio dienos, kuriomis norima dirbti"
+                               attrs="{
+                                    'invisible': [
+                                        '|',
+                                        ('business_trip_request_wish_to_work_extra_days', '=', 'false'),
+                                        ('allow_choose_extra_work_days','=',False)
+                                    ],
+                                    'required': [
+                                        ('allow_choose_extra_work_days','=',True),
+                                        ('business_trip_request_wish_to_work_extra_days', '=', 'true')
+                                    ]
+                                }"
+                               options="{'no_open': False, 'no_create': True}">
+                            <tree editable="top" create="false" delete="false" open="false">
+                                <field name="date" readonly="1"/>
+                                <field name="worked" attrs="{'readonly': False}"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="prasymas_del_tarnybines_komandiruotes_action" model="ir.actions.act_window">
+            <field name="name">Prašymas dėl tarnybinės komandiruotės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'prasymas', u'rec_template_id':
+                u'prasymas_del_tarnybines_komandiruotes_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.prasymas_del_tarnybines_komandiruotes_form"/>
+        </record>
+
+
+        <record id="prasymas_del_tarnybines_komandiruotes_menu" model="ir.ui.menu">
+            <field name="name">Prašymas dėl tarnybinės komandiruotės</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="prasymas"/>
+            <field name="action" ref="e_document.prasymas_del_tarnybines_komandiruotes_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">prašymas,tarnybinė,komandiruotė</field>
+        </record>
+
+
+        <record id="prasymas_del_tarnybines_komandiruotes_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Prašau leisti vykti į komandiruotę {{kur(country_allowance_id, 'Aa')}}, kuri truks nuo {{ date_from
+                    }} iki {{ date_to }} ({{ num_calendar_days }} {{ days_string_based_on_number(num_calendar_days) }})
+                    įskaitytinai, pagal komandiruotės tikslą: {{ text_8 }}. {{ business_trip_request_work_time_text }}
+                    {%if False%}. Prašau apmokėti šias išlaidas: dienpinigius ir kitas pagal pateiktus dokumentus:
+                    gyvenamojo ploto nuomos išlaidas, mokestį už kelius, civilinės atsakomybės draudimo mokestį,
+                    sunaudotų degalų įsigijimo išlaidas, vykstant į konferenciją, simpoziumą, parodą ar kitą renginį –
+                    registravimosi renginyje mokesčio ar bilietų į renginį pirkimo išlaidas.{%endif%}
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Prašymas dėl tarnybinės komandiruotės</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{ employee_id1 }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.prasymas_del_tarnybines_komandiruotes_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras {
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded {
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{%endif%} {{ job_id1}}</span>
+                                            </p>
+                                            <span>{{ employee_id1 }}</span>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p>
+                                                <span>{% if manager_job_id %}{{kam(manager_job_id, 'Aa')}} {%
+                                                    else%}Direktoriui{% endif %} {{kam(manager_id, 'Aa')}}
+                                                </span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>PRAŠYMAS</span>
+                        </p>
+                        <span>PRAŠYMAS
+                            DĖL TARNYBINĖS KOMANDIRUOTĖS
+                        </span>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded {
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p style="font-weight:bold">
+                                                    <span>{{ department_id }}{% if job_id1 %},{%endif%} {{ job_id1}}
+                                                    </span>
+                                                </p>
+                                                <span>{{ employee_id1 }}</span>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p>
+                                                    <span>{% if manager_job_id %}{{kam(manager_job_id, 'Aa')}} {%
+                                                        else%}Direktoriui{% endif %} {{kam(manager_id, 'Aa')}}
+                                                    </span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>PRAŠYMAS</span>
+                            </p>
+                            <span>PRAŠYMAS
+                                DĖL TARNYBINĖS KOMANDIRUOTĖS
+                            </span>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ vieta }}</span>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        Prašau leisti vykti į komandiruotę {{kur(country_allowance_id, 'Aa')}}, kuri truks nuo {{
+                        date_from }} iki {{ date_to }} ({{ num_calendar_days }} {{
+                        days_string_based_on_number(num_calendar_days) }}) įskaitytinai, pagal komandiruotės tikslą: {{
+                        text_8 }}. {{ business_trip_request_work_time_text }}
+                        {%if False%}. Prašau apmokėti šias išlaidas: dienpinigius ir kitas pagal pateiktus dokumentus:
+                        gyvenamojo ploto nuomos išlaidas, mokestį už kelius, civilinės atsakomybės draudimo mokestį,
+                        sunaudotų degalų įsigijimo išlaidas, vykstant į konferenciją, simpoziumą, parodą ar kitą renginį
+                        – registravimosi renginyje mokesčio ar bilietų į renginį pirkimo išlaidas.{%endif%} {{
+                        extra_text }}
+                    </div>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="65%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{ employee_id1 }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.prasymas_del_tarnybines_komandiruotes_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="True"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="allow_copy" eval="False"/>
+        </record>
+    </data>
+</odoo>

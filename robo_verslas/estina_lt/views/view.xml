@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="estina_lt_administratore" model="res.groups">
+            <field name="name">Estina LT administratorė</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_help">Leidžiama kurti įsakymą dėl komandiruotės, matyti čekyje nustatytą darbuotoją</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+        <record id="e_document.isakymas_del_komandiruotes_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('estina_lt.estina_lt_administratore'))]"/>
+        </record>
+        <record model="ir.ui.view" id="cheque_form_estina">
+            <field name="name">cheque</field>
+            <field name="model">hr.expense</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.cheque_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="attributes">
+                    <attribute name="groups">robo_basic.group_robo_premium_manager,robo.group_menu_kita_analitika,estina_lt.estina_lt_administratore</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

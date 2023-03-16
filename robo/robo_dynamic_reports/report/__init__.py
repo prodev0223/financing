@@ -1,0 +1,1 @@
+from . import invoice_registry_dynamic_xlsx_report

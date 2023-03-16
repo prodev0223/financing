@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="nsoft_pay_type_tree" model="ir.ui.view">
+            <field name="name">nsoft.payment.type.tree</field>
+            <field name="model">nsoft.payment.type</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1"
+                      decoration-success="state == 'working'"
+                      decoration-danger="state == 'failed' or not is_active">
+                    <field name="name"/>
+                    <field name="state"/>
+                    <field name="is_active"/>
+                    <field name="do_reconcile"/>
+                    <field name="ext_payment_type_code"/>
+                    <field name="journal_id"/>
+                    <field name="create_individual_invoices"/>
+                    <field name="forced_partner_id"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="open_pay_type_tree" model="ir.actions.act_window">
+            <field name="name">Mokėjimų Tipai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.payment.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="nsoft_pay_type_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="nsoft_pay_type_form" model="ir.ui.view">
+            <field name="name">nsoft.payment.type.form</field>
+            <field name="model">nsoft.payment.type</field>
+            <field name="arch" type="xml">
+                <form string="nSoft Mokėjimo tipai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                        <label string="Mokėjimo tipo pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                        </div>
+                        <group>
+                            <field name="ext_payment_type_code"/>
+                            <field name="journal_id"
+                                   attrs="{'invisible': [('do_reconcile', '=', False)]}"/>
+                            <field name="is_active"
+                                   attrs="{'invisible': [('cash_operation_payment_type', '=', True)]}"/>
+                            <field name="do_reconcile"
+                                   attrs="{'invisible': [('cash_operation_payment_type', '=', True)]}"/>
+                            <field name="create_individual_invoices"
+                                   attrs="{'invisible': [('cash_operation_payment_type', '=', True)]}"/>
+                            <field name="forced_partner_id"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   attrs="{'invisible': [('cash_operation_payment_type', '=', True)]}"/>
+                        </group>
+                        <group string="Cash operation fields"
+                               attrs="{'invisible': [('cash_operation_payment_type', '=', False)]}">
+                             <field name="cash_operation_payment_type" readonly="1"/>
+                             <field name="account_id"/>
+                        </group>
+                        <group string="Alternatyvūs pavadinimai">
+                            <field name="alternative_name_ids" nolabel="1" widget="one2many_list" mode="tree,kanban" options="{'no_open': True}">
+                                <tree class="robo_tree_in_form">
+                                    <field name="alternative_name"/>
+                                </tree>
+                                <form>
+                                    <field name="alternative_name"/>
+                                </form>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Mokėjimų Tipai"
+                id="nsoft_pay_types"
+                sequence="45"
+                action="open_pay_type_tree"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nsoft_data_menu"
+        />
+    </data>
+</odoo>

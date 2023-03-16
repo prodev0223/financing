@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="nsoft_invoice_tree" model="ir.ui.view">
+            <field name="name">nsoft.invoice.tree</field>
+            <field name="model">nsoft.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="nSoft Sąskaitos faktūros"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state in ['failed']" create="1" edit="1" delete="1">
+                    <field name="name"/>
+                    <field name="date_invoice"/>
+                    <field name="date_due"/>
+                    <field name="partner_id"/>
+                    <field name="cash_register_id"/>
+                    <field name="receipt_id"/>
+                    <field name="sum_with_vat"/>
+                    <field name="items_vat_sum"/>
+                    <field name="state"/>
+                    <field name="payment_type_tag_text" widget="roboTags"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record model="ir.actions.server" id="create_invoices_action_inv">
+            <field name="name">Kurti sąskaitas faktūras</field>
+            <field name="model_id" ref="nsoft.model_nsoft_invoice"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).create_invoices()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_invoice_action_inv" model="nsoft.invoice"/>
+        <record id="nsoft_invoice_action" model="ir.actions.act_window">
+            <field name="name">Sąskaitos Faktūros</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="nsoft_invoice_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="nsoft_invoice_form" model="ir.ui.view">
+            <field name="name">nsoft.invoice.form</field>
+            <field name="model">nsoft.invoice</field>
+            <field name="arch" type="xml">
+                <form string="nSoft Sąskaitos Faktūros" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_invoices" type="object" states="imported,failed"
+                                string="Sukurti Sąskaitą faktūrą" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Sąskaitos Pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="date_invoice"/>
+                            <field name="date_due"/>
+                            <field name="ext_id"/>
+                            <field name="partner_vat"/>
+                            <field name="partner_name"/>
+                            <field name="receipt_id"/>
+                            <field name="cash_register_number"/>
+                            <field name="payment_name"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Sąskaitos sumos" colspan="1" col="2">
+                                <field name="sum_wo_vat"/>
+                                <field name="items_vat_sum"/>
+                                <field name="sum_with_vat"/>
+                                <field name="item_amount"/>
+                            </group>
+                            <group string="Sisteminiai laukeliai" colspan="1" col="2">
+                                <field name="cash_register_id"/>
+                                <field name="partner_id"/>
+                                <field name="pay_type_id"/>
+                                <field name="invoice_id"
+                                       attrs="{'readonly': True, 'invisible': [('invoice_id', '=', False)]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Sąskaitos eilutės">
+                                <field name="sale_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}"
+                                       attrs="{'invisible': [('receipt_id','=', False)]}">
+                                    <tree string="nSoft Pardavimai"
+                                          decoration-info="state == 'imported'"
+                                          decoration-success="state == 'created'"
+                                          decoration-danger="state in ['failed']"
+                                          create="1" edit="1" delete="1"
+                                          class="robo_tree_in_form">
+                                        <field name="product_code"/>
+                                        <field name="sale_price"/>
+                                        <field name="quantity"/>
+                                        <field name="discount"/>
+                                        <field name="state"/>
+                                        <field name="receipt_id"/>
+                                        <field name="tax_id"/>
+                                    </tree>
+                                    <form string="nSoft Pardavimai" create="1" edit="1" delete="1">
+                                    <sheet>
+                                    <div>
+                                        <label string="Produkto kodas"/>
+                                        <h1 class="mt0">
+                                            <field name="product_code" class="oe_inline"/>
+                                        </h1>
+                                    </div>
+                                        <group>
+                                            <field name="sale_price"/>
+                                            <field name="quantity"/>
+                                            <field name="discount"/>
+                                            <field name="cash_register_number"/>
+                                            <field name="sale_date"/>
+                                            <field name="payment_due"/>
+                                            <field name="vat_code"/>
+                                            <field name="receipt_id"/>
+                                            <field name="invoice_id"
+                                                   attrs="{'readonly': True, 'invisible': [('invoice_id', '=', False)]}"/>
+                                        </group>
+                                    </sheet>
+                                    <div class="oe_chatter">
+                                        <field name="message_ids" widget="robo_mail_thread"/>
+                                    </div>
+                                </form>
+                                </field>
+                                <field name="inv_line_ids" nolabel="1" widget="one2many_list"
+                                       mode="tree,kanban" options="{'no_open': True, 'no_create': True}"
+                                       attrs="{'invisible': [('receipt_id','!=', False)]}">
+                                    <tree string="nSoft Pardavimai"
+                                          decoration-info="state == 'imported'"
+                                          decoration-success="state == 'created'"
+                                          decoration-danger="state in ['failed']"
+                                          editable="top"
+                                          class="robo_tree_in_form">
+                                        <field name="name"/>
+                                        <field name="product_code"/>
+                                        <field name="vat_price"/>
+                                        <field name="vat_sum"/>
+                                        <field name="item_sum"/>
+                                        <field name="quantity"/>
+                                        <field name="discount"/>
+                                        <field name="state"/>
+                                        <field name="tax_id"/>
+                                        <field name="nsoft_invoice_id" attrs="{'readonly': True}"/>
+                                        <field name="vat_rate"/>
+                                        <field name="invoice_id"
+                                               attrs="{'readonly': True, 'invisible': [('invoice_id', '=', False)]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Apmokėjimai">
+                                <field name="nsoft_payment_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree string="nSoft Apmokėjimai"
+                                            decoration-info="state == 'partially_reconciled'"
+                                            decoration-warning="state in ['open', 'active']"
+                                            decoration-success="state == 'reconciled'"
+                                            decoration-danger="state == 'warning'"
+                                          create="1" edit="1" delete="1"
+                                          class="robo_tree_in_form">
+                                        <field name="pay_type_id"/>
+                                        <field name="receipt_id"/>
+                                        <field name="payment_sum"/>
+                                        <field name="payment_type_code"/>
+                                        <field name="payment_date"/>
+                                        <field name="state"/>
+                                    </tree>
+                                    <form string="nSoft Apmokėjimai" create="0" edit="1" delete="1">
+                                        <sheet>
+                                            <div class="oe_button_box" name="button_box"
+                                                 states="partially_reconciled,reconciled">
+                                                <button class="oe_stat_button" name="action_open_journal_entries"
+                                                        string="DK Įrašai"
+                                                        type="object" groups="account.group_account_manager"
+                                                        icon="fa-bars"/>
+                                            </div>
+                                            <div>
+                                                <label string="Mokėjimo čekis"/>
+                                                <h1 class="mt0">
+                                                    <field name="receipt_id" class="oe_inline" readonly="1"/>
+                                                </h1>
+                                            </div>
+                                            <group>
+                                                <field name="ext_payment_type_id"/>
+                                                <field name="payment_sum"/>
+                                                <field name="payment_type_code"/>
+                                                <field name="payment_date"/>
+                                                <field name="state"/>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+        <record id="nsoft_invoice_search" model="ir.ui.view">
+            <field name="name">Sąskaitų paieška</field>
+            <field name="model">nsoft.invoice</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="import" string="Būsena: Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="create" string="Būsena: Sukurta" domain="[('state','=','created')]"/>
+                    <filter name="failed" string="Būsena: Klaida kuriant sąskaitą" domain="[('state','=','failed')]"/>
+                    <filter name="active_pay" string="Aktyvus mokėjimo tipas" domain="[('pay_active','=',True)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="[
+                            '|', '&amp;',
+                            ('date_invoice', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('date_invoice', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('date_invoice', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('date_invoice', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="[
+                            '|', '&amp;',
+                            ('date_invoice', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('date_invoice', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('date_invoice', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('date_invoice', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai"
+                            domain="[
+                            '|', '&amp;',
+                             ('date_invoice', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('date_invoice', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                             '&amp;',
+                             ('date_invoice', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('date_invoice', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="[
+                            '|', '&amp;',
+                             ('date_invoice', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('date_invoice', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                             '&amp;',
+                             ('date_invoice', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('date_invoice', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <field name="name" filter_domain="[('name','ilike',self)]"/>
+                    <field name="partner_id" filter_domain="[('partner_id','ilike',self)]"/>
+                    <field name="receipt_id" filter_domain="[('receipt_id','ilike',self)]"/>
+                    <field name="partner_code" filter_domain="[('partner_code','ilike',self)]"/>
+                    <field name="cash_register_number" filter_domain="[('partner_code','ilike',self)]"/>
+                    <field name="payment_name" filter_domain="[('payment_name','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Sąskaitos Faktūros"
+                id="nSoft_invoice"
+                sequence="41"
+                action="nsoft_invoice_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nsoft_data_menu"
+        />
+    </data>
+</odoo>

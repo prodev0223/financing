@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="view_invoice_line_form_inherit_asset">
+            <field name="name">account.invoice.line.form.inherit.asset</field>
+            <field name="model">account.invoice.line</field>
+            <field name="inherit_id" ref="account.view_invoice_line_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='account_analytic_id']" position="after">
+                        <field name="asset_id" readonly="1" create="0"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+    </data>
+</odoo>

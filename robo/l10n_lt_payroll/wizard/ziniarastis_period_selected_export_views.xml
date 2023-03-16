@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="ziniarastis_period_selected_export_view_form" model="ir.ui.view">
+            <field name="name">ziniarastis.period.selected.export.view.form</field>
+            <field name="model">ziniarastis.period.selected.export</field>
+            <field name="arch" type="xml">
+                <form string="Pasirinkite darbuotojus">
+                    <group>
+                        <field name="employee_ids" string="Darbuotojai" widget="many2many_tags"
+                               options="{'no_create': True}" required="True"/>
+                        <field name="ziniarastis_period_id" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button name="export_selected_timetable" string="Eksportuoti" type="object"
+                                class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

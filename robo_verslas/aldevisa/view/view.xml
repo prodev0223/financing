@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="smtp_tree" model="ir.ui.view">
+            <field name="priority" eval="99"/>
+            <field name="name">smtp.robo.tree</field>
+            <field name="model">ir.mail_server</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="open_smtp" model="ir.actions.act_window">
+            <field name="name">SMTP nustatymai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.mail_server</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_id" ref="smtp_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('aldevisa.smtp_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('base.ir_mail_server_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="domain">[('allow_change', '=', True)]</field>
+            <field name="context">{'robo_header': {}}</field>
+        </record>
+        <record id="smtp_company_settings" model="ir.ui.view">
+            <field name="name">smtp.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside">
+                    <button name="%(open_smtp)d" string="SMTP nustatymai" type="action" class="oe_link"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_smtp_settings_search"
+                  name="SMTP nustatymai"
+                  parent="robo.menu_company_settings_search"
+                  action="open_smtp"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="SMTP,nustatymai"
+        />
+
+        <record id="smtp_allow_change" model="ir.ui.view">
+            <field name="name">smtp.allow.change</field>
+            <field name="model">ir.mail_server</field>
+            <field name="inherit_id" ref="base.ir_mail_server_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='smtp_debug']" position="after">
+                    <field name="allow_change"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account.email_template_edi_invoice" model="mail.template">
+            <field name="email_from">${('aldevisa@alldevicesoft.lt')|safe}</field>
+            <field name="mail_server_id" search="[('name', '=', 'Aldevisa')]"/>
+        </record>
+        <record id="due_payments.apr_email_template_res_partner_before_invoice" model="mail.template">
+            <field name="email_from">${('aldevisa@alldevicesoft.lt')|safe}</field>
+            <field name="mail_server_id" search="[('name', '=', 'Aldevisa')]"/>
+        </record>
+        <record id="due_payments.apr_email_template_res_partner_on_date_invoice" model="mail.template">
+            <field name="email_from">${('aldevisa@alldevicesoft.lt')|safe}</field>
+            <field name="mail_server_id" search="[('name', '=', 'Aldevisa')]"/>
+        </record>
+        <record id="due_payments.apr_email_template_res_partner_after_invoice" model="mail.template">
+            <field name="email_from">${('aldevisa@alldevicesoft.lt')|safe}</field>
+            <field name="mail_server_id" search="[('name', '=', 'Aldevisa')]"/>
+        </record>
+    </data>
+</odoo>

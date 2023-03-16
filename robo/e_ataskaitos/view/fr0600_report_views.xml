@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="fr0600_report_view_pivot" model="ir.ui.view">
+            <field name="name">fr0600.report,view.pivot</field>
+            <field name="model">fr0600.report</field>
+            <field name="arch" type="xml">
+                <pivot string="FR0600" order="date" order_rule="desc">
+                    <field name="code" string="Code" type="row"/>
+                    <field name="date" string="Data" type="col"/>
+                    <field name="amount" string="Suma" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="fr0600_report_view_search" model="ir.ui.view">
+            <field name="name">fr0600.report,view.search</field>
+            <field name="model">fr0600.report</field>
+            <field name="arch" type="xml">
+                <search string="FR0600">
+                    <field name="code" string="Kodas"/>
+                    <field name="date" string="Data"/>
+                    <field name="invoice_id"/>
+                    <filter name="purchase" string="Purchases" domain="[('inv_type', 'in', ['in_invoice', 'in_refund'])]"/>
+                    <filter name="sale" string="Sales" domain="[('inv_type', 'in', ['out_invoice', 'out_refund'])]"/>
+                    <separator/>
+                    <filter name="mismatch" string="Account not matching" domain="[('matching_account', '=', False)]"/>
+                    <separator/>
+                    <filter name="included" string="Included in report" domain="[('included_in_report', '=', True)]"/>
+                    <filter name="not_included" string="Not included in report" domain="[('included_in_report', '=', False)]"/>
+                    <separator/>
+                    <filter name="last_month" string="Praeitas mėnuo" domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', (context_today() + relativedelta(months=-1,day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today() + relativedelta(months=-1)).strftime('%Y-%m-01'))]"/>
+                    <filter name="current_month" string="Šis mėnuo" domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',time.strftime('%Y-%m-01'))]"/>
+                </search>
+            </field>
+        </record>
+
+        <!--Window actions-->
+        <record id="fr0600_report_action" model="ir.actions.act_window">
+            <field name="name">FR0600</field>
+            <field name="res_model">fr0600.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="fr0600_report_view_pivot"/>
+            <field name="search_view_id" ref="fr0600_report_view_search"/>
+            <field name="context" eval="{
+                'search_default_last_month':1,
+                'search_default_included':1,
+                }"/>
+        </record>
+
+
+        <!--menu-->
+        <menuitem id="menu_fr0600_report_pivot"
+                  name="FR0600"
+                  parent="robo.meniu_kitos_ataskaitos"
+                  sequence="70"
+                  action="fr0600_report_action"
+        />
+    </data>
+</odoo>

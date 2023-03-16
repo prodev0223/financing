@@ -1,0 +1,83 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="form_invoice_mass_mailing_wizard" model="ir.ui.view">
+            <field name="name">form.invoice.mass.mailing.wizard</field>
+            <field name="model">invoice.mass.mailing.wizard</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Masinis sąskaitų siuntimas">
+                    <header>
+                        <button string="Atšaukti" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                    <sheet>
+                        <field name="show_final_window" invisible="1"/>
+                        <group string="Sąskaitos">
+                            <field name="mass_mailing_line_ids" widget="one2many_list" nolabel="1">
+                                <tree editable="top" create="0" class="robo_tree_in_form">
+                                    <field name="invoice_id" readonly="1"/>
+                                    <field name="partner_ids" widget="many2many_tags" readonly="1"/>
+                                    <field name="currency_id"/>
+                                    <field name="amount" readonly="1"/>
+                                    <field name="generated_pdf" filename="file_name"/>
+                                    <field name="file_name" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Laiškas" attrs="{'invisible': [('show_final_window', '=', True)]}">
+                            <div>
+                                <p>
+                                    <i>
+                                        Masiniame sąskaitų siuntimo vedlyje sąskaitos šablono koreguoti neleidžiama.
+                                        Šablonas rodomas apačioje vaizduojamas naudojant pirmąją sąrašo sąskaitą.
+                                     </i>
+                                 </p>
+                             </div>
+                        </group>
+                        <group string="Masinis sąskaitų siuntimas"
+                               attrs="{'invisible': [('show_final_window', '=', False)]}"/>
+                        <group attrs="{'invisible': [('show_final_window', '=', False)]}" col="4"
+                               style="text-align: center;">
+                            <div class="alert alert-info">
+                               Jūsų žinutė nustatyta siuntimui. Atlikus siuntimą gausite informacinį pranešimą.
+                            </div>
+                        </group>
+                        <field name="body" options="{'style-inline': true}" widget="html" readonly="1"
+                               attrs="{'invisible': [('show_final_window', '=', True)]}"/>
+                        <group string="Šablonas" col="4" attrs="{'invisible': [('show_final_window', '=', True)]}">
+                            <field name="template_id" options="{'no_create': True, 'no_open': True}"
+                                   nolabel="1" context="{'default_body_html': body }"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:10%;"
+                                attrs="{'invisible': [('show_final_window', '=', True)]}">
+                            <button string="Siųsti" name="send_mail_action" type="object" class="btn-primary"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_invoice_mass_mailing_wizard" model="ir.actions.act_window">
+            <field name="name">Masinis sąskaitų siuntimas</field>
+            <field name="res_model">invoice.mass.mailing.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="robo_front">True</field>
+            <field name="robo_menu" ref="menu_pajamos"/>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="view_id" ref="form_invoice_mass_mailing_wizard"/>
+        </record>
+        <record id="invoice_mass_mailing_wizard_action" model="ir.actions.server">
+            <field name="name">Siųsti el. paštu</field>
+            <field name="model_id" ref="robo.model_account_invoice"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).invoice_mass_mailing_wizard_action_open()
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="group_ids" eval="[(4,ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.pajamos_tree')])]"/>
+        </record>
+        <function name="invoice_mass_mailing_wizard_action_func" model="account.invoice"/>
+    </data>
+</odoo>

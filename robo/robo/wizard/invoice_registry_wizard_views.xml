@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_invoice_registry_wizard" model="ir.ui.view">
+            <field name="name">invoice.registry.wizard</field>
+            <field name="model">invoice.registry.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Sąskaitų registras">
+                    <sheet>
+                        <group string="Filtrai">
+                            <group>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="partner_ids" widget="many2many_tags"/>
+                                <field name="include_contact_info"/>
+                            </group>
+                            <group>
+                                <field name="type"/>
+                                <field name="refund"/>
+                                <field name="draft"/>
+                                <field name="include_canceled"/>
+                                <field name="report_group_by"/>
+                                <field name="activated_threaded_reports" invisible="1"/>
+                            </group>
+                        </group>
+                        <footer style="text-align: center;">
+                            <button name="print_report" string="Peržiūrėti" context="{'force_html': True}"
+                                    type="object" class="oe_highlight" style="margin-right: 10px;"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    attrs="{'invisible': [('activated_threaded_reports', '=', True)]}"/>
+                            <button name="button_generate_report" string="PDF" context="{'force_pdf': True}"
+                                    type="object" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button name="button_generate_report" string="Excel" class="oe_highlight"
+                                    type="object" context="{'xls_report': True}" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_new_invoices">
+            <field name="name">Sąskaitų registras</field>
+            <field name="res_model">invoice.registry.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="view_id" ref="robo.account_invoice_registry_wizard"/>
+        </record>
+
+        <menuitem id="menu_new_invoices_search_report"
+                  name="Sąskaitų registras"
+                  groups="robo_basic.group_robo_premium_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_new_invoices"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="sąskaitų,registras"
+        />
+    </data>
+</odoo>

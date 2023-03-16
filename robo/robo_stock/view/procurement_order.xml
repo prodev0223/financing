@@ -1,0 +1,144 @@
+<odoo>
+    <data>
+        <!--Tree-->
+        <record id="tree_front_procurement_order" model="ir.ui.view">
+            <field name="name">form.front.procurement.order</field>
+            <field name="model">procurement.order</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree string="Planiniai užsakymai" create="0" import="0">
+                    <field name="date_planned"/>
+                    <field name="location_id"/>
+                    <field name="origin"/>
+                    <field name="product_id"/>
+                    <field name="product_qty"/>
+                    <field name="product_uom"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="form_front_procurement_order" model="ir.ui.view">
+            <field name="name">form.front.procurement.order</field>
+            <field name="model">procurement.order</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Planiniai užsakymai">
+                    <header>
+                        <button name="run" states="confirmed,exception" string="Vykdyti" class="oe_highlight"
+                                type="object"/>
+                        <button name="check" states="running" string="Patikrinti" class="oe_highlight"
+                                type="object"/>
+                        <button name="cancel" states="exception,confirmed,running" string="Atšaukti"
+                                type="object"/>
+                        <button name="reset_to_confirmed" states="cancel"
+                                string="Pažymėti kaip patvirtintą" type="object"/>
+                        <field name="state" readonly="1" widget="statusbar"
+                               statusbar_visible="draft,confirmed,running,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_open_purchase_order_front" string="Pirkimai" type="object"
+                                    class="oe_stat_button" icon="fa-shopping-cart" context="{'active_id':purchase_id}"
+                                    attrs="{'invisible':[('purchase_id', '=', False)]}"/>
+                            <button name="action_open_procurement_orders_front" class="oe_stat_button" icon="fa-bars"
+                                    string="Susiję planiniai užsakymai" type="object"/>
+                            <button name="action_open_stock_pickings_front" class="oe_stat_button" icon="fa-bars"
+                                    string="Susiję važtraščiai" type="object"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="product_id"/>
+                                <label for="product_qty"/>
+                                <div>
+                                    <div>
+                                        <field name="product_qty" class="oe_inline"/>
+                                        <field name="product_uom" class="oe_inline" groups="product.group_uom"/>
+                                    </div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="warehouse_id"/>
+                                <field name="location_id" domain="[('usage', '=', 'internal')]"/>
+                                <field name="route_ids" widget="many2many_tags"
+                                       groups="stock.group_adv_location" string="Maršrutai"/>
+                            </group>
+                            <group name="scheduling" string="Planavimas" colspan="4">
+                                <field name="date_planned"/>
+                                <field name="priority"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Papildoma informacija">
+                                <group>
+                                    <group>
+                                        <field name="origin" placeholder="Pvz.: SO005"/>
+                                        <field name="task_id" groups="base.no_one"/>
+                                        <field name="bom_id"
+                                               domain="[('product_id', '=', product_id)]" string="Komplektacija"/>
+                                        <field name="production_id"
+                                               attrs="{'invisible': [('production_id', '=', False)]}"/>
+                                        <field name="purchase_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="rule_id"
+                                               domain="['|', ('location_id', '=', False), ('location_id', '=', location_id)]"/>
+                                        <field name="partner_dest_id"/>
+                                        <field name="company_id" groups="base.group_multi_company"
+                                               options="{'no_create': True}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Pastabos">
+                                <field name="name" placeholder="Išorinė pastaba..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_procurement_order" model="ir.actions.act_window">
+            <field name="name">Planiniai užsakymai</field>
+            <field name="res_model">procurement.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="tree_front_procurement_order"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_front_procurement_order')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_front_procurement_order')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="context" eval="{'search_default_exceptions': 1}"/>
+            <field name="robo_menu" ref="menu_advanced_stock_locations"/>
+            <field name="header" ref="header_procurement_order"/>
+        </record>
+        <record id="action_open_procurement_order_filtered" model="ir.actions.act_window">
+            <field name="name">Planiniai užsakymai</field>
+            <field name="res_model">procurement.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="tree_front_procurement_order"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_front_procurement_order')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_front_procurement_order')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="domain">[('orderpoint_id','=',active_id)]</field>
+            <field name="robo_menu" ref="menu_advanced_stock_locations"/>
+            <field name="header" ref="header_procurement_order"/>
+        </record>
+    </data>
+</odoo>

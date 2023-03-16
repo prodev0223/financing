@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="mark_signed_form" model="ir.ui.view">
+        <field name="name">mark.signed.form</field>
+        <field name="model">e_document.mark_signed</field>
+        <field name="robo_front">True</field>
+        <field name="arch" type="xml">
+            <form string="Pažymėti dokumentą kaip pasirašytą">
+                <sheet>
+                    <group col="4" colspan="4">
+                        <field name="document" nolabel="1" filename="document_filename"/>
+                        <field name="document_filename" invisible="1"/>
+                    </group>
+                    <group col="4" colspan="4">
+                        <span class="oe_grey">Prisekite pasirašytą dokumentą. Jei jo dar neturite - uždarykite šį langelį, atsispausdinkite suformuotą dokumentą (jį rasite šio dokumento apačioje), duokite darbuotojui pasirašyti, nuskenuokite dokumentą ir prisekite čia.</span>
+                    </group>
+                    <div style="display: inline-flex; width: 100%; align-items: center; justify-content: space-evenly; flex-wrap: wrap;">
+                        <i class="fa fa-download fa-6x" style="color: #297fb9;margin:5px"/>
+                        <i class="fa fa-arrow-right fa-2x" style="margin:5px"/>
+                        <i class="fa fa-print fa-6x" style="color: #297fb9;margin:5px"/>
+                        <i class="fa fa-arrow-right fa-2x" style="margin:5px"/>
+                        <i class="fa fa-pencil fa-6x" style="color: #297fb9;margin:5px"/>
+                        <i class="fa fa-arrow-right fa-2x" style="margin:5px"/>
+                        <i class="fa fa-upload fa-6x" style="color: #297fb9;margin:5px"/>
+                        <i class="fa fa-arrow-right fa-2x" style="margin:5px"/>
+                        <i class="fa fa-check fa-6x" style="color: #43A047;margin:5px"/>
+                    </div>
+                    <footer>
+                        <button name="mark_signed" string="Pažymėti kaip pasirašytą" type="object" class="btn-primary" confirm="Atlikdami šį veiksmą - nustatysite, jog šis dokumentas jau pasirašytas. Šio veiksmo paskirtis - nesant darbuotojų prisijungimui prie sistemos - supildyti prašyma ir suformuoti įsakymą. Atliekant šį veiksmą patvirtinate, jog šis dokumentas buvo atspausdintas ir pasirašytas darbuotojo."/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="open_mark_signed_form" model="ir.actions.act_window">
+        <field name="name">Pažymėti dokumentą kaip pasirašytą</field>
+        <field name="res_model">e_document.mark_signed</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="robo_front" eval="True"/>
+    </record>
+
+</odoo>

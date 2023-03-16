@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="isakymas_del_prastovos_nutraukimo_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl prastovos nutraukimo</field>
+            <field name="model">e.document</field>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="robo_front" eval="True"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="after">
+                    <field name="show_inform_of_possible_subsidy_banner" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:6px;" colspan="4"
+                         attrs="{'invisible': [('show_inform_of_possible_subsidy_banner', '=', False)]}">
+                        Attention, employee is eligible for a subsidy after downtime until 31 August 2021 if he is not
+                        dismissed and his downtime lasted at least 75 work days (at least 600 work hours) during
+                        the first 6 calendar months from state declared emergency and quarantine dates announced
+                        by the government.
+                    </div>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="employee_id2" required="True" string="Darbuotojas" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="date_2" required="True" string="Prastovos nutraukimo/sugrįžimo į darbą data"/>
+                        <field name="text_4" required="True" string="Kodėl nutraukiama prastova"
+                               placeholder="pvz. įmonė gali suteikti darbą darbuotojui"/>
+                        <field name="selection_bool_1" required="True"
+                               string="Darbuotojas reikalaujamas sugrįžti į darbovietę"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="isakymas_del_prastovos_nutraukimo_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl prastovos nutraukimo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'isakymas_del_prastovos_nutraukimo_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.isakymas_del_prastovos_nutraukimo_form"/>
+        </record>
+
+        <record id="isakymas_del_prastovos_nutraukimo_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl prastovos nutraukimo</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.isakymas_del_prastovos_nutraukimo_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas,prastova,nutraukimas,nedarbas,sustabdymas,veikla</field>
+            <field name="groups_id" eval="[
+                (6, 0, [
+                    ref('robo_basic.group_robo_free_manager'),
+                    ref('robo_basic.group_robo_premium_manager'),
+                    ref('robo_basic.group_robo_edocument_manager')
+                    ]
+                )
+            ]"/>
+        </record>
+
+        <record id="isakymas_del_prastovos_nutraukimo_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie pasirašytus prastovos nutraukimo įsakymus</field>
+            <field name="description">Informuoti, kuomet būna pasirašomas prastovos nutraukimo įsakymas</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+
+        <record id="isakymas_del_prastovos_nutraukimo_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px; page-break-inside: auto;" id="body">
+                    {% if not signed_user_id or not signed_user_id.employee_ids or not
+                    signed_user_id.employee_ids[0].gender %}
+                            Atsižvelgdama(-s)
+                    {% elif signed_user_id.employee_ids[0].gender == 'male' %}
+                            Atsižvelgdamas
+                    {% else %}
+                            Atsižvelgdama
+                    {% endif %}
+                    į tai, kad {{text_4}}, įsakau nuo {{ date_2 }} nutraukti darbuotojo(-s)
+                    {{ ko(employee_id2, 'Aa') }} prastovą{%if selection_bool_1 == 'Taip'%} ir nurodau darbuotojui(-ai)
+                    nuo {{ date_2 }} sugrįžti į darbovietę.{%else%}.{%endif%}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl prastovos nutraukimo</field>
+            <field name="footer" type="html">
+                <div style="display: flex; justify-content: flex-end; width: 100%; float:right;">
+                    <table width="65%" align="right" style="float: right; margin-top:25px; border-collapse: separate;
+                        border-spacing: 20px 0;">
+                        <tr style="border:none">
+                            <td style="border:none; text-align: center; width: 70%;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                            <td style="border:none;"><span><br/></span></td>
+                        </tr>
+                        <tr style="border:none;">
+                            <td style="border:none; border-top: 1px solid black; text-align:center;" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                            <td style="border:none; border-top: 1px solid black; text-align:center;" align="center">
+                                <span>(parašas)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.isakymas_del_prastovos_nutraukimo_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify;
+                        .img-rounded{
+                            width: 100px;
+                        }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS DĖL PRASTOVOS NUTRAUKIMO</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.vieta"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.isakymas_del_prastovos_nutraukimo_workflow()</field>
+            <field name="date_from_field_name">date_2</field>
+            <field name="date_to_field_name">date_2</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="True"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="sign_mail_channel_ids"
+                   eval="[(4, ref('e_document.isakymas_del_prastovos_nutraukimo_mail_channel'))]"/>
+        </record>
+    </data>
+</odoo>

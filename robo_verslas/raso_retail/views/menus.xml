@@ -1,0 +1,131 @@
+<odoo>
+    <data>
+        <menuitem
+                name="Raso Retail"
+                id="raso"
+                sequence="49"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Pardavimai/Grąžinimai"
+                id="raso_sale_parent"
+                sequence="48"
+                parent="raso"
+        />
+        <menuitem
+                name="Pardavimai"
+                id="raso_sales"
+                sequence="45"
+                action="raso_sales_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="raso_sale_parent"
+        />
+        <menuitem
+                name="Sąskaitos Faktūros"
+                id="raso_invoices"
+                sequence="46"
+                action="raso_invoices_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="raso_sale_parent"
+        />
+        <menuitem
+                name="Mokėjimai"
+                id="raso_payments_menu"
+                sequence="47"
+                action="raso_payments_action"
+                parent="raso_sale_parent"
+        />
+        <menuitem
+                name="Mokėjimų tipai"
+                id="raso_payment_type_menu"
+                sequence="48"
+                action="raso_payment_type_action"
+                parent="raso_sale_parent"
+        />
+        <menuitem
+                name="Valdymas"
+                id="raso_config_parent"
+                sequence="49"
+                parent="raso"
+        />
+        <menuitem
+                name="Kasos aparatų sąrašas"
+                id="raso_pos"
+                sequence="44"
+                action="raso_pos_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="raso_config_parent"
+        />
+        <menuitem
+                name="Parduotuvių Sąrašas"
+                id="raso_shoplist"
+                sequence="45"
+                action="raso_shoplist_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="raso_config_parent"
+        />
+        <menuitem
+                name="Prekių kainos"
+                id="raso_prices_menu"
+                sequence="49"
+                action="raso_prices_action"
+                parent="raso_config_parent"
+        />
+        <menuitem
+                name="Prekių nuolaidos"
+                id="raso_discounts_menu"
+                sequence="50"
+                action="raso_discounts_action"
+                parent="raso_config_parent"
+        />
+        <menuitem
+                name="Prekių kategorijų nuolaidos"
+                id="raso_group_discounts_menu"
+                sequence="51"
+                action="raso_group_discounts_action"
+                parent="raso_config_parent"
+        />
+        <menuitem
+                name="Partneriai"
+                id="raso_partner_menu"
+                sequence="52"
+                action="contacts.action_contacts"
+                parent="raso_config_parent"
+        />
+        <menuitem
+                name="Prekės"
+                id="raso_goods_menu"
+                sequence="53"
+                action="stock.product_template_action_product"
+                parent="raso_config_parent"
+        />
+        <menuitem
+                name="Prekių kategorijos"
+                id="raso_goods_cat_menu"
+                sequence="54"
+                action="product.product_category_action_form"
+                parent="raso_config_parent"
+        />
+        <menuitem
+                name="Eksportas/Importas"
+                id="raso_data_parent"
+                sequence="50"
+                parent="raso"
+        />
+        <menuitem
+                name="Duomenų eksportavimas iš Raso"
+                id="raso_export_data"
+                sequence="52"
+                action="open_export_wizard_raso"
+                parent="raso_data_parent"
+        />
+        <menuitem
+                name="Duomenų importavimas į Raso"
+                id="raso_import_data"
+                sequence="53"
+                action="open_import_wizard_raso"
+                parent="raso_data_parent"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="work_schedule_category" model="ir.module.category">
+            <field name="name">Work Schedule</field>
+        </record>
+        <record id="work_schedule_menu_category" model="ir.module.category">
+            <field name="name">Work Schedule Menu</field>
+        </record>
+
+        <record id="group_schedule_user" model="res.groups">
+            <field name="category_id" ref="work_schedule_category"/>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomas darbuotojo darbo grafikas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_work_schedule')"/>
+            <field name="name">Work Schedule User</field>
+        </record>
+        <record id="group_schedule_see_colleague_schedules" model="res.groups">
+            <field name="category_id" ref="work_schedule_category"/>
+            <field name="robo_front" eval="True"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_work_schedule')"/>
+            <field name="front_help">Matomas kolegų darbo grafikas</field>
+            <field name="name">Work Schedule see colleague schedule</field>
+        </record>
+
+        <record id="group_schedule_menu_visible" model="res.groups">
+            <field name="category_id" ref="work_schedule_menu_category"/>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomas darbo grafiko meniu</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_work_schedule')"/>
+            <field name="name">Darbo grafikas rodomas</field>
+            <field name="implied_ids" eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('work_schedule.group_schedule_menu_visible'))]"/>
+        </record>
+
+        <record id="group_schedule_manager" model="res.groups">
+            <field name="category_id" ref="work_schedule_category"/>
+            <field name="name">Work Schedule Manager</field>
+            <field name="implied_ids"
+                   eval="[(4, ref('group_schedule_user')), (4, ref('group_schedule_see_colleague_schedules'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomas departamento darbo grafikas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_work_schedule')"/>
+        </record>
+        <record id="group_schedule_super" model="res.groups">
+            <field name="category_id" ref="work_schedule_category"/>
+            <field name="name">Work Schedule Super</field>
+            <field name="implied_ids"
+                   eval="[(4, ref('group_schedule_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Viso darbo grafiko administratorius: pilna prieiga prie grafiko</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_work_schedule')"/>
+        </record>
+
+        <record id="robo_basic.group_robo_premium_user" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="robo_basic.group_robo_premium_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('group_schedule_super'))]"/>
+        </record>
+        <record id="robo_basic.group_robo_premium_accountant" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('group_schedule_super')),
+                          (4, ref('group_schedule_menu_visible'))]"/>
+        </record>
+        <record id="robo_basic.group_robo_hr_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('group_schedule_super'))]"/>
+        </record>
+
+
+        <record id="see_own_schedule_line_rule" model="ir.rule">
+            <field name="name">Schedule user can see only their schedule lines</field>
+            <field name="model_id" ref="model_work_schedule_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('employee_id','in',user.employee_ids.ids),
+                '|',
+                ('state','!=','draft'),
+                ('employee_id.can_fill_own_schedule','=',True),
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="see_own_schedule_day_rule" model="ir.rule">
+            <field name="name">Schedule user can see only their schedule days</field>
+            <field name="model_id" ref="model_work_schedule_day"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('employee_id','in',user.employee_ids.ids),
+                '|',
+                ('state','!=','draft'),
+                ('employee_id.can_fill_own_schedule','=',True),
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="see_own_schedule_day_line_rule" model="ir.rule">
+            <field name="name">Schedule user can see only their schedule day lines</field>
+            <field name="model_id" ref="model_work_schedule_day_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('employee_id','in',user.employee_ids.ids),
+                '|',
+                ('state','!=','draft'),
+                ('employee_id.can_fill_own_schedule','=',True),
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="see_own_schedule_holidays_rule" model="ir.rule">
+            <field name="name">Schedule user can see only their schedule holidays</field>
+            <field name="model_id" ref="model_work_schedule_holidays"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('employee_id','in',user.employee_ids.ids)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+
+
+        <record id="see_colleague_schedule_line_rule" model="ir.rule">
+            <field name="name">See colleague schedule lines</field>
+            <field name="model_id" ref="model_work_schedule_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('department_id','in',user.employee_ids.department_id.ids)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_see_colleague_schedules'))]"/>
+        </record>
+        <record id="see_colleague_schedule_day_rule" model="ir.rule">
+            <field name="name">See colleague schedule days</field>
+            <field name="model_id" ref="model_work_schedule_day"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('work_schedule_line_id.department_id','in',user.employee_ids.department_id.ids)
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_see_colleague_schedules'))]"/>
+        </record>
+        <record id="see_colleague_schedule_day_line_rule" model="ir.rule">
+            <field name="name">See colleague schedule day lines</field>
+            <field name="model_id" ref="model_work_schedule_day_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('day_id.work_schedule_line_id.department_id','in',user.employee_ids.department_id.ids)
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_see_colleague_schedules'))]"/>
+        </record>
+        <record id="see_colleague_schedule_holidays_rule" model="ir.rule">
+            <field name="name">See colleague schedule holidays</field>
+            <field name="model_id" ref="model_work_schedule_holidays"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('day_ids.work_schedule_line_id.department_id','in',user.employee_ids.department_id.ids)
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_see_colleague_schedules'))]"/>
+        </record>
+
+
+        <record id="see_all_schedules_rule_modify_line" model="ir.rule">
+            <field name="name">Schedule manager can modify own lines</field>
+            <field name="model_id" ref="model_work_schedule_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">
+                ['|',('employee_id.department_id.id','=',user.employee_ids.department_id.id),('department_id.id','=',user.employee_ids.department_id.id)]
+            </field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_manager'))]"/>
+        </record>
+        <record id="see_all_schedules_rule_modify_day" model="ir.rule">
+            <field name="name">Schedule manager can modify own department schedule days</field>
+            <field name="model_id" ref="model_work_schedule_day"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">
+                ['|',('employee_id.department_id.id','=',user.employee_ids.department_id.id),('department_id.id','=',user.employee_ids.department_id.id)]
+            </field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_manager'))]"/>
+        </record>
+        <record id="see_all_schedules_rule_modify_day_line" model="ir.rule">
+            <field name="name">Schedule manager can modify own department schedule day lines</field>
+            <field name="model_id" ref="model_work_schedule_day_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">
+                ['|',('employee_id.department_id.id','=',user.employee_ids.department_id.id),('department_id.id','=',user.employee_ids.department_id.id)]
+            </field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_manager'))]"/>
+        </record>
+        <record id="see_all_schedules_rule_modify_holidays" model="ir.rule">
+            <field name="name">Schedule manager can modify own department schedule holidays</field>
+            <field name="model_id" ref="model_work_schedule_holidays"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[('employee_id.department_id.id', '=', user.employee_ids.department_id.id)]
+            </field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_manager'))]"/>
+        </record>
+
+        <record id="change_fill_department_schedule_line_rule" model="ir.rule">
+            <field name="name">Schedule user can change fill department schedule lines</field>
+            <field name="model_id" ref="model_work_schedule_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[
+                '|',
+                '&amp;',
+                ('employee_id.can_fill_own_schedule', '=', True),
+                ('employee_id','in',user.employee_ids.ids),
+                ('department_id','in',user.employee_ids.fill_department_ids.ids)
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="change_fill_department_schedule_day_rule" model="ir.rule">
+            <field name="name">Schedule user can change fill department schedule days</field>
+            <field name="model_id" ref="model_work_schedule_day"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[
+                '|',
+                '&amp;',
+                ('employee_id.can_fill_own_schedule', '=', True),
+                ('employee_id','in',user.employee_ids.ids),
+                ('department_id','in',user.employee_ids.fill_department_ids.ids)
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="change_fill_department_schedule_day_line_rule" model="ir.rule">
+            <field name="name">Schedule user can change fill department schedule day lines</field>
+            <field name="model_id" ref="model_work_schedule_day_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[
+                '|',
+                '&amp;',
+                ('employee_id.can_fill_own_schedule', '=', True),
+                ('employee_id','in',user.employee_ids.ids),
+                ('department_id','in',user.employee_ids.fill_department_ids.ids)
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="change_fill_department_schedule_holidays_rule" model="ir.rule">
+            <field name="name">Schedule user can change fill department schedule holidays</field>
+            <field name="model_id" ref="model_work_schedule_holidays"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[
+                '|',
+                '&amp;',
+                ('employee_id.can_fill_own_schedule', '=', True),
+                ('employee_id','in',user.employee_ids.ids),
+                ('employee_id.department_id.id', 'in', user.employee_ids.fill_department_ids.ids)
+            ]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+
+        <record id="see_or_write_validate_or_confirm_department_schedule_line_rule" model="ir.rule">
+            <field name="name">Schedule user can see validate or confirm department schedule lines</field>
+            <field name="model_id" ref="model_work_schedule_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('department_id','in',user.employee_ids.validate_department_ids.ids+user.employee_ids.confirm_department_ids.ids)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="see_or_write_validate_or_confirm_department_schedule_day_rule" model="ir.rule">
+            <field name="name">Schedule user can see validate or confirm department schedule days</field>
+            <field name="model_id" ref="model_work_schedule_day"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('department_id','in',user.employee_ids.validate_department_ids.ids+user.employee_ids.confirm_department_ids.ids)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="see_or_write_validate_or_confirm_department_schedule_day_line_rule" model="ir.rule">
+            <field name="name">Schedule user can see validate or confirm department schedule day lines</field>
+            <field name="model_id" ref="model_work_schedule_day_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('department_id','in',user.employee_ids.validate_department_ids.ids + user.employee_ids.confirm_department_ids.ids)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+        <record id="see_or_write_validate_or_confirm_department_schedule_holidays_rule" model="ir.rule">
+            <field name="name">Schedule user can see validate or confirm department schedule holidays</field>
+            <field name="model_id" ref="model_work_schedule_holidays"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('employee_id.department_id.id', 'in', user.employee_ids.validate_department_ids.ids + user.employee_ids.confirm_department_ids.ids)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_user'))]"/>
+        </record>
+
+        <record id="see_all_schedules_rule_read_line" model="ir.rule">
+            <field name="name">Schedule manager can see all lines</field>
+            <field name="model_id" ref="model_work_schedule_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_manager'))]"/>
+        </record>
+        <record id="see_all_schedules_rule_read_days" model="ir.rule">
+            <field name="name">Schedule manager can see all days</field>
+            <field name="model_id" ref="model_work_schedule_day"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_manager'))]"/>
+        </record>
+        <record id="see_all_schedules_rule_read_day_line" model="ir.rule">
+            <field name="name">Schedule manager can see all schedule day lines</field>
+            <field name="model_id" ref="model_work_schedule_day_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_manager'))]"/>
+        </record>
+        <record id="see_all_schedules_rule_read_holidays" model="ir.rule">
+            <field name="name">Schedule manager can see all schedule holidays</field>
+            <field name="model_id" ref="model_work_schedule_holidays"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_manager'))]"/>
+        </record>
+
+        <record id="modify_lines_super" model="ir.rule">
+            <field name="name">Schedule super can modify all lines</field>
+            <field name="model_id" ref="model_work_schedule_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_super'))]"/>
+        </record>
+        <record id="modify_days_super" model="ir.rule">
+            <field name="name">Schedule super can modify all days</field>
+            <field name="model_id" ref="model_work_schedule_day"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_super'))]"/>
+        </record>
+        <record id="modify_day_lines_super" model="ir.rule">
+            <field name="name">Schedule super can modify all schedule day lines</field>
+            <field name="model_id" ref="model_work_schedule_day_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_super'))]"/>
+        </record>
+        <record id="modify_holidays_super" model="ir.rule">
+            <field name="name">Schedule super can modify all schedule holidays</field>
+            <field name="model_id" ref="model_work_schedule_holidays"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups"
+                   eval="[(4, ref('group_schedule_super'))]"/>
+        </record>
+    </data>
+</odoo>

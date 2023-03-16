@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">res.company.gpais</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="before">
+                    <group string="GPAIS nustatymai" col="4" colspan="4" name="gpais_settings"
+                           class="robo_group_collapsable robo_group_collapsed">
+                        <group colspan="4">
+                            <button name="%(open_gpais_setting_wizard)d" string="Atidaryti nustatymus" type="action"
+                                    class="oe_highlight"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_gpais_settings_search"
+                  name="GPAIS nustatymai"
+                  parent="robo.menu_company_settings_search"
+                  action="open_gpais_setting_wizard"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="GPAIS,nustatymai"
+        />
+    </data>
+</odoo>

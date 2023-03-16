@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="view_account_journal_form" model="ir.ui.view">
+            <field name="name">account.journal.form.export</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <field name="bank_statements_source" position="attributes">
+                    <attribute name="groups">base.group_system</attribute>
+                </field>
+                <field name="bank_statements_source" position="after">
+                    <field name="import_file_type"
+                           attrs="{'required': [('bank_statements_source', '=', 'file_import')]}"/>
+                    <field name="paypal_api_id" attrs="{'invisible': [('import_file_type', '!=', 'paypal')]}"
+                           context="{'skip_journal_creation': True}"/>
+                    <field name="revolut_account_id" attrs="{'invisible': [('import_file_type', '!=', 'revolut')]}"
+                           domain="[('is_currency_crypto', '=', False)]"
+                           options="{'no_create':True}"/>
+                    <field name="bank_commission_account_id" options="{'no_create':True}"/>
+                </field>
+                <xpath expr="//page[@name='bank_account']" position="after">
+                    <page name="import_rules" string="Importavimo taisyklės"
+                          attrs="{'invisible': [('type', '!=', 'bank')]}">
+                        <field name="import_rule_ids">
+                            <tree editable="bottom">
+                                <field name="line_name" string="Mokėjimo paskirtis"
+                                       attrs="{'required': [('line_imported_partner_name', '=', False),
+                                                            ('reference', '=', False),
+                                                            ('line_imported_partner_code', '=', False)]}"/>
+                                <field name="reference" string="Aprašymas"
+                                       attrs="{'required': [('line_name', '=', False),
+                                                            ('line_imported_partner_name', '=', False),
+                                                            ('line_imported_partner_code', '=', False)]}"/>
+                                <field name="line_imported_partner_name"
+                                       attrs="{'required': [('line_name', '=', False),
+                                                            ('reference', '=', False),
+                                                            ('line_imported_partner_code', '=', False)]}"/>
+                                <field name="line_imported_partner_code"
+                                       attrs="{'required': [('line_imported_partner_name', '=', False),
+                                                            ('reference', '=', False),
+                                                            ('line_name', '=', False)]}"/>
+                                <field name="amount_type"/>
+                                <field name="force_account_id"/>
+                                <field name="force_partner_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='show_on_dashboard']" position="after">
+                    <field name="gateway_deactivated" groups="base.group_system"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_journal_dashboard_kanban_view" model="ir.ui.view">
+            <field name="name">journal.dashboard.view.inherit.paypal</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="kanban_dashboard"]' position="after">
+                    <field name="has_api_import"/>
+                    <field name="api_integrated_bank"/>
+                    <field name="api_integrated_journal"/>
+                </xpath>
+                <xpath expr='//div[@name="bank_journal_default_cta"]' position="after">
+                    <t t-if="record.has_api_import.raw_value">
+                        <button type="object" name="import_via_api" class="btn btn-primary btn-sm">Importuoti per API
+                        </button>
+                    </t>
+                    <t t-if="record.api_integrated_journal.raw_value">
+                        <button type="object" name="action_open_api_bank_query_wizard" class="btn btn-primary btn-sm">
+                            Sinchronizuoti banką
+                        </button>
+                    </t>
+                    <t t-if="record.type.raw_value == 'bank'">
+                        <button type="object" class="btn btn-primary btn-sm"
+                                name="action_open_statement_balance_recalculation_wizard">
+                            Recalculate balances
+                        </button>
+                    </t>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_bank_journal_form" model="ir.ui.view">
+            <field name="name">account.bank.journal.form.sepa</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_bank_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//group' position="attributes">
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr='//field[@name="display_on_footer"]' position="after">
+                    <field name="skip_bank_statement_normalization"/>
+                    <field name="force_bank_statement_normalization"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

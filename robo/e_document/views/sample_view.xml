@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="e_document_template_tree_view" model="ir.ui.view">
+            <field name="name">e.document.template.tree</field>
+            <field name="model">e.document.template</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="e_document_template_form_view" model="ir.ui.view">
+            <field name="name">e.document.template.form</field>
+            <field name="model">e.document.template</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="header"/>
+                            <field name="body"/>
+                            <field name="footer"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="e_document_tree_view" model="ir.ui.view">
+            <field name="name">e.document.tree</field>
+            <field name="model">e.document</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="e_document_form_view" model="ir.ui.view">
+            <field name="name">e.document.form</field>
+            <field name="model">e.document</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="parseit" type="object" string="Parse it"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="employee_id1" required="True"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="date_from" string="Data nuo"/>
+                            <field name="date_to" string="Data iki"/>
+                            <field name="date_document" string="Dokumento data"/>
+                            <field name="document_number" string="Dokumento numeris"/>
+                            <field name="text_1" string="Dokumento vieta"/>
+                            <field name="job_id1" string="Pareigos"/>
+                            <field name="template_id"/>
+                        </group>
+                        <field name="final_document" widget="html"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="e_document_tree_action" model="ir.actions.act_window">
+            <field name="name">E document</field>
+            <field name="res_model">e.document</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record id="e_document_template_tree_action" model="ir.actions.act_window">
+            <field name="name">E document template</field>
+            <field name="res_model">e.document.template</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_edocument_root"
+            name="Edocuments"
+            icon="fa-paperclip"
+            sequence="35"/>
+        <menuitem id="menu_edocuments" name="E Document" parent="menu_edocument_root" action="e_document_tree_action"/>
+        <!--<menuitem id="menu_edocument_templates" name="E Document templates" parent="menu_edocument_root" action="e_document_template_tree_action"/>-->
+    </data>
+</odoo>

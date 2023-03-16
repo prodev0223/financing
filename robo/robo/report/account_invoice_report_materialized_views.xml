@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_invoice_report_materialized_view_search" model="ir.ui.view">
+            <field name="name">account.invoice.report.materialized.filter</field>
+            <field name="model">account.invoice.report.materialized</field>
+            <field name="robo_front">True</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="date"/>
+                    <filter string="Šie metai" name="thisyear"
+                            domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', time.strftime('%Y-12-31')),('date','&gt;=',time.strftime('%Y-01-01'))]"
+                            help="Journal invoices with period in current year"/>
+                    <filter string="Praeiti metai" name="previousyear"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(years=1, month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Šis mėnuo" name="thismonth"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Praeitas mėnuo" name="previousmonth"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter string="Vėluojantys mokėjimai" name="due"
+                            domain="['&amp;',('date_due','&lt;',context_today().strftime('%Y-%m-%d')), ('state', '=', 'open')]"/>
+                    <separator/>
+                    <filter string="Nepatvirtintos sąskaitos" domain="[('state','=','draft')]" help="Draft Invoices"/>
+                    <filter string="Išankstinės sąskaitos"
+                            domain="['|', ('state','=','proforma'),('state','=','proforma2')]"/>
+                    <filter string="Patvirtintos sąskaitos" name="current"
+                            domain="[('state','not in', ('draft','cancel','proforma','proforma2'))]"/>
+                    <separator/>
+                    <filter string="Sąskaitos klientams" name="customer"
+                            domain="['|', ('type','=','out_invoice'),('type','=','out_refund')]"/>
+                    <filter string="Tiekėjų sąskaitos" name="supplier"
+                            domain="['|', ('type','=','in_invoice'),('type','=','in_refund')]"/>
+                    <separator/>
+                    <filter string="Trūksta sandėlio judėjimų" domain="[('no_stock_moves', '=', True)]"/>
+                    <filter string="Su sandėlio judėjimais"
+                            domain="[('no_stock_moves', '=', False),('product_id.type', '=', 'product')]"/>
+                    <separator/>
+                    <filter string="Sąskaitos" domain="['|', ('type','=','out_invoice'),('type','=','in_invoice')]"/>
+                    <filter string="Kreditinės sąskaitos / grąžinimai"
+                            domain="['|', ('type','=','out_refund'),('type','=','in_refund')]"/>
+                    <filter name="user_invoices" domain="[('user_id', '=', uid)]" string="Mano sąskaitos"/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="analytic_id"/>
+                    <field name="account_id" groups="robo_basic.group_robo_premium_accountant"/>
+                    <field name="user_id"/>
+                    <field name="product_id"/>
+                    <field name="categ_id" filter_domain="[('categ_id', 'child_of', self)]"/>
+                    <field name="invoice_id"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Partneris" name="partner_id"
+                                context="{'group_by':'partner_id','residual_visible':True}"/>
+                        <filter string="Produkto kategorija" name="category_product"
+                                context="{'group_by':'categ_id','residual_invisible':True}"/>
+                        <filter string="Būsena" context="{'group_by':'state'}"/>
+                        <filter string="Kliento vadybininkas" name="user" context="{'group_by':'user_id'}"/>
+                        <filter string="Pardavimų komanda" domain="[]" context="{'group_by':'team_id'}"/>
+                        <filter string="Įmonė" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                        <separator orientation="vertical"/>
+                        <filter string="Data" context="{'group_by':'date'}"/>
+                        <filter string="Mokėjimo terminas" context="{'group_by':'date_due:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!--Window actions-->
+        <record id="account_invoice_report_materialized_action_main" model="ir.actions.act_window">
+            <field name="name">Sąskaitų analitika</field>
+            <field name="res_model">account.invoice.report.materialized</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="account_invoice_report_view_pivot_main"/>
+            <field name="search_view_id" ref="account_invoice_report_materialized_view_search"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="header" ref="analytic_default"/>
+            <field name="context" eval="{
+                'search_default_current':1,
+                'search_default_thisyear':1,
+                }"/>
+        </record>
+
+        <record id="account_invoice_report_materialized_action_chart" model="ir.actions.act_window">
+            <field name="name">Verslo analitika</field>
+            <field name="res_model">account.invoice.report.materialized</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="account_invoice_report_view_pivot_chart"/>
+            <field name="search_view_id" ref="account_invoice_report_materialized_view_search"/>
+            <field name="domain">[('state', 'in', ['open', 'paid'])]</field>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="header" ref="analytic_default"/>
+            <field name="context" eval="{
+                'search_default_current':1,
+                'search_default_thisyear':1,
+                }"/>
+        </record>
+
+        <!--Server actions-->
+        <record id="account_invoice_report_materialized_action_server" model="ir.actions.server">
+            <field name="name">Sąskaitų analitika</field>
+            <field name="model_id" ref="robo.model_account_invoice_report_materialized"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_open_materialized_view()
+            </field>
+            <field eval="True" name="condition"/>
+            <field name="robo_front">True</field>
+        </record>
+
+        <menuitem id="menu_invoice_materialized_search_report"
+                  name="Sąskaitų analitika"
+                  groups="robo_basic.group_robo_premium_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="account_invoice_report_materialized_action_server"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="sąskaitų,analitika"
+        />
+
+        <record id="open_extended_due_report" model="ir.actions.server">
+            <field name="name">Verslo analitika</field>
+            <field name="model_id" ref="robo.model_account_invoice_report_materialized"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_open_materialized_view(extra_identifier='due')
+            </field>
+            <field eval="True" name="condition"/>
+            <field name="robo_front">True</field>
+        </record>
+
+        <record id="open_extended_due_report_exp" model="ir.actions.server">
+            <field name="name">Verslo analitika</field>
+            <field name="model_id" ref="robo.model_account_invoice_report_materialized"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_open_materialized_view(extra_identifier='due_exp')
+            </field>
+            <field eval="True" name="condition"/>
+            <field name="robo_front">True</field>
+        </record>
+
+        <record id="open_extended_all_report" model="ir.actions.server">
+            <field name="name">Verslo analitika</field>
+            <field name="model_id" ref="robo.model_account_invoice_report_materialized"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_open_materialized_view(extra_identifier='all')
+            </field>
+            <field eval="True" name="condition"/>
+            <field name="robo_front">True</field>
+        </record>
+
+        <record id="open_extended_all_report_exp" model="ir.actions.server">
+            <field name="name">Sąskaitų analitika</field>
+            <field name="model_id" ref="robo.model_account_invoice_report_materialized"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_open_materialized_view(extra_identifier='due_all')
+            </field>
+            <field eval="True" name="condition"/>
+            <field name="robo_front">True</field>
+        </record>
+
+        <!--Actions in this file are updated as a record on each open if the mode is threaded-->
+        <record id="account_invoice_report_materialized_action_threaded" model="ir.actions.act_window">
+            <field name="name">Sąskaitų analitika</field>
+            <field name="res_model">account.invoice.report.materialized</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="target">main</field>
+            <field name="view_id" ref="account_invoice_report_view_pivot_main"/>
+            <field name="search_view_id" ref="account_invoice_report_materialized_view_search"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="header" ref="analytic_default"/>
+        </record>
+
+        <!--menu-->
+        <menuitem id="menu_kita_analitika" name="Analitika" parent="menu_kita" sequence="70"
+                  action="account_invoice_report_materialized_action_server"
+                  groups="robo.group_menu_kita_analitika"
+                  force_web_icon="icon-chart-growth,none,none"
+                  robo_front="True"
+                  searchable="True"
+                  tags="analitika,ataskaita"
+        />
+    </data>
+</odoo>

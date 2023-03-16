@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cron_generate_docs_to_continue_term_contracts" model="ir.cron">
+            <field name="name">Create documents to continue work relations for terminated contracts</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="model">e.document</field>
+            <field name="function">cron_generate_docs_to_continue_term_contracts</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(day=1, hour=20, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_inform_about_unsigned_documents" model="ir.cron">
+            <field name="name">Create Message For Unsigned Documents</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">e.document</field>
+            <field name="function">cron_inform_about_unsigned_documents</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(day=28, hour=12)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_cancel_expired_work_continuation_contracts" model="ir.cron">
+            <field name="name">Cancel expired work continuation contracts</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">e.document</field>
+            <field name="function">cron_cancel_expired_work_continuation_contracts</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=3, minute=30, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_remove_running_boolean" model="ir.cron">
+            <field name="name">Remove running boolean from stuck documents</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="model">e.document</field>
+            <field name="function">cron_remove_running_boolean</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=0, minute=20, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+    </data>
+</odoo>

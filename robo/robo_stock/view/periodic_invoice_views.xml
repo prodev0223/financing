@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="periodic_invoice_tree" model="ir.ui.view">
+            <field name="name">periodic.invoice.tree</field>
+            <field name="model">periodic.invoice</field>
+            <field name="inherit_id" ref="robo.periodic_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='create_einvoice']" position="after">
+                    <field name="picking_action"/>
+                    <field name="warehouse_id" attrs="{'required': [('picking_action', 'in', ('create', 'confirm'))]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="periodic_invoice_kanban" model="ir.ui.view">
+            <field name="name">periodic.invoice.kanban</field>
+            <field name="model">periodic.invoice</field>
+            <field name="inherit_id" ref="robo.periodic_invoice_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='create_einvoice']" position="after">
+                    <field name="picking_action"/>
+                    <field name="warehouse_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

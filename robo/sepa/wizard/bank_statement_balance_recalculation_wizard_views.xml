@@ -1,0 +1,33 @@
+<odoo>
+    <data>
+        <record id="bank_statement_balance_recalculation_wizard_view_form" model="ir.ui.view">
+            <field name="name">bank.statement.balance.recalculation.wizard.view.form</field>
+            <field name="model">bank.statement.balance.recalculation.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Statement balance recalculation">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                            In this wizard you can recalculate bank statement balances in ascending
+                            or descending modes. Filter date can be supplied and it behaves differently
+                            based on the mode.
+                                * Ascending mode - Statements balances are calculated from the filter date.
+                                * Descending mode - Statements balances are calculated until the filter date.
+                        </div>
+                        <group string="Balance recalculation">
+                            <field name="journal_id" readonly="1"/>
+                            <field name="mode" required="1"/>
+                            <field name="filter_date"/>
+                            <field name="end_balance" attrs="{'invisible': [('mode', '!=', 'descending')]}"/>
+                            <field name="start_balance" attrs="{'invisible': [('mode', '!=', 'ascending')]}"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="recalculate_and_normalize_balances"
+                                string="Recalculate statement balances" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

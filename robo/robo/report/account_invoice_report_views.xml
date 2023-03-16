@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Views-->
+        <record id="account_invoice_report_view_pivot_main" model="ir.ui.view">
+            <field name="name">robo.invoice.report</field>
+            <field name="model">account.invoice.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Sąskaitų analizė" disable_linking="True" order="price_total" order_rule="desc">
+                    <field name="partner_id" string="Partneris" type="row"/>
+                    <field name="date" string="Data" type="col"/>
+                    <field name="price_total" string="Suma" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="account_invoice_report_view_pivot_chart" model="ir.ui.view">
+            <field name="name">robo.invoice.report</field>
+            <field name="model">account.invoice.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Verslo analitika" disable_linking="True" order="residual" order_rule="desc">
+                    <field name="partner_id" string="Partneris" type="row"/>
+                    <field name="date_due" string="Data" type="col"/>
+                    <field name="residual" string="Liko mokėti" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!--View extensions-->
+        <record id="account_invoice_report_filter" model="ir.ui.view">
+            <field name="name">account.invoice.report.filter</field>
+            <field name="model">account.invoice.report</field>
+            <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
+            <field name="robo_front">True</field>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="before">
+                    <field name="product_id"/>
+                    <field name="invoice_id"/>
+                </xpath>
+                <xpath expr="//separator[last()]" positon="after">
+                    <filter string="Trūksta sandėlio judėjimų" domain="[('no_stock_moves', '=', True)]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

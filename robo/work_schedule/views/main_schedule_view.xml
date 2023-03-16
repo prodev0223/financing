@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="main_work_schedule_view" model="ir.ui.view">
+            <field name="name">main.work.schedule.view</field>
+            <field name="model">work.schedule.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <workschedule string="Grafikas" adjustment="object" adjust_name="grid_adjust">
+                    <field name="work_schedule_id" type="dropdown"/>
+                </workschedule>
+            </field>
+        </record>
+        <record id="schedule_header" model="robo.header">
+            <field name="button_name"></field>
+            <field name="fit">True</field>
+            <field name="robo_xs_header">True</field>
+            <field name="fit" eval="True"/>
+        </record>
+        <record id="action_main_work_schedule_view" model="ir.actions.act_window">
+            <field name="name">Darbo grafikas</field>
+            <field name="res_model">work.schedule.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">workschedule</field>
+            <field name="header" ref="schedule_header"/>
+            <field name="context" eval="{'search_default_dept_search':1, 'search_add_custom': False}"/>
+        </record>
+        <menuitem id="menu_work_schedule_main"
+                  parent="robo.menu_start"
+                  name="Grafikas"
+                  sequence="52"
+                  groups="work_schedule.group_schedule_menu_visible"
+                  force_web_icon="icon-calendar-user,none,none"
+                  robo_extended="1"
+                  robo_front="True"
+                  action="action_main_work_schedule_view"
+                  searchable="True"
+                  tags="darbo,grafikas"
+        />
+        <record id="work_schedule_line_search_view" model="ir.ui.view">
+            <field name="name">work.schedule.line</field>
+            <field name="model">work.schedule.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Grafikas">
+                    <filter string="Mano skyrius" name="dept_search" domain="[('current_user_department_line', '=', True)]"/>
+                    <filter string="Nepatvirtinta" name="draft_search" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Nepateikta" name="not_confirmed_search" domain="[('state', 'not in', ['confirmed', 'done'])]"/>
+                    <filter string="Nepriimta" name="not_done_search" domain="[('state', '!=', 'done')]"/>
+                    <filter string="Pateikta" name="confirmed_search" domain="[('state', '=', 'confirmed')]"/>
+                    <filter string="Patvirtinta" name="validated_search" domain="[('state', '=', 'validated')]"/>
+                    <filter string="Priimta" name="done_search" domain="[('state', '=', 'done')]"/>
+                    <separator/>
+                    <filter string="Tikrinama" name="busy_search" domain="[('busy', '=', True)]"/>
+                    <!-- TODO Comparing constraint_check_data against a list of values for some reason does not work -->
+                    <filter string="Pažeidžia darbo laiko apribojimus" name="breaches_constraints_search"
+                            domain="[
+                                ('busy', '=', False),
+                                ('constraint_check_data', '!=', None),
+                                ('constraint_check_data', '!=', False),
+                                ('constraint_check_data', '!=', ''),
+                                ('constraint_check_data', '!=', 'VALID'),
+                            ]"/>
+                    <filter string="Laikosi darbo laiko apribojimų" name="follows_constraints_search"
+                            domain="[('constraint_check_data', '=', 'VALID')]"/>
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="employee_job_id"/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>
+

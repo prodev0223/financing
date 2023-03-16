@@ -1,0 +1,68 @@
+<odoo>
+    <data noupdate="1">
+        <record id="cron_delete_unused_margin_taxes" model="ir.cron">
+            <field name="name">Cron Delete unused margin taxes</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">account.tax</field>
+            <field name="function">cron_delete_unused_margin_taxes</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=23, minute=59, second=59, months=1, day=1)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="active" eval="True"/>
+            <field name="args">()</field>
+        </record>
+    </data>
+    <data>
+        <record id="margin_scheme_cateogry_front_form" model="ir.ui.view">
+            <field name="name">margin.scheme.category.front</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_category_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="use_margin_scheme"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="margin_scheme_cateogry_front_back" model="ir.ui.view">
+            <field name="name">margin.scheme.category.back</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="use_margin_scheme"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_invoice_margin_extend" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_tax_ids']" position="before">
+                    <field name="margin_line" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_tax_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('margin_line', '=', True)]}</attribute>
+                    <attribute name="domain">[('type_tax_use','=','sale'),('company_id', '=', parent.company_id),
+                        ('price_include', '=', parent.price_include), ('margin_invoice_line_id', '=', False)]</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_invoice_margin_extend_front" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_tax_ids']" position="before">
+                    <field name="margin_line" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_tax_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('margin_line', '=', True)]}</attribute>
+                    <attribute name="domain">[('type_tax_use','=','sale'),('company_id', '=', parent.company_id),
+                        ('price_include', '=', parent.price_include), ('margin_invoice_line_id', '=', False)]</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

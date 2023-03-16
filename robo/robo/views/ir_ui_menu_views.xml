@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="base_edit_menu_access_robo_front" model="ir.ui.view">
+            <field name="name">base.edit.menu.access.robo.front</field>
+            <field name="model">ir.ui.menu</field>
+            <field name="inherit_id" ref="base.edit_menu_access"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='web_icon']" position="after">
+                    <field name="robo_front"/>
+                    <field name="searchable"/>
+                    <field name="tags"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

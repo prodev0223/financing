@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="voluntary_internship_agreement_form" model="ir.ui.view">
+            <field name="name">Savanoriškos praktikos sutartis</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_agreement_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="cancel_voluntary_internship" type="object" string="Atšaukti sutartį"
+                            confirm="Ar tikrai norite atšauktį šią savanoriškos praktikos sutartį?"
+                            groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_edocument_manager"
+                            attrs="{'invisible': [('state','!=','e_signed')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='extra_text']" position="replace"></xpath>
+                <xpath expr="//group[@name='main_document_info']" position="attributes">
+                    <attribute name="string" eval="False"/>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group string="Praktikanto duomenys" colspan="4" col="4">
+                        <field name="employee_id2" string="Praktikantas" required="True"
+                               options="{'no_create': True, 'no_open': True}"/>
+                        <field name="text_1" string="Praktikanto asmens kodas" required="True"/>
+                        <field name="text_2" string="Praktikanto gyvenamoji vieta" required="True"/>
+                    </group>
+                    <group string="Praktikos duomenys" colspan="4" col="4">
+                        <field name="text_3" string="Praktikos aprašymas/tipas" required="True"/>
+                        <field name="date_from" string="Praktikos pradžia" required="True"/>
+                        <field name="date_to" string="Praktikos pabaiga" required="True"/>
+                        <field name="employee_id1" string="Praktikos vadovas" required="True"
+                               options="{'no_create': True, 'no_open': True}"/>
+                        <field name="text_6" string="Praktikos atlikimo vietos pavadinimas ir adresas" required="True"/>
+                        <field name="int_1" string="Kiek dienų reikia pranešti prieš, norint nutraukti sutartį"
+                               required="True"/>
+                    </group>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="after">
+                    <group string="Papildoma informacija" colspan="4" col="4">
+                        <field name="text_4" string="Kitos savanoriškos praktikos atlikimo sąlygos ir tvarka"/>
+                        <field name="extra_text" string="Papildomi priimančios įmonės, įstaigos, organizacijos ar kitos
+                        organizacinės struktūros įsipareigojimai"/>
+                        <field name="text_5"
+                               string="Papildomi savanorišką praktiką atliekančio asmens įsipareigojimai"/>
+                    </group>
+                    <group string="Praktikos grafikas" colspan="4" col="4">
+                        <field name="fixed_attendance_ids" nolabel="1" options="{'no_open': True}">
+                            <tree string="Grafikas" editable="bottom" class="robo_tree_in_form">
+                                <field name="dayofweek"/>
+                                <field name="hour_from" widget="float_time"/>
+                                <field name="hour_to" widget="float_time"/>
+                                <field name="time_total" widget="float_time" sum="time_total"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="voluntary_internship_agreement_action" model="ir.actions.act_window">
+            <field name="name">Savanoriškos praktikos sutartis</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{
+                u'default_document_type': u'agreement',
+                u'rec_template_id': u'voluntary_internship_agreement_template',
+                u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.voluntary_internship_agreement_form"/>
+        </record>
+
+        <record id="voluntary_internship_agreement_menu" model="ir.ui.menu">
+            <field name="name">Savanoriškos praktikos sutartis</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="False"/>
+            <field name="parent_id" ref="e_document.agreement"/>
+            <field name="action" ref="e_document.voluntary_internship_agreement_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">
+                sutartis,praktika,savanoriška,bandymas,bandomasis,pasibandymas,tobulėjimas,internship,voluntary,agreement
+            </field>
+            <field name="groups_id" eval="[(6, 0, [
+                ref('robo_basic.group_robo_free_manager'),
+                ref('robo_basic.group_robo_premium_manager'),
+                ref('robo_basic.group_robo_edocument_manager')
+                ])
+            ]"/>
+        </record>
+
+        <record id="voluntary_internship_agreement_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    <p>
+                        {{ company_id }} (toliau – priimanti įmonė, įstaiga, organizacija ar kita organizacinė
+                        struktūra), atstovaujama {{ ko(manager_job_id, 'aa') }} {{ ko(manager_id) }} ir savanorišką
+                        praktiką atliekantis asmuo {{ employee_id2 }}, a.k. {{ text_1 }}, gyvenantis {{ text_2 }}
+                        toliau kartu vadinami šalimis, vadovaudamiesi Lietuvos Respublikos užimtumo įstatymo (toliau –
+                        Užimtumo įstatymas) ir Savanoriškos praktikos atlikimo tvarkos aprašo, tvirtinamo socialinės
+                        apsaugos ir darbo ministro, nuostatomis, sudaro šią sutartį:
+                    </p>
+                    <h3>I. BENDROSIOS NUOSTATOS</h3>
+                    <p>
+                        1. Savanorišką praktiką atliekantis asmuo ir priimanti įmonė, įstaiga, organizacija ar kita
+                        organizacinė struktūra susitaria dėl savanoriškos praktikos atlikimo tokiomis sąlygomis:
+                    </p>
+                    <p>
+                        1.1. atliekama savanoriška praktika (veiklos pobūdis) – {{ text_3 }};
+                    </p>
+                    <p>
+                        1.2. savanoriškos praktikos atlikimo trukmė – prasideda {{ date_from }} ir baigiasi
+                        {{ date_to }};
+                    </p>
+                    <p>
+                        1.3. savanoriškos praktikos priežiūrą vykdo savanoriškos praktikos vadovas {{ employee_id1 }};
+                    </p>
+                    {% if text_4 != '' %}
+                        <p>
+                            1.4. kitos savanoriškos praktikos atlikimo sąlygos ir tvarka – {{ text_4 }};
+                        </p>
+                    {% endif %}
+                    <h3>II. ŠALIŲ ĮSIPAREIGOJIMAI</h3>
+                    <p>
+                        2. Priimanti įmonė, įstaiga, organizacija ar kita organizacinė struktūra įsipareigoja:
+                    </p>
+                    <p>
+                        2.1. suteikti savanorišką praktiką atliekančiam asmeniui vietą atlikti savanorišką praktiką
+                        {{ kur(text_6) }}, sudaryti sąlygas ir aprūpinti priemonėmis, būtinomis savanoriškai praktikai
+                        atlikti;
+                    </p>
+                    <p>
+                        2.2. užtikrinti, kad savanorišką praktiką atliekančiam asmeniui iš kvalifikuotų darbuotojų būtų
+                        paskirtas savanoriškos praktikos vadovas, su kuriuo savanorišką praktiką atliekantis asmuo
+                        parengia savanoriškos praktikos atlikimo planą (programą), kuris vykdo savanoriškos praktikos
+                        atlikimo priežiūrą, o jai pasibaigus ją įvertina;
+                    </p>
+                    <p>
+                        2.3. organizuoti būtinus darbuotojų saugos ir sveikatos bei priešgaisrinės saugos instruktažus;
+                    </p>
+                    <p>
+                        2.4. vadovaudamasi priimančioje įmonėje, įstaigoje, organizacijoje ar kitoje organizacinėje
+                        struktūroje veikiančiais nuostatais dėl darbo tvarkos ir sąlygų, užtikrinti savanorišką
+                        praktiką atliekančiam asmeniui darbuotojų saugos ir sveikatos bei higienos normas atitinkančias
+                        savanoriškos praktikos sąlygas, prireikus savanorišką praktiką atliekantį asmenį aprūpinti
+                        būtinais darbo įrankiais, darbo drabužiais ir darbo avalyne, kitomis asmeninėmis ir
+                        kolektyvinėmis darbuotojų saugos ir sveikatos priemonėmis, jeigu sutarties šalys šioje sutartyje
+                        nesusitaria kitaip;
+                    </p>
+                    <p>
+                        2.5. atsižvelgdama į savanoriškos praktikos vadovo įvertinimą, išduoti dokumentą apie
+                        savanorišką praktiką atliekančio asmens atliktą savanorišką praktiką;
+                    </p>
+                    <p>
+                        2.6. supažindinti savanorišką praktiką atliekantį asmenį su priimančios įmonės, įstaigos,
+                        organizacijos ar kitos organizacinės struktūros nuostatais (įstatais) ir darbo tvarkos
+                        taisyklėmis, taip pat pranešti, kuri atliekant savanorišką praktiką suteikiama informacija yra
+                        priimančios įmonės, įstaigos, organizacijos ar kitos organizacinės struktūros komercinė arba
+                        kita paslaptis, neplatinama už priimančios įmonės, įstaigos, organizacijos ar kitos
+                        organizacinės struktūros ribų;
+                    </p>
+                    <p>
+                        2.7. informuoti savanorišką praktiką atliekantį asmenį, kad Užimtumo įstatymo 10 straipsnio 4
+                        dalyje nustatyta tvarka sveikatos draudimu ir nelaimingų atsitikimų darbe ir profesinių ligų
+                        socialiniu draudimu valstybės lėšomis jis bus apdraustas tik savanoriškos praktikos atlikimo
+                        (šios sutarties galiojimo) laikotarpiu;
+                    </p>
+                    <p>
+                        2.8. likus ne mažiau kaip 1 darbo dienai iki numatytos savanoriškos praktikos pradžios,
+                        Valstybinio socialinio draudimo fondo valdybos prie Socialinės apsaugos ir darbo ministerijos
+                        (toliau – Valstybinio socialinio draudimo fondo valdyba) teritoriniam skyriui pateikti pranešimą
+                        apie savanoriškos praktikos pradžią;
+                    </p>
+                    <p>
+                        2.9. ne vėliau kaip per 3 darbo dienas pateikti Valstybinio socialinio draudimo fondo valdybos
+                        teritoriniam skyriui pranešimą apie savanoriškos praktikos pabaigą, kai savanoriškos praktikos
+                        sutartis pasibaigia arba yra nutraukiama;
+                    </p>
+                    {%if extra_text != '' %}
+                        <p>
+                            2.10. papildomi priimančios įmonės, įstaigos, organizacijos ar kitos organizacinės struktūros
+                            įsipareigojimai – {{ extra_text_html }}.
+                        </p>
+                    {% endif %}
+                    <p>
+                        3. Savanorišką praktiką atliekantis asmuo įsipareigoja:
+                    </p>
+                    <p>
+                        3.1. vykdyti savanoriškos praktikos metu gautas užduotis;
+                    </p>
+                    <p>
+                        3.2. neatvykęs atlikti savanoriškos praktikos priimančioje įmonėje, įstaigoje, organizacijoje ar
+                        kitoje organizacinėje struktūroje, nedelsdamas pranešti apie tai savanoriškos praktikos vadovui,
+                        nurodyti priežastį, o laikinojo nedarbingumo atveju – pateikti pranešimą apie išduotą
+                        elektroninį nedarbingumo pažymėjimą ar elektroninį nėštumo ir gimdymo atostogų pažymėjimą arba
+                        pateikti medicininę pažymą (forma 094/a);
+                    </p>
+                    <p>
+                        3.3. laikytis priimančios įmonės, įstaigos, organizacijos ar kitos organizacinės struktūros
+                        nuostatų (įstatų) ir darbo tvarkos taisyklių, laikyti paslaptyje priimančios įmonės, įstaigos,
+                        organizacijos ar kitos organizacinės struktūros komercines ir kitas paslaptis bei informaciją,
+                        kurią nurodo priimanti įmonė, įstaiga, organizacija ar kita organizacinė struktūra, pagal šios
+                        sutarties 2.6 papunktį;
+                    </p>
+                    <p>
+                        3.4. tausoti priimančios įmonės, įstaigos, organizacijos ar kitos organizacinės struktūros
+                        turtą, atlyginti padarytą materialinę žalą;
+                    </p>
+                    <p>
+                        3.5. laikytis darbuotojų saugos ir sveikatos bei priešgaisrinės apsaugos taisyklių reikalavimų;
+                    </p>
+                    {% if text_5 != '' %}
+                        <p>
+                            3.6. papildomi savanorišką praktiką atliekančio asmens įsipareigojimai – {{ text_5 }}.
+                        </p>
+                    {% endif %}
+                    <h3>III. BAIGIAMOSIOS NUOSTATOS</h3>
+                    <p>
+                        4. Ši sutartis gali būti pakeista tik rašytiniu abiejų šalių susitarimu. Sutarties pakeitimai
+                        yra neatsiejama šios sutarties dalis.
+                    </p>
+                    <p>
+                        5. Ši sutartis gali būti nutraukiama:
+                    </p>
+                    <p>
+                        5.1. vienašališkai, jei viena iš šalių pažeidžia šioje sutartyje nustatytus įsipareigojimus, jų
+                        nevykdo arba vykdo netinkamai;
+                    </p>
+                    <p>
+                        5.2. šalių susitarimu, jei tokį susitarimą lėmė nenumatytos, objektyvios ir motyvuotos
+                        priežastys.
+                    </p>
+                    <p>
+                        6. Sutarties šalis praneša kitai sutarties šaliai apie sutarties nutraukimą ne vėliau kaip prieš
+                        {{ int_1 }} dienas (-ų).
+                    </p>
+                    <p>
+                        7. Visi ginčai, kurių sutarties šalys negali išspręsti geranoriškai ir bendru sutarimu,
+                        sprendžiami teismo tvarka.
+                    </p>
+                    <p>
+                        8. Ši sutartis sudaryta dviem egzemplioriais, turinčiais vienodą teisinę galią, po vieną
+                        kiekvienai sutarties šaliai.
+                    </p>
+                </div>
+            </field>
+            <field name="name">Savanoriškos praktikos sutartis</field>
+            <field name="footer" type="html">
+                <div style="padding-left: 20px; page-break-inside: avoid;">
+                    <h3>IV. ŠALIŲ REKVIZITAI</h3>
+                    <table style="border: 1px solid black;">
+                        <tr style="font-weight: bold; padding: 3px;">
+                            <th style="border-right: 1px solid black; max-width: 50%; width: 50%; padding: 5px;">
+                                Priimanti įmonė, įstaiga, organizacija ar kita organizacinė struktūra
+                            </th>
+                            <th style="padding: 5px;">Savanorišką praktiką atliekantis asmuo</th>
+                        </tr>
+                        <tr style="padding: 3px;">
+                            <td style="border-right: 1px solid black; padding: 5px;">{{ company_id }}</td>
+                            <td style="padding: 5px;">{{ employee_id2 }}</td>
+                        </tr>
+                        <tr style="padding: 3px;">
+                            <td style="border-right: 1px solid black; padding: 5px;">į.k. {{ company_code }}</td>
+                            <td style="padding: 5px;">a.k. {{ text_1 }}</td>
+                        </tr>
+                        <tr style="padding: 3px;">
+                            <td style="border-right: 1px solid black; padding: 5px;">{{ company_address }}</td>
+                            <td style="padding: 5px;">{{ text_2 }}</td>
+                        </tr>
+                        <tr style="padding: 3px;">
+                            <td style="border-right: 1px solid black; padding: 5px;">{{ manager_job_id }}</td>
+                            <td style="padding: 5px;"/>
+                        </tr>
+                        <tr style="padding: 3px;">
+                            <td style="border-right: 1px solid black; padding: 5px;">{{ manager_id }}</td>
+                            <td style="padding: 5px;"/>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.voluntary_internship_agreement_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine {
+                        float: right;
+                        width: 300px;
+                        text-align: justify;
+                        .img-rounded {
+                            width: 100px;
+                        }
+                    }
+                    h3 {
+                        font-weight: bold;
+                        text-align: center;
+                        font-size: 15px;
+                    }
+                    table {
+
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            </div>
+                            <p class="centras">
+                                <span style="font-weight: bold;">SAVANORIŠKOS PRAKTIKOS SUTARTIS</span><br/>
+                                <span>{{ date_document }} Nr. {% if document_number != '-' %}{{ document_number }}{% endif %}</span><br/>
+                                <span>{{ vieta }}</span>
+                            </p>
+                        </div>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.voluntary_internship_agreement_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="True"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+        </record>
+    </data>
+</odoo>

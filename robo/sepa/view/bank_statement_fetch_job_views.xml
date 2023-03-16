@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="tree_bank_statement_fetch_job" model="ir.ui.view">
+            <field name="name">bank.statement.fetch.job.tree</field>
+            <field name="model">bank.statement.fetch.job</field>
+            <field name="arch" type="xml">
+                <tree create="0" edit="1" delete="1"
+                      decoration-info="state in ['in_progress', 'in_progress_external']"
+                      decoration-warning="state == 'waiting'"
+                      decoration-success="state == 'succeeded'"
+                      decoration-danger="state == 'failed'">
+                    <field name="journal_id"/>
+                    <field name="statement_start_date"/>
+                    <field name="statement_end_date"/>
+                    <field name="execution_start_date"/>
+                    <field name="execution_end_date"/>
+                    <field name="user_name"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="form_bank_statement_fetch_job" model="ir.ui.view">
+            <field name="name">bank.statement.fetch.job.form</field>
+            <field name="model">bank.statement.fetch.job</field>
+            <field name="arch" type="xml">
+                <form edit="0" create="0" delete="0">
+                    <header>
+                        <button name="reset_state" type="object"
+                                string="Atstatyti būseną" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="Pagrindinė informacija">
+                            <field name="journal_id"/>
+                            <field name="statement_start_date"/>
+                            <field name="statement_end_date"/>
+                            <field name="execution_start_date"/>
+                            <field name="execution_end_date"/>
+                            <field name="user_name"/>
+                            <field name="error_message"/>
+                        </group>
+                        <group string="Gautas failas"
+                               attrs="{'invisible': [('fetched_file', '=', False)]}">
+                            <field name="fetched_file" filename="fetched_file_name"/>
+                            <field name="fetched_file_name" invisibl="1"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_bank_statement_fetch_job" model="ir.actions.act_window">
+            <field name="name">Bankinio sinchronizavimo darbai</field>
+            <field name="res_model">bank.statement.fetch.job</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="tree_bank_statement_fetch_job"/>
+        </record>
+        <menuitem id="menu_bank_statement_fetch_job"
+                  action="action_open_bank_statement_fetch_job"
+                  string="Bankinio sinchronizavimo darbai"
+                  parent="account.menu_finance_configuration"
+                  sequence="4"/>
+    </data>
+</odoo>

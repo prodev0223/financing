@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ExportButtons">
+        <div class="export-button-container dropdown">
+            <button class="dynamic-report-header-button btn-primary dropdown-toggle" type="button" id="pdf"
+                    style="margin-right: 5px;">
+                <span class="fa fa-download" style="margin-right: 5px;"/>.PDF
+            </button>
+            <button class="dynamic-report-header-button btn-primary dropdown-toggle" type="button" id="xlsx"
+                    style="margin-right: 5px;">
+                <span class="fa fa-download" style="margin-right: 5px;"/>.XLSX
+            </button>
+        </div>
+    </t>
+
+    <t t-name="ApplyFiltersButton">
+        <button type="button" id="filter_apply_button" class="dynamic-report-header-button btn-primary"
+                action="apply_filter"
+            style="position: relative;">
+            <i class="fa fa-refresh"/> Refresh
+        </button>
+    </t>
+
+    <t t-name="SelectionFilter">
+        <div t-attf-class="dynamic-report-header-button select-filter-button py-search-#{filter_field.name}">
+            <a type="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <t t-esc="filter_field.string"/>
+                <span class="fa fa-caret-down" style="margin-left: 5px;"/>
+            </a>
+            <select t-attf-class="dropdown-menu selection-filters-menu #{filter_field.name}-multiple"
+                    t-attf-multiple="#{filter_field.allow_selecting_multiple ? 'multiple':False}">
+                <t t-foreach="filter_field.list_of_values" t-as="filter_option">
+                    <option t-attf-value="{{filter_option[0]}}">
+                        <t t-esc="filter_option[1]"/>
+                    </option>
+                </t>
+            </select>
+        </div>
+    </t>
+
+    <t t-name="NumberFilter">
+        <div t-attf-class="number-filter-container">
+            <span><t t-esc="filter_field.string"/></span>
+            <input type="text" t-attf-class="#{filter_field.name}-input"/>
+        </div>
+    </t>
+
+    <t t-name="DateRangeSelection">
+        <span class="filter-apply-button">Period</span>
+        <div class="date-range-input-container">
+            <select class="dropdown-menu selection-filters-menu date_filter-multiple dynamic-report-input form-control date-range-input">
+                <option value=""></option>
+                <option value="today">Today</option>
+                <option value="this_week">This Week</option>
+                <option value="this_month">This Month</option>
+                <option value="this_quarter">This Quarter</option>
+                <option value="this_fiscal_year">This Year</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="last_week">Last Week</option>
+                <option value="last_month">Last Month</option>
+                <option value="last_quarter">Last Quarter</option>
+                <option value="last_financial_year">Last Year</option>
+            </select>
+        </div>
+    </t>
+
+    <t t-name="DateFieldFilter">
+        <div class="date-range-container">
+            <span t-esc="filter_field.string"/>
+            <input type="text" t-attf-id="#{filter_field.name}"
+                   t-attf-class="o_datepicker date dynamic-report-input form-control dynamic_report_datepicker"/>
+        </div>
+    </t>
+
+    <t t-name="DynamicReportFilterSection">
+            <div><h2 class="report-name"><t t-esc="widget.displayName"/></h2></div>
+            <div>
+                <div class="dynamic-report-date-filters">
+                    <t t-if="widget.headerDateSections">
+                        <div class="date-range-container">
+                            <t t-foreach="widget.headerDateSections" t-as="headerDateSection">
+                                <t t-raw="headerDateSection"/>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+                <t t-call="ApplyFiltersButton"/>
+            </div>
+            <t t-call="ExportButtons"/>
+            <div>
+                <t t-if="widget.headerFilterSections">
+                    <div class="dynamic-report-other-filters">
+                        <t t-foreach="widget.headerFilterSections" t-as="headerFilterSection">
+                            <t t-raw="headerFilterSection"/>
+                        </t>
+                        <t t-if="widget.groupByData.length">
+                            <div t-attf-class="dynamic-report-header-button select-filter-button dynamic-report-group-by-button">
+                                <a type="button" class="dropdown-toggle" data-toggle="dropdown">
+                                    Group By
+                                    <span class="fa fa-caret-down" style="margin-left: 5px;"/>
+                                </a>
+                                <select t-attf-class="dropdown-menu py-group-by-menu" multiple="multiple">
+                                    <t t-foreach="widget.groupByData" t-as="groupByField">
+                                        <option t-attf-value="{{groupByField['id']}}">
+                                            <t t-esc="groupByField['name']"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+                <t t-if="widget.enableReportSettings">
+                     <a href="#" id="report_settings"><i class="fa fa-cog"/></a>
+                </t>
+            </div>
+    </t>
+</templates>

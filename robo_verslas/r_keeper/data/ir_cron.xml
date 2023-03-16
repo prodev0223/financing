@@ -1,0 +1,65 @@
+<odoo>
+    <data noupdate="1">
+        <!--Cron Jobs-->
+        <record id="cron_fetch_r_keeper_data" model="ir.cron">
+            <field name="name">rKeeper: Fetch data</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">r.keeper.data.import</field>
+            <field name="function">cron_fetch_r_keeper_data</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=01)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_process_imported_data" model="ir.cron">
+            <field name="name">rKeeper: Process imported data</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">r.keeper.data.import</field>
+            <field name="function">cron_process_imported_data</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=02)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_import_about_failed_sales" model="ir.cron">
+            <field name="name">rKeeper: Inform about failed sales</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">r.keeper.sale.line</field>
+            <field name="function">cron_import_about_failed_sales</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=9)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_produce_sales_small_batches" model="ir.cron">
+            <field name="name">rKeeper Sales: Produce in small batches</field>
+            <field name="interval_number">20</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">r.keeper.data.import</field>
+            <field name="function">cron_produce_sales_small_batches</field>
+            <field name="nextcall"
+                   eval="(DateTime.now()).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_check_pending_export_state" model="ir.cron">
+            <field name="name">rKeeper: Check pending export state</field>
+            <field name="interval_number">10</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">r.keeper.data.export</field>
+            <field name="function">cron_check_pending_export_state</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=02)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

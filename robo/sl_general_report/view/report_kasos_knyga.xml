@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <report
+                id="report_kasos_knyga"
+                model="report.sl_general_report.report_kasos_knyga"
+                string="Kasos knyga"
+                report_type="qweb-html"
+                name="sl_general_report.report_kasos_knyga_template"
+                file="sl_general_report.report_kasos_knyga_template"
+        />
+        <!--<template id="report_kasos_orderis_template">-->
+            <!--<t t-call="report.html_container">-->
+                <!--<t t-foreach="docs" t-as="doc">-->
+                    <!--<t t-lang="doc.company_id.partner_id.lang"-->
+                       <!--t-call="l10n_lt.report_kasos_orderis_template_document"/>-->
+                <!--</t>-->
+            <!--</t>-->
+        <!--</template>-->
+        <template id="report_kasos_knyga_template">
+            <style type="text/css">
+            body.container {
+            margin-left: 7px !important;
+            }
+            h3 {
+            text-align: center;
+            }
+            .centras{
+            text-align: center;
+            margin-left:auto;
+            margin-right:auto;
+            }
+            .virsus{
+            border-top: 1px solid black;
+            }
+            .desine{
+            float: right;
+            width: 400px;
+            text-align: justify
+            }
+            .lentele{
+            border: 1px solid black;
+            }
+            .tr, th, td{
+            padding-left: 5px;
+            border: 1px solid black;
+            border-color:black;
+            border-bottom-width:1px;
+            }
+            .rotate{
+            transform: rotate(-90deg);
+            transform-origin: 0% 0% 0;
+            }
+            .line-header {
+            margin-top: 15px;
+            position:relative;
+            }
+            .line-header:before {
+                position: absolute;
+                display:block;
+                top:0;
+                left:0;
+                bottom:0;
+                content: attr(title);
+                background-color:#FFF;
+                color:#FFF;
+                z-index:-1;
+                padding-right:.5em;
+                }
+            .line-header::after {
+                position:absolute;
+                content:'';
+                display: block;
+                left:0;
+                right:0;
+                top:50%;
+                background-color:#555;
+                height:1px;
+                z-index:-2;
+                }
+            </style>
+            <t t-call="report.html_container">
+                <div class="page xls_front" id="main">
+                    <t t-set="o" t-value="doc"/>
+                    <div class="centras">
+                        <table style="margin-left:auto; margin-right:auto; border-style:none" width="20%" align="left">
+                            <tr style="border-style:none">
+                                <td align="left" style="border-style:none">
+                                    <span t-esc="company.name"/>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td align="left" style="border-style:none">
+                                    <span t-esc="company.company_registry"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table style="border-style:none" class="centras">
+                            <tr style="border-style:none" align="center">
+                                <strong>
+                                    <td style="border-style:none">KASOS KNYGA</td>
+                                </strong>
+                            </tr>
+                            <tr style="border-style:none" align="center"><td style="border-style:none"> Kasa už <t t-esc="date_from"/> iki <t t-esc="date_to"/></td></tr>
+                        </table>
+                    </div>
+                    <p/>
+
+                    <table class="table table-bordered mb32 main_table" style="table-layout:auto; border-style:none">
+                        <thead>
+                            <tr style="border-color:black; border-bottom-width:1px">
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;"><span>Kasos <br/>orderio Nr.</span></td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Data</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Iš ko gauta arba <br/>kam išduota</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Koresp.<br/>sąsk.</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Pajamos</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Išlaidos</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Likutis</td>
+                                <t t-if="include_canceled">
+                                    <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">
+                                        Atšaukta
+                                    </td>
+                                </t>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="page-break-inside: avoid;">
+                                <td style="border-color:black; border-bottom-width:1px"/>
+                                <td style="border-color:black; border-bottom-width:1px" t-esc="starting_line['date']"/>
+                                <td style="border-color:black; border-bottom-width:1px">Likutis laikotarpio pradžioje</td>
+                                <td style="border-color:black; border-bottom-width:1px"/>
+                                <td style="border-color:black; border-bottom-width:1px">x</td>
+                                <td style="border-color:black; border-bottom-width:1px">x</td>
+                                <td style="border-color:black; border-bottom-width:1px" t-esc="starting_line['balance']"/>
+                                <t t-if="include_canceled">
+                                    <td style="border-color:black; border-bottom-width:1px">-</td>
+                                </t>
+                            </tr>
+                            <tr t-foreach="lines" t-as="line" style="page-break-inside: avoid;">
+                                <td t-esc="line['number']" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="line['date']" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="line['partner_name']" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="line['account_name']" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="line['income']" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="line['expense']" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="round(line['balance'],2)" style="border-color:black; border-bottom-width:1px"/>
+                                <t t-if="include_canceled">
+                                    <t t-if="line['canceled']">
+                                        <td style="border-color:black; border-bottom-width:1px">Taip</td>
+                                    </t>
+                                    <t t-else="">
+                                        <td style="border-color:black; border-bottom-width:1px">Ne</td>
+                                    </t>
+                                </t>
+                            </tr>
+                            <tr style="border-style:none; page-break-inside: avoid;">
+                                <td style="border-style:none"/>
+                                <td style="border-style:none"/>
+                                <td style="border-style:none"/>
+                                <td style="border-style:none; text-align:right">Iš viso:</td>
+                                <td t-esc="total_income" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="total_expense" style="border-color:black; border-bottom-width:1px"/>
+                                <td style="border-color:black; border-bottom-width:1px">x</td>
+                            </tr>
+                            <tr style="border-style:none; page-break-inside: avoid;">
+                                <td style="border-style:none"/>
+                                <td style="border-style:none"/>
+                                <td style="border-style:none"/>
+                                <td style="border-style:none; text-align:right">Likutis laikotarpio pabaigoje:</td>
+                                <td style="border-color:black; border-bottom-width:1px">x</td>
+                                <td style="border-color:black; border-bottom-width:1px">x</td>
+                                <td t-esc="round(balance,2)" style="border-color:black; border-bottom-width:1px"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <span>Kasininkas: </span>
+                    <t t-if="company.cashier_id">
+                        <span t-esc="company.cashier_id.name"/>
+                    </t>
+                    <t t-if="company.cashier_id">
+                        <span style="text-decoration: underline; white-space: pre;">                   </span>
+                    </t>
+                    <br/>
+                    <span>Įrašus knygoje patikrinau ir priėmiau:</span>
+                    <br/>
+                    <span t-esc="num_in"/><span> pajamų ir</span>
+                    <br/>
+                    <span t-esc="num_out"/><span> Išlaidų</span>
+                    <br/>
+                    <span>dokumentus</span>
+                    <br/>
+                    <span/> <span t-esc="company.cashier_accountant_id and company.cashier_accountant_id.name or company.vadovas.name"/>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

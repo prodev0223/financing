@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+          <xpath expr="//tbody[@class='invoice_tbody'][1]" position="replace">
+            <tbody class="invoice_tbody">
+                <tr t-foreach="o.invoice_line_ids" t-as="l" style=" white-space: nowrap;page-break-inside: avoid">
+                    <td><span t-field="l.name"/></td>
+                    <td class="text-center">
+                        <span t-field="l.uos_id" groups="product.group_uom"/>
+                    </td>
+                    <td class="text-right">
+                        <span t-field="l.quantity"/>
+                    </td>
+                    <td class="text-right">
+                        <t t-if="not l.invoice_id.free_sample">
+                            <t t-if="o.state not in ['proforma', 'proforma2']"><span t-field="l.price_unit"/></t>
+                            <t t-if="o.state in ['proforma', 'proforma2']"><span t-field="l.price_unit_tax_included"/></t>
+                        </t>
+                        <t t-if="l.invoice_id.free_sample"><span t-field="l.sale_order_lines_price_unit"  /></t>
+                    </td>
+                    <td class="text-right" groups="sale.group_discount_per_so_line"><span t-field="l.discount"/></td>
+                    <td t-if="len(o.tax_line_ids) &gt; 1 and o.state not in ['proforma', 'proforma2']" class="text-right">
+                        <span t-esc="', '.join(map(lambda x: x.description if x.description else x.name, l.invoice_line_tax_ids))"/>
+                    </td>
+                    <td class="text-right">
+                        <t t-if="not l.invoice_id.free_sample">
+                            <t t-if="o.state not in ['proforma', 'proforma2']"><span t-field="l.price_subtotal" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                            <t t-if="o.state in ['proforma', 'proforma2']"><span t-field="l.total_with_tax_amount" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                        </t>
+                        <t t-if="l.invoice_id.free_sample"><span t-field="l.sale_order_line_price_subtotal" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                    </td>
+                </tr>
+            </tbody>
+          </xpath>
+            <xpath expr="//table[@class='table table-condensed'][2]" position="replace">
+                <table class="table table-condensed" style="margin-top:15px; white-space: nowrap;page-break-inside: avoid">
+                        <tr class="border-black" style="white-space: nowrap;page-break-inside: avoid">
+                            <td><strong>Iš viso be PVM:</strong></td>
+                            <td class="text-right">
+                                <t t-if="not o.free_sample"><span t-field="o.amount_untaxed" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                                <t t-if="o.free_sample"><span t-field="o.sale_order_amount_total" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                            </td>
+                        </tr>
+                        <tr style="white-space: nowrap; page-break-inside: avoid">
+                            <td style="white-space: normal"><span t-esc="', '.join([ lt.tax_id.description if lt.tax_id and lt.tax_id.description else lt.name or '' for lt in o.tax_line_ids ]) or 'PVM 0%:'"/></td>
+                            <td class="text-right">
+                                <span t-field="o.amount_tax" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black" style="white-space: nowrap;page-break-inside: avoid">
+                            <td><strong>Suma su PVM:</strong></td>
+                            <td class="text-right">
+                                <t t-if="not o.free_sample"><span t-field="o.amount_total" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                                <t t-if="o.free_sample"><span t-field="o.sale_order_amount_total" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                            </td>
+                        </tr>
+                    </table>
+            </xpath>
+            <xpath expr="//table[@class='table table-condensed'][3]" position="replace">
+                <table class="table table-condensed" style="margin-top:15px; white-space: nowrap;page-break-inside: avoid">
+                        <tr class="border-black">
+                            <td><strong>Iš viso be PVM:</strong></td>
+                            <td class="text-right">
+                                <t t-if="not o.free_sample"><span t-field="o.amount_untaxed" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                                <t t-if="o.free_sample"><span t-field="o.sale_order_amount_total" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: normal"><span t-esc="', '.join([ lt.tax_id.description if lt.tax_id and lt.tax_id.description else lt.name or '' for lt in o.tax_line_ids ]) or 'PVM 0%:'"/></td>
+                            <td class="text-right">
+                                <span t-field="o.amount_tax" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black">
+                            <td><strong>Suma su PVM:</strong></td>
+                            <td class="text-right">
+                                <t t-if="not o.free_sample"><span t-field="o.amount_total" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                                <t t-if="o.free_sample"><span t-field="o.sale_order_amount_total" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></t>
+                            </td>
+                        </tr>
+                    </table>
+            </xpath>
+            <xpath expr="//table[@class='table table-condensed'][4]" position="replace">
+                <table class="table table-condensed">
+                        <thead>
+                            <tr style="white-space: nowrap;page-break-inside: avoid">
+                                <th>Tax</th>
+                                <th class="text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.tax_line_ids" t-as="t" style="white-space: nowrap;page-break-inside: avoid">
+                                <td><span t-field="t.name"/></td>
+                                <td class="text-right">
+                                    <span t-field="t.amount" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </xpath>
+        </template>
+    </data>
+</odoo>

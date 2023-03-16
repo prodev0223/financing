@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="unreconciled_payment_reminder_view" model="ir.ui.view">
+            <field name="name">unreconciled.payment.reminder.view</field>
+            <field name="model">advance.payment.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Nesudengti mokėjimai">
+                    <sheet>
+                        <header>
+                            <button name="form_lines" type="object" string="Formuoti" class="oe_highlight"/>
+                            <button name="get_report" type="object" string="Spausdinti" class="oe_highlight"/>
+                            <button name="get_report" type="object" string="Eksportuoti excel" class="oe_highlight" context="{'xls_report': 1}"/>
+                        </header>
+                        <group>
+                            <field name="date"/>
+                            <field name="type"/>
+                            <field name="account_ids" widget="many2many_tags"/>
+                            <field name="extended_mode"/>
+                            <field name="line_ids">
+                                <tree>
+                                    <field name="partner_id"/>
+                                    <field name="description"/>
+                                    <field name="dates"/>
+                                    <field name="amount"/>
+                                    <field name="amount_residual"/>
+                                    <field name="currency_id"/>
+                                    <field name="reconcile_possible"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_unreconciled_payment_reminder" model="ir.actions.act_window">
+            <field name="name">Nesudengtų mokėjimų priminimai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">advance.payment.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="False"/>
+            <!--<field name="target">new</field>-->
+        </record>
+
+        <menuitem id="menu_unreconciled_payment_reminder"
+                  parent="menu_reminders"
+                  action="action_unreconciled_payment_reminder"
+                  sequence="1"
+                  groups="account.group_account_manager"/>
+
+    </data>
+</odoo>

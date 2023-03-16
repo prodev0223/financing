@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="kuro_nurasymo_aktas_form" model="ir.ui.view">
+            <field name="inherit_id" ref="e_document.acts_base_view"/>
+            <field name="model">e.document</field>
+            <field name="name">Kuro nurašymas</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='extra_text']" position="before">
+                    <field name="int_1" string="Kuro likutis (litrais)" required="True" invisible="0"/>
+                    <field name="date_1" string="Likučio data" required="True" invisible="0" attrs="{'readonly': ['|', ('lock_date', '=', True), ('state', '!=', 'draft')]}"/>
+                    <field name="lock_date" invisible="True"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="kuro_nurasymo_aktas_action" model="ir.actions.act_window">
+            <field name="name">Kuro nurašymo aktas</field>
+            <field name="res_model">e.document</field>
+            <field name="view_id" ref="e_document.kuro_nurasymo_aktas_form"/>
+            <field name="context">{
+                u'default_document_type': u'act',
+                u'rec_template_id': u'kuro_nurasymo_aktas_template',
+                u'e_document_view_type': u'rigid'
+            }</field>
+        </record>
+
+
+        <record id="kuro_nurasymo_aktas_menu" model="ir.ui.menu">
+            <field name="name">Kuro nurašymo aktas</field>
+            <field name="action" ref="e_document.kuro_nurasymo_aktas_action"/>
+            <field name="parent_id" ref="e_document.act"/>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="tags">kuras, kuro, nurašyti, nurasyti, nurasymas, nurašymas, degalai, benzinas, dyzelinas</field>
+            <field name="groups_id"
+                   eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),
+                   ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+
+        <record id="kuro_nurasymo_aktas_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Šiuo aktu patvirtinu, kad <span style="font-style: italic">ROBOLABS</span> sistemoje pateiktuose
+                    pirkimo dokumentuose nurodytas kuro kiekis buvo ar bus sunaudotas įmonės veikloje. Įmonė turi tą
+                    patvirtinančius dokumentus ir visas sunaudotas kuras turi būti laikomas įmonės sąnaudomis pagal
+                    LR PMĮ 17 str. 1 dalies nuostatas.
+                    <br/>
+                    Nesunaudoto kuro likutis {{ date_string(date_1, 'ko', 'ko', 'kam') }} buvo {{ int_1 }}
+                    {% if int_1 | int % 10 == 0 or (10 &lt; int_1 | int % 100 &lt; 20) %}
+                    litrų.
+                    {% elif int_1 | int % 10 == 1 %}
+                    litras.
+                    {% else %}
+                    litrai.
+                    {% endif %}
+                    <br/><br/>
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Kuro nurašymo aktas</field>
+            <field name="footer" type="html">
+                <div style="display: flex; justify-content: flex-end; width: 100%; float:right;">
+                    <table width="55%" align="right" style="float: right; margin-top:25px; border-collapse: separate;
+                        border-spacing: 20px 0;">
+                        <tr style="border:none">
+                            <td style="border:none; text-align: center; width: 70%;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                            <td style="border:none;"><span><br/></span></td>
+                        </tr>
+                        <tr style="border:none;">
+                            <td style="border:none; border-top: 1px solid black; text-align:center;" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                            <td style="border:none; border-top: 1px solid black; text-align:center;" align="center">
+                                <span>(parašas)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.kuro_nurasymo_aktas_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                            width: 100px;
+                        }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>AKTAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>KURO NURAŠYMO AKTAS</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                            text-align: center;
+                            margin-left:auto;
+                            margin-right:auto;
+                        }
+                        .desine{
+                            float: right;
+                            width: 300px;
+                            text-align: justify
+                            .img-rounded{
+                                width: 100px;
+                            }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>AKTAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                                <br/>
+                                <span>KURO NURAŠYMO AKTAS</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ vieta }}</span>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        Šiuo aktu patvirtinu, kad <span style="font-style: italic">ROBOLABS</span> sistemoje pateiktuose
+                        pirkimo dokumentuose nurodytas kuro kiekis buvo ar bus sunaudotas įmonės veikloje. Įmonė turi tą
+                        patvirtinančius dokumentus ir visas sunaudotas kuras turi būti laikomas įmonės sąnaudomis pagal
+                        LR PMĮ 17 str. 1 dalies nuostatas.
+                        <br/>
+                        Nesunaudoto kuro likutis {{ date_string(date_1, 'ko', 'ko', 'kam') }} buvo {{ int_1 }}
+                        {% if int_1 | int % 10 == 0 or (10 &lt; int_1 | int % 100 &lt; 20) %}
+                        litrų.
+                        {% elif int_1 | int % 10 == 1 %}
+                        litras.
+                        {% else %}
+                        litrai.
+                        {% endif %}
+                        <br/><br/>
+                        {{ extra_text_html }}
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; width: 100%; float:right;">
+                        <table width="55%" align="right" style="float: right; margin-top:25px; border-collapse: separate;
+                            border-spacing: 20px 0;">
+                            <tr style="border:none">
+                                <td style="border:none; text-align: center; width: 70%;">
+                                    <span>{{manager_job_id}} {{ manager_id }}</span>
+                                </td>
+                                <td style="border:none;"><span><br/></span></td>
+                            </tr>
+                            <tr style="border:none;">
+                                <td style="border:none; border-top: 1px solid black; text-align:center;" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                                <td style="border:none; border-top: 1px solid black; text-align:center;" align="center">
+                                    <span>(parašas)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.kuro_nurasymo_aktas_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+        </record>
+    </data>
+</odoo>

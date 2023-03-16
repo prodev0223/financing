@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="isakymas_del_atleidimo_is_darbo_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl atleidimo iš darbo</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="possible_negative_holiday_deduction" invisible="1"/>
+                    <field name="request_field_type" invisible="1"/>
+                    <field name="is_severance_pay_needed" invisible="1"/>
+                    <field name="allow_deducting_overused_holidays_from_salary" invisible="1"/>
+                </xpath>
+                <xpath expr="//header" position="after">
+                    <field name="show_ending_fixed_term_contract_box" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:6px;" colspan="4"
+                         attrs="{'invisible': [('show_ending_fixed_term_contract_box', '=', False)]}">
+                        In case You want to extend the work relation for an indefinite duration -
+                        <button class="oe_highlight" name="switch_contract_type_change_document" string="Click here"
+                                type="object" context="{'action': 'change_type', 'current': 'terminate'}"/>
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:6px;" colspan="4"
+                         attrs="{'invisible': [('show_ending_fixed_term_contract_box', '=', False)]}">
+                        In case You want to extend the term of the fixed contract -
+                        <button class="oe_highlight" name="switch_contract_type_change_document" string="Click here"
+                                type="object" context="{'action': 'extend', 'current': 'terminate'}"/>
+                    </div>
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px; margin-top:2px;"
+                         colspan="4" attrs="{'invisible': [('state','!=','e_signed')]}"
+                         groups="robo_basic.group_robo_premium_manager">
+                        DARBUOTOJŲ PRAŠYMUS, ĮSPĖJIMUS DĖL DARBO SUTARTIES NUTRAUKIMO BEI ĮSAKYMUS DĖL DARBO SUTARČIŲ
+                        NUTRAUKIMO
+                        REKOMENDUOJAMA PAPILDOMAI ATSISPAUSDINTI, PASIRAŠYTI BEI SAUGOTI PRIE NUTRAUKIAMOS DARBO
+                        SUTARTIES!
+                    </div>
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px; margin-top:2px;"
+                         colspan="4" attrs="{'invisible': [('possible_negative_holiday_deduction', '=', False)]}">
+                        ATLEIDŽIAMAS DARBUOTOJAS TURI NEIGIAMĄ ATOSTOGŲ LIKUTĮ ATLEIDIMO DATAI. ATLEIDŽIANT DARBUOTOJĄ
+                        JO INICIATYVA -
+                        YRA GALIMYBĖ IŠSKAIČIUOTI NEIGIAMĄ ATOSTOGŲ LIKUTĮ (SUSIGRĄŽINTI PINIGUS) IŠ JO DARBO
+                        UŽMOKĘSČIO.
+                        NORINT TAI PADARYTI, PASIRAŠIUS DOKUMENTĄ INFORMUOKITE BUHALTERĮ DOKUMENTO APAČIOJE.
+                    </div>
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px; margin-top:2px;"
+                         colspan="4" attrs="{'invisible': [('is_severance_pay_needed', '=', False)]}">
+                        PAGAL PASIRINKTĄ DK STRAIPSNĮ DARBUOTOJUI PRIKLAUSO IŠEITINĖ IŠMOKA. SUSISIEKITE SU BUHALTERIU DĖL IŠMOKOS APSKAIČIAVIMO.
+                    </div>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="employee_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) Vardas Pavardė" required="True" invisible="0"/>
+                    </group>
+                    <group>
+                        <field name="dk_nutraukimo_straipsnis" options="{'no_create': True, 'no_open': True}"
+                               string="DK straipsnis pagal kurį nutraukiama" required="True" invisible="0"/>
+                        <field name="dk_detalizacija" options="{'no_create': True, 'no_open': True}"
+                               string="DK straipsnio detalizacija" required="0" invisible="0"/>
+                        <field name="date_2" options="{'no_create': True, 'no_open': True}"
+                               string="Prašymo data" required="0" attrs="{'invisible': [('request_field_type', '!=', 'request')]}"/>
+                        <field name="date_2" options="{'no_create': True, 'no_open': True}"
+                               string="Susitarimo data" required="0" attrs="{'invisible': [('request_field_type', '!=', 'agreement')]}"/>
+                        <field name="job_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) pareigos" required="0" invisible="1"/>
+                        <field name="bool_1" string="Deduct overused leaves from final salary"
+                               attrs="{'invisible': [('allow_deducting_overused_holidays_from_salary', '=', False)]}"/>
+                        <field name="date_1" options="{'no_create': True, 'no_open': True}"
+                               string="Nuo kada nutraukti (paskutinė darbo diena)" required="True"
+                               invisible="0"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_atleidimo_is_darbo_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl atleidimo iš darbo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'isakymas_del_atleidimo_is_darbo_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.isakymas_del_atleidimo_is_darbo_form"/>
+        </record>
+
+
+        <record id="isakymas_del_atleidimo_is_darbo_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl atleidimo iš darbo</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.isakymas_del_atleidimo_is_darbo_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas,atleidimas iš darbo</field>
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+        <record id="isakymas_del_atleidimo_is_darbo_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie pasirašytus atleidimo iš darbo įsakymus</field>
+            <field name="description">Informuoti, kuomet būna pasirašomas atleidimo iš darbo įsakymas</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, [ref('robo_basic.group_robo_premium_manager'),
+                                                       ref('robo_basic.group_robo_hr_manager'),
+                                                       ])]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>e_documents</field>
+        </record>
+
+        <record id="isakymas_del_atleidimo_is_darbo_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Vadovaudamasis(-i) {{dk_tekstas}}
+                    {%if date_2 %}
+                        bei atsižvelgdamas(-a) į {{ date_2 }}
+                        {% if request_field_type == 'Susitarimas' %}
+                            susitarimą
+                        {% else %}
+                            prašymą
+                        {% endif %}
+                    {%endif%},
+                    a t l e i d ž i u {{ka(employee_id2, 'Aa')}} iš {{ko(job_id2, 'aa')}} pareigų nuo {{ date_1 }}
+                    (laikant šią datą paskutine darbo diena). {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl atleidimo iš darbo</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.isakymas_del_atleidimo_is_darbo_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS
+                                DĖL {{ko(employee_id2.upper(), 'AA')}} ATLEIDIMO IŠ DARBO
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.isakymas_del_atleidimo_is_darbo_workflow()</field>
+            <field name="date_from_field_name">date_1</field>
+            <field name="date_to_field_name">date_1</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="sign_mail_channel_ids" eval="[(4, ref('e_document.isakymas_del_atleidimo_is_darbo_mail_channel'))]"/>
+            <field name="date_lim_for_signing_field_name">date_1</field>
+        </record>
+    </data>
+</odoo>

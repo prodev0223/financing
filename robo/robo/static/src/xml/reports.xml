@@ -1,0 +1,208 @@
+<template>
+    <t t-name="RoboReports">
+        <t t-if="widget.robo_reports_general">
+            <div class="robo_reports_buttons container mb32 mt32" t-if="widget.is_premium_manager">
+                <div class="row mb16 text-center">
+                    <h2 class="heading-text">Finansinės ataskaitos</h2>
+                </div>
+                <div class="report_section">
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_balance">
+                            <div class="icon">
+                                <span class="icon-balance"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Balansas</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_profit">
+                            <div class="icon">
+                                <span class="icon-page-break2"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Pelnas nuostolis</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_cash">
+                            <div class="icon">
+                                <span class="icon-bag-euro"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Pinigų srautai</a>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="robo_reports_buttons robo_activity_reports_buttons robo_management_buttons container mb32 mt32">
+                <div class="row mb16 text-center">
+                    <h2 class="heading-text">Veiklos valdymo ataskaitos</h2>
+                </div>
+                <div class="report_section" t-if="widget.is_premium_manager">
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_client_debt">
+                            <div class="icon">
+                                <span class="icon-warning"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Skolų ataskaitos</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_new_invoices">
+                            <div class="icon">
+                                <span class="icon-register"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Sąskaitų faktūrų registras</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_expenses">
+                            <div class="icon">
+                                <span class="icon-chart-growth"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Sąskaitų analitika</a>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="report_section mt16">
+                    <div class="reports-box  r-cursor" t-if="widget.robo_reports_general">
+                        <div class="robo_button_cashier">
+                            <div class="icon">
+                                <span class="icon-cashier"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Kasos knyga</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor"  t-if="widget.is_premium_manager">
+                        <div class="robo_button_general_ledger">
+                            <div class="icon">
+                                <span class="icon-book2"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Didžioji knyga</a>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="robo_reports_buttons robo_activity_reports_buttons container mb32 mt32"
+                 t-if="widget.is_hr_manager or widget.is_premium_manager">
+                <div class="row mb16 text-center">
+                    <h2 class="heading-text">Darbo užmokesčio ataskaitos</h2>
+                </div>
+                <div class="report_section">
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_payslips">
+                            <div class="icon">
+                                <span class="icon-users"></span>
+                                <span class="icon-cash-euro"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Atlyginimų suvestinė</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_timesheets">
+                            <div class="icon">
+                                <span class="icon-clock3"></span>
+                                <span class="icon-man2"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Laiko žiniaraštis</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_employee_other_payments">
+                            <div class="icon">
+                                <span class="icon-clipboard-text"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Kiti mokėjimai</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="report_section mt16">
+                        <div class="reports-box  r-cursor">
+                            <div class="robo_button_employee_holiday_accumulation">
+                                <div class="icon">
+                                    <span class="icon-users"></span>
+                                    <span class="icon-clipboard-text"></span>
+                                </div>
+                                <h3>
+                                    <a class="btn-header">Atostogų kaupinių apskaitymas</a>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="reports-box  r-cursor">
+                            <div class="robo_button_downtime">
+                                <div class="icon">
+                                    <span class="icon-calendar-user"></span>
+                                    <span class="icon-clipboard-text"></span>
+                                </div>
+                                <h3>
+                                    <a class="btn-header">Prastovų suvestinė</a>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="reports-box r-cursor">
+                            <div class="robo_button_hr_employee_work_norm_report_export">
+                                <div class="icon">
+                                    <span class="icon-users"></span>
+                                    <span class="icon-clock3"></span>
+                                </div>
+                                <h3>
+                                    <a class="btn-header">Work norm report</a>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="robo_reports_buttons robo_activity_reports_buttons container mb32 mt32"
+                 t-if="widget.is_premium_manager or widget.robo_front_statements">
+                <div class="row mb16 text-center">
+                    <h2 class="heading-text">Mokėjimai</h2>
+                </div>
+                <div class="report_section">
+                    <div class="reports-box  r-cursor" t-if="widget.is_premium_manager">
+                        <div class="robo_button_all_payables">
+                            <div class="icon">
+                                <span class="icon-list3"></span>
+                                <span class="icon-coin-euro"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Mokėtinos sumos</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor"
+                         t-if="widget.is_premium_manager or widget.robo_front_statements">
+                        <div class="robo_button_payments">
+                            <div class="icon">
+                                <span class="icon-credit-card"></span>
+                            </div>
+                            <h3>
+                                <a class="btn-header">Mokėjimų ruošiniai</a>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+        <div class="robo_reports_buttons robo_activity_reports_buttons"/>
+    </t>
+</template>

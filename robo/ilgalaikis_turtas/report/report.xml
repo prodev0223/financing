@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="action_ilgalaikio_turto_sarasas_report_action"
+                model="account.asset.asset"
+                string="Ilgalaikio turto sąrašas"
+                report_type="qweb-html"
+                name="ilgalaikis_turtas.robo_report_ilgalaikio_turto_sarasas"
+                file="Ilgalaikio turto sąrašas"
+                paperformat="report.paperformat_a4_landscape"
+        />
+        <record id="action_ilgalaikio_turto_sarasas_report_action" model="ir.actions.report.xml">
+            <field name="print_report_name">'ilgalaikis-'+time.strftime('%Y-%m-%d')+'.pdf'</field>
+        </record>
+        <template id="robo_report_ilgalaikio_turto_sarasas">
+            <t t-call="ilgalaikis_turtas.robo_report_ilgalaikio_turto_sarasas_document"
+               t-lang="company_id._context.get('force_lang') or company_id.partner_id.lang or 'lt_LT'"/>
+        </template>
+        <template id="robo_report_ilgalaikio_turto_sarasas_document">
+            <t t-call="report.html_container">
+                <div class="page xls_front" id="main">
+                    <t t-set="ultimate_start" t-value="1900-01-01"/>
+                    <t t-set="total_1" t-value="0.0"/>
+                    <t t-set="total_2" t-value="0.0"/>
+                    <t t-set="total_3" t-value="0.0"/>
+                    <t t-set="total_4" t-value="0.0"/>
+                    <t t-set="total_5" t-value="0.0"/>
+                    <t t-set="total_6" t-value="0.0"/>
+                    <t t-set="total_7" t-value="0.0"/>
+                    <t t-set="total_8" t-value="0.0"/>
+                    <style type="text/css">
+                        div.page{ page-break-after: always; }
+                        body{
+                        font-size: 13px;
+                        }
+                        table{
+                        font-size: 13px;
+                        }
+                    </style>
+                    <center>
+                        <img t-if="company_id.logo_web" t-att-src="'data:image/png;base64,%s' % company_id.logo_web"/>
+                        <p/>
+                        <span t-field="company_id.partner_id"/>
+                    </center>
+                    <div class="row">
+                        <div class="col-xs-12" style="text-align: center;">
+                            <p style="font-weight:bold">ILGALAIKIO TURTO SĄRAŠAS</p>
+                        </div>
+                         <div class="col-xs-12" style="text-align: center;">
+                            <p><span t-esc="date_from"/> - <span t-esc="date_to"/></p>
+                        </div>
+                    </div>
+                    <table class="table table-condensed main_table">
+                        <thead>
+                            <th>Inventorinis Nr.</th>
+                            <th>Pavadinimas</th>
+                            <th>Įsigijimo (pirkimo) data</th>
+                            <th>Likutis laikotarpio pradžioje</th>
+                            <th>Likutis laikotarpio pabaigoje</th>
+                            <th>Įsigijimo (pirkimo) kaina</th>
+                            <!--<th>Pradinė įsigijimo kaina</th>-->
+                            <th>Likvidacinė kaina</th>
+                            <th>Likutinė vertė laik. pradžioje</th>
+                            <th>Perkainavimai ir pagerinimai per laikotarpį</th>
+                            <th>Pardavimai ir nurašymai per laikotarpį</th>
+                            <th>Nusidėvėjimas per laikotarpį</th>
+                            <th>Likutinė vertė laik. pabaigoje</th>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="assets">
+                                <t t-value="0.0" t-set="total_cat_1"/>
+                                <t t-value="0.0" t-set="total_cat_2"/>
+                                <t t-value="0.0" t-set="total_cat_3"/>
+                                <t t-value="0.0" t-set="total_cat_4"/>
+                                <t t-value="0.0" t-set="total_cat_5"/>
+                                <t t-value="0.0" t-set="total_cat_6"/>
+                                <t t-value="0.0" t-set="total_cat_7"/>
+                                <t t-value="0.0" t-set="total_cat_8"/>
+                                <tr>
+                                    <td colspan="11" style="font-style:italic">
+                                        <span t-esc="assets[0].category_id.name"/>
+                                    </td>
+                                </tr>
+                                <t t-foreach="assets.with_context(date_from=date_from, date_to=date_to)" t-as="o">
+                                    <tr>
+                                        <t t-value="residual_start(o)" t-set="start_residual"/>
+                                        <t t-value="residual_end(o)" t-set="end_residual"/>
+                                        <t t-value="residual(o)" t-set="total_depreciation"/>
+                                        <t t-value="perkainavimai_f(o)" t-set="perkainavimai"/>
+                                        <t t-value="nurasymai_f(o)" t-set="nurasymai"/>
+                                        <t t-value="o.with_context(date_from=ultimate_start, date_to=prev_date).change_between_dates" t-set="previous_pagerinimai"/>
+                                        <td>
+                                            <span t-field="o.code"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.pirkimo_data"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="o.with_context(date=date_from).residual_quantity"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="o.with_context(date=date_to).residual_quantity"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="format(o.original_value)"/>
+                                        </td>
+                                        <!--<td>-->
+                                            <!--<span t-esc="format(o.value)"/>-->
+                                        <!--</td>-->
+                                        <!--<td>-->
+                                            <!--<span t-esc="format((o.original_value or o.value) + previous_pagerinimai)"/>-->
+                                        <!--</td>-->
+                                        <td>
+                                            <span t-esc="format(o.salvage_value)"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="format(start_residual)"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="format(perkainavimai)"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="format(nurasymai)"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="format(total_depreciation)"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="format(end_residual)"/>
+                                        </td>
+                                    </tr>
+                                    <t t-value="total_cat_1 + o.original_value" t-set="total_cat_1"/>
+                                    <!--<t t-value="total_cat_2 + (o.original_value or o.value) + previous_pagerinimai" t-set="total_cat_2"/>-->
+                                    <t t-value="total_cat_3 + o.salvage_value" t-set="total_cat_3"/>
+                                    <t t-value="total_cat_4 + start_residual" t-set="total_cat_4"/>
+                                    <t t-value="total_cat_5 + perkainavimai" t-set="total_cat_5"/>
+                                    <t t-value="total_cat_6 + nurasymai" t-set="total_cat_6"/>
+                                    <t t-value="total_cat_7 + total_depreciation" t-set="total_cat_7"/>
+                                    <t t-value="total_cat_8 + end_residual" t-set="total_cat_8"/>
+                                </t>
+
+                                <tr>
+                                    <td/>
+                                    <td colspan="4" style="font-style:italic">Viso (kategorijos)</td>
+                                    <td>
+                                        <span t-esc="format(total_cat_1)" style="font-style:italic"/>
+                                    </td>
+                                    <!--<td>-->
+                                        <!--<span t-esc="format(total_cat_2)" style="font-style:italic"/>-->
+                                    <!--</td>-->
+                                    <td>
+                                        <span t-esc="format(total_cat_3)" style="font-style:italic"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="format(total_cat_4)" style="font-style:italic"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="format(total_cat_5)" style="font-style:italic"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="format(total_cat_6)" style="font-style:italic"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="format(total_cat_7)" style="font-style:italic"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="format(total_cat_8)" style="font-style:italic"/>
+                                    </td>
+                                </tr>
+                                <t t-set="total_1" t-value="total_1+total_cat_1"/>
+                                <!--<t t-set="total_2" t-value="total_2+total_cat_2"/>-->
+                                <t t-set="total_3" t-value="total_3+total_cat_3"/>
+                                <t t-set="total_4" t-value="total_4+total_cat_4"/>
+                                <t t-set="total_5" t-value="total_5+total_cat_5"/>
+                                <t t-set="total_6" t-value="total_6+total_cat_6"/>
+                                <t t-set="total_7" t-value="total_7+total_cat_7"/>
+                                <t t-set="total_8" t-value="total_8+total_cat_8"/>
+                            </t>
+                            <tr>
+                                <td colspan="5" style="font-weight:bold">Iš viso</td>
+                                <td>
+                                    <span style="font-weight:bold" t-esc="format(total_1)"/>
+                                </td>
+                                <!--<td>-->
+                                    <!--<span style="font-weight:bold" t-esc="format(total_2)"/>-->
+                                <!--</td>-->
+                                <td>
+                                    <span style="font-weight:bold" t-esc="format(total_3)"/>
+                                </td>
+                                <td>
+                                    <span style="font-weight:bold" t-esc="format(total_4)"/>
+                                </td>
+                                <td>
+                                    <span style="font-weight:bold" t-esc="format(total_5)"/>
+                                </td>
+                                <td>
+                                    <span style="font-weight:bold" t-esc="format(total_6)"/>
+                                </td>
+                                <td>
+                                    <span style="font-weight:bold" t-esc="format(total_7)"/>
+                                </td>
+                                <td>
+                                    <span style="font-weight:bold" t-esc="format(total_8)"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <div style="float: left; width:30%">
+                        <table style="margin-left:auto; margin-right:auto; border-style:none">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; text-align:left">
+                                    Buhalteris(-ė)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="display:inline-block; width:30%">
+                        <table class="centras" align="center" width="40%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none">
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none;text-align:center">
+                                    <span>(parašas)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="float: right; width:30%">
+                        <table width="40%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto;text-align:center">
+                                    <span t-esc="accountant"/>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none;text-align:center">
+                                    <span>(vardas ir pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>

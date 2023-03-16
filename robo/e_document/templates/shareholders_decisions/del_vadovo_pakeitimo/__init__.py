@@ -1,0 +1,1 @@
+import del_vadovo_pakeitimo

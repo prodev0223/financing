@@ -1,0 +1,90 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_r_keeper_data_import_job" model="ir.ui.view">
+            <field name="name">tree.r.keeper.data.import.job</field>
+            <field name="model">r.keeper.data.import.job</field>
+            <field name="arch" type="xml">
+                <tree string="Importavimo darbai"
+                      create="0" delete="1" edit="0"
+                      decoration-info="state == 'in_progress'"
+                      decoration-success="state == 'finished'"
+                      decoration-danger="state == 'failed'">
+                    <field name="imported_file_name"/>
+                    <field name="file_type"/>
+                    <field name="execution_start_date"/>
+                    <field name="execution_end_date"/>
+                    <field name="state"/>
+                    <field name="fail_message"/>
+                    <field name="imported_file" filename="imported_file_name"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="form_r_keeper_data_import_job" model="ir.ui.view">
+            <field name="name">form.r.keeper.data.import.job</field>
+            <field name="model">r.keeper.data.import.job</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="reset_state" type="object" string="Atstatyti būseną"
+                                class="oe_highlight" groups="base.group_system"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Failas"/>
+                            <h1 class="mt0">
+                                <field name="imported_file" class="oe_inline" filename="imported_file_name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="imported_file_name" invisible="1"/>
+                            <field name="execution_start_date" readonly="1"/>
+                            <field name="execution_end_date" readonly="1"/>
+                            <field name="fail_message" readonly="1"/>
+                            <field name="imported_api" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCH-->
+        <record id="search_r_keeper_data_import_job" model="ir.ui.view">
+            <field name="name">search.r.keeper.data.import.job</field>
+            <field name="model">r.keeper.data.import.job</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="act_add" string="Importuota per API"
+                            domain="[('imported_api', '=', True)]"/>
+                    <filter name="act_add" string="Importuota rankiniu būdu"
+                            domain="[('imported_api', '=', False)]"/>
+                    <separator/>
+                    <field name="imported_file_name" filter_domain="[('imported_file_name', 'ilike', self)]"/>
+                    <group>
+                        <filter name="state" string="Būsena"
+                                context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_r_keeper_data_import_job" model="ir.actions.act_window">
+            <field name="name">Importavimo darbai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.data.import.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_r_keeper_data_import_job"/>
+        </record>
+        <!--MENU ITEMS-->
+        <menuitem
+                id="menu_r_keeper_data_import_job"
+                name="Importavimo darbai"
+                action="action_r_keeper_data_import_job"
+                sequence="3"
+                parent="r_keeper_import_root"
+        />
+    </data>
+</odoo>

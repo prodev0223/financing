@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_partner_balance_reconciliation_date_attrs" model="ir.ui.view">
+            <field name="name">res.partner.balance.reconciliation.date.attrs</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="robo.new_clients_customer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='balance_reconciliation_date']" position="attributes">
+                    <attribute name="readonly">False</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

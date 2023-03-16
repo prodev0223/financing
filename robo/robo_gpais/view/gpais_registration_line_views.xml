@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="gpais_registration_line_form">
+            <field name="name">GPAIS setting line</field>
+            <field name="model">gpais.registration.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="company_id"/>
+                            <field name="gpais_product_type"/>
+                            <field name="klasifikacija"/>
+                        </group>
+                        <group>
+                            <field name="activity_own_need"/>
+                            <field name="activity_b2c"/>
+                            <field name="activity_b2b"/>
+                            <field name="activity_remote"/>
+                            <field name="activity_export_broker"
+                                   attrs="{'invisible': [('gpais_product_type', 'not in', ('prekinisVienetas'))]}"/>
+                            <field name="activity_export"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="assing_new_employee" model="ir.ui.view">
+            <field name="name">assign.new.employee</field>
+            <field name="model">asset.assign.responsible</field>
+            <field name="arch" type="xml">
+                <form string="Priskirti metarialiai atsakingą asmenį">
+                    <group>
+                        <field name="employee_id"/>
+                        <field name="date"/>
+                    </group>
+                    <footer>
+                        <button name="assign" string="Assign" type="object" class="oe_highlight"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

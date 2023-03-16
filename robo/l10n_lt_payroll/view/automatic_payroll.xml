@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="automatic_payroll_execution_history_tree" model="ir.ui.view">
+            <field name="name">Automatic payroll execution history tree</field>
+            <field name="model">automatic.payroll.execution.history</field>
+            <field name="arch" type="xml">
+                <tree string="Automatinis atlyginimo skaičiavimas" create="false" edit="false" delete="false">
+                    <field string="Vykdytojas" name="create_uid"/>
+                    <field string="Vykdymo data" name="create_date"/>
+                    <field name="year"/>
+                    <field name="month"/>
+                    <field name="success"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="automatic_payroll_execution_history_form" model="ir.ui.view">
+            <field name="name">Automatic payroll execution history form</field>
+            <field name="model">automatic.payroll.execution.history</field>
+            <field name="arch" type="xml">
+                <form string="Automatinis atlyginimo skaičiavimas" edit="false" create="false" delete="false">
+                    <group colspan="4" col="4">
+                        <group colspan="2" col="2">
+                            <field string="Vykdytojas" name="create_uid"/>
+                            <field string="Vykdymo data" name="create_date"/>
+                            <field name="success"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="year"/>
+                            <field name="month"/>
+                        </group>
+                        <group colspan="4" col="4">
+                            <field name="employee_history" nolabel="1" options="{'no_open': True, 'no_create': True}">
+                                <tree create="false" delete="false" edit="false">
+                                    <field name="employee_id"/>
+                                    <field name="stage"/>
+                                    <field name="message"/>
+                                    <field name="success"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="automatic_payroll_execution_employee_history_tree" model="ir.ui.view">
+            <field name="name">Automatic payroll execution employee history tree</field>
+            <field name="model">automatic.payroll.execution.employee.history</field>
+            <field name="arch" type="xml">
+                <tree string="Automatinis atlyginimo skaičiavimas - darbuotojų istorija" editable="bottom">
+                    <field name="history_obj_id"/>
+                    <field name="employee_id"/>
+                    <field name="stage"/>
+                    <field name="message"/>
+                    <field name="success"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_open_automatic_payroll_execution_history">
+            <field name="name">Automatinis atlyginimo skaičiavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">automatic.payroll.execution.history</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('automatic_payroll_execution_history_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('automatic_payroll_execution_history_form')})]"/>
+        </record>
+
+        <menuitem
+                name="Automatinis atlyginimo skaičiavimas"
+                action="action_open_automatic_payroll_execution_history"
+                id="menu_automatic_payroll_history"
+                parent="l10n_lt_payroll.meniu_payrol_reports"
+                groups="hr_payroll.group_hr_payroll_user"
+                sequence="99"
+        />
+
+    </data>
+</odoo>

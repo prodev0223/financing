@@ -1,0 +1,177 @@
+<odoo>
+    <data>
+        <record id="remote_work_request_form" model="ir.ui.view">
+            <field name="name">Prašymas dėl leidimo dirbti nuotoliniu būdu</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_request_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='cancel']" position="replace"/>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="text_3" string="Priežastis" required="0"/>
+                        <field name="date_from" string="Data nuo" required="1"/>
+                        <field name="date_to" string="Data iki" required="0"/>
+                        <field name="additional_remote_work_compensation" required="True"/>
+                        <field name="float_1" string="Papildomų išlaidų kompensacijos suma" attrs="{
+                            'required': [('additional_remote_work_compensation', '=', 'specific_amount')],
+                            'invisible': [('additional_remote_work_compensation', '!=', 'specific_amount')]
+                        }"/>
+                        <field name="text_4" attrs="{
+                            'required': [('additional_remote_work_compensation', '=', 'specific_amount')],
+                            'invisible': [('additional_remote_work_compensation', '!=', 'specific_amount')]
+                        }" string="Už ką kompensuojama aukščiau nurodyta suma?"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="remote_work_request_action" model="ir.actions.act_window">
+            <field name="name">Prašymas dėl leidimo dirbti nuotoliniu būdu</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'prasymas', u'rec_template_id':
+                u'remote_work_request_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.remote_work_request_form"/>
+        </record>
+
+
+        <record id="remote_work_request_menu" model="ir.ui.menu">
+            <field name="name">Prašymas dėl leidimo dirbti nuotoliniu būdu</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="prasymas"/>
+            <field name="action" ref="e_document.remote_work_request_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">prašymas,leisti dirbti is namu, leisti dirbti nuotoliniu budu, nuotolinis, namai</field>
+        </record>
+
+
+        <record id="remote_work_request_template" model="e.document.template">
+            <field name="name">Prašymas dėl leidimo dirbti nuotoliniu būdu</field>
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Prašau man, {{kam(employee_id1, 'Aa')}}
+                    {% if text_3 %}
+                        , dėl {{ text_3 }}
+                    {% endif %}
+                    , nuo {{ date_from }}
+                    {% if date_to %}
+                        iki {{ date_to }}
+                    {% endif %}
+                    leisti savo darbo funkciją atlikti nuotoliniu būdu.
+                    {% if additional_remote_work_compensation__sv__ == 'specific_amount' %}
+                        Prašau man skirti {{ float_1 }} EUR dydžio kompensaciją už {{ text_4 }}.
+                    {% elif additional_remote_work_compensation__sv__ == 'based_on_documents' %}
+                        Prašau man, dėl darbo nuotolinių būdu atsiradusioms išlaidoms padengti, skirti kompensaciją
+                        pagal pateiktus dokumentus.
+                    {% endif %}
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{ employee_id1 }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.remote_work_request_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded {
+                        width: 100px;
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{%endif%} {{ job_id1}}</span>
+                                            </p>
+                                            <span>{{ employee_id1 }}</span>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p>
+                                                <span>{% if manager_job_id %}{{kam(manager_job_id, 'Aa')}} {%
+                                                    else%}Direktoriui{% endif %} {{kam(manager_id, 'Aa')}}
+                                                </span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>PRAŠYMAS</span>
+                        </p>
+                        <span>PRAŠYMAS DĖL LEIDIMO DIRBTI NUOTOLINIU BŪDU</span>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.remote_work_request_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="True"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="allow_copy" eval="False"/>
+        </record>
+    </data>
+</odoo>

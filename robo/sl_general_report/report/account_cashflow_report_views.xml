@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_report_cashflow_wizard" model="ir.ui.view">
+            <field name="name">robo.cashflow.report.wizard</field>
+            <field name="model">account.cashflow.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pinigų srautai">
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="company_id" invisible="1"/>
+                            <group col="2">
+                                <field name="target_move" widget="radio" invisible="1"/>
+                                <field name="date_from" string="Nuo"/>
+                                <field name="date_to" string="Iki"/>
+                                <field name="force_lang"/>
+                            </group>
+                        </group>
+                        <footer style="text-align: center; margin-top:20%;">
+                            <div>
+                                <p>
+                                    <i>
+                                        Generuojama ataskaita yra preliminari, šios ataskaitos sumos gali pasikeisti po
+                                        metų uždarymo procedūrų.
+                                    </i>
+                                </p>
+                            </div>
+                            <button name="check_report" string="Peržiūrėti" type="object" default_focus="1"
+                                    class="oe_highlight" context="{'front':True, 'force_html': True}"
+                                    style="margin-right: 10px;"/>
+                            <button name="check_report" string="PDF" type="object" default_focus="1"
+                                    class="oe_highlight" context="{'front':True, 'force_pdf': True}"
+                                    style="margin-right: 10px;"/>
+                            <button name="xls_export" context="{'xls_report':1}" type="object"
+                                    string="Excel" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_cash_flow">
+            <field name="name">Pinigų srautai</field>
+            <field name="res_model">account.cashflow.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="view_id" ref="robo_report_cashflow_wizard"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="employee_vdu_tree_view" model="ir.ui.view">
+            <field name="name">employee.vdu.tree</field>
+            <field name="model">employee.vdu</field>
+            <field name="arch" type="xml">
+                <tree string="VDU (1 mėn)" editable="bottom">
+                    <field name="employee_id"/>
+                    <field name="year_id" widget="selection" domain="[('code', '&gt;', context_today().year-4),
+                                                                      ('code', '&lt;', context_today().year+4)]"/>
+                    <field name="month"/>
+                    <field name="time_worked"/>
+                    <field name="days_worked"/>
+                    <field name="hours_worked"/>
+                    <field name="vdu"/>
+                    <field name="amount"/>
+                    <field name="type"/>
+                    <field name="date_from" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record id="employee_vdu_search_view" model="ir.ui.view">
+            <field name="name">employee.vdu.search</field>
+            <field name="model">employee.vdu</field>
+            <field name="arch" type="xml">
+                <search string="VDU">
+                    <field name="employee_id"/>
+                    <filter name="last_three_months" string="Paskutiniai trys mėnesiai"
+                            domain="[('date_from', '&gt;=', (context_today()-relativedelta(months=3, day=1)).strftime('%%Y-%%m-%%d')),
+                                    ('date_from', '&lt;=', (context_today()-relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_open_vdu" model="ir.actions.act_window">
+            <field name="name">VDU (1 mėn)</field>
+            <field name="res_model">employee.vdu</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,pivot</field>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_last_three_months': True}</field>
+        </record>
+
+        <menuitem
+            id="vdu_menu"
+            name="VDU (1 mėn)"
+            action="action_open_vdu"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="15"
+            groups="hr.group_hr_manager"/>
+    </data>
+</odoo>

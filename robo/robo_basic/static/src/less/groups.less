@@ -1,0 +1,27 @@
+.group_help_preview {
+    position: relative;
+    display: inline-block;
+    color: #337ab7;
+
+    .group_help_preview_tooltip {
+        display: none;
+        background-color: #337ab7;
+        color: #fff;
+        text-align: center;
+        padding: 4px !important;
+        border-radius: 6px;
+        position: absolute;
+        z-index: 999 !important;
+        width: 120px !important;
+    }
+
+    &:hover .group_help_preview_tooltip {
+        display: block;
+        transform: translate(-50%, calc(-100% - 20px));
+
+        @media (max-width: 768px) {
+            transform: translate(calc(-100% + 12px), calc(-100% - 20px));
+        }
+    }
+
+}

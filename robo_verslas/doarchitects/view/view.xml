@@ -1,0 +1,425 @@
+<odoo>
+    <data>
+        <record id="project_extended_filters" model="ir.ui.view">
+            <field name="name">project.analytics.extended.filters</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="robo_projects.view_business_analytics_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="inside">
+                    <filter name="savikaina" string="Savikaina" domain="['|','|','|','|',('account_id.code', '=like', 'A0%'),('account_id.code', '=like', 'I0%'),('account_id.code', '=like', 'K0%'),('account_id.code', '=like', 'W0%'),('account_id.code', '=like', 'U0%')]" context="{}"/>
+                    <filter name="administracija" string="Administracija" domain="[('account_id.code', 'in', ['DO001', 'DO002'])]" context="{}"/>
+                    <filter name="do004" string="DO004" domain="[('account_id.code', 'in', ['DO004'])]" context="{}"/>
+                    <filter name="papildomos_islaidos" string="Papildomos išlaidos" domain="[('account_id.code', 'in', ['MA001', 'NA001', 'AS001', 'AN001', 'AB001'])]" context="{}"/>
+                    <filter name="verslo_partneriai" string="Verslo partneriai" domain="[('account_id.code', 'in', ['DO006', 'VA001', 'DO005'])]" context="{}"/>
+                    <filter name="nusidevejimas" string="Nusidėvėjimas" domain="[('account_id.code', 'in', ['DO012'])]" context="{}"/>
+                    <filter name="nenumatytos" string="Nenumatytos išlaidos" domain="[('account_id.code', 'in', ['DO003'])]" context="{}"/>
+                    <filter name="do008" string="DO008" domain="[('account_id.code', 'in', ['DO008'])]" context="{}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="project_extended_invoice_filters" model="ir.ui.view">
+            <field name="name">project.analytics.extended.invoice.filters</field>
+            <field name="model">account.invoice.report.materialized</field>
+            <field name="inherit_id" ref="robo.account_invoice_report_materialized_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="inside">
+                    <filter name="savikaina" string="Savikaina" domain="['|','|','|','|',('analytic_id.code', '=like', 'A0%'),('analytic_id.code', '=like', 'I0%'),('analytic_id.code', '=like', 'K0%'),('analytic_id.code', '=like', 'W0%'),('analytic_id.code', '=like', 'U0%')]" context="{}"/>
+                    <filter name="administracija" string="Administracija" domain="[('analytic_id.code', 'in', ['DO001', 'DO002'])]" context="{}"/>
+                    <filter name="do004" string="DO004" domain="[('analytic_id.code', 'in', ['DO004'])]" context="{}"/>
+                    <filter name="papildomos_islaidos" string="Papildomos išlaidos" domain="[('analytic_id.code', 'in', ['MA001', 'NA001', 'AS001', 'AN001', 'AB001'])]" context="{}"/>
+                    <filter name="verslo_partneriai" string="Verslo partneriai" domain="[('analytic_id.code', 'in', ['DO006', 'VA001', 'DO005'])]" context="{}"/>
+                    <filter name="nusidevejimas" string="Nusidėvėjimas" domain="[('analytic_id.code', 'in', ['DO012'])]" context="{}"/>
+                    <filter name="nenumatytos" string="Nenumatytos išlaidos" domain="[('analytic_id.code', 'in', ['DO003'])]" context="{}"/>
+                    <filter name="do008" string="DO008" domain="[('analytic_id.code', 'in', ['DO008'])]" context="{}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_employee_job_code" model="ir.ui.view">
+            <field name="name">hr.employee.job_code</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='job_id']" position="after">
+                    <field name="job_code"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_analytic_job_code" model="ir.ui.view">
+            <field name="name">hr_timesheet_sheet.sheet.job_code</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='timesheet_ids']//tree[1]//field[@name='name']" position="after">
+                    <field name="job_code_compute"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="view_project_project_filter_ext" model="ir.ui.view">
+            <field name="name">project.project.select.search.ext</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="robo_projects.view_project_project_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="inside">
+                     <filter string="Etapą" name="stage" context="{'group_by':'stage_id'}"/>
+                </xpath>
+<!--                <xpath expr="//field[@name='code']" position="after">-->
+<!--                     <field name="stage_id" string="Projekto kodas"/>-->
+<!--                </xpath>-->
+            </field>
+        </record>
+
+        <record id="robo_projects.open_view_project_all" model="ir.actions.act_window">
+            <field name="context" eval="{
+                'robo_menu_name': ref('robo_projects.menu_projects_parent'),
+                'view_kanban_default_group_by': 'stage_id',
+                'tz': 'Europe/Vilnius',
+                'robo_header': {
+                    'fit':True,
+                    'header_button': 'Sukurti naują...',
+                    'header_button_items': [{'text': 'Projektą', 'icon': 'icon-puzzle', 'action': ref('robo_projects.open_create_project'), 'class': 'new_project'}]
+                },
+            }"/>
+        </record>
+
+        <record id="hr_employee_job_code_extend" model="ir.ui.view">
+            <field name="name">hr.employee.job.code</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='job_id']" position="after">
+                    <field name="job_code"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="robo_projects.menu_all_timesheets_analysis" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_do_administratore'))]"/>
+        </record>
+        <record id="robo_projects.menu_analytic_accounts" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_do_administratore'))]"/>
+        </record>
+        <!--<record model="ir.ui.view" id="project.view_project_kanban">-->
+            <!--<field name="arch" type="xml">-->
+                <!--<kanban class="oe_background_grey o_kanban_dashboard o_project_kanban" default_group_by="stage_id" on_create="project.open_create_project">-->
+                    <!--<field name="name"/>-->
+                    <!--<field name="use_tasks"/>-->
+                    <!--<field name="color"/>-->
+                    <!--<field name="task_count"/>-->
+                    <!--<field name="task_needaction_count"/>-->
+                    <!--<field name="label_tasks"/>-->
+                    <!--<field name="alias_id"/>-->
+                    <!--<field name="alias_name"/>-->
+                    <!--<field name="alias_domain"/>-->
+                    <!--<field name="doc_count"/>-->
+                    <!--<field name="is_favorite"/>-->
+                    <!--<field name="stage_id"-->
+                           <!--options='{"group_by_tooltip": {"description": "Stage Description", "legend_priority": "Use of stars"}}'/>-->
+                    <!--<templates>-->
+                        <!--<t t-name="kanban-box">-->
+                            <!--<div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">-->
+                                <!--<div class="o_project_kanban_main">-->
+                                    <!--<div class="o_kanban_card_content o_visible">-->
+                                        <!--<div class="o_kanban_primary_left">-->
+                                            <!--<div class="o_primary">-->
+                                                <!--<span><t t-esc="record.name.value"/></span>-->
+                                            <!--</div>-->
+                                            <!--<div t-if="record.alias_name.value and record.alias_domain.value">-->
+                                                <!--<span><i class="fa fa-envelope"/> <t t-esc="record.alias_id.value"/></span>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="o_kanban_card_manage_pane o_invisible">-->
+                                        <!--<div class="o_kanban_card_manage_section o_kanban_manage_reports">-->
+                                            <!--<div groups="project.group_project_manager">-->
+                                                <!--<a type="edit">Settings</a>-->
+                                            <!--</div>-->
+                                            <!--<div attrs="{'invisible': [('use_tasks', '=', False)]}">-->
+                                                <!--<a name="807" type="action">Tasks</a>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div t-if="widget.editable" class="o_project_kanban_colorpicker">-->
+                                            <!--<ul class="oe_kanban_colorpicker" data-field="color"/>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="o_project_kanban_manage">-->
+                                        <!--<a class="o_kanban_manage_toggle_button o_left" href="#">More <i class="fa fa-caret-down"/></a>-->
+                                        <!--<a type="object" name="toggle_favorite" class="o_right"><i t-attf-class="oe_inline fa o_dashboard_star #{record.is_favorite.raw_value ? 'fa-star' : 'fa-star-o'}" title="Add/remove from favorite"/></a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                                <!--<div class="o_project_kanban_boxes">-->
+                                    <!--<div t-if="record.use_tasks.raw_value" class="o_project_kanban_box">-->
+                                        <!--<a name="808" type="action">-->
+                                            <!--<span class="o_value"><t t-esc="record.task_count.value"/></span>-->
+                                            <!--<span class="o_label"><t t-esc="record.label_tasks.value"/></span>-->
+                                        <!--</a>-->
+                                        <!--<a t-if="record.task_needaction_count.raw_value" class="o_needaction" name="808" type="action" context="{'search_default_message_needaction': 1}">-->
+                                            <!--<t t-esc="record.task_needaction_count.raw_value"/>-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                    <!--<div t-if="record.doc_count.raw_value" class="o_project_kanban_box">-->
+                                        <!--<a name="attachment_tree_view" type="object">-->
+                                            <!--<span class="o_value"><t t-esc="record.doc_count.value"/></span>-->
+                                            <!--<span class="o_label">Documents</span>-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</t>-->
+                    <!--</templates>-->
+                <!--</kanban>-->
+            <!--</field>-->
+        <!--</record>-->
+        <!--<record id="project_is_billable_extend" model="ir.ui.view">-->
+            <!--<field name="name">project.project.is.bilable</field>-->
+            <!--<field name="model">project.project</field>-->
+            <!--<field name="inherit_id" ref="project.edit_project"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--&lt;!&ndash;<xpath expr="//sheet[1]" position="before">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<header>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<field name="stage_id" widget="statusbar" clickable="True"/>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<field name="is_project_manager" invisible="1"/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</header>&ndash;&gt;-->
+                <!--&lt;!&ndash;</xpath>&ndash;&gt;-->
+                <!--<xpath expr="//button[@name='toggle_active']" position="before">-->
+                    <!--<button name="open_stages" type="object" string="Edit stages" icon="fa-file-text" class="oe_stat_button"/>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//field[@name='partner_id']" position="after">-->
+                    <!--<field name="project_is_billable"/>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+        <!--<record id="project_stage_tree" model="ir.ui.view">-->
+            <!--<field name="name">project.stage.tree</field>-->
+            <!--<field name="model">project.stage</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<tree string="Project Stages">-->
+                    <!--<field name="sequence" widget="handle"/> &lt;!&ndash; groups="base.group_no_one" &ndash;&gt;-->
+                    <!--<field name="name"/>-->
+                    <!--<field name="fold"/>-->
+                <!--</tree>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--&lt;!&ndash; Adding PROJECT STAGES menu, LIST and FORM views &ndash;&gt;-->
+        <!--<record id="open_project_stage_form" model="ir.actions.act_window">-->
+            <!--<field name="name">Project Stages</field>-->
+            <!--<field name="res_model">project.stage</field>-->
+            <!--<field name="view_type">form</field>-->
+            <!--<field name="view_id" ref="project_stage_tree"/>-->
+            <!--<field name="help" type="html">-->
+                <!--<p class="oe_view_nocontent_create">-->
+                    <!--Click to add a project stage in the projects pipeline.-->
+                <!--</p>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--<record id="project_stage_edit" model="ir.ui.view">-->
+            <!--<field name="name">project.stage.form</field>-->
+            <!--<field name="model">project.stage</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<form string="Project Stages">-->
+                    <!--<group>-->
+                        <!--<group>-->
+                            <!--<field name="name"/>-->
+                            <!--<field name="sequence"/>-->
+                            <!--<field name="fold"/>-->
+                            <!--<field name="description"/>-->
+                        <!--</group>-->
+                    <!--</group>-->
+                <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--<record id="project_stage_search" model="ir.ui.view">-->
+            <!--<field name="name">project.stage.search</field>-->
+            <!--<field name="model">project.stage</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<search string="Project Stages">-->
+                    <!--<field name="name" string="Project Stages"/>-->
+                <!--</search>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--<menuitem action="open_project_stage_form" id="menu_project_stages" name="Project Stages"-->
+                  <!--parent="project.menu_project_config" sequence="1"/>-->
+
+
+        <record model="ir.actions.act_window" id="robo.open_board_clients_action_supplier">
+            <field name="domain">['|', ('supplier','=',True), ('customer', '=', False)]
+            </field>
+        </record>
+
+        <template id="external_layout_header" inherit_id="skolu_suderinimas.external_layout_header">
+            <xpath expr="//div[@class='header']" position="replace">
+                <div class="header">
+                    <div class="row">
+                        <div class="col-xs-12 text-center">
+                            <img src="/doarchitects/static/src/img/do_arch.png" atl="logo"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+        <template id="external_layout_footer" inherit_id="saskaitos.external_layout_footer">
+            <xpath expr="//div[@class='footer']" position="replace">
+                <div class="footer">
+                    <div class="text-center">
+                        <p t-if="company.website">Tinklalapis:
+                            <span t-field="company.website"/>
+                        </p>
+                        <!--<ul t-if="not company.custom_footer" class="list-inline">-->
+                            <!--<t t-set="company" t-value="company.sudo()"/>-->
+                            <!--<li t-if="company.phone">Telefonas:-->
+                                <!--<span t-field="company.phone"/>-->
+                            <!--</li>-->
+                            <!--<li t-if="company.fax">Faksas:-->
+                                <!--<span t-field="company.fax"/>-->
+                            <!--</li>-->
+                            <!--<li t-if="company.email">El. paštas:-->
+                                <!--<span t-field="company.email"/>-->
+                            <!--</li>-->
+                            <!--<li t-if="company.website">Tinklalapis:-->
+                                <!--<span t-field="company.website"/>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                        <t t-if="company.custom_invoice_footer_enabled">
+                            <span t-esc="company.custom_invoice_footer"/>
+                        </t>
+                        <t t-else="">
+                            <ul class="list-inline" name="financial_infos">
+                                <li t-if="company.vat">PVM kodas: <span t-field="company.vat"/> </li>
+                                <t t-if="not company.custom_footer">
+                                    <t t-set="is_first" t-value="True"/>
+                                    <t t-foreach="company.bank_journal_ids" t-as="journal">
+                                        <t t-set="bank_acc" t-value="journal.bank_account_id"/>
+                                        <t t-if="journal.display_on_footer and bank_acc.acc_number">
+                                            <li>
+                                                <span t-esc="bank_acc.bank_name"/>
+                                                <t t-if="bank_acc.bank_bic">(<span t-esc="bank_acc.bank_bic"/>)
+                                                </t>
+                                                :
+                                                <span t-esc="bank_acc.acc_number"/>
+                                            </li>
+                                            <t t-set="is_first" t-value="False"/>
+                                        </t>
+                                    </t>
+                                </t>
+                            </ul>
+                        </t>
+
+                        <ul class="list-inline" style="position:relative">
+                            <li>Puslapis:</li>
+                            <li>
+                                <span class="page"/>
+                            </li>
+                            <li>/</li>
+                            <li>
+                                <span class="topage"/>
+                            </li>
+                        </ul>
+                        <div class="robolabs_marketing_doarch">
+                                Buhalterija šiuolaikiškai - www.robolabs.lt
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+        <!--<delete id="saskaitos.report_invoice_document" model="ir.ui.view"/>-->
+        <template id="doarchitects_external_invoice_layout" inherit_id="saskaitos.external_invoice_layout">
+            <xpath expr="//div[@class='header']" position="replace">
+                <t t-call="report.external_layout_header"/>
+            </xpath>
+        </template>
+        <template id="report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//img[@class='main_logo_header']/../.." position="replace"/>
+            <xpath expr="//div[contains(@class, 'report_invoice_page')]" position="attributes">
+                <attribute name="class">page report_invoice_page doarch</attribute>
+            </xpath>
+            <xpath expr="//div[contains(@class, 'invoice_dates')]" position="attributes">
+                <attribute name="class">invoice_dates mt32</attribute>
+            </xpath>
+            <xpath expr="//div[contains(@class, 'invoice_dates')]/div[contains(@class, 'col-')]" position="attributes">
+                <attribute name="class">text-left</attribute>
+            </xpath>
+        </template>
+
+
+        <template id="contact" inherit_id="base.contact">
+            <xpath expr="//span[@itemprop='streetAddress']" position="replace">
+                <span itemprop="streetAddress" t-raw="address.replace('\n', options.get('no_tag_br') and ', ' or ('&lt;br/&gt;%s' % ('' if options.get('no_marker') else '&amp;nbsp; &amp;nbsp; ')), 1).replace('\n',' ')"/>
+            </xpath>
+        </template>
+<!--71 61 34 16 15-->
+        <record id="report.paperformat_euro" model="report.paperformat">
+            <field name="margin_top" eval="71.0"/>
+            <field name="header_spacing" eval="61.0"/>
+            <field name="margin_bottom" eval="34"/>
+            <!--do arch picture gives additional white left 4mm-->
+            <field name="margin_left" eval="16"/>
+            <field name="margin_right" eval="15"/>
+        </record>
+
+        <record id="account.email_template_edi_invoice" model="mail.template">
+            <field name="body_html"><![CDATA[
+    <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px;">
+        <p></p><p></p>
+        <p><b>SABINA DAUGĖLIENĖ <br/>
+GENERAL MANAGER</b></p>
+        <p><b>00 370 699 74635 / SABINA.DAUGELIENE@DOARCHITECTS.LT <br/>
+RAUGYKLOS G. 21, LT-01140, VILNIUS / WWW.DOARCHITECTS.LT</b></p>
+        <div style="padding-top:20px;color:rgba(150,150,150,0.7);font-size:10px">Buhalterija šiuolaikiškai - www.robolabs.lt<div>
+    </div>
+        ]]></field>
+            <field name="subject">DO ARCHITECTS_sąskaita už projektavimo paslaugas</field>
+        </record>
+        <record id="account_invoice_analytic_code" model="ir.ui.view">
+            <field name="name">account.invoice.required.analytic</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']//field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_invoice_supplier_analytic_code" model="ir.ui.view">
+            <field name="name">account.invoice.required.analytic</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']//field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="required">0</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="expense_analytic_code" model="ir.ui.view">
+            <field name="name">expense.required.analytic</field>
+            <field name="model">hr.expense</field>
+            <field name="inherit_id" ref="robo.cheque_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='analytic_account_id']" position="attributes">
+                    <attribute name="required">0</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="paperformat_a4_narrow_do_invoice" model="report.paperformat">
+            <field name="name">European A4 narrow (DoArchitects)</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top" eval="55.0"/>
+            <field name="header_spacing" eval="55.0"/>
+            <field name="margin_left" eval="7"/>
+            <field name="margin_right" eval="7"/>
+            <field name="margin_bottom" eval="25.0"/>
+        </record>
+        <record id="saskaitos.account_invoices_sl" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="paperformat_a4_narrow_do_invoice"/>
+            <field name="attachment_use" eval="False"/>
+        </record>
+    </data>
+</odoo>

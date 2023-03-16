@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Form-->
+        <record id="from_r_keeper_pos_transfer_wizard" model="ir.ui.view">
+            <field name="name">form.r.keeper.pos.transfer.wizard</field>
+            <field name="model">r.keeper.pos.transfer.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Pardavimo taško informacijos perkėlimas">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                            Šiame vedlyje galite rankiniu būdu perkelti vieno pardavimo taško
+                            produktų eilutes į kitą, pasirinktą pardavimo tašką.
+                            Galite pasirinkti vieną iš pateiktų rėžimų. Duomenų atnaujinimas
+                            nekoreguos jau esančių eilučių, tik užpildys produktų sąrašą trūkstamais
+                            produktais. Duomenų perrašymas perrašys visas produktų eilutes naudojant
+                            pasirinktą pardavimo tašką.
+                        </div>
+                        <group>
+                            <field name="destination_point_of_sale_id"/>
+                            <field name="source_point_of_sale_id"
+                                   options="{'no_open': True, 'no_create': True}" required="1"/>
+                            <field name="transfer_mode" required="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Perkelti" name="transfer_data" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </odoo>
+</data>

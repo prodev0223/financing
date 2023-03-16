@@ -1,0 +1,179 @@
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_robo_api_job" model="ir.ui.view">
+            <field name="name">tree.robo.api.job</field>
+            <field name="model">robo.api.job</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree string="API darbai"
+                      decoration-info="state in ['to_execute', 'in_progress']"
+                      decoration-danger="state == 'failed'"
+                      decoration-warning="state == 'to_retry'"
+                      decoration-success="state == 'succeeded'"
+                      create="0" edit="0" delete="0">
+                    <field name="action_name"/>
+                    <field name="action_method"/>
+                    <field name="data_identifier"/>
+                    <field name="registration_date"/>
+                    <field name="execution_end_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="form_robo_api_job" model="ir.ui.view">
+            <field name="name">form.robo.api.job</field>
+            <field name="model">robo.api.job</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="API darbai" create="0" edit="0" delete="0">
+                    <header>
+                        <button name="button_execute_api_job" type="object" string="Vykdyti"
+                                states="to_execute,to_retry,failed" class="oe_highlight"
+                                groups="robo_basic.group_robo_premium_manager"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Veiksmas"/>
+                            <h1 class="mt0">
+                                <field name="action_name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="action_method"/>
+                            <field name="data_identifier"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Datos" colspan="1" col="2">
+                                <field name="registration_date"/>
+                                <field name="execution_start_date"/>
+                                <field name="execution_end_date"/>
+                            </group>
+                            <group string="Vykdymo duomenys" colspan="1" col="2">
+                                <field name="response_message"/>
+                                <field name="response_code"/>
+                                <field name="execution_fail_count"/>
+                                <field name="admin_response_message"
+                                       groups="robo_basic.group_robo_premium_accountant"/>
+                            </group>
+                        </group>
+                        <group string="Importuoti duomenys">
+                            <field name="json_data" nolabel="1"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Atsako informacija" colspan="1" col="2">
+                                <field name="callback_state"/>
+                                <field name="callback_response_message"/>
+                            </group>
+                            <group string="Grąžinami duomenys" colspan="1" col="2">
+                                <field name="response_data" nolabel="1"/>
+                                <field name="attachment_id" nolabel="1"
+                                       groups="robo_basic.group_robo_premium_accountant"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+        <record id="search_robo_api_job" model="ir.ui.view">
+            <field name="name">API darbų paieška</field>
+            <field name="model">robo.api.job</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="state_in_progress"
+                            string="Būsena - Vykdoma" domain="[('state','=','in_progress')]"/>
+                    <filter name="state_failed"
+                            string="Būsena - Vykdymas nepavyko" domain="[('state', '=', 'failed')]"/>
+                    <filter name="state_succeeded"
+                            string="Būsena - Sėkmingai įvykdyta" domain="[('state', '=', 'succeeded')]"/>
+                    <filter name="state_succeeded"
+                            string="Būsena - Pakartoti" domain="[('state', '=', 'to_retry')]"/>
+                    <filter name="state_succeeded"
+                            string="Būsena - Laukiama vykdymo" domain="[('state', '=', 'to_execute')]"/>
+                    <separator/>
+                    <field name="action_method" filter_domain="[('action_method', 'ilike', self)]"/>
+                    <field name="data_identifier" filter_domain="[('data_identifier', 'ilike', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo (Registracijos data)"
+                            domain="[
+                            '|', '&amp;',
+                            ('registration_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('registration_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('registration_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('registration_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo (Registracijos data)"
+                            domain="[
+                            '|', '&amp;',
+                            ('registration_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('registration_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('registration_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('registration_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai (Registracijos data)"
+                            domain="[
+                            '|', '&amp;',
+                             ('registration_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('registration_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                             '&amp;',
+                             ('registration_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('registration_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai (Registracijos data)"
+                            domain="[
+                            '|', '&amp;',
+                             ('registration_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('registration_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                             '&amp;',
+                             ('registration_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('registration_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_robo_api_job" model="ir.actions.act_window">
+            <field name="name">API darbai</field>
+            <field name="res_model">robo.api.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="search_view_id" ref="search_robo_api_job"/>
+            <field name="header" ref="robo.robo_front_header_no_content"/>
+            <field name="with_settings">True</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_robo_api_job')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_robo_api_job')})]"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="robo_front" eval="1"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="action_reset_job_multi" model="ir.actions.server">
+            <field name="name">Nustatyti pakartotiniam vykdymui</field>
+            <field name="model_id" ref="robo_api.model_robo_api_job"/>
+            <field name="group_ids" eval="[(4,ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).server_action_reset_job()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_action_reset_job_multi" model="robo.api.job"/>
+        <!--Menu items-->
+        <menuitem id="menu_robo_api_job"
+                  name="Foninio API darbai"
+                  parent="robo.menu_kita"
+                  force_web_icon="icon-cloud-sync,none,none"
+                  groups="group_robo_threaded_api"
+                  action="action_open_robo_api_job"
+                  robo_front="True"
+                  sequence="61"
+                  searchable="True"
+                  tags="foninio,API,darbai"
+        />
+    </data>
+</odoo>

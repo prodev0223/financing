@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="amazon_sp_order_import_wizard" model="ir.ui.view">
+            <field name="name">amazon.sp.order.import.wizard.form</field>
+            <field name="model">amazon.sp.order.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Amazon CSV Import">
+                    <sheet>
+                        <group>
+                            <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                                In this wizard you can import Amazon CSV files. Orders that are already
+                                in the system will be updated according to this CSV file.
+                            </div>
+                        </group>
+                        <group>
+                            <field name="file_data" filename="file_name" required="1"/>
+                            <field name="file_name" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Import data" name="button_data_import" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_amazon_sp_order_import_wizard" model="ir.actions.act_window">
+            <field name="name">CSV Data import</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.order.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_amazon_sp_csv_data_import"
+                name="CSV Data import"
+                sequence="5"
+                parent="menu_amazon_sp_management_root"
+                action="action_open_amazon_sp_order_import_wizard"
+        />
+    </data>
+</odoo>

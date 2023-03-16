@@ -1,0 +1,57 @@
+<template>
+    <t t-name="FieldStatus.content.desktop">
+        <t t-as="i" t-foreach="widget.selection.unfolded">
+            <t t-call="FieldStatus.content.button"/>
+        </t>
+        <t t-if="widget.selection.folded.length">
+            <ul class="dropdown-menu o-status-more" role="menu">
+                <li t-as="i" t-foreach="widget.selection.folded">
+                    <t t-call="FieldStatus.content.button"/>
+                </li>
+            </ul>
+            <button class="btn btn-sm o_arrow_button btn-default dropdown-toggle" data-toggle="dropdown" type="button">More <span class="caret"/></button>
+        </t>
+    </t>
+    <t t-name="FieldStatus.content.mobile">
+        <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" type="button">
+            <t t-as="i" t-foreach="widget.selection.unfolded">
+                <t t-if="i[0] === widget.get('value')">
+                    <t t-esc="i[1]"/>
+                </t>
+            </t>
+        </button>
+        <ul class="dropdown-menu o-status-more" role="menu">
+            <li t-as="i" t-foreach="widget.selection.unfolded">
+                <t t-call="FieldStatus.content.button"/>
+            </li>
+            <li t-as="i" t-foreach="widget.selection.folded">
+                <t t-call="FieldStatus.content.button"/>
+            </li>
+        </ul>
+    </t>
+
+    <t t-name="FieldRoboRadio">
+        <div t-if="widget.get('effective_readonly')">
+            <!--<div class="btn-group" data-toggle="buttons">-->
+                <!--<t t-foreach="widget.selection" t-as="selection" class="o_radio_item">-->
+                    <!--<label t-if="selection[1]" class="btn btn-robo-radio-toggle" t-att-id="widget.uniqueId + '_' + selection[0]" t-att-name="widget.uniqueId" t-att-value="selection[0]">-->
+                        <!--<input type="radio" name="options"  autocomplete="off"/>-->
+                          <!--<h3><t t-esc="selection[1]"/></h3>-->
+                      <!--</label>-->
+                <!--</t>-->
+            <!--</div>-->
+        </div>
+        <div t-if="!widget.get('effective_readonly')">
+            <div class="btn-group" data-toggle="buttons">
+                <t t-foreach="widget.selection" t-as="selection" class="o_radio_item">
+                    <label t-if="selection[1]" class="btn btn-robo-radio-toggle active_link" t-att-id="widget.uniqueId + '_' + selection[0]" t-att-name="widget.uniqueId" t-att-value="selection[0]">
+                        <input type="radio" name="options"  autocomplete="off"/>
+                          <h3><t t-esc="selection[1]"/></h3>
+                      </label>
+                </t>
+            </div>
+        </div>
+
+    </t>
+
+</template>

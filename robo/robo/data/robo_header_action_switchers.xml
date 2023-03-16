@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <!--switchers-->
+        <record id="robo_button_customer_switch1" model="robo.header.action.switcher">
+            <field name="action_id" ref="open_board_clients_action_customer"/>
+            <field name="menu_id" ref="menu_klientai"/>
+            <field name="name">Klientai</field>
+            <field name="priority">action1</field>
+        </record>
+
+        <record id="robo_button_customer_switch2" model="robo.header.action.switcher">
+            <field name="action_id" ref="open_board_clients_action_supplier"/>
+            <field name="menu_id" ref="menu_klientai"/>
+            <field name="name">Tiekėjai</field>
+            <field name="priority">action2</field>
+        </record>
+
+
+        <record id="robo_button_customer" model="robo.header">
+            <field name="action_switcher_ids"
+                   eval="[(6,0,[ref('robo_button_customer_switch1'), ref('robo_button_customer_switch2')])]"/>
+            <field name="active_action_switcher">action1</field>
+        </record>
+
+        <record id="robo_button_supplier" model="robo.header">
+            <field name="action_switcher_ids"
+                   eval="[(6,0,[ref('robo_button_customer_switch1'), ref('robo_button_customer_switch2')])]"/>
+            <field name="active_action_switcher">action2</field>
+        </record>
+    </data>
+</odoo>

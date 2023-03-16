@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_r_keeper_point_of_sale" model="ir.ui.view">
+            <field name="name">r.keeper.point.of.sale.tree</field>
+            <field name="model">r.keeper.point.of.sale</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1"
+                      decoration-success="configured and not products_to_update"
+                      decoration-danger="not configured"
+                      decoration-warning="products_to_update and configured">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="journal_id"/>
+                    <field name="cash_journal_id"/>
+                    <field name="location_id"/>
+                    <field name="configured"/>
+                    <field name="products_to_update"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tree_r_keeper_point_of_sale_front" model="ir.ui.view">
+            <field name="name">r.keeper.point.of.sale.tree.front</field>
+            <field name="model">r.keeper.point.of.sale</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0"
+                      decoration-success="configured and not products_to_update"
+                      decoration-danger="not configured"
+                      decoration-warning="products_to_update and configured">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="journal_id"/>
+                    <field name="cash_journal_id"/>
+                    <field name="location_id"/>
+                    <field name="configured"/>
+                    <field name="products_to_update"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="form_r_keeper_point_of_sale" model="ir.ui.view">
+            <field name="name">r.keeper.point.of.sale.form</field>
+            <field name="model">r.keeper.point.of.sale</field>
+            <field name="arch" type="xml">
+                <form string="rKeeper pardavimų taškai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="configured_text" class="validate_by_accountant_text" nolabel="1"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="code"/>
+                            <field name="partner_id"/>
+                            <field name="analytic_account_id"
+                                   attrs="{'invisible': [('show_analytic_account_selection', '=', False)]}"/>
+                            <field name="show_analytic_account_selection" invisible="1"/>
+                            <field name="journal_id"/>
+                            <field name="picking_type_id"/>
+                            <field name="cash_journal_id"/>
+                            <field name="location_id"/>
+                        </group>
+                        <group string="Produktai">
+                            <field name="point_of_sale_product_ids" nolabel="1" widget="one2many_list"
+                                   mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree decoration-muted="product_state == 'deleted'"
+                                      decoration-info="r_keeper_export_state == 'waiting'"
+                                      decoration-danger="r_keeper_export_state == 'rejected'"
+                                      decoration-warning="r_keeper_export_state in ['out_dated', 'not_tried']"
+                                      decoration-success="r_keeper_export_state == 'up_to_date'"
+                                      class="robo_invoice_edit robo_tree_in_form"
+                                      editable="bottom" create="0">
+                                    <field name="product_id" required="1"
+                                           options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="category_id" readonly="1" required="1"/>
+                                    <field name="uom_id" readonly="1" required="1"/>
+                                    <field name="price_unit" required="1"/>
+                                    <field name="vat_rate" required="1"/>
+                                    <field name="is_weighed"/>
+                                    <field name="related_product_id"
+                                           options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="related_product_uom_id"/>
+                                    <field name="product_state" required="1"/>
+                                    <field name="r_keeper_update" readonly="1"/>
+                                    <field name="r_keeper_revision_number_display" readonly="1"/>
+                                    <field name="r_keeper_export_state" readonly="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="form_r_keeper_point_of_sale_front" model="ir.ui.view">
+            <field name="name">r.keeper.point.of.sale.form.front</field>
+            <field name="model">r.keeper.point.of.sale</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="rKeeper pardavimų taškai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="action_open_data_export_wizard" type="object"
+                                string="Eksportuoti į rKeeper serverį" class="oe_highlight"
+                                attrs="{'invisible': [('products_to_update', '=', False)]}"/>
+                        <button name="action_open_pos_transfer_wizard" type="object"
+                                string="Perkelti produktų informaciją" class="oe_highlight"/>
+                        <field name="configured_text" class="validate_by_accountant_text" nolabel="1"/>
+                    </header>
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom: 2px;">
+                            Pardavimų taškai ateinantys tiesiai iš rKeeper neturi pavadinimo laukelio,
+                            tad pirminei inicializacijai pavadinimas turi būti pakoreguotas rankiniu būdu.
+                            Galite modifikuoti pardavimo taško žurnalą ir lokaciją.
+                            Susijęs partneris yra sukuriamas automatiškai.
+                        </div>
+                        <div>
+                            <label string="Pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" required="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="code" required="1"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="journal_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="cash_journal_id" readonly="1"/>
+                            <field name="location_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="picking_type_id"/>
+                            <field name="analytic_account_id" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'invisible': [('show_analytic_account_selection', '=', False)]}"/>
+                            <field name="show_analytic_account_selection" invisible="1"/>
+                            <field name="products_to_update" invisible="1"/>
+                        </group>
+                        <group>
+                            <button name="action_open_point_of_sale_products" type="object"
+                                    string="Atverti produktų eilutes" class="oe_highlight"
+                                    attrs="{'invisible': [('point_of_sale_product_ids', '=', False)]}"/>
+                        </group>
+                        <group string="Produktai">
+                            <group colspan="4">
+                                <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                                     attrs="{'invisible': [('products_to_update', '=', False)]}">
+                                    Pardavimo taškas turi eilučių kurias reikia atnaujinti.
+                                    Kad atnaujintumėte duomenis spauskite 'Veiksmas' -> 'Eksportuoti į rKeeper serverį'.
+                                </div>
+                            </group>
+                            <group colspan="4">
+                                <field name="point_of_sale_product_ids" nolabel="1" widget="one2many_list"
+                                       mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree decoration-muted="product_state == 'deleted'"
+                                          decoration-info="r_keeper_export_state == 'waiting'"
+                                          decoration-danger="r_keeper_export_state == 'rejected'"
+                                          decoration-warning="r_keeper_export_state in ['out_dated', 'not_tried']"
+                                          decoration-success="r_keeper_export_state == 'up_to_date'"
+                                          class="robo_invoice_edit robo_tree_in_form"
+                                          editable="bottom" create="0">
+                                        <field name="product_id" required="1"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="category_id" readonly="1" required="1"/>
+                                        <field name="uom_id" readonly="1" required="1"/>
+                                        <field name="price_unit" required="1"/>
+                                        <field name="vat_rate" required="1"/>
+                                        <field name="is_weighed"/>
+                                        <field name="related_product_id"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="related_product_uom_id"/>
+                                        <field name="product_state" required="1"/>
+                                        <field name="r_keeper_update" readonly="1"/>
+                                        <field name="r_keeper_revision_number_display" readonly="1"/>
+                                        <field name="r_keeper_export_state" readonly="1"/>
+                                    </tree>
+                                    <form>
+                                        <sheet>
+                                            <div>
+                                                <label string="Produktas"/>
+                                                <h1 class="mt0">
+                                                    <field name="product_id" class="oe_inline" required="1"/>
+                                                </h1>
+                                            </div>
+                                            <group string="Produkto informacija">
+                                                <field name="category_id"/>
+                                                <field name="uom_id"/>
+                                                <field name="price_unit"/>
+                                                <field name="vat_rate"/>
+                                                <field name="is_weighed"/>
+                                                <field name="related_product_id"/>
+                                                <field name="related_product_uom_id"/>
+                                                <field name="product_state"/>
+                                            </group>
+                                            <group string="rKeeper atnaujinimo informacija">
+                                                <field name="r_keeper_update"/>
+                                                <field name="r_keeper_revision_number_display"/>
+                                                <field name="r_keeper_revision_text"/>
+                                                <field name="r_keeper_export_state"/>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="search_r_keeper_point_of_sale" model="ir.ui.view">
+            <field name="name">Pardavimų taškų paieška</field>
+            <field name="model">r.keeper.point.of.sale</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="products_to_update" string="Reikalingas rKeeper atnaujinimas"
+                            domain="[('products_to_update', '=', True)]"/>
+                    <separator/>
+                    <filter name="configured" string="Sukonfigūruota"
+                            domain="[('configured', '=', True)]"/>
+                    <filter name="n_configured" string="Trūksta konfigūracijos"
+                            domain="[('configured', '=', False)]"/>
+                    <separator/>
+                    <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="code" filter_domain="[('code', 'ilike', self)]"/>
+                    <field name="partner_id"/>
+                    <field name="journal_id"/>
+                    <field name="cash_journal_id"/>
+                    <field name="location_id"/>
+                    <group>
+                        <filter name="group_partner_id" string="Partneris"
+                                context="{'group_by':'partner_id'}"/>
+                        <filter name="group_journal_id" string="Žurnalas"
+                                context="{'group_by':'journal_id'}"/>
+                        <filter name="group_cash_journal_id" string="Grynųjų žurnalas"
+                                context="{'group_by':'cash_journal_id'}"/>
+                        <filter name="group_location_id" string="Lokacija"
+                                context="{'group_by':'location_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_r_keeper_point_of_sale" model="ir.actions.act_window">
+            <field name="name">Pardavimų taškai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.point.of.sale</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_r_keeper_point_of_sale"/>
+        </record>
+        <record id="action_open_r_keeper_point_of_sale_front" model="ir.actions.act_window">
+            <field name="name">Pardavimų taškai</field>
+            <field name="res_model">r.keeper.point.of.sale</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree_robo</field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="header_r_keeper_point_of_sale"/>
+            <field name="search_view_id" ref="search_r_keeper_point_of_sale"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_r_keeper_point_of_sale_front')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_r_keeper_point_of_sale_front')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="action_new_r_keeper_point_of_sale_front" model="ir.actions.act_window">
+            <field name="name">Pardavimų taškai</field>
+            <field name="res_model">r.keeper.point.of.sale</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="with_settings">True</field>
+        </record>
+        <!--MENU ITEMS-->
+        <menuitem
+                id="menu_r_keeper_point_of_sale"
+                name="Pardavimų taškai"
+                sequence="4"
+                action="action_open_r_keeper_point_of_sale"
+                parent="r_keeper_accounting_root"
+        />
+        <menuitem id="menu_r_keeper_point_of_sale_front"
+                  name="Pardavimų taškai"
+                  parent="r_keeper.r_keeper_root_front"
+                  sequence="1"
+                  robo_front="True"
+                  action="action_open_r_keeper_point_of_sale_front"
+                  groups="r_keeper.group_r_keeper_front_end"
+                  force_web_icon="icon-cashier,none,none"
+                  searchable="True"
+                  tags="rkeeper,pardavimų,taškai"
+        />
+    </data>
+</odoo>

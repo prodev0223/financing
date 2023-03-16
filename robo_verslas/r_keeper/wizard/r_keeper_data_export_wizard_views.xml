@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Form-->
+        <record id="from_r_keeper_data_export_wizard" model="ir.ui.view">
+            <field name="name">form.r.keeper.data.export.wizard</field>
+            <field name="model">r.keeper.data.export.wizard</field>
+            <field name="arch" type="xml">
+                <form string="rKeeper duomenų eksportas">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                            Šiame vedlyje galite eksportuoti pasirinkto pardavimo taško produktų informaciją į
+                            rKeeper serverį. Po duomenų eksportavimo jums bus išsiųsta žinutė informuojanti apie
+                            importuoto failo statusą.
+                        </div>
+                        <group>
+                            <field name="point_of_sale_id" readonly="1"
+                                   options="{'no_open': True, 'no_create': True}" required="1"/>
+                            <field name="point_of_sale_product_ids" readonly="1" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Importuoti duomenis"
+                                name="export_data" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </odoo>
+</data>

@@ -1,0 +1,56 @@
+<odoo>
+    <data>
+        <record id="gemma_register_form" model="ir.ui.view">
+            <field name="name">gemma.cash.register.form</field>
+            <field name="model">gemma.cash.register</field>
+            <field name="arch" type="xml">
+                <form string="Gemma Mokėjimas" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Kasos/Departamento pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="number"/>
+                            <field name="partner_id"/>
+                            <field name="location_id"/>
+                            <field name="journal_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="gemma_register_tree" model="ir.ui.view">
+            <field name="name">gemma.cash.register.tree</field>
+            <field name="model">gemma.cash.register</field>
+            <field name="arch" type="xml">
+                <tree string="Mokėjimų tipai"
+                      create="1" edit="1" delete="1"
+                      decoration-danger="state == 'failed'"
+                      decoration-success="state == 'working'">
+                    <field name="number"/>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="location_id"/>
+                    <field name="journal_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="gemma_register_action" model="ir.actions.act_window">
+            <field name="name">Kasos/Departamentai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">gemma.cash.register</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="gemma_register_tree"/>
+        </record>
+    </data>
+</odoo>

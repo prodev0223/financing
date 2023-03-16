@@ -1,0 +1,39 @@
+<odoo>
+    <data>
+        <record id="form_stock_to_accounting_matcher" model="ir.ui.view">
+            <field name="name">form.stock.to.accounting.matcher</field>
+            <field name="model">stock.to.accounting.matcher</field>
+            <field name="arch" type="xml">
+                <form string="Susieti SF su sandėlio DK įrašais">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                            Šiame vedlyje galite susieti sąskaitų faktūrų eilutes su apskaitos įrašais.
+                            Nenustačius laukelio 'Data iki', bus naudojama šiandienos diena.
+                        </div>
+                        <group>
+                            <field name="date_from" required="1"/>
+                            <field name="date_to"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Susieti" name="match_lines_prep" type="object" class="btn-primary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_stock_to_accounting_matcher" model="ir.actions.act_window">
+            <field name="name">Susieti SF su sandėlio DK įrašais</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.to.accounting.matcher</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        <menuitem id="menu_stock_to_accounting_matcher"
+                  name="Susieti SF su sandėlio DK įrašais"
+                  parent="menu_consistency_tests"
+                  action="action_open_stock_to_accounting_matcher"
+                  sequence="3"/>
+    </data>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_payslip_print_language_form" model="ir.ui.view">
+            <field name="name">hr.payslip.print.language.form</field>
+            <field name="model">payslip.print.language.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Kalba">
+                    <group>
+                        <span>Pasirinkite kalbą, kuria norite atsisiųsti</span>
+                    </group>
+                    <footer>
+                        <button name="render_payslip_note" string="Lietuvių k." type="object" context="{'lang': 'lt_LT'}" class="oe_highlight"/>
+                        <button name="render_payslip_note" string="Anglų k." type="object" context="{'lang': 'en_US'}" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

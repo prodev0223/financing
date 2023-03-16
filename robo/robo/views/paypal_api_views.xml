@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="paypal_api_view_form" model="ir.ui.view">
+            <field name="name">paypal.api.view.form</field>
+            <field name="model">paypal.api</field>
+            <field name="priority">15</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Paypal API nustatymai">
+                    <header>
+                        <button name="check_credentials_validity" type="object" class="btn-primary"
+                                string="Check configuration"
+                                attrs="{'invisible': ['|', ('client_id', '=', False), ('secret', '=', False)]}"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <div class="alert alert-info" role="alert" style="margin-bottom: 2px;">
+                                Visą informaciją apie integracijos aktyvavimą galite rasti paspaudę šią nuorodą -
+                                <a href="https://pagalba.robolabs.lt/lt/integracijos#paypal-integracija"
+                                   target="_blank">Robolabs pagalba</a> - ir pasirinkę skiltį "PayPal integracija".
+                            </div>
+                        </group>
+                        <group>
+                            <field name="client_id" required="True"/>
+                            <field name="secret" required="True"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="paypal_api_view_tree" model="ir.ui.view">
+            <field name="name">paypal.api.view.tree</field>
+            <field name="model">paypal.api</field>
+            <field name="robo_front">True</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <tree string="Paypal API nustatymai">
+                    <field name="name"/>
+                    <field name="client_id" required="True"/>
+                    <field name="sandbox"/>
+                </tree>
+            </field>
+        </record>
+        <record id="paypal_api_action" model="ir.actions.act_window">
+            <field name="name">Paypal API</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="robo_front">True</field>
+            <field name="res_model">paypal.api</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5,0,0),
+                          (0,0,{'view_mode':'tree', 'view_id': ref('paypal_api_view_tree')}),
+                          (0,0,{'view_mode':'form', 'view_id': ref('paypal_api_view_form')})]"/>
+            <field name="target">current</field>
+        </record>
+    </data>
+</odoo>

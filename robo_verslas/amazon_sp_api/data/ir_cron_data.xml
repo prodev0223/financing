@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="amazon_sp_api_cron_fetch_orders" model="ir.cron">
+            <field name="name">Amazon SP-API: Fetch orders</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">amazon.sp.api.orders</field>
+            <field name="function">cron_fetch_orders</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=22)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+        <record id="amazon_sp_api_cron_create_from_orders" model="ir.cron">
+            <field name="name">Amazon SP-API: Create from orders</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">amazon.sp.api.orders</field>
+            <field name="function">cron_create_from_orders</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=00)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+        <record id="amazon_sp_api_cron_fetch_inventory_summaries" model="ir.cron">
+            <field name="name">Amazon SP-API: Fetch inventory summaries</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">amazon.sp.api.inventory</field>
+            <field name="function">cron_fetch_inventory_summaries</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=22, minute=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+        <record id="amazon_sp_api_cron_create_from_inventory_summaries" model="ir.cron">
+            <field name="name">Amazon SP-API: Create from inventory summaries</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">amazon.sp.api.inventory</field>
+            <field name="function">cron_create_from_inventory_summaries</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=03)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

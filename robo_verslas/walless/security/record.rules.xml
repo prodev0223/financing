@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_walless_expense_validator" model="res.groups">
+            <field name="name">Walless expense validators</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama tvirtinti kompensacijas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+
+        <record id="e_document_premium_user_confirm_expenses" model="ir.rule">
+            <field name="name">eDocument WALLESS Validator</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('document_type', '=', 'prasymas'),
+                ('active', '=', True),
+                ('state', '=', 'e_signed'),
+                ('template_id.name', '=', 'Prašymas dėl išlaidų kompensavimo')
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('walless.group_walless_expense_validator'))]"/>
+        </record>
+        <record id="e_document_line_premium_user_confirm_expenses" model="ir.rule">
+            <field name="name">eDocument WALLESS Validator</field>
+            <field name="model_id" ref="e_document.model_e_document_line"/>
+            <field name="domain_force">[
+                ('e_document_id.document_type', '=', 'prasymas'),
+                ('e_document_id.active', '=', True),
+                ('e_document_id.state', '=', 'e_signed'),
+                ('e_document_id.template_id.name', '=', 'Prašymas dėl išlaidų kompensavimo')
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('walless.group_walless_expense_validator'))]"/>
+        </record>
+    </data>
+</odoo>

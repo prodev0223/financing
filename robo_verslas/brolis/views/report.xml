@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="brolis_saskaitos_extend" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//div[contains(@class, 'invoice_pvm')]//span[@t-field='o.print_amount_total_signed']" position="replace">
+                <span t-if="o.state not in ['proforma','proforma2']" t-field="o.residual"/>
+                <span t-else="" t-field="o.print_amount_total_signed"/>
+            </xpath>
+            <xpath expr="//p[contains(@class, 'invoice_comment')]" position="after">
+                <p class="invoice_comment">
+                    <span>Sąskaitą išrašė:
+                        <span t-field="o.user_id"/>
+                    </span>
+                </p>
+                <p>
+                    <span>Prekes/paslaugas gavo:</span>
+                </p>
+            </xpath>
+            <!--<xpath expr="//img[@class='main_logo_header']" position="replace">-->
+                <!--<img class="main_logo_header" t-if="o.company_id.logo_web" t-att-src="'data:image/png;base64,%s' % o.company_id.logo_web" style="min-height: 50px; min-width: 200px"/>-->
+            <!--</xpath>-->
+        </template>
+        <template id="brolis_sale_offer_extend" inherit_id="robo_stock.template_sale_offer">
+            <xpath expr="//p[contains(@class, 'sale_order_note')]" position="replace">
+                <p class="sale_order_note pull-left" style="max-width:50%" t-if="o.note">
+                    <span t-field="o.note"/>
+                </p>
+                <div class="left salesman" style="margin-top: 64px!important;">
+                    <table class="order_salesman" style="border-collapse: separate;border-spacing: 10px 0 !important;">
+                        <tr>
+                            <td>
+                                <strong>Pasiūlymą paruošė:</strong>
+                            </td>
+                            <td>
+                                <span t-field="o.user_id.name"/>
+                            </td>
+                        </tr>
+                        <tr t-if="o.user_id.employee_ids" >
+                            <td/>
+                            <td>
+                                <span t-esc="o.user_id.employee_ids[0].work_email"/>
+                            </td>
+                        </tr>
+                        <tr t-if="o.user_id.employee_ids" >
+                            <td/>
+                            <td>
+                                <span t-esc="o.user_id.employee_ids[0].work_phone"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </xpath>
+        </template>
+
+        <record id="paperformat_a4_narrow" model="report.paperformat">
+            <field name="name">European A4 narrow</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top" eval="5"/>
+            <field name="header_spacing" eval="5"/>
+            <field name="margin_left" eval="7"/>
+            <field name="margin_right" eval="7"/>
+            <field name="margin_bottom" eval="15"/>
+        </record>
+        <record id="saskaitos.account_invoices_sl" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="brolis.paperformat_a4_narrow"/>
+        </record>
+        <!--<template id="report.external_layout_header">-->
+            <!--<div class="header">-->
+                <!--<div class="row">-->
+                    <!--<div class="col-xs-3 robo_company_logo">-->
+                        <!--<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="min-height: 50px; min-width: 200px"/>-->
+                    <!--</div>-->
+                    <!--<div class="col-xs-9 text-right" style="margin-top:20px;" t-field="company.rml_header1"/>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</template>-->
+    </data>
+</odoo>

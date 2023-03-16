@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="account_journal_view_form_front" model="ir.ui.view">
+            <field name="name">account.journal.view.form.front</field>
+            <field name="model">account.journal</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.account_journal_view_form_front"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='code']" position="after">
+                    <field name="image" widget="image"/>
+                    <field name="mail_server_id"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_journal_form" model="ir.ui.view">
+            <field name="name">account.journal.view.form</field>
+            <field name="model">account.journal</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='advanced_settings']//group//group[2]" position="inside">
+                    <field name="image" widget="image" attrs="{'invisible': [('type', '!=', 'sale')]}"/>
+                    <field name="mail_server_id" attrs="{'invisible': [('type', '!=', 'sale')]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

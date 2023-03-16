@@ -1,0 +1,1 @@
+import del_priemimo_i_darba

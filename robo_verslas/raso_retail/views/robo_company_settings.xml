@@ -1,0 +1,109 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="raso_company_settings" model="ir.ui.view">
+            <field name="name">raso.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="after">
+                    <group string="Raso Valdymo skydelis" class="robo_group_collapsable robo_group_collapsed">
+                         <button name="%(raso_shoplist_action)d"
+                                 string="Raso Parduotuvės" type="action" class="oe_link"/>
+                         <button name="%(raso_sales_action)d"
+                                 string="Raso Pardavimai" type="action" class="oe_link"/>
+                         <button name="%(raso_invoices_action)d"
+                                 string="Raso Sąskaitos" type="action" class="oe_link"/>
+                         <button name="%(raso_payments_action)d"
+                                 string="Raso Mokėjimai" type="action" class="oe_link"/>
+                         <button name="%(raso_prices_action)d"
+                                 string="Raso Prekių Kainos" type="action" class="oe_link"/>
+                         <button name="%(raso_discounts_action)d"
+                                 string="Raso Prekių nuolaidos" type="action" class="oe_link"/>
+                        <button name="%(raso_group_discounts_action)d"
+                                string="Raso Prekių kategorijų nuolaidos" type="action" class="oe_link"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_raso_shoplist_settings_search"
+                  name="Raso parduotuvės"
+                  parent="robo.menu_company_settings_search"
+                  action="raso_shoplist_action"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="raso,parduotuvės"
+        />
+
+        <menuitem id="menu_raso_sales_settings_search"
+                  name="Raso pardavimai"
+                  parent="robo.menu_company_settings_search"
+                  action="raso_sales_action"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="raso,pardavimai"
+        />
+
+        <menuitem id="menu_raso_invoices_settings_search"
+                  name="Raso sąskaitos"
+                  parent="robo.menu_company_settings_search"
+                  action="raso_invoices_action"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="raso,sąskaitos"
+        />
+
+        <menuitem id="menu_raso_payments_settings_search"
+                  name="Raso mokėjimai"
+                  parent="robo.menu_company_settings_search"
+                  action="raso_payments_action"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="raso,mokėjimai"
+        />
+
+        <menuitem id="menu_raso_prices_settings_search"
+                  name="Raso prekių kainos"
+                  parent="robo.menu_company_settings_search"
+                  action="raso_prices_action"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="raso,prekių,kainos"
+        />
+
+        <menuitem id="menu_raso_discounts_settings_search"
+                  name="Raso prekių nuolaidos"
+                  parent="robo.menu_company_settings_search"
+                  action="raso_discounts_action"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="raso,prekių,nuolaidos"
+        />
+
+        <menuitem id="menu_raso_group_discounts_settings_search"
+                  name="Raso prekių kategorijų nuolaidos"
+                  parent="robo.menu_company_settings_search"
+                  action="raso_group_discounts_action"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="raso,prekių,kategorijų,nuolaidos"
+        />
+
+    </data>
+</odoo>

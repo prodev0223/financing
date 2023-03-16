@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="account_analytic_group_tree_view" model="ir.ui.view">
+            <field name="name">account.analytic.group.tree</field>
+            <field name="model">account.analytic.group</field>
+            <field name="arch" type="xml">
+                <tree string="Analytic groups">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_analytic_group_form_view" model="ir.ui.view">
+            <field name="name">account.analytic.group.form</field>
+            <field name="model">account.analytic.group</field>
+            <field name="arch" type="xml">
+                <form string="Analytic group">
+                    <sheet string="Analytic group">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-check">
+                                <field name="active" widget="boolean_button" options='{"terminology": "active"}'/>
+                            </button>
+                        </div>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_analytic_group_action" model="ir.actions.act_window">
+            <field name="name">Analytic groups</field>
+            <field name="res_model">account.analytic.group</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new group.
+              </p>
+            </field>
+        </record>
+
+        <menuitem
+            id="account_analytic_group_menu"
+            name="Analytic groups"
+            parent="account.menu_analytic_accounting"
+            action="robo_analytic.account_analytic_group_action"
+        />
+    </data>
+</odoo>

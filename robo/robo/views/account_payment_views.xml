@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_account_payment_invoice_form" model="ir.ui.view">
+            <field name="name">account.payment.invoice.form</field>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <form string="Register Payment" version="7">
+                    <sheet>
+                        <group>
+                            <field name="payment_type" invisible="1"/>
+                            <field name="partner_type" invisible="1"/>
+                            <field name="invoice_ids" invisible="1"/>
+                            <field name="partner_id" invisible="1"/>
+                            <field name="state" invisible="1"/>
+                            <group>
+                                <field name="journal_id" widget="selection" string="Sąskaita" domain="[('type','=','cash')]"/>
+                                <field name="hide_payment_method" invisible="1"/>
+                                <field name="payment_method_id" string="Mokėjimo metodas" widget="radio"
+                                       attrs="{'invisible': [('hide_payment_method', '=', True)]}"/>
+                                <field name="payment_method_code" invisible="1"/>
+                                <label for="amount" string="Suma"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount"/>
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                           groups="base.group_multi_currency"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="payment_date" string="Data"/>
+                                <field name="communication" string="Mokėjimo nurodymas"/>
+                                <field name="cashier_id" string="Kasininkas"/>
+                            </group>
+                            <!--<group attrs="{'invisible': [('payment_difference', '=', 0.0)]}">-->
+                            <group attrs="{'invisible': 1}">
+                                <label for="payment_difference" string="Neapmokėtas likutis"/>
+                                <div>
+                                    <field name="payment_difference" string="Skirtumas"/>
+                                    <field name="payment_difference_handling" widget="radio" nolabel="1"/>
+                                </div>
+                                <field name="writeoff_account_id" string="Nurašyti į"
+                                       attrs="{'invisible': [('payment_difference_handling','=','open')], 'required': [('payment_difference_handling', '=', 'reconcile')]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string='Patvirtinti' name="post" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_account_invoice_payment" model="ir.actions.act_window">
+            <field name="name">Registruoti mokėjimą</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_payment_invoice_form"/>
+            <field name="context">{'default_invoice_ids': [(4, active_id, None)]}</field>
+            <field name="target">new</field>
+        </record>
+
+        <!--other-->
+        <record id="view_account_payment_invoice_form" model="ir.ui.view">
+            <field name="name">account.payment.invoice.form</field>
+            <field name="model">account.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Register Payment" version="7">
+                    <sheet>
+                        <group>
+                            <field name="payment_type" invisible="1"/>
+                            <field name="partner_type" invisible="1"/>
+                            <field name="invoice_ids" invisible="1"/>
+                            <field name="partner_id" invisible="1"/>
+                            <field name="state" invisible="1"/>
+                            <group>
+                                <field name="journal_id" widget="selection" string="Sąskaita" domain="[('type','=','cash')]"/>
+                                <field name="hide_payment_method" invisible="1"/>
+                                <field name="payment_method_id" string="Mokėjimo metodas" widget="radio"
+                                       attrs="{'invisible': [('hide_payment_method', '=', True)]}"/>
+                                <field name="payment_method_code" invisible="1"/>
+                                <label for="amount" string="Suma"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount"/>
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                           groups="base.group_multi_currency"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="payment_date" string="Data"/>
+                                <field name="communication" string="Mokėjimo nurodymas"/>
+                                <field name="cashier_id" string="Kasininkas"/>
+                            </group>
+                            <!--<group attrs="{'invisible': [('payment_difference', '=', 0.0)]}">-->
+                            <group attrs="{'invisible': 1}">
+                                <label for="payment_difference" string="Neapmokėtas likutis"/>
+                                <div>
+                                    <field name="payment_difference" string="Skirtumas"/>
+                                    <field name="payment_difference_handling" widget="radio" nolabel="1"/>
+                                </div>
+                                <field name="writeoff_account_id" string="Nurašyti į"
+                                       attrs="{'invisible': [('payment_difference_handling','=','open')], 'required': [('payment_difference_handling', '=', 'reconcile')]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string='Patvirtinti' name="post" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_account_invoice_payment" model="ir.actions.act_window">
+            <field name="name">Registruoti mokėjimą</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_payment_invoice_form"/>
+            <field name="context">{'default_invoice_ids': [(4, active_id, None)]}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="extend_account_payment_form" model="ir.ui.view">
+            <field name="name">extend.account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='destination_journal_id']" position="attributes">
+                    <attribute name="string">Pervesti į</attribute>
+                </xpath>
+                <xpath expr="//field[@name='destination_journal_id']" position="after">
+                    <field name="cash_operation_type" attrs="{'invisible': [('partner_type', '!=', 'employee')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_payment_form" model="ir.ui.view">
+            <field name="name">account.payment.robo.form</field>
+            <field name="model">account.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Kasos orderiai">
+                    <header>
+                        <button name="post" class="oe_highlight" states="draft" string="Patvirtinti" type="object"/>
+                        <button name="print_order" string="Spausdinti" type="object"
+                                attrs="{'invisible': [('state', '=', 'draft')]}" class="oe_highlight"/>
+                        <button name="button_action_draft" attrs="{'invisible': [('state', '=', 'draft')]}"
+                                string="Atstatyti į juodraštį" type="object" />
+                        <button name="button_action_cancel" attrs="{'invisible': [('state', '=', 'canceled')]}"
+                                string="Atšaukti" type="object" />
+                        <field name="state" widget="statusbar" statusbar_visible="posted,reconciled"/>
+                    </header>
+                    <field name="nbr_of_attachments" invisible="1"/>
+                    <field name="user_attachment_ids" invisible="1"/>
+                    <field name="attachment_drop_lock" invisible="1"/>
+                    <widget type="robo_attach_files"/>
+                    <field name="unique_wizard_id" invisible="1"/>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="button_journal_entries" string="Žurnalo elementai"
+                                    type="object" attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"
+                                    groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="move_line_ids" invisible="1"
+                                   />
+                            <button class="oe_stat_button" name="button_invoices" string="Sąskaitos faktūros"
+                                    type="object" attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"
+                                    groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="has_invoices" invisible="1" />
+                        </div>
+                        <field name="id" invisible="1" />
+                        <field name="show_future_payment_date_banner" invisible="1"/>
+                        <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;"
+                             align="center" colspan="4"
+                             attrs="{'invisible': ['|', ('state','!=','draft'), ('show_future_payment_date_banner', '=', False)]}">
+                            CASH REGISTER DOCUMENT IS SET FOR A FUTURE (UPCOMING) DATE
+                        </div>
+                        <br/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="payment_type" widget="radio"
+                                       attrs="{'invisible':1, 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="partner_type" nolabel="1" widget="selection" string=""
+                                       attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
+                                       on_change="1"
+                                       />
+                                <field name="partner_id" nolabel="1"
+                                       options="{'no_quick_create': True}"
+                                       attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
+                                       context="{'form_view_ref': 'robo.new_clients_customer_form', 'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"
+                                       on_change="1" can_create="true" can_write="true"
+                                       />
+                                <field name="journal_id" widget="selection"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}" on_change="1"
+                                       groups="robo_basic.group_robo_premium_accountant"
+                                       can_create="true"
+                                       can_write="true"
+                                       />
+                                <field name="destination_journal_id" widget="selection"
+                                       attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"
+                                       string="Pervesti į" on_change="1" can_create="true" can_write="true"
+                                       />
+                                <field name="hide_payment_method" invisible="1"
+                                       />
+                                <field name="payment_method_id" string=" " widget="radio"
+                                       attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"
+                                       on_change="1" can_create="true" can_write="true"
+                                       />
+                                <field name="payment_method_code" invisible="1"
+                                       />
+                                <label for="amount"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                           />
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                           attrs="{'readonly': [('state', '!=', 'draft')]}" can_create="true"
+                                           can_write="true"
+                                           />
+                                </div>
+                                <field name="calculate_exchange_diff"
+                                       attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('payment_type','!=','transfer')]}"
+                                       string="Skaičiuoti valiutų kursų pokytį"
+                                       />
+                                <field name="exchange_type" widget="selection"
+                                       attrs="{'invisible': [('calculate_exchange_diff', '=', False)],                                     'readonly': [('state', '!=', 'draft')]}"
+                                       />
+                                <label for="exchange_rate"
+                                       attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')]}"
+                                       />
+                                <div class="o_row"
+                                     attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')]}"
+                                     >
+                                    <field name="exchange_rate"
+                                           attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')],                                     'readonly': [('state', '!=', 'draft')]}"
+                                           />
+                                    <field name="rate_label" nolabel="1"
+                                           attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')]}"
+                                           />
+                                </div>
+                                <field name="currency_dest_id" invisible="1" can_create="true" can_write="true"
+                                       />
+                                <field name="exchange_fixed_amount"
+                                       attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'fixed')],                                 'readonly': [('state', '!=', 'draft')]}"
+                                       options="{'currency_field': 'currency_dest_id'}" widget="monetary"
+                                       />
+                                <field name="payment_transaction_id" can_create="true" can_write="true"
+                                       attrs="{'invisible':1}"/>
+                                <field name="cash_operation_type"
+                                       attrs="{'invisible': [('partner_type', '!=', 'employee')]}"/>
+                            </group>
+                            <group>
+                                <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                       />
+                                <field name="cashier_employee_ids" invisible="1"/>
+                                <field name="cashier_id" attrs="{'required': 1}" domain="[('id', 'in', cashier_employee_ids and cashier_employee_ids[0][2])]"
+                                       options="{'no_create':1, 'no_open':1}"/>
+                                <field name="signed_employee_id" required="1" options="{'no_create': 1, 'no_open': 1}"/>
+                                <field name="communication" string="Paskirtis"
+                                       attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"
+                                       />
+                                <field name="force_destination_account_id"
+                                       groups="robo_basic.group_robo_cash_receipts_force_account"
+                                       options="{'no_open':1, 'no_create':1}"
+                                />
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_cash_reg_form" model="ir.ui.view">
+            <field name="name">account.payment.robo.form</field>
+            <field name="model">account.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Kasos orderiai">
+                    <header>
+                        <button name="post" class="oe_highlight" states="draft" string="Patvirtinti" type="object"/>
+                        <button name="print_order" string="Spausdinti" type="object"
+                                attrs="{'invisible': [('state', '=', 'draft')]}" class="oe_highlight"/>
+                        <button name="print_income_expense_order" string="Print income/expense order" type="object"
+                                groups="robo.robo_cash_register_printing_for_journal_payments"
+                                attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                        <button name="button_action_draft" attrs="{'invisible': [('state', '=', 'draft')]}"
+                                string="Atstatyti į juodraštį" type="object" />
+                        <button name="button_action_cancel" attrs="{'invisible': [('state', '=', 'canceled')]}"
+                                string="Atšaukti" type="object" />
+                        <field name="state" widget="statusbar" statusbar_visible="posted,reconciled"/>
+                    </header>
+                    <field name="nbr_of_attachments" invisible="1"/>
+                    <field name="user_attachment_ids" invisible="1"/>
+                    <field name="attachment_drop_lock" invisible="1"/>
+                    <widget type="robo_attach_files"/>
+                    <field name="unique_wizard_id" invisible="1"/>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="button_journal_entries" string="Žurnalo elementai"
+                                    type="object" attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"
+                                    groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="move_line_ids" invisible="1"
+                                   />
+                            <button class="oe_stat_button" name="button_invoices" string="Sąskaitos faktūros"
+                                    type="object" attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"
+                                    groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="has_invoices" invisible="1" />
+                        </div>
+                        <field name="id" invisible="1" />
+                        <field name="show_future_payment_date_banner" invisible="1"/>
+                        <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;"
+                             align="center" colspan="4"
+                             attrs="{'invisible': ['|', ('state','!=','draft'), ('show_future_payment_date_banner', '=', False)]}">
+                             CASH REGISTER DOCUMENT IS SET FOR A FUTURE (UPCOMING) DATE
+                        </div>
+                        <br/>
+                        <div class="oe_title" attrs="{'invisible': [('state', '=', 'draft')]}"
+                             >
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="payment_type" widget="radio"
+                                       attrs="{'invisible':1, 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="partner_type" nolabel="1" widget="selection" string=""
+                                       attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
+                                       on_change="1"
+                                       />
+                                <field name="partner_id" nolabel="1"
+                                       options="{'no_quick_create': True}"
+                                       attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
+                                       context="{'form_view_ref': 'robo.new_clients_customer_form', 'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound', 'default_partner_id': False}"
+                                       on_change="1" can_create="true" can_write="true"
+                                       />
+                                <field name="journal_id" widget="selection"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}" on_change="1"
+                                       can_create="true"
+                                       can_write="true"
+
+                                       />
+                                <field name="destination_journal_id" widget="selection"
+                                       attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"
+                                       string="Pervesti į" on_change="1" can_create="true" can_write="true"
+                                       />
+                                <field name="hide_payment_method" invisible="1"
+                                       />
+                                <field name="payment_method_id" string=" " widget="radio"
+                                       attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"
+                                       on_change="1" can_create="true" can_write="true"
+                                       />
+                                <field name="payment_method_code" invisible="1"
+                                       />
+                                <label for="amount"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                           />
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                           attrs="{'readonly': [('state', '!=', 'draft')]}" can_create="true"
+                                           can_write="true"
+                                           />
+                                </div>
+                                <field name="calculate_exchange_diff"
+                                       attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('payment_type','!=','transfer')]}"
+                                       string="Skaičiuoti valiutų kursų pokytį"
+                                       />
+                                <field name="exchange_type" widget="selection"
+                                       attrs="{'invisible': [('calculate_exchange_diff', '=', False)],                                     'readonly': [('state', '!=', 'draft')]}"
+                                       />
+                                <label for="exchange_rate"
+                                       attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')]}"
+                                       />
+                                <div class="o_row"
+                                     attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')]}"
+                                     >
+                                    <field name="exchange_rate"
+                                           attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')],                                     'readonly': [('state', '!=', 'draft')]}"
+                                           />
+                                    <field name="rate_label" nolabel="1"
+                                           attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')]}"
+                                           />
+                                </div>
+                                <field name="currency_dest_id" invisible="1" can_create="true" can_write="true"
+                                       />
+                                <field name="exchange_fixed_amount"
+                                       attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'fixed')],                                 'readonly': [('state', '!=', 'draft')]}"
+                                       options="{'currency_field': 'currency_dest_id'}" widget="monetary"
+                                       />
+                                <field name="payment_transaction_id" can_create="true" can_write="true"
+                                       attrs="{'invisible':1}"/>
+                            </group>
+                            <group>
+                                <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                       />
+                                <field name="cash_register_employee_ids" invisible="1"/>
+                                <field name="cashier_id" attrs="{'required': 1}"
+                                       domain="[('id', 'in', cash_register_employee_ids and cash_register_employee_ids[0][2])]"
+                                       options="{'no_create':1, 'no_open':1}"/>
+                                <field name="communication" string="Paskirtis"
+                                       attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"
+                                       />
+                                <field name="force_destination_account_id"
+                                       groups="robo_basic.group_robo_cash_receipts_force_account"
+                                       options="{'no_open':1, 'no_create':1}"
+                                />
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="extend_account_payment_exch_form" model="ir.ui.view">
+            <field name="name">extend.account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account_exchange_rate.view_account_payment_form_exchange_ext"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='calculate_exchange_diff']" position="attributes">
+                    <attribute name="string">Skaičiuoti valiutų kursų pokytį</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!--action3-->
+        <record id="tree_kasos_operacijos" model="ir.ui.view">
+            <field name="name">kasos.operacijos.tree</field>
+            <field name="model">account.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0" string="Kasos operacijos"
+                      decoration-danger="state == 'canceled'">
+                    <field name="payment_date" string="Data"/>
+                    <field name="name" string="Pavadinimas"/>
+                    <field name="partner_id" string="Partneris"/>
+                    <field name="payment_type" string="Operacija"/>
+                    <field name="journal_id" string="Žurnalas"/>
+                    <field name="amount" widget='monetary' sum="Suma" string="Suma"/>
+                    <field name="state" string="Būsena"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tree_cash_register" model="ir.ui.view">
+            <field name="name">tree.cash.register</field>
+            <field name="model">account.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0" string="Kasos aparatas"
+                      decoration-danger="state == 'canceled'">
+                    <field name="payment_date" string="Data"/>
+                    <field name="name" string="Pavadinimas"/>
+                    <field name="partner_id" string="Partneris"/>
+                    <field name="payment_type" string="Operacija"/>
+                    <field name="journal_id" string="Žurnalas"/>
+                    <field name="amount" widget='monetary' sum="Suma" string="Suma"/>
+                    <field name="state" string="Būsena"/>
+                </tree>
+            </field>
+        </record>
+        <record id="kanban_kasos_operacijos" model="ir.ui.view">
+            <field name="name">kasos.operacijos.kanban</field>
+            <field name="model">account.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban create="0" import="0" string="Kasos operacijos">
+                    <field name="payment_date"/>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="payment_type"/>
+                    <field name="journal_id"/>
+                    <field name="amount"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.partner_id.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                    <div class="col-xs-6 pull-right text-right">
+                                        <strong>
+                                            <t t-esc="record.amount.value"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <t t-esc="record.payment_date.value"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span class="pull-right text-right">
+                                            <field name="state" widget="kanban_label_selection"
+                                                   options="{'classes': {'draft': 'robo-draft', 'posted': 'robo-posted', 'sent': 'robo-sent', 'reconciled': 'robo-reconciled'}}"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="search_account_payment" model="ir.ui.view">
+            <field name="name">search.account.payment</field>
+            <field name="model">account.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Kasos operacijos">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('communication','ilike',self)]"
+                           string="Aprašymas"/>
+                    <separator/>
+                    <field name="partner_id" string="Partneris"/>
+                    <field name="company_id" string="Kompanija" groups="base.group_multi_company"/>
+                    <filter string="Išlaidų orderiai" domain="[('payment_type','=','outbound')]"/>
+                    <filter string="Pajamų orderiai" domain="[('payment_type','=','inbound')]"/>
+                    <field name="journal_id"/>
+                    <separator/>
+                    <filter string="Juodraščiai" domain="[('state','=','draft')]" name="state_draft"/>
+                    <filter string="Anuliuoti" domain="[('state','=','canceled')]" name="state_canceled"/>
+                    <filter string="Užregistruoti" domain="[('state','=','posted')]" name="state_posted"/>
+                    <separator/>
+                    <filter string="Partneris" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Būsena" domain="[]" context="{'group_by': 'state'}"/>
+                    <filter string="Žurnalas" domain="[]" context="{'group_by': 'journal_id'}"/>
+                    <filter string="Valiuta" domain="[]" context="{'group_by': 'currency_id'}"
+                            groups="base.group_multi_currency"/>
+                    <filter string="Kompanija" domain="[]" context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_cash_operations" >
+            <field name="name">Kasos operacijos</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,kanban,form</field>
+            <field name="domain">[('journal_id.type', '=', 'cash'), ('journal_id.code', '=like', 'CSH%')]</field>
+            <field name="search_view_id" ref="search_account_payment"/>
+            <field name="header" ref="robo.robo_button_cash"/>
+            <field name="with_settings">True</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_kasos_operacijos')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('account_payment_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('kanban_kasos_operacijos')})]"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="new_revenue_operation">
+            <field name="name">Pajamų orderis</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="robo.account_payment_form"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="context">{
+                'default_payment_type': 'inbound',
+                'robo_header': {},
+                }
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="new_cash_register_inc">
+            <field name="name">Kasos aparatas</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="robo.account_cash_reg_form"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="header" ref="robo.robo_button_cash_register"/>
+            <field name="context">{
+                'default_payment_type': 'inbound',
+                'cash_reg_view': True,
+                'robo_header': {},
+                }
+            </field>
+        </record>
+
+            <record model="ir.actions.act_window" id="new_cash_register_exp">
+            <field name="name">Kasos aparatas</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="robo.account_cash_reg_form"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="context">{
+                'default_payment_type': 'outbound',
+                'cash_reg_view': True,
+                'robo_header': {},
+                }
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="new_expense_operation">
+            <field name="name">Išlaidų orderis</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="robo.account_payment_form"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="context">{
+                'default_payment_type': 'outbound',
+                'robo_header': {},
+                }
+            </field>
+        </record>
+
+
+        <menuitem id="menu_kasos_operacijos"
+                  parent="menu_kita"
+                  name="Kasos operacijos"
+                  sequence="41"
+                  action="open_cash_operations"
+                  groups="robo_basic.group_robo_cash_manager"
+                  force_web_icon="icon-cashier,none,none"
+                  robo_front="True"
+                  searchable="True"
+                  tags="kasos,operacijos"
+        />
+
+        <record id="menu_kasos_operacijos" model="ir.ui.menu">
+            <field name="groups_id" eval="[(5,), (4, ref('robo_basic.group_robo_cash_manager'))]"/>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_cash_register_operations">
+            <field name="name">Kasos aparatas</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,kanban,form</field>
+            <field name="domain">[('journal_id.type', '=', 'cash'), ('journal_id.code', '!=', 'KVIT'), ('journal_id.code', 'not like', 'CSH')]</field>
+            <field name="header" ref="robo.robo_button_cash_register"/>
+            <field name="search_view_id" ref="search_account_payment"/>
+            <field name="robo_front" eval="True"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_cash_register')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('account_cash_reg_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('kanban_kasos_operacijos')})]"/>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'robo_header': {},
+                'cash_reg_view': True,
+                }"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <menuitem id="menu_kasos_aparato_operacijos"
+                  parent="menu_kita"
+                  name="Kasos aparatas"
+                  sequence="41"
+                  action="open_cash_register_operations"
+                  searchable="True"
+                  tags="kasos,aparatas"
+        />
+        <record id="menu_kasos_aparato_operacijos" model="ir.ui.menu">
+            <field name="web_icon">icon-cashier,none,none</field>
+            <field name="robo_front" eval="True"/>
+        </record>
+
+        <record id="multi_cash_payment_print_action" model="ir.actions.server">
+            <field name="name">Spausdinti kasos operacijas</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="code">
+action = env['report'].get_action(object.browse(context.get('active_ids', False)), 'l10n_lt.report_islaidu_orderis_template', data={})
+action['report_type'] = 'qweb-pdf'
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.tree_kasos_operacijos')])]"/>
+        </record>
+        <function name="create_multi_cash_payment_print_action" model="account.payment"/>
+
+        <record id="multi_cash_register_payment_print_action" model="ir.actions.server">
+            <field name="name">Spausdinti kasos kvitus</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="code">
+action = env['report'].get_action(object.browse(context.get('active_ids', False)), 'l10n_lt.report_cash_register_template', data={})
+action['report_type'] = 'qweb-pdf'
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.tree_cash_register')])]"/>
+        </record>
+        <function name="create_multi_cash_register_payment_print_action" model="account.payment"/>
+    </data>
+</odoo>

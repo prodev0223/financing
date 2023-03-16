@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_hr_holidays_payment_report_pivot" model="ir.ui.view">
+            <field name="name">hr.holidays.payment.report.pivot</field>
+            <field name="model">hr.holidays.payment.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Atostoginių analizė">
+                    <field name="date_from" type="col"/>
+                    <field name="employee_id" type="row"/>
+                    <field name="bruto" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_hr_holidays_payment_report_search" model="ir.ui.view">
+            <field name="name">hr.holidays.payment.report.search</field>
+            <field name="model">hr.holidays.payment.report</field>
+            <field name="arch" type="xml">
+                <search string="Atostoginių analizė">
+                    <filter name="this_year" string="Šie metai"
+                            domain="[('date_from', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                     ('date_from', '&lt;', (context_today()+relativedelta(years=1, month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <field name="employee_id"/>
+                    <field name="contract_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Darbuotojas" context="{'group_by': 'employee_id'}"/>
+                        <filter string="Kontraktas" context="{'group_by': 'contract_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_hr_holidays_payment_report" model="ir.actions.act_window">
+            <field name="name">Atostoginių analizė</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.holidays.payment.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="context">{'search_default_this_year': True}</field>
+        </record>
+
+        <menuitem
+            name="Atostoginių analizė"
+            parent="hr_holidays.menu_hr_holidays_report"
+            action="action_hr_holidays_payment_report"
+            id="menu_holidays_payment_report"/>
+    </data>
+</odoo>

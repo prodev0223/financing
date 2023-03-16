@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="template_sale_offer">
+
+            <t t-call="report.external_layout">
+
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+                <t t-set="invoice-color" t-value="o.state"/>
+
+                <div class="page report_invoice_page">
+                    <h2>
+                        <span>Komercinis pasiūlymas</span>
+                    </h2>
+
+                    <div class="report_invoice_reference">
+                        <h3>
+                            <t t-if="o.name">
+                                <p>Nr.
+                                    <span t-field="o.name"/>
+                                </p>
+                            </t>
+
+                        </h3>
+                    </div>
+                    <div class="invoice_dates row mt32">
+                        <div class="col-xs-offset-8 col-xs-4 text-left">
+                            <p t-if="o.date_order">
+                                Data:
+                                <span t-esc="o.date_order[:10]"/>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="companies">
+                        <div class="left">
+                            <h3 class="company_type">Pardavėjas</h3>
+                            <p>
+                                <strong>
+                                    <span t-field="o.company_id.name"/>
+                                </strong>
+                            </p>
+                            <p t-if="o.company_id.name">
+                                <span t-esc="o.company_id.partner_id"
+                                      t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                            </p>
+                            <p t-if="o.company_id.company_registry">
+                                <span class="comp_code">Įmonės kodas:</span>
+                                <span t-field="o.company_id.company_registry"/>
+                            </p>
+                            <p t-if="o.company_id.with_context({'date':o.date_order}).vat_payer">
+                                <span class="comp_pvm">PVM mokėtojo kodas:</span>
+                                <span t-field="o.company_id.vat"/>
+                            </p>
+                            <p>
+                                <t t-foreach="o.company_id.sudo().bank_journal_ids" t-as="bankas">
+                                    <t t-if="bankas.display_on_footer and bankas.bank_acc_number">
+                                        <p t-if="bankas.bank_id.name">
+                                            <span class="comp_bank">Bankas:</span>
+                                            <span t-field="bankas.bank_id.name"/>
+                                        </p>
+                                        <p t-if="bankas.bank_id.bic">
+                                            <span class="comp_bic">BIC:</span>
+                                            <span t-field="bankas.bank_id.bic"/>
+                                        </p>
+                                        <p t-if="bankas.bank_acc_number">
+                                            <span class="account_nr">A/s. Nr.</span>
+                                            <span t-field="bankas.bank_acc_number"/>
+                                        </p>
+                                    </t>
+                                </t>
+                            </p>
+                        </div>
+                        <div class="right">
+                            <h3 class="company_type">Pirkėjas</h3>
+                            <p>
+                                <strong>
+                                    <span t-field="o.partner_id.name"/>
+                                </strong>
+                            </p>
+                            <p t-if="o.partner_id.name">
+                                <span t-esc="o.partner_id"
+                                      t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                            </p>
+                            <p t-if="o.partner_id.kodas">
+                                <span class="comp_code">Įmonės kodas:</span>
+                                <span t-field="o.partner_id.kodas"/>
+                            </p>
+                            <p t-if="o.partner_id.vat">
+                                <span class="comp_code">PVM mokėtojo kodas:</span>
+                                <span t-field="o.partner_id.vat"/>
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <!-- Is there a discount on at least one line? -->
+                    <t t-set="display_discount" t-value="any([l.discount for l in o.order_line])"/>
+
+                    <div class="mt32">
+                        <table class="table table-condensed invoice_lines">
+                            <thead t-attf-class="invoice_draft">
+                                <tr>
+                                    <th>Aprašymas</th>
+                                    <th class="text-right">Kiekis</th>
+
+                                    <t t-if="o.company_id.with_context({'date':o.date_order}).vat_payer">
+                                        <th t-if="not o.price_include" class="text-right">Vnt. kaina (be PVM)</th>
+                                        <th t-else="" class="text-right">Vnt. kaina (su PVM)</th>
+                                    </t>
+                                    <t t-else="">
+                                        <th class="text-right">Vnt. kaina</th>
+                                    </t>
+                                    <th class="text-right" t-if="display_discount">
+                                        <t t-if="discount_type == 'perc'">
+                                            Nuol.(%)
+                                        </t>
+                                        <t t-if="discount_type == 'currency'">
+                                            Nuol.
+                                        </t>
+                                    </th>
+                                    <t t-if="o.company_id.with_context({'date':o.date_order}).vat_payer">
+                                        <th t-if="detect_tax_lines(o)" class="text-right">Mokesčiai</th>
+                                        <th t-if="not o.price_include" class="text-right">Suma be PVM</th>
+                                        <th t-else="" class="text-right">Suma su PVM</th>
+                                    </t>
+                                    <t t-else="">
+                                        <th class="text-right">Suma</th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody class="invoice_tbody">
+                                <tr t-foreach="o.order_line" t-as="l">
+                                    <td>
+                                        <span t-field="l.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="l.product_uom_qty"/>
+                                        <span t-field="l.product_uom" groups="product.group_uom"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <!--<t t-if="True">-->
+                                            <span t-field="l.price_unit"/>
+                                        <!--</t>-->
+                                    </td>
+                                    <t t-if="display_discount">
+                                        <td t-if="discount_type=='perc'" class="text-right">
+                                            <span t-field="l.discount"/>
+                                        </td>
+                                        <td t-if="discount_type=='currency'" class="text-right">
+                                            <span t-esc="formatLang(l.price_unit * l.product_uom_qty - l.price_subtotal, 2, o.partner_id.lang)"/>
+                                        </td>
+                                    </t>
+
+                                    <t t-if="o.company_id.with_context({'date':o.date_order}).vat_payer">
+                                    <td t-if="detect_tax_lines(o)" class="text-right">
+                                        PVM
+                                        <span t-esc="tax_names(l)"/>
+                                    </td>
+                                    <td t-if="not o.price_include" class="text-right">
+                                        <span t-field="l.price_subtotal"/>
+                                    </td>
+                                    <td t-else="" class="text-right">
+                                        <span t-field="l.price_total"/>
+                                    </td>
+                                    </t>
+                                    <t t-else="">
+                                        <td class="text-right">
+                                            <span t-field="l.price_total"/>
+                                        </td>
+                                    </t>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <div class="row invoice_additional">
+
+                        <div class="col-xs-6 pull-left" style="max-width:50%">
+                        </div>
+                        <div class="col-xs-6 pull-right invoice_pvm">
+                            <table class="table table-condensed mt16"
+                                   style="white-space: nowrap;page-break-inside: avoid">
+                                <tr t-if="o.company_id.with_context({'date':o.date_order}).vat_payer" class="border-robo-invoice">
+                                    <td>
+                                        <span t-attf-class="invoice_draft">Suma be PVM:</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="o.amount_untaxed"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="o.company_id.with_context({'date':o.date_order}).vat_payer">
+                                    <td>
+                                        <span>Mokesčiai</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="o.amount_tax"/>
+                                    </td>
+                                </tr>
+
+                                <tr class="border-robo-invoice">
+                                    <td>
+                                        <span t-attf-class="invoice_draft">Viso:</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="o.amount_total"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        </div>
+
+                    <p class="invoice_fiscal_position_note pull-left" t-if="o.fiscal_position_id"
+                       style="max-width:50%">
+                        <span t-field="o.fiscal_position_id.note"/>
+                    </p>
+                    <table class="table table-condensed invoice_amount_words">
+                        <tr class="border-black">
+                            <td>
+                                <div class="amount_words">
+                                    <strong>Suma žodžiais:</strong>
+                                    <span t-esc="suma(o.amount_total, o.partner_id.lang, o.currency_id.name)"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="sale_order_note pull-left" style="max-width:50%; font-size: x-small" t-if="o.note">
+                        <span t-field="o.note"/>
+                    </p>
+                </div>
+
+            </t>
+        </template>
+        <template id="template_sale_offer_main">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="robo_stock.template_sale_offer" t-lang="o.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="external_layout_header" inherit_id="report.external_layout_header">
+            <xpath expr="//div[@class='header']" position="replace">
+                <div class="header">
+                    <div class="row">
+                        <div class="col-xs-3 robo_company_logo">
+                            <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+        <record id="robo_quant_search_view" model="ir.ui.view">
+            <field name="name">stock.quant.search</field>
+            <field name="model">stock.quant</field>
+            <field eval="10" name="priority"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Inventorius">
+                    <field name="product_id"/>
+                    <field name="location_id"/>
+                    <field name="package_id" groups="stock.group_tracking_lot"/>
+                    <field name="lot_id" groups="stock.group_production_lot"/>
+                    <field name="owner_id" groups="stock.group_tracking_owner"/>
+                    <group expand='0' string='Filters'>
+                        <filter name='internal_loc' string="Vidinės lokacijos" domain="[('location_id.usage','=', 'internal')]"/>
+                        <separator/>
+                        <filter name='product_wh' string="Sandėliuojami produktai" domain="[('product_id.type','=', 'product')]"/>
+                        <!--<filter name='transit_loc' string="Tranzitinės lokacijos" domain="[('location_id.usage' ,'=', 'transit')]"/>-->
+                        <separator/>
+                        <filter name="negative" string="Neigiamas" domain="[('qty', '&lt;', 0.0)]"/>
+                        <filter name="positive" string="Teigiamas" domain="[('qty', '&gt;', 0.0)]"/>
+                    </group>
+                    <group expand='0' string='Group by...'>
+                        <filter string='Lokacija' name="locationgroup" domain="[]" context="{'group_by': 'location_id'}"/>
+                        <filter string='Produktas' name="productgroup" context="{'group_by': 'product_id'}"/>
+                        <filter string='Savininkas' context="{'group_by': 'owner_id'}" groups="stock.group_tracking_owner"/>
+                        <filter string='Lot/Serijos numeris' context="{'group_by': 'lot_id'}" groups="stock.group_production_lot"/>
+                        <filter string='Pakuotė' domain="[]" context="{'group_by': 'package_id'}" groups="stock.group_tracking_lot"/>
+                        <filter string='Kompanija' domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                   </group>
+                </search>
+            </field>
+        </record>
+
+        <!--Back view - make front-->
+        <record id="stock.view_stock_quant_pivot" model="ir.ui.view">
+            <field name="robo_front">True</field>
+        </record>
+        <record id="stock_quant_header" model="robo.header">
+            <field name="button_name"></field>
+            <field name="fit">True</field>
+            <field name="robo_xs_header">True</field>
+            <field name="switch_views_buttons">True</field>
+        </record>
+        <record model="ir.actions.act_window" id="robo_open_current_inventory">
+            <field name="name">Turimos atsargos</field>
+            <field name="res_model">stock.quant</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,pivot,form</field>
+            <field name="view_id" ref="robo_stock_quant_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('stock.view_stock_quant_pivot')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_stock_quant_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_stock_quant_form')})]"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="header" ref="stock_quant_header"/>
+            <field name="context" eval="{
+                'search_default_internal_loc': 1,
+                'search_default_positive':1,
+                'search_default_product_wh': 1
+            }"/>
+            <field name="search_view_id" ref="robo_quant_search_view"/>
+        </record>
+
+        <menuitem id="menu_current_inventory_search_report"
+                  name="Turimos atsargos"
+                  groups="robo_stock.robo_stock_reports"
+                  parent="robo.menu_ataskaitos_search"
+                  action="robo_open_current_inventory"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="turimos,atsargos"
+        />
+
+        <record id="stock.view_stock_level_forecast_pivot" model="ir.ui.view">
+            <field name="robo_front">True</field>
+        </record>
+        <record model="ir.actions.act_window" id="robo_view_inventory_forecast">
+            <field name="name">Atsargų prognozė</field>
+            <field name="res_model">report.stock.forecast</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="header" ref="robo_stock.stock_default_xs"/>
+            <field name="view_id" ref="stock.view_stock_level_forecast_pivot"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="context" eval="{'search_default_pivot_by':1,'name': 'prognozė'}"/>
+        </record>
+
+        <record id="view_stock_level_forecast_wizard" model="ir.ui.view">
+            <field name="name">inventory.forecast.wizard.form</field>
+            <field name="model">inventory.forecast.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Please select the type">
+                    <sheet>
+                        <footer style="text-align: center; margin-top:1%;">
+                            <div class="o_horizontal_separator">
+                                <span>Please select the type</span>
+                            </div>
+                            <div style="margin-top: 10%;">
+                                <!-- <button name="%(robo_view_inventory_forecast)d" string="Peržiūrėti" type="object" class="oe_highlight" style="margin-right: 10px;" groups="base.group_system"/> -->
+                                <button name="show_forecast" string="Peržiūrėti" type="object" class="oe_highlight" style="margin-right: 10px;"/>
+                                <button name="show_report" string="Excel" type="object" class="oe_highlight" style="margin-right: 10px;" context="{'xls_export': True}"/>
+                                <button string="Atšaukti" class="oe_highlight" type="action"
+                                        name="%(robo.open_reports_action)d" style="margin-right: 10px;"/>
+                            </div>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="robo_open_inventory_forecast">
+            <field name="name">Atsargų prognozė</field>
+            <field name="res_model">inventory.forecast.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_stock_level_forecast_wizard"/>
+            <field name="target">inline</field>
+            <field name="header" ref="robo_stock.stock_default_xs"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="context" eval="{'name': 'Duomenys'}"/>
+        </record>
+
+        <menuitem id="menu_inventory_forecast_search_report"
+                  name="Atsargų prognozė"
+                  groups="robo_stock.robo_stock_reports"
+                  parent="robo.menu_ataskaitos_search"
+                  action="robo_open_inventory_forecast"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="atsargų,prognozė"
+        />
+
+        <record id="inventory_summary_wizard_form_view_robo" model="ir.ui.view">
+            <field name="name">inventory.summary.wizard.form</field>
+            <field name="model">inventory.summary.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Atsargų analizė">
+                    <sheet>
+                        <header>
+                            <field name="threaded_reports_are_enabled" attrs="{'invisible': True}"/>
+                        </header>
+                        <group string="Filtrai">
+                            <field name="date_from" string="Nuo"/>
+                            <field name="date_to" string="Iki"/>
+                            <field name="selection_type" string="Filtruoti pagal" widget="radio"/>
+                            <field name="select_all_products" string="Rodyti visus produktus"
+                                   attrs="{'invisible': [('selection_type', '!=', 'product')]}"/>
+                            <field name="product_ids" string="Filtruoti produktus" widget="many2many_tags" options="{'no_create': True}"
+                                   attrs="{'invisible':['|', ('select_all_products','=',True), ('selection_type', '!=', 'product')]}"/>
+                            <field name="select_all_categories" string="Rodyti visas produktų kategorijas"
+                                   attrs="{'invisible': [('selection_type', '!=', 'category')]}"/>
+                            <field name="category_ids" string="Filtruoti produktų kategorijas" widget="many2many_tags" options="{'no_create': True}"
+                                   attrs="{'invisible':['|', ('select_all_categories','=',True), ('selection_type', '!=', 'category')]}"/>
+                            <field name="group_by_location"/>
+                            <field name="select_all_locations" string="Rodyti visus sandėlius"/>
+                            <field name="location_ids" string="Filtruoti sandėlius"
+                                   widget="many2many_tags" attrs="{'invisible':[('select_all_locations','=',True)]}"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:1%;">
+                            <button name="show_report" string="Peržiūrėti" type="object" class="oe_highlight" style="margin-right: 10px;" groups="base.group_system"/>
+                            <button name="show_report" string="Peržiūrėti (Neatnaujinant)" type="object"
+                                    class="oe_highlight" style="margin-right: 10px;" groups="base.group_system"
+                                    context="{'xls_export': True, 'do_not_refresh_stock_history': True}"/>
+                            <button name="show_report" string="Excel" type="object" class="oe_highlight" style="margin-right: 10px;" context="{'xls_export': True}"/>
+                            <button name="show_report" string="Excel (Neatnaujinant)" type="object"
+                                    class="oe_highlight" style="margin-right: 10px;"
+                                    context="{'xls_export': True, 'do_not_refresh_stock_history': True}"
+                                    attrs="{'invisible': [('threaded_reports_are_enabled', '=', True)]}"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+                
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="robo_open_inventory_analysis">
+            <field name="name">Atsargų analizė</field>
+            <field name="res_model">inventory.summary.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="inventory_summary_wizard_form_view_robo"/>
+            <field name="target">inline</field>
+            <field name="header" ref="robo_stock.stock_default_xs"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="context" eval="{'name': 'Duomenys'}"/>
+        </record>
+
+        <menuitem id="menu_inventory_analysis_search_report"
+                  name="Atsargų analizė"
+                  groups="robo_stock.robo_stock_reports"
+                  parent="robo.menu_ataskaitos_search"
+                  action="robo_open_inventory_analysis"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="atsargų,analizė"
+        />
+
+        <template id="assets_backend" name="board assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <!--reports-->
+                <script type="text/javascript" src="/robo_stock/static/src/js/reports.js"></script>
+                <link rel="stylesheet" href="/robo_stock/static/src/less/reports.less"/>
+
+                <link rel="stylesheet" href="/robo_stock/static/src/less/form_tree_view.less"/>
+                <link rel="stylesheet" href="/robo_stock/static/src/less/templates.less"/>
+            </xpath>
+        </template>
+
+        <record id="view_stock_history_report_search_extend" model="ir.ui.view">
+            <field name="name">stock.history.search.extend</field>
+            <field name="model">stock.history</field>
+            <field name="inherit_id" ref="stock_account.view_stock_history_report_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <separator/>
+                    <filter name='product_wh' string="Sandėliuojami produktai" domain="[('product_id.type','=', 'product')]"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

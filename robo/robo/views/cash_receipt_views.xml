@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_cash_receipt_form_front" model="ir.ui.view">
+            <field name="name">cash.receipt.form</field>
+            <field name="model">cash.receipt</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pinigų kvitas">
+                    <header>
+                        <button name="post" states="draft"  class="oe_highlight" string="Patvirtinti" type="object"/>
+                        <button name="print_receipt" string="Spausdinti" type="object"/>
+                        <button name="cancel" attrs="{'invisible': [('state', '=', 'draft')]}" string="Atšaukti" type="object"/>
+                        <button name="action_receipt_change_number" type="object" states="posted,draft"
+                                string="Keisti numerį" groups="robo_basic.group_robo_premium_accountant"/>
+                        <field name="state" widget="statusbar" statusbar_visible="posted,draft"/>
+                    </header>
+                    <field name="nbr_of_attachments" invisible="1"/>
+                    <field name="user_attachment_ids" invisible="1"/>
+                    <field name="attachment_drop_lock" invisible="1"/>
+                    <widget type="robo_attach_files"/>
+                    <field name="unique_wizard_id" invisible="1"/>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="button_journal_entries" string="Žurnalo elementai" type="object" groups="account.group_account_manager" attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                            <field name="move_line_ids" invisible="1"/>
+                        </div>
+                        <field name="id" invisible="1"/>
+                        <div class="oe_title" attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <h1>
+                                <field name="cash_receipt_name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="custom_name" string="Custom name"
+                                   attrs="{'invisible': [('state', '!=', 'draft')]}"
+                                   groups="robo.group_change_cash_receipt_name"/>
+                            <field name="payment_type" invisible="1"/>
+                            <field name="payment_date" string="Data" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="partner_id" attrs="{'readonly': [('state', '!=', 'draft')]}" context="{'form_view_ref': 'robo.new_clients_customer_form', 'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                            <field name="cashier_id" domain="[('main_accountant', '=', False)]" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'no_open':True, 'no_create':True}"/>
+                            <field name="journal_id" widget="selection" string="Mokėjimo žurnalas" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <label for="amount" string="Suma"/>
+                            <div name="amount_div" class="o_row">
+                                <field name="amount" string="Suma" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <!--<field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency" attrs="{'readonly': [('state', '!=', 'draft')]}"/>-->
+                            </div>
+
+                        </group>
+                    </sheet>
+                     <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread" context="{}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="view_cash_receipt_form_front_accountant" model="ir.ui.view">
+            <field name="name">cash.receipt.form.accountant</field>
+            <field name="model">cash.receipt</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="view_cash_receipt_form_front"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+            <field name="arch" type="xml">
+                <!--<xpath expr="//sheet" position="after">-->
+                    <!--<div class="oe_button_box" name="button_box">-->
+                        <!--<button class="oe_stat_button" name="button_journal_entries" string="Journal Items" type="object" groups="account.group_account_manager" attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>-->
+                        <!--<field name="move_line_ids" invisible="1"/>-->
+                        <!--<button class="oe_stat_button" name="button_invoices" string="Invoices" type="object" attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>-->
+                        <!--<field name="has_invoices" invisible="1"/>-->
+                    <!--</div>-->
+                <!--</xpath>-->
+                 <xpath expr="//div[@name='amount_div']" position="after">
+                        <field name="communication" string="Memo" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="force_source_account_id" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'no_open':1, 'no_create':1}"/>
+                        <field name="force_destination_account_id" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'no_open':1, 'no_create':1}"/>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='cashier_id']" position="attributes">
+                    <attribute name="options">{'no_create': '1'}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_cash_receipt_tree_front" model="ir.ui.view">
+            <field name="name">cash.receipt.tree</field>
+            <field name="model">cash.receipt</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree edit="false" create='0' import="0">
+                    <field name="payment_date" string="Data"/>
+                    <field name="name" string="Pavadinimas" invisible="1"/>
+                    <field name="cash_receipt_name" string="Name"/>
+                    <field name="journal_id" invisible="1"/>
+                    <field name="partner_id" string="Partneris"/>
+                    <field name="cashier_id" string="Priėmėjas"/>
+                    <field name="amount" sum="Suma"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="state" string="Statusas"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_cash_receipt_search" model="ir.ui.view">
+            <field name="robo_front"/>
+            <field name="name">cash.receipt.search</field>
+            <field name="model">cash.receipt</field>
+            <field name="arch" type="xml">
+                <search string="Mokėjimai">
+                    <field name="name"
+                           filter_domain="['|', '|', ('name','ilike',self), ('communication','ilike',self), ('cash_receipt_name', 'ilike', self)]"
+                           string="Pavadinimas"/>
+                    <separator/>
+                    <field name="partner_id" string="Partneris"/>
+                    <field name="cashier_id" string="Pinigus priimantis"/>
+                    <field name="company_id" groups="base.group_multi_company" string="Kompanija"/>
+                    <field name="state" string="Statusas"/>
+                    <separator/>
+                    <filter string="Partneris" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Pinigų priėmėjas" domain="[]" context="{'group_by': 'cashier_id'}"/>
+                    <filter string="Kompanija" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_cash_receipt_kanban" model="ir.ui.view">
+            <field name="name">Pajamos kanban</field>
+            <field name="model">cash.receipt</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban create="0" import="0" string="Kasos operacijos">
+                    <field name="partner_id"/>
+                    <field name="cashier_id"/>
+                    <field name="journal_id" invisible="1"/>
+                    <field name="amount"/>
+                    <field name="payment_date"/>
+                    <field name="state"/>
+                    <field name="name"/>
+                    <templates>
+                         <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong><span><t t-if="record.name.value != 'Juodraštis'"><t t-esc="record.name.value"/></t><t t-else="">---</t></span></strong>
+                                    </div>
+                                    <div class="col-xs-6 pull-right text-right">
+                                        <strong><t t-esc="record.amount.value"/></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4 text-muted">
+                                        <span>Partneris</span>
+                                    </div>
+                                    <div class="col-xs-8 text-right">
+                                        <span><t t-esc="record.partner_id.value"/></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4 text-muted">
+                                        <span>Priėmė</span>
+                                    </div>
+                                    <div class="col-xs-8 text-right">
+                                        <span><t t-esc="record.cashier_id.value"/></span>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <span><t t-esc="record.payment_date.value"/></span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span class="pull-right text-right">
+                                            <field name="state" widget="kanban_label_selection"
+                                                   options="{'classes': {'draft': 'robo-draft', 'posted': 'robo-paid'}}"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="action_front_pinigu_priemimo_kvitai" model="ir.actions.act_window">
+            <field name="name">Pinigų priėmimo kvitai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">cash.receipt</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('view_cash_receipt_tree_front')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_cash_receipt_form_front')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_cash_receipt_kanban')})]"/>
+            <field name="search_view_id" ref="view_cash_receipt_search"/>
+            <field name="view_id" eval="view_cash_receipt_form_front"/>
+            <field name="header" ref="header_pinigu_priemimas"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="domain">[('payment_type', '=', 'inbound')]</field>
+            <field name="context">
+                {
+                    'showDuplicate': True,
+                    'default_payment_type': 'inbound',
+                }
+            </field>
+            <field name="robo_help" type="html">
+                    <p class="oe_view_robo_nocontent_search">
+                        Nėra kvitų
+                    </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_pinigu_operacijos"
+                  parent="menu_kita"
+                  name="Pinigų priėmimo kvitai"
+                  sequence="42"
+                  action="action_front_pinigu_priemimo_kvitai"
+                  robo_front="True"
+                  force_web_icon="icon-cash-euro,none,none"
+                  groups="robo_basic.group_robo_cash_receipts"
+                  searchable="True"
+                  tags="pinigų,priėmimo,kvitai,mokėjimai"
+        />
+    </data>
+</odoo>

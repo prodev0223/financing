@@ -1,0 +1,279 @@
+.dynamic-report-header-container {
+
+    @button-background-color: #2980b9;
+    @filter-button-background-color: #447ba0;
+    @button-text-color: white;
+    @button-border-radius: 3px;
+
+    .o_control_panel {
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+        z-index: 100;
+        position: relative;
+        display: grid;
+        grid-template-columns: auto auto;
+
+        h2 {
+            margin: 0;
+        }
+
+        @media (max-width: @screen-xs-max) {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        & > div {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+
+            @media (max-width: @screen-xs-max) {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            &:nth-of-type(n) {
+                justify-content: flex-start;
+            }
+
+            &:nth-of-type(2n) {
+                justify-content: flex-end
+            }
+        }
+
+        .dynamic-report-header-button {
+            .btn;
+            padding: 6px 12px;
+            max-height: 30px;
+            background-color: @button-background-color !important;
+            border-radius: @button-border-radius !important;
+            color: @button-text-color;
+            white-space: nowrap;
+            display: inline-block;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+
+            & > a {
+                color: @button-text-color !important;
+            }
+        }
+
+        .select-filter-button {
+            padding: 0;
+            margin: 0 6px;
+            filter: none !important;
+            background-color: @filter-button-background-color !important;
+
+            @media (max-width: @screen-xs-max) {
+                margin: 6px;
+            }
+
+            & > a {
+                padding: 5px;
+                display: block;
+            }
+            &:hover {
+                background-color: @button-background-color !important
+            }
+        }
+
+        .selection-filters-menu {
+            overflow: auto;
+            z-index: 1;
+            position: absolute;
+            padding: 5px 0;
+            right: 0;
+            left: auto;
+        }
+
+        .export-button-container {
+            @media (max-width: @screen-xs-max) {
+                padding: 6px;
+                justify-content: center;
+                display: flex;
+                position: static;
+                flex-direction: row;
+            }
+
+            .export-dropdown-menu {
+                left: 0;
+                right: auto;
+
+                li {
+                    &:hover {
+                        text-decoration: none;
+                        color: #2c3e50;
+                        background-color: #e1f0fa;
+                    }
+
+                    a {
+                        display: inline-flex !important;
+                        align-items: center;
+
+                        .export-button-icon {
+                            width: 40px;
+                            padding: 5px;
+                            text-align: center;
+                            img {
+                                max-width: 30px;
+                                max-height: 30px;
+                                width: 30px;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            .dropdown-item {
+                display: block;
+                width: 100%;
+                clear: both;
+                font-weight: 400;
+                color: rgb(102, 102, 102);
+                text-align: inherit;
+                white-space: nowrap;
+                background-color: transparent;
+                padding: 0.25rem 0.5rem;
+                border-width: 0;
+                border-style: initial;
+                border-color: initial;
+                border-image: initial;
+                position: relative;
+            }
+        }
+
+        #report_settings {
+            color: @filter-button-background-color !important;
+            background: none;
+            border-radius: @button-border-radius;
+            margin-left: 5px;
+            height: 30px;
+            display: flex;
+            position: relative;
+            padding: 3px 6px;
+            align-items: center;
+
+            &:hover {
+                background-color: lightgray;
+            }
+        }
+
+        #filter_apply_button {
+            position: relative;
+            margin-right: 34px !important;
+            font-weight: bold !important;
+
+            @media (max-width: @screen-xs-max) {
+                margin-right: 0 !important;
+            }
+        }
+
+        .date-range-container {
+            display: flex;
+            align-items: center;
+            break-inside: avoid;
+            flex-wrap: wrap;
+
+            @media (max-width: @screen-xs-max) {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .dynamic-report-date-filters {
+            display: flex;
+            margin: 5px 0;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            .filter-apply-button {
+                padding-right: 5px;
+                font-weight: normal;
+            }
+            .date-range-input-container {
+                position: relative;
+                display: inline-block;
+                .date-range-input {
+                    position: relative;
+                    display: inline-block;
+                    &:first-of-type {
+                        margin-left: 0;
+                    }
+                }
+            }
+        }
+        .dynamic-report-other-filters {
+            display: flex;
+            margin: 5px 0;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            justify-content: start;
+
+            @media (max-width: @screen-xs-max) {
+                justify-content: center;
+            }
+
+            .filter-label {
+                padding-right: 5px;
+                font-size: 120%;
+                width: 45px;
+                font-weight: normal;
+            }
+        }
+        .dynamic-report-group-by-selections {
+            display: flex;
+            margin: 5px 0;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            justify-content: start;
+            .filter-label {
+                padding-right: 5px;
+                font-size: 120%;
+                width: 45px;
+                font-weight: normal;
+            }
+        }
+        .dynamic-report-input {
+            width: 166px !important;
+            height: 30px;
+            box-shadow: inset 0 0 2px 1px rgba(0,0,0,0.1);
+            border-radius: 5px !important;
+            border: none !important;
+            background: none;
+            background-image: none !important;
+            margin: 0 5px;
+        }
+        div.date-range-input-container {
+            div.dynamic-report-input {
+                ul {
+                    background-image: none !important;
+                    background: none;
+                }
+            }
+        }
+
+
+    }
+
+    @media (max-width: 695px) {
+        .py-filter-button {
+            margin: 3px;
+        }
+        .dynamic-report-date-filters {
+            flex-direction: column;
+        }
+        .dynamic-report-other-filters {
+            justify-content: space-between;
+        }
+        .dynamic-report-group-by-selections {
+            justify-content: space-between;
+        }
+    }
+}

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="apr_email_template_res_partner_before_invoice" model="mail.template">
+            <field name="name">APR Before Reminder email</field>
+            <field name="email_from">noreply@robolabs.lt</field>
+            <field name="subject">Payment reminder from </field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="robo_company_template_wrap" eval="True"/>
+            <field name="body_html"><![CDATA[
+                    <p>Dear business partner,</p>
+                    <p></p>
+                    <p>Thanks for doing business with us. We’re just getting in touch regarding ${object.env.context.get('invoice')|safe}.
+                    We wanted to give you a quick reminder that the balance of  ${object.env.context.get('amount')|safe}
+                    <span style="text-decoration: underline;">is due to be paid in ${object.env.context.get('n_days')} days</span>.</p>
+                    <p></p>
+
+                    ${object.env.context.get('payment_details')|safe}
+
+                    % if object.env.context.get('show_pay_now_link'):
+                        <p>You can pay this invoice by clicking the link bellow</p>
+                        <a href="${object.env.context.get('pay_now_link')}"
+                            style="background-color: #3498dc; color: white; padding: 7px 12px; border-radius: 2px; font-size: 16px; text-decoration: none;font-family: Georgia;font-weight: bold;"
+                            target="_blank">
+                            Pay Now
+                        </a>
+                        <br/>
+                    %endif
+
+                    <p>Of course, if you have already paid this invoice, please disregard this message.</p>
+
+                    <p>Once again, we greatly appreciate your business.</p>
+                    <p></p>
+                    <p>Thanks,</p>
+                    <p>${user.company_id.name}</p>
+]]>
+            </field>
+        </record>
+        <record id="apr_email_template_res_partner_on_date_invoice" model="mail.template">
+            <field name="name">APR Today Reminder email</field>
+            <field name="email_from">noreply@robolabs.lt</field>
+            <field name="subject">Payment reminder from </field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="robo_company_template_wrap" eval="True"/>
+            <field name="body_html"><![CDATA[
+                    <p>Dear business partner,</p>
+                    <p></p>
+                    <p>This a quick message regarding ${object.env.context.get('invoice')|safe}.
+                    We just wanted to remind you that the balance for this invoice of ${object.env.context.get('amount')|safe} <span style="text-decoration: underline;">is due to be paid today</span>.</p>
+                    <p></p>
+                    <p>You can settle your balance by making a transfer. Here are all the details you will need to make a transfer to settle your balance:</p>
+
+                    ${object.env.context.get('payment_details')|safe}
+
+                    % if object.env.context.get('show_pay_now_link'):
+                        <p>You can make the payment by clicking the link bellow</p>
+                        <a href="${object.env.context.get('pay_now_link')}"
+                            style="background-color: #3498dc; color: white; padding: 7px 12px; border-radius: 2px; font-size: 16px; text-decoration: none;font-family: Georgia;font-weight: bold;"
+                            target="_blank">
+                            Pay Now
+                        </a>
+                        <br/>
+                    %endif
+
+                    <p>Of course, if you have already paid this invoice, please disregard this message.</p>
+
+                    <p>As always, we greatly appreciate your business.</p>
+                    <p></p>
+                    <p>Thanks,</p>
+                    <p>${user.company_id.name}</p>
+]]>
+            </field>
+        </record>
+        <record id="apr_email_template_res_partner_after_invoice" model="mail.template">
+            <field name="name">APR After Reminder email</field>
+            <field name="email_from">noreply@robolabs.lt</field>
+            <field name="subject">Payment reminder from </field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="robo_company_template_wrap" eval="True"/>
+            <field name="body_html"><![CDATA[
+                    <p>Dear business partner,</p>
+                    <p></p>
+                    <p>We are contacting you with regards to ${object.env.context.get('invoice')|safe}.
+                    We wanted to remind you that total amount to pay is ${object.env.context.get('amount')|safe}
+                    and the earliest missed payment was
+                    <span style="text-decoration: underline;">due to be paid on ${object.env.context.get('date_due')|safe}</span>.</p>
+                    <p></p>
+                    <p>We kindly ask that this payment be made as soon as possible. Here are all the details you will need to make a transfer to settle your balance:</p>
+
+                    ${object.env.context.get('payment_details')|safe}
+
+                    % if object.env.context.get('show_pay_now_link'):
+                        <p>You can make the payment by clicking the link bellow</p>
+                        <a href="${object.env.context.get('pay_now_link')}"
+                            style="background-color: #3498dc; color: white; padding: 7px 12px; border-radius: 2px; font-size: 16px; text-decoration: none;font-family: Georgia;font-weight: bold;"
+                            target="_blank">
+                            Pay Now
+                        </a>
+                        <br/>
+                    %endif
+
+                    <p>We look forward to your swift response. Please feel free to contact us if we can be of any assistance.</p>
+
+                    <p>Of course, if you have already paid this invoice, please disregard this message.</p>
+
+                    <p>Thanks once again for your business.</p>
+                    <p></p>
+                    <p>Regards,</p>
+                    <p>${user.company_id.name}</p>
+]]>
+            </field>
+        </record>
+    </data>
+</odoo>

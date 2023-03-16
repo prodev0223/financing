@@ -1,0 +1,116 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="form_seb_configuration" model="ir.ui.view">
+            <field name="name">form.seb.configuration</field>
+            <field name="model">seb.configuration</field>
+            <field name="arch" type="xml">
+                <form string="SEB configuration" create="0" delete="0">
+                    <header>
+                        <field name="api_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="SEB API configuration">
+                            <group>
+                                <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                    Welcome to the SEB integration configuration wizard.
+                                    To initiate integration, you first must make a contract
+                                    for "Baltic Gateway" services with SEB bank,
+                                    specifying Robolabs as intermediary party.
+                                    You can find more information by clicking
+                                    <a href="https://e.seb.lt/cgi-bin/ubus/ifirma.w?act=BGWoperator"
+                                       target="_blank">this link</a>.
+                                    After you sign the contract, fill in the Organisation ID field if it's
+                                    not yet specified and click 'Initiate API', rights to access your
+                                    account will be granted to us automatically.
+                                </div>
+                            </group>
+                            <group col="2">
+                                <field name="organisation_id" required="1"/>
+                            </group>
+                            <group col="2">
+                                <button name="initiate_test_api" class="oe_highlight" type="object"
+                                        string="Initiate API"/>
+                            </group>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'failed')]}">
+                            <group col="1">
+                                <div class="alert alert-danger"
+                                     role="alert" style="margin-bottom: 2px;">
+                                    API initialization failed ...
+                                    Error description is provided below (in each IBAN), contact the administrators
+                                    if you think the issue is on Robolabs side
+                                    (If error does not explicitly say that it's SEB side),
+                                    otherwise wait and repeat the steps.
+                                    <br/>
+                                </div>
+                            </group>
+                        </group>
+                        <group colspan="4" col="1"
+                               attrs="{'invisible': [('api_state', '!=', 'awaiting_confirmation')]}">
+                            <group col="1">
+                                <div class="alert alert-info"
+                                     role="alert" style="margin-bottom: 2px;">
+                                    API initialization failed ...
+                                    <b>Based on the error description, it seems that the bank is
+                                    still verifying your contract.</b> You must wait up to 24
+                                    hours for API to become active after contract signing.
+                                    <br/>
+                                </div>
+                            </group>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'working')]}">
+                            <group col="1">
+                                <div class="alert alert-success"
+                                     role="alert" style="margin-bottom: 2px;">
+                                    API successfully configured.
+                                </div>
+                            </group>
+                        </group>
+                        <group string="Journal configuration" colspan="4" col="1">
+                            <group col="1">
+                                <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                    Journals that are associated with your SEB account are displayed in this section.
+                                    You can manually add or remove specific journals that belong to the integration.
+                                </div>
+                            </group>
+                            <group col="1">
+                                <field name="seb_journal_ids" nolabel="1" widget="one2many_list"
+                                       mode="tree,kanban" options="{'no_open': True, 'always_reload': True}">
+                                    <tree class="robo_tree_in_form" create="0" delete="1" edit="0" editable="bottom"
+                                          decoration-muted="not activated"
+                                          decoration-success="state == 'working'"
+                                          decoration-warning="state == 'non_configured'"
+                                          decoration-danger="state == 'failed'">
+                                        <field name="journal_id"/>
+                                        <field name="bank_account"/>
+                                        <field name="state"/>
+                                        <field name="activated"/>
+                                    </tree>
+                                </field>
+                            </group>
+                            <group col="2">
+                                <button name="renew_journal_data" class="oe_highlight"
+                                        string="Renew journal list" type="object"/>
+                            </group>
+                        </group>
+                        <group string="Available functionality">
+                            <field name="intra_day_endpoint" readonly="1"/>
+                            <field name="payment_init_endpoint" readonly="1"/>
+                            <field name="statement_endpoint" readonly="1"/>
+                        </group>
+                        <group string="System settings" groups="base.group_system">
+                            <field name="system_notification" readonly="1"/>
+                            <field name="allow_external_signing"/>
+                            <field name="external_signing_daily_limit"
+                                   attrs="{'invisible': [('allow_external_signing', '=', False)],
+                                   'required': [('allow_external_signing', '=', True)]}"/>
+                            <field name="external_signing_daily_limit_residual" readonly="1"
+                                   attrs="{'invisible': [('allow_external_signing', '=', False)]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

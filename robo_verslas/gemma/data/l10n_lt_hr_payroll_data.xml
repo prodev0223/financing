@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_payroll_kvalifikacijos_kelimas" model="hr.salary.rule.category">
+            <field name="name">Kvalifikacijos kėlimas</field>
+            <field name="code">KV</field>
+        </record>
+        <record id="l10n_lt_payroll.hr_payroll_rules_valb" model="hr.salary.rule">
+            <field name="amount_python_compute">
+result = categories.B + categories.DN + categories.VSS + categories.VD + \
+                categories.P + categories.BUD + categories.KR + categories.MA + categories.T + categories.V + categories.PD + \
+                categories.PR + categories.PDN + categories.PRI + categories.PLS + categories.SNV + categories.NDL + \
+                categories.VDL + categories.ATS + categories.LIG + categories.KM - categories.NAKM + categories.NTR + \
+                categories.INV + categories.IST + categories.AK + categories.PL + categories.DP + categories.KV + categories.PN
+result = round(result,2)
+            </field>
+        </record>
+
+
+        <record id="l10n_lt_payroll.hr_payroll_rules_menb" model="hr.salary.rule">
+            <field name="amount_python_compute">
+result = categories.B + categories.DN + categories.VSS + categories.VD + \
+                categories.P + categories.BUD + categories.KR + categories.MA + categories.T + categories.V + categories.PD + \
+                categories.PR + categories.PDN + categories.PRI + categories.PLS + categories.SNV + categories.NDL + \
+                categories.VDL + categories.ATS + categories.LIG + categories.KM - categories.NAKM + categories.NTR + \
+                categories.INV + categories.IST + categories.AK + categories.PL + categories.DP + categories.KV + categories.PN
+result = round(result,2)
+            </field>
+        </record>
+
+        <record id="hr_payroll_rules_kv" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_kvalifikacijos_kelimas"/>
+            <field name="name">Kvalifikacijos kėlimas</field>
+            <field name="code">KV</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try :
+    result = 0.0
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code == 'KV']
+    appointments = set(l.appointment_id for l in lines)
+    previous_vdu = payslip.dict.with_context(vdu_type='h').vdu_previous
+    for app in appointments:
+        app_lines = [l for l in lines if l.appointment_id.id == app.id]
+        if app.struct_id.code == 'VAL':
+            hourly_wage = app.wage
+        else:
+            try:
+                hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+            except:
+                hourly_wage = 0.0
+        vdu_to_use = previous_vdu or vdu_h or hourly_wage
+        result += sum([l.number_of_hours * vdu_to_use for l in app_lines])
+except :
+    result = 0
+try:
+    result += inputs.KV.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <record id="l10n_lt_payroll.hr_payroll_salary_structure_menesinis" model="hr.payroll.structure">
+            <field name="rule_ids" eval="[(4, ref('hr_payroll_rules_kv'), 0)]"/>
+        </record>
+        <record id="l10n_lt_payroll.hr_payroll_salary_structure_valandinis" model="hr.payroll.structure">
+            <field name="rule_ids" eval="[(4, ref('hr_payroll_rules_kv'), 0)]"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="disapprove_account_invoice_view_form" model="ir.ui.view">
+            <field name="name">disapprove.account.invoice.view.form</field>
+            <field name="model">disapprove.account.invoice</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Invoice disapproval">
+                    <group>
+                        <span>Please enter the reason for your disapproval of this invoice</span>
+                        <field name="reason" colspan="4" nolabel="1"/>
+                    </group>
+                    <footer>
+                        <button name="action_disapprove" string="Disapprove" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="force_disapprove_account_invoice_view_form" model="ir.ui.view">
+            <field name="name">force.disapprove.account.invoice.view.form</field>
+            <field name="model">disapprove.account.invoice</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Invoice disapproval">
+                    <group>
+                        <span>Please enter the reason for your disapproval of this invoice</span>
+                        <field name="reason" colspan="4" nolabel="1"/>
+                    </group>
+                    <footer>
+                        <button name="action_force_disapprove" string="Force disapprove" type="object"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="disapprove_account_invoice_action" model="ir.actions.act_window">
+            <field name="name">Disapprove invoice</field>
+            <field name="res_model">disapprove.account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="disapprove_account_invoice_view_form"/>
+        </record>
+
+        <record id="force_disapprove_account_invoice_action" model="ir.actions.act_window">
+            <field name="name">Force disapprove invoice</field>
+            <field name="res_model">disapprove.account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="force_disapprove_account_invoice_view_form"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="remote_work_agreement_form" model="ir.ui.view">
+            <field name="name">Susitarimas dėl nuotolinio darbo</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_agreement_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="action_copy" type="object" string="Kurti kopiją" states="draft,confirm,e_signed"/>
+                </xpath>
+                <xpath expr="//field[@name='extra_text']" position="replace"/>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="employee_id2" string="Darbuotojas" required="True"
+                               options="{'no_create': True, 'no_open': True}"/>
+                        <field name="date_from" string="Nuo kada" required="True"/>
+                        <field name="date_to" string="Iki kada" required="False"/>
+                        <field name="additional_remote_work_compensation" required="True"/>
+                        <field name="float_1" string="Papildomų išlaidų kompensacijos suma" attrs="{
+                            'required': [('additional_remote_work_compensation', '=', 'specific_amount')],
+                            'invisible': [('additional_remote_work_compensation', '!=', 'specific_amount')]
+                        }"/>
+                    </group>
+                    <group colspan="4" col="1">
+                        <field name="text_4" required="False" string="Reason for ordering remote work"/>
+                        <field name="extra_text" string="Papildomas tekstas"/>
+                        <p>
+                            To prevent legal conflicts we strongly advise you to specify the following things:
+                            <ul>
+                                <li>Workplace requirements</li>
+                                <li>Inventory to be given to work remotely</li>
+                                <li>How inventory is given (should the employee take it himself)</li>
+                                <li>How the inventory should be used</li>
+                                <li>Who should the employee keep in touch with - who will overlook their work</li>
+                            </ul>
+                        </p>
+                    </group>
+                    <group colspan="4" col="1">
+                        <field name="user_ids" nolabel="1" readonly="1">
+                            <tree decoration-muted="signed_by_delegate" create="0">
+                                <field name="user_id" readonly="1"/>
+                                <field name="date"/>
+                                <field name="state"/>
+                                <field name="signed_by_delegate" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="remote_work_agreement_action" model="ir.actions.act_window">
+            <field name="name">Susitarimas dėl nuotolinio darbo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'agreement', u'rec_template_id':
+                u'remote_work_agreement_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.remote_work_agreement_form"/>
+        </record>
+
+
+        <record id="remote_work_agreement_menu" model="ir.ui.menu">
+            <field name="name">Susitarimas dėl nuotolinio darbo</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="e_document.agreement"/>
+            <field name="action" ref="e_document.remote_work_agreement_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">susitarimas,leidimas,nuotolinis,namai,iš namų,nuotoliniu būdu,ne darbovietėje</field>
+            <field name="groups_id" eval="[(6, 0, [
+                ref('robo_basic.group_robo_free_manager'),
+                ref('robo_basic.group_robo_premium_manager'),
+                ref('robo_basic.group_robo_edocument_manager')
+            ])]"/>
+        </record>
+
+
+        <record id="remote_work_agreement_template" model="e.document.template">
+            <field name="name">Susitarimas dėl nuotolinio darbo</field>
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Nuo {{ date_from }} iki
+                    {% if date_to %}
+                        {{ date_to }}
+                    {% else %}
+                        atskiro sprendimo,
+                    {% endif %}
+
+                    {% if text_4 %}
+                        dėl {{ text_4 }},
+                    {% endif %}
+                    bendru susitarimu nurodau {{kam(employee_id2, 'Aa')}} atlikti savo darbo funkciją nuotoliniu būdu.
+                    Darbo laikas dirbant nuotoliniu būdu apskaitomas pagal darbuotojo įprastą darbo laiką.
+                    {% if additional_remote_work_compensation__sv__ == 'based_on_documents' %}
+                        Atsiradus papildomoms išlaidoms dirbant nuotoliniu būdu, išlaidos bus kompensuojamos pagal
+                        pateiktus dokumentus.
+                    {% elif additional_remote_work_compensation__sv__ == 'specific_amount' %}
+                        Dėl atsiradusių papildomų išlaidų dirbant nuotoliniu būdu, darbuotojui bus skiriama
+                        {{ float_1 }} EUR dydžio kompensacija, išmokama kartu su darbo užmokesčiu.
+                    {% elif additional_remote_work_compensation__sv__ == 'not_compensated' %}
+                        Papildomos išlaidos, atsiradusios dėl darbo nuotoliniu būdu, darbuotojui nėra kompensuojamos.
+                    {% endif %}
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="width: 100%; clear: both; float: left;">
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:10px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="45%" align="right" style="float: right; margin-top:10px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{employee_id2}}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.remote_work_agreement_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>Susitarimas{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>Susitarimas dėl nuotolinio darbo</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">pass</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="True"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+        </record>
+    </data>
+</odoo>

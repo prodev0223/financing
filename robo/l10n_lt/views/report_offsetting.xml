@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            id="report_offsetting"
+            model="report.l10n_lt.report_offsetting_template"
+            string="Offsetting"
+            report_type="qweb-html"
+            name="l10n_lt.report_offsetting_template"
+            file="l10n_lt.report_offsetting_template"
+        />
+        <template id="report_offsetting_template">
+            <style type="text/css">
+                .bold{
+                    font-weight: bold;
+                }
+                .party_data
+                {
+                    padding: 1.2em 0em;
+                }
+                .center
+                {
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                }
+            </style>
+            <t t-call="report.html_container">
+                <div class="page xls_front" id="main">
+                   <div class="center">
+                       <table style="margin-left:auto; margin-right:auto; border-style: none; width: 100%;" align="center">
+                           <tr align="center">
+                               <td colspan="4">
+                                   <span t-esc="company.name"/><br/><span t-esc="company.company_registry"/>
+                               </td>
+                           </tr>
+                           <tr align="left">
+                               <td colspan="4">
+                                   <span t-esc="partner.name"/>
+                                   <t t-if="partner.is_company">
+                                       , <span t-esc="partner.kodas"/>
+                                   </t>
+                                   <br/>
+                                   <t t-if="partner.street">
+                                       <span t-esc="partner.street"/>
+                                   </t>
+                                   <t t-if="partner.street and partner.city">
+                                       , <span t-esc="partner.city"/>
+                                   </t>
+                                   <t t-else="partner.city">
+                                       <span t-esc="partner.city"/>
+                                   </t>
+                               </td>
+                           </tr>
+                           <tr align="center">
+                               <td colspan="4" style="text-align: center; font-size: 1.2em; padding-top: 1.5em;">
+                                   <b>TARPUSAVIO SKOLŲ UŽSKAITYMO AKTAS</b><br/><t t-esc="date_act"/>
+                               </td>
+                           </tr>
+                           <tr>
+                               <td colspan="4" style="padding-top: 3em; text-indent: 2em;">
+                                   Mes, žemiau pasirašiusieji, <br/>
+                               </td>
+                           </tr>
+                           <tr align="center">
+                               <td colspan="4" style="border-bottom: 1px solid black">
+                                   <b>
+                                       <t t-if="company_representative">
+                                           <span t-esc="company_representative.job_id.display_name"/>
+                                           <span t-esc="company_representative.name_related"/>
+                                       </t>
+                                       <t t-else="">
+                                           <span t-esc="company.name"/>
+                                       </t>
+                                   </b>
+                               </td>
+                           </tr>
+                           <tr align="center">
+                               <td colspan="4" style="font-size: 0.8em; padding-top: 0.5em;">
+                                   (Siuntėjo įmonės atstovo pareigos, vardas, pavardė)
+                               </td>
+                           </tr>
+                           <tr align="left"><td colspan="4" style="padding-top: 5px;">ir</td></tr>
+                           <tr align="center">
+                               <td colspan="4" style="border-bottom: 1px solid black">
+                                   <b>
+                                       <span t-esc="partner.name"/>
+                                   </b>
+                               </td>
+                           </tr>
+                           <tr align="center">
+                               <td colspan="4" style="font-size: 0.8em; padding-top: 0.5em;">
+                                   (Gavėjo įmonės atstovo pareigos, vardas, pavardė)
+                               </td>
+                           </tr>
+                           <tr>
+                               <td colspan="4" style="padding-top: 1.01em;">
+                                   surašėme šį tarpusavio skolų užskaitymo aktą pagal
+                                   <span t-esc="date_offsetting"/> apskaitos duomenis.
+                               </td>
+                           </tr>
+
+                           <tr>
+                               <td colspan="4" style="padding-top: 2em; padding-bottom: 0.5em;">
+                                   <span t-esc="company.name"/> yra skolinga(-s) <span t-esc="partner.name"/> pagal šiuos dokumentus:
+                               </td>
+                           </tr>
+                           <tr>
+                               <th style="border: 1px solid black; text-align: center;">Eil. Nr.</th>
+                               <th style="border: 1px solid black; text-align: center;">Data</th>
+                               <th style="border: 1px solid black; text-align: center;">Apskaitos dokumento pavadinimas, Nr.</th>
+                               <th style="border: 1px solid black; text-align: center;">Įsiskolinimo suma</th>
+                           </tr>
+                           <p t-foreach="lines_payable" t-as="line">
+                               <tr>
+                                   <td style="border: 1px solid black; text-align: center;">
+                                       <t t-esc="line_index+1"/>
+                                   </td>
+                                   <td style="border: 1px solid black; text-align: center;">
+                                       <t t-esc="line.date"/>
+                                   </td>
+                                   <td style="border: 1px solid black; text-align: center;">
+                                       <t t-if="line.invoice_id.document_name">
+                                           <t t-esc="line.invoice_id.document_name"/>
+                                           <t t-if="line.invoice_id.reference">
+                                               , <t t-esc="line.invoice_id.reference"/>
+                                           </t>
+                                       </t>
+                                       <t t-else="">
+                                           <t t-esc="line.name"/>
+                                       </t>
+                                   </td>
+                                   <td style="border: 1px solid black; text-align: center;">
+                                       <t t-esc="abs(line.balance)"/>
+                                   </td>
+                               </tr>
+                           </p>
+                           <tr>
+                               <td colspan="4" style="padding-top: 2em; padding-bottom: 0.5em;">
+                                    <span t-esc="partner.name"/> yra skolinga(-s) <span t-esc="company.name"/> pagal šiuos dokumentus:
+                               </td>
+                           </tr>
+                           <tr>
+                               <th style="border: 1px solid black; text-align: center;">Eil. Nr.</th>
+                               <th style="border: 1px solid black; text-align: center;">Data</th>
+                               <th style="border: 1px solid black; text-align: center;">Apskaitos dokumento pavadinimas, Nr.</th>
+                               <th style="border: 1px solid black; text-align: center;">Įsiskolinimo suma</th>
+                           </tr>
+                           <p t-foreach="lines_receivable" t-as="line">
+                               <tr>
+                                   <td style="border: 1px solid black; text-align: center;">
+                                       <t t-esc="line_index+1"/>
+                                   </td>
+                                   <td style="border: 1px solid black; text-align: center;">
+                                       <t t-esc="line.date"/>
+                                   </td>
+                                   <td style="border: 1px solid black; text-align: center;">
+                                       <t t-if="line.invoice_id.document_name">
+                                           <t t-esc="line.invoice_id.document_name"/>
+                                           <t t-if="line.invoice_id.number">
+                                               , <t t-esc="line.invoice_id.number"/>
+                                           </t>
+                                       </t>
+                                       <t t-else="">
+                                           <t t-esc="line.name"/>
+                                       </t>
+                                   </td>
+                                   <td style="border: 1px solid black; text-align: center;">
+                                       <t t-esc="abs(line.balance)"/>
+                                   </td>
+                               </tr>
+                           </p>
+                       </table>
+                       <table style="margin-left:auto; margin-right:auto; width: 100%;" align="center">
+                           <tr>
+                               <td colspan="4" style="padding-top: 2em;">
+                                   Šalys susitaria atlikti tarpusavio skolų užskaitymą
+                                   <t t-esc="amount_reconciled"/> Eur sumai. Po užskaitymo <t t-esc="date_act"/>
+                                   <t t-if="not is_company_indebted and amount_left_to_reconcile == 0">
+                                       šalys nebelieka viena kitai skolingos, tarpusavio įsipareigojimai laikomi padengtais.
+                                   </t>
+                                   <t t-else="">
+                                       <t t-if="is_company_indebted">
+                                           <span class="bold" t-esc="company.name"/> lieka skolinga(-s)
+                                           <span class="bold" t-esc="partner.name"/>
+                                       </t>
+                                       <t t-else="">
+                                           <span class="bold" t-esc="partner.name"/> lieka skolinga(-s)
+                                           <span class="bold" t-esc="company.name"/>
+                                       </t>
+                                       <t t-esc="amount_left_to_reconcile"/> Eur.
+                                   </t>
+                               </td>
+                           </tr>
+                           <tr>
+                               <td colspan="4" style="padding-top: 6em;">
+                                   Šalių parašai:
+                               </td>
+                           </tr>
+                           <tr align="center">
+                               <td style="border-bottom: 1px solid black; padding-top: 2em;"><span t-esc="company.name"/></td>
+                               <td style="padding-top: 2em;" colspan="2">&#160;</td>
+                               <td style="border-bottom: 1px solid black; padding-top: 2em;">
+                                   <t t-if="partner.is_company">
+                                       <span t-esc="partner.name"/>
+                                   </t>
+                               </td>
+                           </tr>
+                           <tr align="center">
+                              <td style="font-size: 0.8em; padding-top: 0.5em;">
+                                  (Siuntėjo įmonės pavadinimas)
+                              </td>
+                              <td colspan="2" style="width: 10%">&#160;</td>
+                              <td style="font-size: 0.8em; padding-top: 0.5em;">
+                                  (Gavėjo įmonės pavadinimas)
+                              </td>
+                           </tr>
+                           <tr align="center">
+                               <td style="border-bottom: 1px solid black; padding-top: 1em;">
+                                   <t t-if="company_representative">
+                                       <span t-esc="company_representative.job_id.display_name"/>
+                                       <span t-esc="company_representative.name_related"/>
+                                   </t>
+                               </td>
+                               <td style="padding-top: 1em;" colspan="2">&#160;</td>
+                               <td style="border-bottom: 1px solid black; padding-top: 1em;">
+                                   <t t-if="not partner.is_company">
+                                       <span t-esc="partner.name"/>
+                                   </t>
+                               </td>
+                           </tr>
+                           <tr align="center">
+                              <td style="font-size: 0.8em; padding-top: 0.5em;">
+                                  (Siuntėjo atstovo pareigos, vardas, pavardė)
+                              </td>
+                              <td colspan="2" style="width: 10%">&#160;</td>
+                              <td style="font-size: 0.8em; padding-top: 0.5em;">
+                                  (Gavėjo atstovo pareigos, vardas, pavardė)
+                              </td>
+                           </tr>
+                           <tr align="center">
+                               <td style="border-bottom: 1px solid black; padding-top: 1em;"/>
+                               <td style="padding-top: 1em;" colspan="2">&#160;</td>
+                               <td style="border-bottom: 1px solid black; padding-top: 1em;"/>
+                           </tr>
+                           <tr align="center">
+                              <td style="font-size: 0.8em; padding-top: 0.5em;">(Parašas)</td>
+                              <td colspan="2" style="width: 10%">&#160;</td>
+                              <td style="font-size: 0.8em; padding-top: 0.5em;">(Parašas)</td>
+                           </tr>
+                           <tr>
+                               <td colspan="4" style="padding-top: 4em;">
+                                   Aktą sudarė:
+                                   <t t-if="company_representative">
+                                       <span t-esc="company_representative.job_id.display_name"/>
+                                       <span t-esc="company_representative.name_related"/>
+                                   </t>
+                                   <t t-else="">
+                                       <span t-esc="company.name"/>
+                                   </t>
+                               </td>
+                           </tr>
+                       </table>
+                   </div>
+                   <div t-if="accountant" style="float:left; margin-right: 10px; padding-top: 2em;">
+                       <table style="border: 1px solid black; page-break-inside: avoid;">
+                           <tbody>
+                               <tr>
+                                   <td style="padding-top: 10px; padding-left: 10px; padding-right: 10px;">
+                                       <span>Pasirašė: UAB „Robolabs“ įgaliotas(-a)</span>
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td style="padding-left: 10px; padding-right: 10px;">
+                                       <span>buhalteris(-ė)</span>
+                                       <span t-esc="accountant.display_name.upper()"/>
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td style="padding-left: 10px; padding-right: 10px;">
+                                       <span>Laiko žyma:</span>
+                                       <span t-esc="current_user_timestamp"/>
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td style="padding-bottom: 10px; padding-left: 10px; padding-right: 10px;">
+                                        <span>Pasirašyta RoboLabs sistemoje</span>
+                                   </td>
+                               </tr>
+                           </tbody>
+                       </table>
+                   </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="set_robo_ux_settings_view_form" model="ir.ui.view">
+            <field name="name">set.robo.ux.settings.view.form</field>
+            <field name="model">set.robo.ux.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Customisation settings" create="false" edit="false">
+                    <header>
+                        <button string="Išsaugoti" type="object" name="confirm" class="oe_highlight"/>
+                        <button string="Atšaukti" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="enabled"/>
+                        </group>
+                        <notebook>
+                            <page name="email_settings" string="E-mail templates"
+                                  attrs="{'readonly': [('enabled','=',False)]}">
+                                <notebook>
+                                    <page name="account_invoice_mail_template_settings" string="Invoices"
+                                          attrs="{'readonly': [('enabled','=',False)]}">
+                                        <group string="Default templates">
+                                            <group colspan="4">
+                                                <span>Here you can choose which templates should be used by default when
+                                                    sending invoices
+                                                </span>
+                                            </group>
+                                            <group colspan="4">
+                                                <field name="invoice_mail_template_lt_id"
+                                                       attrs="{'readonly': [('enabled','=',False)]}"
+                                                       options="{'no_create': True, 'no_open': True}"/>
+                                                <field name="invoice_mail_template_en_id"
+                                                       attrs="{'readonly': [('enabled','=',False)]}"
+                                                       options="{'no_create': True, 'no_open': True}"/>
+                                            </group>
+                                        </group>
+                                    </page>
+                                </notebook>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="set_robo_ux_settings_action_view_form" model="ir.actions.act_window">
+            <field name="name">Tinkinimo nustatymai</field>
+            <field name="res_model">set.robo.ux.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="view_id" ref="set_robo_ux_settings_view_form"/>
+            <field name="context" eval="{
+                'robo_menu_name': ref('robo.menu_start')
+            }"/>
+        </record>
+    </data>
+</odoo>

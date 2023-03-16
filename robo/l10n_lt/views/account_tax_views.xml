@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_tax_search_extend" model="ir.ui.view">
+            <field name="name">search.account.tax.extend</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_account_tax_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="replace">
+                    <field name="name"
+                           filter_domain="['|','|', ('name','ilike',self), ('description','ilike',self),('code','ilike',self)]"
+                           string="Tax"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_tax_form" model="ir.ui.view">
+            <field name="name">account.tax.form</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tax_group_id']" position="before">
+                    <field name="child_tax_ids" domain="[('type_tax_use','=',type_tax_use)]" widget="many2many_tags"/>
+                </xpath>
+                <xpath expr="//field[@name='tax_group_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="code"/>
+                </xpath>
+                <xpath expr="//field[@name='account_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='refund_account_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='refund_account_id']" position="after">
+                    <field name="long_description"/>
+                    <field name="show_description"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_tax_tree_view_extension" model="ir.ui.view">
+            <field name="name">account.tax.view.tree</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="code"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

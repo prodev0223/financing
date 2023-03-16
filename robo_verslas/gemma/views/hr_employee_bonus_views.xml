@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="extend_hr_employee_bonus">
+        <field name="name">extend.hr.employee.bonus</field>
+        <field name="model">hr.employee.bonus</field>
+        <field name="inherit_id" ref="l10n_lt_payroll.hr_employee_bonus_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet//group//field[@name='comment']" position="before">
+                <field name="exclude_bonus_from_du_aspi"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

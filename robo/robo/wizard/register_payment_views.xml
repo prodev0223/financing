@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_register_payment_form" model="ir.ui.view">
+            <field name="name">register.payment.form</field>
+            <field name="model">register.payment</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimo grynais registravimas">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="journal_id" widget="selection" string="Mokėjimo būdas" domain="[('type','=','cash')]"/>
+                                <label for="amount" string="Suma"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount"/>
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                           groups="base.group_multi_currency"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="payment_type" invisible="1"/>
+                                <field name="payment_date" string="Data"/>
+                                <field name="communication" string="Mokėjimo nurodymas"/>
+                                <field name="cashier_id" options="{'no_open': True, 'no_create': True}"
+                                       domain="[('main_accountant','=',False)]"
+                                       attrs="{'invisible': [('payment_type', '=', 'receipt')], 'required': [('payment_type', '=', 'order')]}"/>
+                                <field name="employee_id" options="{'no_open': True, 'no_create': True}"
+                                       domain="[('main_accountant','=',False)]"
+                                       attrs="{'invisible': [('payment_type', '=', 'order')], 'required': [('payment_type', '=', 'receipt')]}"/>
+                            </group>
+                            <group attrs="{'invisible': [('payment_difference', '=', 0.0)]}">
+                                <label for="payment_difference" string="Neapmokėtas likutis"/>
+                                <div>
+                                    <field name="payment_difference" string="Skirtumas"/>
+                                    <field name="payment_difference_handling" widget="radio" nolabel="1"/>
+                                </div>
+                                <field name="writeoff_account_id" string="Nurašyti į" options="{'no_open': True, 'no_create': True}"
+                                       attrs="{'invisible': [('payment_difference_handling','=','open')], 'required': [('payment_difference_handling', '=', 'reconcile')]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string='Patvirtinti' name="post" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_account_invoice_register_payment" model="ir.actions.act_window">
+            <field name="name">Registruoti mokėjimą</field>
+            <field name="res_model">register.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_register_payment_form"/>
+            <field name="context">{'invoice_id': active_id}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_register_payment_form" model="ir.ui.view">
+            <field name="name">register.payment.form</field>
+            <field name="model">register.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimo grynais registravimas">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="journal_id" widget="selection" string="Mokėjimo būdas" domain="[('type','=','cash')]"/>
+                                <label for="amount" string="Suma"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount"/>
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                           groups="base.group_multi_currency"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="payment_type" invisible="1"/>
+                                <field name="payment_date" string="Data"/>
+                                <field name="communication" string="Mokėjimo nurodymas"/>
+                                <field name="cashier_id" options="{'no_open': True, 'no_create': True}" attrs="{'invisible': [('payment_type', '=', 'receipt')], 'required': [('payment_type', '=', 'order')]}"/>
+                                <field name="employee_id" options="{'no_open': True, 'no_create': True}"
+                                       domain="[('main_accountant','=',False)]"
+                                       attrs="{'invisible': [('payment_type', '=', 'order')], 'required': [('payment_type', '=', 'receipt')]}"/>
+                            </group>
+                            <group attrs="{'invisible': [('payment_difference', '=', 0.0)]}">
+                                <label for="payment_difference" string="Neapmokėtas likutis"/>
+                                <div>
+                                    <field name="payment_difference" string="Skirtumas"/>
+                                    <field name="payment_difference_handling" widget="radio" nolabel="1"/>
+                                </div>
+                                <field name="writeoff_account_id" string="Nurašyti į" options="{'no_open': True, 'no_create': True}"
+                                       attrs="{'invisible': [('payment_difference_handling','=','open')], 'required': [('payment_difference_handling', '=', 'reconcile')]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string='Patvirtinti' name="post" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_account_invoice_register_payment" model="ir.actions.act_window">
+            <field name="name">Registruoti mokėjimą</field>
+            <field name="res_model">register.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_register_payment_form"/>
+            <field name="context">{'invoice_id': active_id}</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

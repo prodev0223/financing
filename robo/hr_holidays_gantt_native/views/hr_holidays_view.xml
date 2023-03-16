@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+                    <!--ghost_id="workorder_id"-->
+                <!--ghost_model="mrp.workcenter.productivity"-->
+                <!--ghost_name="display_name"-->
+                <!--ghost_date_start="date_start"-->
+                <!--ghost_date_end="date_end"-->
+                <!--ghost_durations="duration"-->
+     <!--progress="duration_percent"-->
+     <!--is_milestone="is_milestone"-->
+
+
+    <record id="view_hr_holidays_ganttaps" model="ir.ui.view">
+    <field name="name">hr.holidays.ganttaps</field>
+    <field name="model">hr.holidays</field>
+    <field name="type">ganttaps</field>
+    <field eval="2" name="priority"/>
+
+    <field name="arch" type="xml">
+        <ganttaps
+
+                default_group_by = "employee_id"
+                main_group_id_name = "employee_id"
+
+                name = "name"
+                date_start="date_from"
+                date_stop="date_to"
+
+                date_done="date_finished"
+
+                state="state"
+                state_status="approved"
+
+                sorting_seq="sorting_seq"
+                sorting_level="sorting_level"
+
+
+                project_id="employee_id"
+
+
+                on_gantt="on_gantt"
+
+                no_group_sort_mode=""
+
+
+
+             >
+
+        </ganttaps>
+
+    </field>
+
+</record>
+
+
+<record id="hr_holidays.open_employee_leaves" model="ir.actions.act_window">
+    <field name="view_mode">tree,form,calendar,ganttaps</field>
+</record>
+
+<record id="hr_holidays.open_department_holidays_approve" model="ir.actions.act_window">
+    <field name="view_mode">tree,form,calendar,ganttaps</field>
+ </record>
+
+<record id="hr_holidays.open_department_holidays_allocation_approve" model="ir.actions.act_window">
+    <field name="view_mode">tree,form,calendar,ganttaps</field>
+ </record>
+
+   <record id="hr_holidays.open_ask_holidays" model="ir.actions.act_window">
+    <field name="view_mode">tree,form,calendar,ganttaps</field>
+ </record>
+
+     <record id="hr_holidays.open_allocation_holidays" model="ir.actions.act_window">
+    <field name="view_mode">tree,form,calendar,ganttaps</field>
+ </record>
+
+
+
+
+
+
+</odoo>

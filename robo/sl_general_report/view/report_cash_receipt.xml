@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <report
+                id="report_cash_receipt"
+                model="report.sl_general_report.report_cash_receipt"
+                string="Cash receipt"
+                report_type="qweb-html"
+                name="sl_general_report.report_cash_receipt_template"
+                file="sl_general_report.report_cash_receipt_template"
+        />
+
+        <template id="report_cash_receipt_template">
+            <style type="text/css">
+            body.container {
+            margin-left: 7px !important;
+            }
+            h3 {
+            text-align: center;
+            }
+            .centras{
+            text-align: center;
+            margin-left:auto;
+            margin-right:auto;
+            }
+            .virsus{
+            border-top: 1px solid black;
+            }
+            .desine{
+            float: right;
+            width: 400px;
+            text-align: justify
+            }
+            .lentele{
+            border: 1px solid black;
+            }
+            .table-cell{
+            border-color:black;
+            border-bottom-width:1px;
+            border-top: 1px solid black;
+            text-align: center;
+            vertical-align: middle;
+            }
+            .tr, th, td{
+            padding-left: 5px;
+            border: 1px solid black;
+            border-color:black;
+            border-bottom-width:1px;
+            }
+            .rotate{
+            transform: rotate(-90deg);
+            transform-origin: 0% 0% 0;
+            }
+            .line-header {
+            margin-top: 15px;
+            position:relative;
+            }
+            .line-header:before {
+                position: absolute;
+                display:block;
+                top:0;
+                left:0;
+                bottom:0;
+                content: attr(title);
+                background-color:#FFF;
+                color:#FFF;
+                z-index:-1;
+                padding-right:.5em;
+                }
+            .line-header::after {
+                position:absolute;
+                content:'';
+                display: block;
+                left:0;
+                right:0;
+                top:50%;
+                background-color:#555;
+                height:1px;
+                z-index:-2;
+                }
+            </style>
+            <t t-call="report.html_container">
+                <div class="page xls_front" id="main">
+                    <t t-set="o" t-value="doc"/>
+                    <div class="centras">
+                        <table style="margin-left:auto; margin-right:auto; border-style:none; width: 30%" align="left">
+                            <tr style="border-style:none" align="center">
+                                <strong>
+                                    <td style="border-style:none">
+                                        <h4 style="font-weight: bold">
+                                            CASH RECEIVEMENT AND PAYOUT RECEIPT ACCOUNTING BOOK
+                                        </h4>
+                                    </td>
+                                </strong>
+                            </tr>
+                            <tr style="border-style:none" align="center">
+                                <td style="border-style:none">
+                                    from <b><t t-esc="date_from"/></b> to <b><t t-esc="date_to"/></b>
+                                </td></tr>
+                        </table>
+                        <br/>
+                        <table style="border-style:none" class="centras">
+                            <tr style="border-style:none">
+                                <td align="left" style="border-style:none">
+                                    <b><span t-esc="company.name"/></b>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td align="left" style="border-style:none">
+                                    <span t-esc="company.company_registry"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p/>
+
+                    <table class="table table-bordered mb32 main_table" style="table-layout:auto; border-style:none">
+                        <thead>
+                            <tr style="border-color:black; border-bottom-width:1px; text-align: center;">
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Cash receipt No.</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black; width: 11%">Date</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Payment type</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Received from /<br/>Payed out to</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Income</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Expenses</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Balance</td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">Employee who received /<br/>payed out</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="lines" t-as="line" style="page-break-inside: avoid;">
+                                <td t-esc="line['receipt_no']" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="line['date']" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="line['payment_type_name']" style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="line['partner']" style="border-color:black; border-bottom-width:1px"/>
+                                <t t-if="line['payment_type'] == 'inbound'">
+                                    <td t-esc="line['amount']" align="right"
+                                        style="border-color:black; border-bottom-width:1px"/>
+                                    <td style="border-color:black; border-bottom-width:1px" align="right">0</td>
+                                </t>
+                                <t t-elif="line['payment_type'] == 'outbound'">
+                                    <td style="border-color:black; border-bottom-width:1px" align="right">0</td>
+                                    <td t-esc="line['amount']" align="right"
+                                        style="border-color:black; border-bottom-width:1px"/>
+                                </t>
+                                <td t-esc="line['balance']" align="right"
+                                    style="border-color:black; border-bottom-width:1px"/>
+                                <td t-esc="line['cashier']" style="border-color:black; border-bottom-width:1px"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="float: left; width:30%">
+                        <table style="margin-left:auto; margin-right:auto; border-style:none">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; text-align:left">
+                                    Entity manager
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none"><span><span>&#160;</span></span></td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none; text-align:left">
+                                    Senior accountant (accountant)
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none"><span><span>&#160;</span></span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="display:inline-block; width:20%">
+                        <table class="centras" align="center" width="100%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none"><span><span>&#160;</span></span></td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none;text-align:center">
+                                    <span>(signature)</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none"><span><span>&#160;</span></span></td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none;text-align:center">
+                                    <span>(signature)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="float: right; width:40%">
+                        <table width="80%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto;text-align:center">
+                                    <span t-esc="company.vadovas.name"/>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none;text-align:center">
+                                    <span>(name and surname)</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto;text-align:center">
+                                    <t t-if="company.cashier_accountant_id.name">
+                                        <span t-esc="company.cashier_accountant_id.name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span>&#160;</span>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none;text-align:center">
+                                    <span>(name and surname)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

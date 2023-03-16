@@ -1,0 +1,181 @@
+<odoo>
+    <data>
+        <record id="work_during_absence_order_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl leidimo dirbti nedarbingumo metu</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="employee_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) Vardas Pavardė" required="True" invisible="0"
+                               attrs="{'readonly': True}"/>
+                    </group>
+                    <group colspan="4" col="4" string="Patvirtinamas laikas">
+                        <field name="e_document_time_line_ids" nolabel="1" colspan="4"
+                               options="{'no_open': True}" attrs="{'readonly': True, 'required': True}">
+                            <tree editable="bottom" open="0" class="robo_tree_in_form">
+                                <field name="date" required="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="work_during_absence_order_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl leidimo dirbti nedarbingumo metu</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{
+                u'default_document_type': u'isakymas',
+                u'rec_template_id': u'work_during_absence_order_template',
+                u'e_document_view_type': u'rigid'
+            }</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.work_during_absence_order_form"/>
+        </record>
+
+
+        <record id="work_during_absence_order_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl leidimo dirbti nedarbingumo metu</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="False"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.work_during_absence_order_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">nedarbingumas,įsakymas,liga,dirbti</field>
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+        <record id="work_during_absence_order_mail_channel" model="mail.channel">
+            <field name="name">
+                Pranešimai apie pasirašytus įsakymus dėl leidimo dirbti nedarbingumo metu
+            </field>
+            <field name="description">Informuoti apie pasirašytus įsakymus dėl leidimo dirbti nedarbingumo metu</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+
+        <record id="work_during_absence_order_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Vadovaudamasis darbuotojo {{ ko(employee_id2.upper(), 'Aa') }} {{ date_2 }} dienos prašymu, nurodau
+                    buhalterijai darbo laiko apskaitos žiniaraštyje žemiau nurodytomis dienomis žymėti darbo laiką ir
+                    už jį skaičiuoti darbo užmokestį.
+                    <br/>
+                    <table style="border: 1px solid black; border-collapse: collapse;">
+                        <tr>
+                            <th style="border: 1px solid black; padding: 2px;">Data</th>
+                        </tr>
+                        {% for e_document_time_line in e_document_time_line_ids %}
+                            <tr>
+                                <td style="border: 1px solid black; padding: 2px;">{{ e_document_time_line.date }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </field>
+            <field name="name">Leidimas dirbti nedarbingumo metu</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.work_during_absence_order_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded {
+                            width: 100px;
+                        }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span><br/>
+                            <span>
+                                ĮSAKYMAS DĖL LEIDIMO {{ kam(employee_id2.upper(), 'AA') }} DIRBTI NEDARBINGUMO METU
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.work_during_absence_order_workflow()</field>
+            <field name="date_from_field_name">min_e_document_time_line_date</field>
+            <field name="date_to_field_name">max_e_document_time_line_date</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="sign_mail_channel_ids" eval="[(4, ref('e_document.work_during_absence_order_mail_channel'))]"/>
+        </record>
+    </data>
+</odoo>

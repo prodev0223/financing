@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_nsoft_report_move" model="ir.ui.view">
+            <field name="name">tree.nsoft.report.move</field>
+            <field name="model">nsoft.report.move</field>
+            <field name="arch" type="xml">
+                <tree string="nSoft Aktai"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-warning="state == 'partially_failed'"
+                      decoration-danger="state == 'failed'"
+                      create="0" edit="0" delete="1">
+                    <field name="ext_doc_id"/>
+                    <field name="ext_warehouse_id"/>
+                    <field name="ext_doc_number"/>
+                    <field name="report_type_id"/>
+                    <field name="total_move_quantity"/>
+                    <field name="total_move_amount"/>
+                    <field name="report_date"/>
+                    <field name="ext_create_date"/>
+                    <field name="state"/>
+                    <field name="potential_duplicate"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_mark_act_duplicates" model="ir.actions.server">
+            <field name="name">Atšaukti potencialius dublikatus</field>
+            <field name="model_id" ref="nsoft.model_nsoft_report_move"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).action_mark_act_duplicates()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="action_mark_act_duplicates_func" model="nsoft.report.move"/>
+
+        <record id="create_report_move_create_multi_act" model="ir.actions.server">
+            <field name="name">Kurti aktus</field>
+            <field name="model_id" ref="nsoft.model_nsoft_report_move"/>
+            <field name="code">
+                if user.is_manager():
+                action = object.browse(context.get('active_ids', False)).move_creation_prep()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_report_move_create_multi_func" model="nsoft.report.move"/>
+        <record id="action_open_nsoft_report_move" model="ir.actions.act_window">
+            <field name="name">nSoft Aktai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.report.move</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="context" eval="{
+                'search_default_state_non_duplicates':1
+                }"/>
+            <field name="view_id" ref="tree_nsoft_report_move"/>
+        </record>
+        <!--Forms-->
+        <record id="form_nsoft_report_move" model="ir.ui.view">
+            <field name="name">form.nsoft.report.move</field>
+            <field name="model">nsoft.report.move</field>
+            <field name="arch" type="xml">
+                <form string="nSoft Aktai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="button_move_creation_prep" type="object" string="Kurti apskaitos įrašus"
+                                states="imported,failed" class="oe_highlight"/>
+                        <button name="button_remove_duplicates" type="object" string="Trinti dublikatus" class="oe_highlight"
+                                attrs="{'invisible': [('potential_duplicate', '=', False)]}" states="created"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box" states="created,cancelled_dub">
+                            <button class="oe_stat_button" name="action_open_journal_move_lines"
+                                    string="Žurnalo elementai"
+                                    type="object" groups="account.group_account_manager" icon="fa-bars"/>
+                        </div>
+                        <div class="oe_button_box" name="button_box" states="created,cancelled_dub">
+                            <button class="oe_stat_button" name="action_open_journal_moves"
+                                    string="Žurnalo įrašai"
+                                    type="object" groups="account.group_account_manager" icon="fa-bars"/>
+                        </div>
+                        <div>
+                            <label string="Aktas"/>
+                            <h1 class="mt0">
+                                <field name="ext_doc_number" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="report_type_id"/>
+                            <field name="total_move_quantity"/>
+                            <field name="total_move_amount"/>
+                            <field name="ext_doc_id"/>
+                            <field name="report_date"/>
+                            <field name="ext_create_date"/>
+                            <field name="ext_warehouse_id"/>
+                            <field name="potential_duplicate"/>
+                        </group>
+                        <group>
+                            <field name="nsoft_report_move_line_ids" nolabel="1"
+                                   widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree string="nSoft Akto eilutės"
+                                      decoration-info="state == 'imported'"
+                                      decoration-success="state == 'created'"
+                                      decoration-danger="state in ['failed']"
+                                      create="1" edit="1" delete="1"
+                                      class="robo_tree_in_form">
+                                    <field name="product_name"/>
+                                    <field name="line_quantity"/>
+                                    <field name="line_amount"/>
+                                    <field name="move_id"/>
+                                    <field name="ext_product_category_id"/>
+                                    <field name="nsoft_product_category_id"/>
+                                    <field name="state"/>
+                                </tree>
+                                <form string="nSoft Akto eilutės" create="1" edit="1" delete="1">
+                                    <sheet>
+                                        <div>
+                                            <label string="Tėvinis įrašas"/>
+                                            <h1 class="mt0">
+                                                <field name="nsoft_report_move"/>
+                                            </h1>
+                                        </div>
+                                        <group>
+                                            <field name="product_name"/>
+                                            <field name="line_quantity"/>
+                                            <field name="line_amount"/>
+                                            <field name="move_id"/>
+                                            <field name="ext_product_category_id"/>
+                                            <field name="nsoft_product_category_id"/>
+                                            <field name="state"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+        <record id="search_nsoft_report_move" model="ir.ui.view">
+            <field name="name">Aktų paieška</field>
+            <field name="model">nsoft.report.move</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="prime_cost_move" string="Pardavimo savikainos aktai" domain="[('report_type','=', 2)]"/>
+                    <filter name="inventory_move" string="Inventorizacijos aktai" domain="[('report_type','=',6)]"/>
+                    <filter name="write_off_move" string="Nurašymo aktai" domain="[('report_type','=',7)]"/>
+                    <filter name="period_close_move" string="Uždarymo aktai" domain="[('report_type','=',9)]"/>
+                    <separator/>
+                    <filter name="state_non_duplicates" string="Netraukti atšauktų dublikatų"
+                            domain="[('state','!=','cancelled_dub')]"/>
+                    <filter name="state_imported" string="Būsena: Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="state_created" string="Būsena: Sukurta" domain="[('state','=','created')]"/>
+                    <filter name="state_failed" string="Būsena: Klaida kuriant įrašus"
+                            domain="[('state','=','failed')]"/>
+                    <filter name="state_part_failed"
+                            string="Būsena: Klaida kuriant dalį įrašų"
+                            domain="[('state','=','partially_failed')]"/>
+                    <separator/>
+                    <field name="ext_warehouse_id" filter_domain="[('ext_warehouse_id','ilike',self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="[
+                            '|', '&amp;',
+                            ('report_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('report_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('report_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('report_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="[
+                            '|', '&amp;',
+                            ('report_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('report_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('report_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('report_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai"
+                            domain="[
+                            '|', '&amp;',
+                             ('report_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('report_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                             '&amp;',
+                             ('report_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('report_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="[
+                            '|', '&amp;',
+                             ('report_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('report_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                             '&amp;',
+                             ('report_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('report_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <field name="report_type_id"/>
+                    <field name="ext_doc_id" filter_domain="[('ext_doc_id','ilike',self)]"/>
+                    <field name="ext_doc_number" filter_domain="[('ext_doc_number','ilike',self)]"/>
+                    <field name="report_type" filter_domain="[('report_type','ilike',self)]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_report_type" string="Akto tipas" context="{'group_by':'report_type'}"/>
+                        <filter name="ext_warehouse_id" string="Sandėlio ID" context="{'group_by':'ext_warehouse_id'}"/>
+                        <filter name="group_partner_id" string="Partneris" context="{'group_by':'partner_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Aktai"
+                id="menu_nsoft_report_move"
+                sequence="42"
+                action="action_open_nsoft_report_move"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nsoft_sum_accounting"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="swed_directory_path" model="ir.config_parameter">
+             <field name="key">swed_directory_path</field>
+             <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+         <record id="swed_cert_path" model="ir.config_parameter">
+             <field name="key">swed_cert_path</field>
+             <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+         <record id="swed_main_url" model="ir.config_parameter">
+             <field name="key">swed_main_url</field>
+              <field name="value">https://swedbankgateway.net</field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+        <record id="cron_fetch_statements_swed" model="ir.cron">
+          <field name="name">Fetch SwedBank statements</field>
+          <field name="interval_number">20</field>
+          <field name="interval_type">minutes</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">swed.bank.export.internal</field>
+          <field name="function">cron_fetch_statements</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=08, minute=15, second=00)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="args">()</field>
+        </record>
+        <record id="cron_collect_statements_swed" model="ir.cron">
+          <field name="name">Collect SwedBank statements</field>
+          <field name="interval_number">10</field>
+          <field name="interval_type">minutes</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">swed.bank.export.internal</field>
+          <field name="function">cron_collect_statements</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=08, minute=10, second=00)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="args">()</field>
+        </record>
+        <record id="cron_outgoing_file_cleanup_swed" model="ir.cron">
+          <field name="name">Outgoing SwedBank file cleanup</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">days</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">swed.bank.export.internal</field>
+          <field name="function">cron_outgoing_file_cleanup</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=23, minute=59, second=59)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="args">()</field>
+        </record>
+    </data>
+    <data>
+        <menuitem
+            name="SwedBank API"
+            id="swed_api_root"
+            sequence="48"
+            groups="base.group_system"
+            />
+    </data>
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="extend_compose_email" model="ir.ui.view">
+            <field name="name">extend.compose.email.wizard</field>
+            <field name="model">mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ids']/.." position="replace">
+                    <div>
+                        <field name="partner_ids"
+                               domain="[
+                                   ('advance_payment','=',False),
+                                   '|',
+                                   ('email','not like','@robolabs.lt'),
+                                   '|',
+                                   ('customer','=',True),
+                                   ('supplier','=',True),
+                               ]"
+                               widget="many2many_tags_email" placeholder="Pridėti gavėjus..."
+                               context="{'force_email':True, 'show_email':True}"
+                               required="1"
+                        />
+                    </div>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_ids']/.." position="after">
+                    <field name="additional_recipients" placeholder="Add additional recipients..."/>
+                </xpath>
+
+                <xpath expr="//field[@name='attachment_ids']" position="replace">
+                </xpath>
+
+                <xpath expr="//field[@name='body']" position="replace">
+                    <group colspan="4" col="3" name="main_mail_compose_message_data" class="robo_mobile_flex_column">
+                        <group colspan="3">
+                            <field name="body" options="{'style-inline': true}" class="robo-mail-compose-body" nolabel="1"/>
+                        </group>
+                        <group colspan="3">
+                            <field name="attachment_ids" widget="many2many_binary" string="Attach a file" nolabel="1" colspan="2"/>
+<!--                            <field name="nbr_of_attachments" invisible="1"/>-->
+<!--                            <field name="user_attachment_ids" invisible="1"/>-->
+<!--                            <field name="attachment_drop_lock" invisible="1"/>-->
+<!--                            <field name="unique_wizard_id" invisible="1"/>-->
+<!--                            <widget type="robo_attach_files" style="width: 150px"/>-->
+<!--                            TODO Robo attach files - issues occur with newmodel object in compute_all_attachments-->
+                        </group>
+                    </group>
+                </xpath>
+
+                <xpath expr="//field[@name='template_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='save_as_template']" position="replace"/>
+            </field>
+        </record>
+    </data>
+</odoo>

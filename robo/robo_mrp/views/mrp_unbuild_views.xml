@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--MRP unbuild-->
+        <record id="mrp_unbuild_add_accounting" model="ir.ui.view">
+            <field name="name">mrp.unbuild.accounting</field>
+            <field name="model">mrp.unbuild</field>
+            <field name="inherit_id" ref="mrp.mrp_unbuild_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <div class="oe_right" states="done,progress" groups="account.group_account_user">
+                        <button name="open_account_move_lines" type="object" class="oe_stat_button" icon="fa-bars"
+                                string="Apskaitos įrašai"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <record id="robo_mrp_unbuild_form_view" model="ir.ui.view">
+            <field name="name">mrp.unbuild.form</field>
+            <field name="model">mrp.unbuild</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Unbuild Orders">
+                    <header>
+                        <button name="action_unbuild" string="Išrinkti" type="object" states="reserved"
+                                class="oe_highlight"/>
+                        <button name="reserve" string="Rezervuoti" type="object" states="draft"
+                                class="oe_highlight"/>
+                        <button name="unreserve" string="Atšaukti rezervaciją" type="object" states="reserved"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="%(mrp.action_mrp_unbuild_moves)d"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    string="Judėjimai" type="action" icon="fa-arrows-v" states="done"/>
+                            <button name="open_account_move_lines" type="object" class="oe_stat_button" states="done"
+                                    icon="fa-bars" string="Apskaitos įrašai"
+                                    groups="robo_basic.group_robo_premium_accountant"/>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Unbuild Order" nolabel="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="product_id" domain="[('bom_ids', '!=', False)]"
+                                       context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"
+                                       attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="bom_id" domain="['|',
+                                            ('product_id','=',product_id),
+                                            '&amp;',
+                                                ('product_tmpl_id.product_variant_ids','=',product_id),
+                                                ('product_id','=',False),
+                                                ('type', '=', 'normal')]"
+                                       context="{'form_view_ref': 'robo_mrp.robo_mrp_bom_form_view'}"
+                                       attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <label for="product_qty"/>
+                                <div class="o_row">
+                                    <field name="product_qty" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="product_uom_id" options="{'no_open':True,'no_create':True}"
+                                           groups="product.group_uom" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="build_date" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="mo_id"
+                                       context="{'form_view_ref': 'robo_mrp.robo_mrp_production_form_view'}"/>
+                                <field name="location_id" groups="stock.group_stock_multi_locations"
+                                       domain="[('usage', '=', 'internal')]"
+                                       options="{'no_open': 1}"/>
+                                <field name="location_dest_id" groups="stock.group_stock_multi_locations"
+                                       domain="[('usage', '=', 'internal')]"
+                                       options="{'no_open': 1}"/>
+                                <field name="has_tracking" invisible="1"/>
+                                <field name="lot_id" attrs="{'invisible': [('has_tracking', '=', 'none')]}"
+                                       string="SN"
+                                       groups="stock.group_production_lot"/>
+                            </group>
+                            <field name="price_ids" states="reserved,done" nolabel="1" options="{'no_open': True}">
+                                <tree editable="bottom" create="0">
+                                    <field name="let_modify" invisible="1"/>
+                                    <field name="product_id"/>
+                                    <field name="qty" attrs="{'readonly':[('let_modify','!=',True)]}"
+                                           sum="total_qty"/>
+                                    <field name="price_unit"/>
+                                    <field name="total_value" sum="total_value"/>
+                                </tree>
+                            </field>
+                            <group>
+                                <field name="consume_value" states="reserved,done"/>
+                                <button colspan="2" name="recompute_proportion" type="object"
+                                        class="oe_highlight" string="Perskaičiuoti produktų savikainą"
+                                        states="reserved"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="robo_mrp_unbuild_kanban_view" model="ir.ui.view">
+            <field name="name">mrp.unbuild.kanban</field>
+            <field name="model">mrp.unbuild</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" import="0" create="0">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="bom_id"/>
+                    <field name="lot_id" groups="stock.group_production_lot"/>
+                    <field name="product_qty"/>
+                    <field name="product_uom_id" groups="product.group_uom"/>
+                    <field name="state"/>
+                    <field name="location_id" groups="stock.group_stock_multi_locations"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-7">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.name.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                    <div class="col-xs-5 text-right">
+                                        <span>
+                                            <t t-esc="record.state.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-muted">
+                                        <t t-esc="record.product_id.value"/>
+                                        <t t-esc="record.product_qty.value"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-muted">
+                                        <span><strong>Spec</strong>:
+                                            <t t-esc="record.bom_id.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row" groups="stock.group_production_lot">
+                                    <div class="col-xs-12 text-muted">
+                                        <span><strong>Lot</strong>:
+                                            <t t-esc="record.lot_id.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-muted">
+                                        <span><strong>Lok</strong>:
+                                            <t t-esc="record.location_id.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="robo_mrp_unbuild_tree_view" model="ir.ui.view">
+            <field name="name">mrp.unbuild.tree</field>
+            <field name="model">mrp.unbuild</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0" create="0">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="bom_id"/>
+                    <field name="lot_id" groups="stock.group_production_lot"/>
+                    <field name="product_qty"/>
+                    <field name="product_uom_id" grousp="product.group_uom"/>
+                    <field name="state"/>
+                    <field name="location_id" groups="stock.group_stock_multi_locations"/>
+                </tree>
+            </field>
+        </record>
+        <record id="robo_mrp_unbuild_search_view" model="ir.ui.view">
+            <field name="name">mrp.unbuild.search</field>
+            <field name="model">mrp.unbuild</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="product_id"/>
+                    <field name="state"/>
+                    <field name="mo_id"/>
+                    <group expand="0" string="Filters">
+                        <filter name="draft" string="Juodraštis" domain="[('state', '=', 'draft')]"/>
+                        <filter name="done" string="Įvykdyta" domain="[('state', '=', 'done')]"/>
+                    </group>
+                    <group expand='0' string='Group by...'>
+                        <filter string='Produktą' name="productgroup" context="{'group_by': 'product_id'}"/>
+                        <filter string="Gamybos užsakymą" name="mogroup" context="{'group_by': 'mo_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="robo_mrp_unbuild">
+            <field name="name">Išrinkimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">mrp.unbuild</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="search_view_id" ref="robo_mrp_unbuild_search_view"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_mrp_unbuild_tree_view')}),
+                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('robo_mrp_unbuild_kanban_view')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('robo_mrp_unbuild_form_view')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="menu_robo_mrp_start"/>
+            <field name="header" ref="robo_mrp_header_unbuild"/>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                }"/>
+        </record>
+        <!--END MRP unbuild-->
+        <!--MENU-->
+        <menuitem id="robo_menu_mrp_unbuild"
+                  name="Išrinkimas"
+                  parent="menu_robo_mrp_start"
+                  action="robo_mrp_unbuild"
+                  groups="mrp.group_mrp_manager"
+                  sequence="20"
+                  robo_front="True"
+                  force_web_icon="icon-hammer-wrench,none,none"
+                  searchable="True"
+                  tags="gaminių,išrinkimas"
+        />
+        <!--END MENU-->
+    </data>
+</odoo>

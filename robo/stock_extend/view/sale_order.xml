@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="sale_add_force_price_total">
+            <field name="name">sale.add.force.price.total.view.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='price_subtotal']" position="replace">
+                    <field name="amount_depends" widget="monetary" groups="sale.group_show_price_subtotal"/>
+                    <field name="price_subtotal_make_force_step" invisible="1"/>
+                    <field name="price_subtotal_save_force_value" invisible="1"/>
+                </xpath>
+                <xpath expr="//tree//field[@name='tax_id']" position="attributes">
+                    <attribue name="domain">
+                        [('type_tax_use','=','sale'),('company_id','=',parent.company_id),('price_include','=',parent.price_include)]
+                    </attribue>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//form//field[@name='tax_id']" position="attributes">
+                    <attribue name="domain">
+                        [('type_tax_use','=','sale'),('company_id','=',parent.company_id),('price_include','=',parent.price_include)]
+                    </attribue>
+                </xpath>
+                <xpath expr="//field[@name='amount_total']" position="after">
+                    <field name="price_include_selection" style="min-width:150px"
+                           context="{'date': date_order, 'vat_date_test': True}"
+                           attrs="{'readonly': [('state','!=','draft')]}"/>
+                    <field name="price_include" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

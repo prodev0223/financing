@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="pajamos_form" model="ir.ui.view">
+            <field name="name">account.invoice.license.extend</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_email']" position="after">
+                    <field name="license_number" placeholder="Licencijos numeris"
+                           attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">account.invoice.licence.extend</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="license_number" placeholder="Licencijos numeris"
+                           attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

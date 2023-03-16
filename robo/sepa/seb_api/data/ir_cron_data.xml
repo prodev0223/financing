@@ -1,0 +1,83 @@
+<odoo>
+    <data noupdate="1">
+        <record id="cron_update_export_states" model="ir.cron">
+            <field name="name">SEB: Update export states</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">seb.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=01, minute=05)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_update_export_states</field>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_retry_eod_transaction_fetch_seb" model="ir.cron">
+            <field name="name">SEB: Re-fetch EOD statements</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">seb.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=01, minute=05)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_retry_eod_transaction_fetch</field>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_fetch_statements_daily_seb" model="ir.cron">
+            <field name="name">SEB: Fetch statements (daily)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="False"/>
+            <field name="doall" eval="False"/>
+            <field name="model">seb.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=03, minute=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_daily</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_fetch_statements_weekly_seb" model="ir.cron">
+            <field name="name">SEB: Fetch statements (weekly)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">weeks</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="False"/>
+            <field name="doall" eval="False"/>
+            <field name="model">seb.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=03, minute=50)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_weekly</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_fetch_statements_monthly_seb" model="ir.cron">
+            <field name="name">SEB: Fetch statements (monthly)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="False"/>
+            <field name="doall" eval="False"/>
+            <field name="model">seb.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(months=1, day=1, hour=04, minute=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_monthly</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_fetch_end_balances_seb" model="ir.cron">
+            <field name="name">SEB: Fetch end balances</field>
+            <field name="interval_number">3</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">seb.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(minute=05, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_end_balances</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="recompute_analytics_wizard_view">
+            <field name="name">recompute.analytics.wizard.view</field>
+            <field name="model">recompute.analytics.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group string="Filtrai">
+                        <group colspan="4">
+                            <div class="alert alert-info" role="alert" style="margin-bottom: 2px; text-align: center;">
+                                Pasirinkite kokiems ir kokiame periode esantiems įrašams norėtumėte perskaičiuoti analitiką.
+                            </div>
+                        </group>
+                        <group colspan="4">
+                            <field name="records_to_recompute" required="1"/>
+                        </group>
+                        <group colspan="4">
+                            <group col="2">
+                                <field name="date_from" required="1"/>
+                            </group>
+                            <group col="2">
+                                <field name="date_to" required="1"/>
+                            </group>
+                        </group>
+                        <group colspan="4" attrs="{'invisible':[('records_to_recompute','!=', 'payslip')]}">
+                            <group col="2">
+                                <field name="is_analytics_recompute_for_single_employee"/>
+                            </group>
+                            <group col="2">
+                                <field name="employee_id"
+                                       attrs="{'invisible':[('is_analytics_recompute_for_single_employee','=', False)],
+                                               'required': [('is_analytics_recompute_for_single_employee','=', True)]}"
+                                />
+                            </group>
+                        </group>
+                    </group>
+                    <group>
+                        <div class="alert alert-info" role="alert" style="text-align: center;"
+                             attrs="{'invisible':[('records_to_recompute','=', False)]}">
+                            <field name="description" readonly="1"/>
+                        </div>
+                    </group>
+                    <footer>
+                        <button name="recompute_analytics_account_move_line" string="Perskaičiuoti"
+                                type="object" class="oe_highlight"
+                                attrs="{'invisible':[('records_to_recompute','!=', 'account_move')]}"/>
+                        <button name="recompute_analytics_invoices" string="Perskaičiuoti"
+                                type="object" class="oe_highlight"
+                                attrs="{'invisible':[('records_to_recompute','!=', 'invoice')]}"/>
+                        <button name="recompute_analytics_payslips" string="Perskaičiuoti"
+                                type="object" class="oe_highlight"
+                                attrs="{'invisible':[('records_to_recompute','!=', 'payslip')]}"/>
+                        <button name="recompute_analytics_payslips" string="Nustatyti numatytąją analitiką ir perskaičiuoti"
+                                type="object" class="oe_highlight"
+                                context="{'set_default_analytics': True}"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                attrs="{'invisible':[('records_to_recompute','!=', 'payslip')]}"/>
+                        <button name="recompute_analytics_holiday_reserve" string="Perskaičiuoti"
+                                type="object" class="oe_highlight"
+                                attrs="{'invisible':[('records_to_recompute','!=', 'holiday_reserve')]}"/>
+                        <button name="recompute_analytics_holiday_reserve"
+                                string="Nustatyti numatytąją analitiką ir perskaičiuoti"
+                                type="object" class="oe_highlight"
+                                context="{'set_default_analytics': True}"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                attrs="{'invisible':[('records_to_recompute','!=', 'holiday_reserve')]}"/>
+                        <button string="Atšaukti" type="object" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_recompute_analytics_wizard_form">
+            <field name="name">Analitikos perskaičiavimas</field>
+            <field name="res_model">recompute.analytics.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="recompute_analytics_wizard_view"/>
+        </record>
+        <menuitem id="menu_analytics_recomputation"
+                  parent="robo_analytic.menu_analytic_parent"
+                  name="Analitikos perskaičiavimas"
+                  sequence="15"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                  force_web_icon="icon-calculator,none,none"
+                  robo_front="True"
+                  action="action_recompute_analytics_wizard_form"
+                  searchable="True"
+                  tags="analitika,perskaičiavimas"
+        />
+    </data>
+</odoo>

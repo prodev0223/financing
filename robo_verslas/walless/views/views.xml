@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="walless_invoice_extend" model="ir.ui.view">
+            <field name="name">account.invoice.extend.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='my_company_kodas']" position="replace"/>
+            </field>
+        </record>
+        <record id="walless_supplier_invoice_extend" model="ir.ui.view">
+            <field name="name">account.supplier.invoice.extend.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='my_company_kodas']" position="replace"/>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="domain">[]</attribute>
+                </xpath>
+            </field>
+        </record>
+        <template id="walless_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//span[@class='comp_code']/.." position="replace"/>
+        </template>
+
+        <record id="robo.action_open_company_shareholder" model="ir.actions.act_window">
+            <field name="name">Akcininkai</field>
+            <field name="res_model">res.company.shareholder</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="robo_front" eval="True"/>
+        </record>
+
+        <record id="robo.res_company_shareholders_tree" model="ir.ui.view">
+            <field name="name">res.company.shareholder.tree</field>
+            <field name="model">res.company.shareholder</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1">
+                    <field name="shareholder_name"/>
+                    <field name="shareholder_address" groups="base.group_system"/>
+                    <field name="shareholder_personcode" groups="base.group_system"/>
+                    <field name="date_from"/>
+                    <field name="date_from_income"/>
+                    <field name="date_to"/>
+                    <field name="api_key" password="True" groups="base.group_system"/>
+                    <field name="api_extension" groups="base.group_system"/>
+                    <field name="shareholder_shares" sum="sum_shareholder_shares"/>
+                </tree>
+            </field>
+         </record>
+
+        <record id="res_company_shareholder_form" model="ir.ui.view">
+            <field name="name">res.company.shareholder.form</field>
+            <field name="model">res.company.shareholder</field>
+            <field name="arch" type="xml">
+            <form string="Akcininkas">
+                <sheet>
+                    <div>
+                        <label string="Akcininko vardas"/>
+                        <h1 class="mt0">
+                            <field name="shareholder_name" class="oe_inline"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="shareholder_address" groups="base.group_system"/>
+                        <field name="shareholder_personcode" groups="base.group_system"/>
+                        <field name="date_from"/>
+                        <field name="date_from_income"/>
+                        <field name="date_to"/>
+                        <field name="api_key" password="True" groups="base.group_system"/>
+                        <field name="api_extension" groups="base.group_system"/>
+                        <field name="shareholder_shares" sum="sum_shareholder_shares"/>
+                    </group>
+                <group string="Eksportavimo sąrašas" groups="base.group_system">
+                <field name="export_ids" widget="one2many_list"
+                       mode="tree,kanban" nolabel="1" options="{'no_open': True, 'always_reload': True}">
+                    <tree decoration-success="status == 'imported'"
+                            decoration-danger="status == 'failed'">
+                        <field name="name_display"/>
+                        <field name="invoice_total_shareholder"/>
+                        <field name="status"/>
+                        <field name="update_date"/>
+                    </tree>
+                </field>
+                </group>
+                </sheet>
+            </form>
+            </field>
+        </record>
+
+        <record id="cron_export_walless_invoices" model="ir.cron">
+            <field name="name">Export invoices to Shareholders</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">account.invoice</field>
+            <field name="function">export_to_shareholders</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(day=14, hour=23, minute=59, second=59)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_reexport_walless_invoices" model="ir.cron">
+            <field name="name">Re-export failed invoices to Shareholders</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">account.invoice</field>
+            <field name="function">re_export_failed</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=2, minute=59, second=59)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_redelete_walless_invoices" model="ir.cron">
+            <field name="name">Re-delete failed invoices to Shareholders</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">account.invoice</field>
+            <field name="function">re_delete_failed</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=1, minute=59, second=59)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_check_invoice_existence" model="ir.cron">
+            <field name="name">Check shareholder invoice existence</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">account.invoice</field>
+            <field name="function">check_existence</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=0, minute=59, second=59)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="account_invoice_search_extension_walless" model="ir.ui.view">
+            <field name="name">account.invoice.search.extension.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <filter name="employee" string="Darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '!=', False)]"/>
+                    <filter name="non_employee" string="Ne darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '=', False)]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+        <record id="pajamos_search_extension_walless_front" model="ir.ui.view">
+            <field name="name">account.invoice.search.extension.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_pajamos_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <filter name="employee" string="Darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '!=', False)]"/>
+                    <filter name="non_employee" string="Ne darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '=', False)]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+                <record id="expense_search_extension_walless_front" model="ir.ui.view">
+            <field name="name">account.invoice.search.extension.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <filter name="employee" string="Darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '!=', False)]"/>
+                    <filter name="non_employee" string="Ne darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '=', False)]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_invoice_form_walless_extend" model="ir.ui.view">
+            <field name="name">account.invoice.form.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_cancel']" position="before">
+                    <button name="action_invoice_cancel_partners" type="object"
+                            string="Atšaukti (Įskaitant partnerių sistemas)"
+                            groups="robo_basic.group_robo_premium_accountant"
+                            confirm="Ar tikrai norite atlikti šį veiksmą?"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'cancel'])]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_invoice_form_walless_extend_exp" model="ir.ui.view">
+            <field name="name">account.invoice.form.walless.exps</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_cancel']" position="before">
+                    <button name="action_invoice_cancel_partners" type="object"
+                            string="Atšaukti (Įskaitant partnerių sistemas)"
+                            groups="robo_basic.group_robo_premium_accountant"
+                            confirm="Ar tikrai norite atlikti šį veiksmą?"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'cancel'])]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_invoice_form_walless_extend_back_o" model="ir.ui.view">
+            <field name="name">account.invoice.form.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_cancel']" position="before">
+                    <button name="action_invoice_cancel_partners" type="object"
+                            string="Atšaukti (Įskaitant partnerių sistemas)"
+                            groups="robo_basic.group_robo_premium_accountant"
+                            confirm="Ar tikrai norite atlikti šį veiksmą?"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'cancel'])]}"/>
+                </xpath>
+            </field>
+        </record>
+                <record id="account_invoice_form_walless_extend_back_i" model="ir.ui.view">
+            <field name="name">account.invoice.form.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_cancel']" position="before">
+                    <button name="action_invoice_cancel_partners" type="object"
+                            string="Atšaukti (Įskaitant partnerių sistemas)"
+                            groups="robo_basic.group_robo_premium_accountant"
+                            confirm="Ar tikrai norite atlikti šį veiksmą?"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'cancel'])]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="walless_res_partner_royalties" model="ir.ui.view">
+            <field name="name">walless.res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="robo.new_clients_customer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="after">
+                    <group string="Walless honorarai (darbuotojams)" groups="robo_basic.group_robo_premium_manager">
+                       <field name="vsd_with_royalty"/>
+                        <field name="sodra_royalty_percentage"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="walless_res_partner_royalties_back" model="ir.ui.view">
+            <field name="name">walless.res.partner.back</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[2]" position="after">
+                    <group string="Walless honorarai (darbuotojams)">
+                       <field name="vsd_with_royalty"/>
+                        <field name="sodra_royalty_percentage"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+            <record id="form_walless_export_wizard" model="ir.ui.view">
+              <field name="name">Walless Eksportas</field>
+              <field name="model">walless.export.wizard</field>
+              <field name="priority">1</field>
+              <field name="arch" type="xml">
+                <form string="Importuoti Duomenis">
+                    <group col="2" string="XML Importas">
+                        <field name="export_type"/>
+                    </group>
+                    <footer>
+                        <button name="execute" string="Vykdyti" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+              </field>
+            </record>
+            <record id="tree_walless_export_jobs" model="ir.ui.view">
+            <field name="name">walless.export.jobs</field>
+            <field name="model">walless.export.jobs</field>
+            <field name="arch" type="xml">
+                <tree string="Walless Darbai"
+                      create="0" delete="0" editable="bottom"
+                        decoration-info="state == 'in_progress'"
+                        decoration-success="state == 'finished'"
+                        decoration-danger="state == 'failed'">
+                    <field name="operation_code" readonly="1"/>
+                    <field name="execution_start_date" readonly="1"/>
+                    <field name="execution_end_date" readonly="1"/>
+                    <field name="state"/>
+                    <field name="fail_message" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+            <record id="action_walless_export_wizard" model="ir.actions.act_window">
+              <field name="name">Walless Eksportas</field>
+              <field name="type">ir.actions.act_window</field>
+              <field name="res_model">walless.export.wizard</field>
+              <field name="view_type">form</field>
+              <field name="view_mode">form</field>
+              <field name="target">new</field>
+              <field name="view_id" ref="form_walless_export_wizard"/>
+            </record>
+            <record id="action_walless_export_jobs" model="ir.actions.act_window">
+              <field name="name">Walless Darbai</field>
+              <field name="type">ir.actions.act_window</field>
+              <field name="res_model">walless.export.jobs</field>
+              <field name="view_type">tree</field>
+                <field name="view_mode">tree,form</field>
+              <field name="view_id" ref="tree_walless_export_jobs"/>
+            </record>
+         <menuitem
+                name="Walless"
+                id="walless"
+                sequence="50"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Walless Eksportas"
+                id="walless_export"
+                sequence="50"
+                action="action_walless_export_wizard"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="walless"
+        />
+        <menuitem
+                name="Darbai"
+                id="walless_jobs"
+                sequence="52"
+                action="action_walless_export_jobs"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="walless"
+        />
+    </data>
+</odoo>

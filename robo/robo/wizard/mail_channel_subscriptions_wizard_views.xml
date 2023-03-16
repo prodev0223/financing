@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_mail_channel_subscriptions" model="ir.ui.view">
+            <field name="name">mail.channel.subscriptions</field>
+            <field name="model">mail.channel.subscriptions.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <field name="show_mail_channels" invisible="1"/>
+                    <div>
+                        <div attrs="{'invisible': [('show_mail_channels', '=', False)]}">
+                            <div class="alert alert-info" role="alert" style="margin-bottom: 2px; text-align: center;">
+                                By using this wizard you can subscribe or unsubscribe from mail channels.
+                                By subscribing to mail channels you can view messages posted to them and receive
+                                notifications when new ones are posted.
+                            </div>
+                            <field name="mail_channel_ids" nolabel="1"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   domain="[('robo_front', '=', True)]"
+                                   context="{'search_default_group_categories': 1}">
+                                <tree class="robo_tree_in_form" open="0" edit="0">
+                                    <field name="name" readonly="1"/>
+                                    <field name="category" readonly="1"/>
+                                </tree>
+                            </field>
+                        </div>
+                        <div style="color:#8394a1; font-size:21px; text-align: center; padding: 20px 0px;"
+                             attrs="{'invisible': [('show_mail_channels', '=', True)]}">
+                            There are no mail channels currently available for you.
+                        </div>
+                        <footer>
+                            <button string="Save" name="save" type="object" class="btn-primary" attrs="{'invisible': [('show_mail_channels', '=', False)]}"/>
+                            <button string="Cancel" class="btn-default" special="cancel"
+                                    attrs="{'invisible': [('show_mail_channels', '=', False)]}"
+                                    confirm="Any changes you made will not be saved. Are you sure you want to exit the wizard?"/>
+                            <button string="Cancel" class="btn-default" special="cancel"
+                                    attrs="{'invisible': [('show_mail_channels', '=', True)]}"/>
+                        </footer>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="action_mail_channel_subscriptions_wizard_create" model="ir.actions.server">
+            <field name="name">Mail channel subscription wizard create</field>
+            <field name="model_id" ref="robo.model_mail_channel_subscriptions_wizard"/>
+            <field name="robo_front">True</field>
+            <field name="code">
+                    action = env.get('mail.channel.subscriptions.wizard').action_create_wizard()
+            </field>
+        </record>
+
+        <record id="mail_channel_view_tree" model="ir.ui.view">
+            <field name="inherit_id" ref="mail.mail_channel_view_tree"/>
+            <field name="name">mail.channel.tree</field>
+            <field name="model">mail.channel</field>
+            <field name="priority" eval="10"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="category"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="mail_channel_view_search" model="ir.ui.view">
+            <field name="inherit_id" ref="mail.mail_channel_view_search"/>
+            <field name="name">mail.channel.search</field>
+            <field name="model">mail.channel</field>
+            <field name="priority" eval="10"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="category"/>
+                    <filter string="Categories"
+                        name="group_categories"
+                        domain="[]"
+                        context="{'group_by':'category'}"
+                        help="Grouping by categories"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

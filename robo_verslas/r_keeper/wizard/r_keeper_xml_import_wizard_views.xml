@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Form-->
+        <record id="from_r_keeper_xml_import_wizard" model="ir.ui.view">
+            <field name="name">form.r.keeper.xml.import.wizard</field>
+            <field name="model">r.keeper.xml.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="XML Failų importas">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                            Šiame vedlyje galite rankiniu būdu importuoti <i>rKeeper</i> integracijai
+                            pritaikytus XML failus. Paspaudus 'Importuoti' veiksmas bus atliekamas
+                            fone. Veiksmų rezultatus/statusus galite peržiūrėti paspaudę meniu 'Importo darbai'
+                        </div>
+                        <group>
+                            <field name="xml_name" invisible="1"/>
+                            <field name="xml_data" filename="xml_name"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Importuoti" name="import_xml_file" type="object" class="btn-primary"/>
+                        <button string="Update amounts (system)" name="import_xml_file"
+                                context="{'force_update_amounts': True}" type="object"
+                                groups="base.group_system" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_r_keeper_xml_import_wizard" model="ir.actions.act_window">
+            <field name="name">XML failų importas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.xml.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                id="menu_r_keeper_xml_import_wizard"
+                name="XML Failų importas"
+                action="action_open_r_keeper_xml_import_wizard"
+                parent="r_keeper_import_root"
+                sequence="1"
+        />
+    </odoo>
+</data>

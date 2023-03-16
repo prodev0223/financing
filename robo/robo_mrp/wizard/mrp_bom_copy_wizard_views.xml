@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Form-->
+        <record id="form_mrp_bom_copy_wizard" model="ir.ui.view">
+            <field name="name">form.mrp.bom.copy.wizard</field>
+            <field name="model">mrp.bom.copy.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Komplektacijų kopijavimo vedlys">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                            Šiame vedlyje galite kopijuoti esamą komplektaciją su papildomais
+                            nustatymais kurie keičia (suarchyvuoja, nustato galiojimo pabaigą) einamają komplektaciją.
+                        </div>
+                        <group>
+                            <field name="bom_id" invisible="1"/>
+                            <field name="bom_expiry_dates_enabled" invisible="1"/>
+                            <field name="archive_source"/>
+                            <field name="src_valid_to" readonly="0"
+                                   attrs="{'invisible': [('bom_expiry_dates_enabled', '=', False)]}"/>
+                            <field name="dst_valid_from"
+                                   attrs="{'invisible': [('bom_expiry_dates_enabled', '=', False)],
+                                           'required': [('bom_expiry_dates_enabled', '=', True)]}"/>
+                            <field name="dst_valid_to" attrs="{'invisible': [('bom_expiry_dates_enabled', '=', False)]}"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Kopijuoti" name="copy_bom" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </odoo>
+</data>

@@ -1,0 +1,181 @@
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="raso_sales_tree" model="ir.ui.view">
+            <field name="name">raso.sales.tree</field>
+            <field name="model">raso.sales</field>
+            <field name="arch" type="xml">
+                <tree decoration-success="state in ['created', 'created_inventory']"
+                      decoration-info="state == 'imported'"
+                      decoration-danger="state in ['failed', 'failed_inventory', 'warning']"
+                      string="Pardavimai" create="1" edit="1" delete="1">
+                    <field name="name"/>
+                    <field name="shop_no"/>
+                    <field name="code"/>
+                    <field name="sale_date"/>
+                    <field name="qty"/>
+                    <field name="amount"/>
+                    <field name="state"/>
+                    <field name="data_type"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="raso_sales_action" model="ir.actions.act_window">
+            <field name="name">Pardavimai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">raso.sales</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="raso_sales_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="raso_sales_form" model="ir.ui.view">
+            <field name="name">raso.sales.form</field>
+            <field name="model">raso.sales</field>
+            <field name="arch" type="xml">
+                <form string="Pardavimų sąrašas" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_invoices" type="object" states="imported,failed"
+                                string="Sukurti Sąskaitą faktūrą" class="oe_highlight"/>
+                        <button name="split_zero_amount_sale" type="object"
+                                string="Skaidyti eilutę" class="oe_highlight"
+                                attrs="{'invisible': [('split_sale_line_id', '!=', False)]}"
+                        />
+                        <button name="create_inventory_write_off_prep" type="object"
+                                string="Kurti atsargų nurašymą" class="oe_highlight"
+                                attrs="{'invisible': [
+                                '|', ('inventory_id', '!=', False),
+                                '&amp;', ('zero_amount_sale', '=', False), ('zero_manual_amount_sale', '=', False)]}"
+                        />
+                        <button name="recompute_fields" type="object" string="Perskaičiuoti laukus"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Produkto kodas"/>
+                            <h1 class="mt0">
+                                <field name="code" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="product_id"/>
+                            <field name="name"/>
+                            <field name="shop_no"/>
+                            <field name="shop_id"/>
+                            <field name="pos_no"/>
+                            <field name="pos_id"/>
+                            <field name="sale_date"/>
+                            <field name="invoice_id" attrs="{'invisible': [('invoice_id','=', False)]}"/>
+                            <field name="payment_id" attrs="{'invisible': [('payment_id','=', False)]}"/>
+                            <field name="split_sale_line_id"
+                                   attrs="{'invisible': [('split_sale_line_id','=', False)]}"/>
+                            <field name="inventory_id" attrs="{'invisible': [('inventory_id', '=', False)]}"/>
+                            <field name="zero_amount_sale" invisible="1"/>
+                            <field name="zero_manual_amount_sale" invisible="1"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Pagrindinės sumos" colspan="1" col="2">
+                                <field name="qty"/>
+                                <field name="amount"/>
+                                <field name="vat_sum"/>
+                                <field name="discount"/>
+                                <field name="tax_id" attrs="{'invisible': [('tax_id','=', False)]}"/>
+                            </group>
+                            <group string="Rankinių nuolaidų sumos" colspan="1" col="2">
+                                <field name="qty_man"/>
+                                <field name="amount_man"/>
+                                <field name="vat_sum_man"/>
+                                <field name="man_tax_id" attrs="{'invisible': [('man_tax_id','=', False)]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Functions-->
+        <record model="ir.actions.server" id="create_invoices_action_raso">
+            <field name="name">Kurti sąskaitas faktūras</field>
+            <field name="model_id" ref="raso_retail.model_raso_sales"/>
+            <field name="code">
+                if user.is_manager():
+                action = object.browse(context.get('active_ids', False)).create_invoices()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_invoice_action_raso" model="raso.sales"/>
+        <!--Searches-->
+        <record model="ir.ui.view" id="raso_sales_search">
+            <field name="name">Pardavimų Paieška</field>
+            <field name="model">raso.sales</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="imported" string="Importuota"
+                            domain="[('state', '=', 'imported')]"/>
+                    <filter name="created" string="Sąskaita sukurta"
+                            domain="[('state', '=', 'created')]"/>
+                    <filter name="warning" string="Importuota su įspėjimais"
+                            domain="[('state', '=', 'warning')]"/>
+                    <filter name="failed" string="Klaida kuriant sąskaitą"
+                            domain="[('state', '=', 'failed')]"/>
+                    <filter name="created_inventory" string="Nurašymas sukurtas"
+                            domain="[('state', '=', 'created_inventory')]"/>
+                    <filter name="failed_inventory" string="Klaida kuriant nurašymą"
+                            domain="[('state', '=', 'failed_inventory')]"/>
+                    <separator/>
+                    <field name="shop_id"/>
+                    <field name="pos_id"/>
+                    <separator/>
+                    <filter name="sales" string="Tipas: Pardavimai" domain="[('data_type','=','0')]"/>
+                    <filter name="tara" string="Tipas: Tara" domain="[('data_type','=','2')]"/>
+                    <filter name="refs" string="Tipas: Grąžinimai" domain="[('data_type','=','3')]"/>
+                    <separator/>
+                    <field name="name" filter_domain="[('name','ilike',self)]"/>
+                    <field name="code" filter_domain="[('code','ilike',self)]"/>
+                    <field name="amount" filter_domain="[('amount','ilike',self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Pardavimo data" context="{'group_by':'sale_date'}"/>
+                        <filter name="group_product_id" string="Produktas"
+                                context="{'group_by':'product_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

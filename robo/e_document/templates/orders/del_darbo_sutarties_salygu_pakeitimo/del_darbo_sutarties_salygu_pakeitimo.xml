@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="isakymas_del_darbo_sutarties_salygu_pakeitimo_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl darbo sutarties sąlygų pakeitimo</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="show_warning" invisible="1"/>
+                    <field name="show_etatas" invisible="1"/>
+                    <field name="show_wage_is_mma_warning" invisible="1"/>
+                    <field name="show_etatas_computed" invisible="1"/>
+                    <field name="show_weekly_work_hours" invisible="1"/>
+                    <field name="show_weekly_work_hours_computed" invisible="1"/>
+                    <field name="show_fixed_attendance_lines" invisible="1"/>
+                </xpath>
+                <xpath expr="//header" position="after">
+                    <field name="show_ending_fixed_term_contract_box" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:6px;" colspan="4"
+                         attrs="{'invisible': [('show_ending_fixed_term_contract_box', '=', False)]}">
+                        In case You want to extend the work relation for an indefinite duration -
+                        <button class="oe_highlight" name="switch_contract_type_change_document" string="Click here"
+                                type="object" context="{'action': 'change_type', 'current': 'extend'}"/>
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:6px;" colspan="4"
+                         attrs="{'invisible': [('show_ending_fixed_term_contract_box', '=', False)]}">
+                        In case You want to end the work relation -
+                        <button class="oe_highlight" name="switch_contract_type_change_document" string="Click here"
+                                type="object" context="{'action': 'terminate', 'current': 'extend'}"/>
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('show_warning','!=',True)]}">Nepamirškite užpildyti asmens kodo
+                        darbuotojo kortelėje!
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('show_wage_is_mma_warning','=',False)]}">
+                        Atkreipiame dėmesį, kad minimalus darbo užmokestis gali būti mokamas tik už nekvalifikuotą
+                        darbą (DK 141 str. 2 dalis). Jei darbinate į kvalifikuotas pareigas, siūlome rinktis didesnį
+                        nei minimalųjį darbo užmokestį.
+                    </div>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="date_3" string="Įsigaliojimo data" required="True" invisible="0"/>
+                        <field name="employee_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) Vardas Pavardė" required="True" invisible="0"/>
+                        <field name="job_id" string="Darbuotojo(-s) pareigos" required="1" invisible="0"
+                               options="{'no_open': True}"/>
+                        <field name="department_id" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) pareigos" required="0" invisible="1"/>
+                        <field name="department_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Department"/>
+                        <field name="terminuota_sutartis" invisible="1"/>
+                        <field name="date_6" string="Sutarties pabaiga"
+                               attrs="{'required': [('terminuota_sutartis', '=', True)], 'invisible': [('terminuota_sutartis', '=', False)]}"/>
+                        <field name="date_2" string="Seno bandomojo laikotarpio pabaigos data" invisible="1"/>
+                        <field name="darbo_rusis" string="Darbo sutarties rūšis" required="True" invisible="0"/>
+                        <field name="struct" options="{'no_create': True, 'no_open': True}"
+                               string="Atlyginimo struktūra" required="True" invisible="0"/>
+                        <field name="npd_type"
+                               attrs="{'invisible': [('struct', '!=', 'MEN')], 'required': [('struct', '=', 'MEN')]}"/>
+                        <field name="contract_priority" attrs="{
+                                   'required': [('npd_type', '=', 'manual'), ('struct', '=', 'MEN')],
+                                   'invisible': ['|', ('npd_type', '=', 'auto'), ('struct', '!=', 'MEN')]
+                               }"
+                        />
+                    </group>
+                    <group>
+                        <field name="darbo_grafikas" string="Darbo laiko grafikas" required="True"
+                               invisible="0"/>
+                        <field name="fixed_schedule_template"
+                               attrs="{'invisible': [('show_fixed_attendance_lines', '=', False)]}"/>
+                        <field name="etatas"
+                               attrs="{'invisible': [('show_etatas', '=', False)], 'required': [('show_etatas', '=', True)]}"/>
+                        <field name="extra_fields_visible" invisible="1"/>
+                        <field name="work_norm"
+                               attrs="{'invisible':[('extra_fields_visible','=',False)], 'required': [('extra_fields_visible','=',True)], 'readonly': ['|', ('extra_fields_visible','=',False), ('state', '!=', 'draft')]}"/>
+                        <field name="etatas_computed"
+                               attrs="{'invisible': [('show_etatas_computed', '=', False)], 'required': [('show_etatas_computed', '=', True)]}"/>
+                        <field name="weekly_work_hours"
+                               attrs="{'invisible': [('show_weekly_work_hours', '=', False)], 'required': [('show_weekly_work_hours', '=', True)]}"/>
+                        <field name="weekly_work_hours_computed"
+                               attrs="{'invisible': [('show_weekly_work_hours_computed', '=', False)], 'required': [('show_weekly_work_hours_computed', '=', True)]}"/>
+                        <field name="du_input_type" nolabel="True" class="oe_inline"
+                               attrs="{'invisible': [('struct', '!=', 'MEN')], 'required': [('struct', '=', 'MEN')]}"/>
+                        <field name="float_1" options="{'no_create': True, 'no_open': True}"
+                               string="Darbo užmokestis" required="True" invisible="0"/>
+                        <field name="freeze_net_wage"
+                               attrs="{
+                                    'invisible': ['|', ('struct', '!=', 'MEN'), ('du_input_type', '!=', 'neto')]
+                               }"/>
+                        <field name="enable_advance_setup" invisible="1"/>
+                        <field name="selection_1" options="{'no_create': True, 'no_open': True}"
+                               string="Kiek kartų mokėti"
+                               attrs="{'required': [('enable_advance_setup', '=', True)], 'invisible': [('enable_advance_setup', '!=', True)]}"/>
+                        <field name="advance_amount" string="Avanso dydis (neto)"
+                               attrs="{'invisible': ['|', ('selection_1', '!=', 'twice_per_month'), ('enable_advance_setup', '!=', True)], 'required': [('selection_1', '=', 'twice_per_month'), ('enable_advance_setup', '=', True)]}"/>
+                        <field name="selection_bool_2" string="Ar darbuotojas turi ribotą darbingumą?"
+                               attrs="{'invisible': [('npd_type', '!=', 'auto')], 'required': [('npd_type', '=', 'auto')]}"/>
+                        <field name="selection_nedarbingumas" options="{'no_create': True, 'no_open': True}"
+                               string="Darbingumo lygis"
+                               attrs="{'invisible': ['|', ('selection_bool_2', '=', 'false'), ('npd_type', '!=', 'auto')], 'required': [('selection_bool_2', '=', 'true'), ('npd_type', '=', 'auto')]}"/>
+                    </group>
+
+                    <field name="fixed_attendance_ids" nolabel="1"
+                           attrs="{'invisible': [('show_fixed_attendance_lines', '=', False)], 'required': [('show_fixed_attendance_lines', '=', True)]}"
+                           options="{'no_open': True}">
+                        <tree string="Grafikas" editable="bottom" class="robo_tree_in_form">
+                            <field name="dayofweek"/>
+                            <field name="hour_from" widget="float_time"/>
+                            <field name="hour_to" widget="float_time"/>
+                        </tree>
+                    </field>
+                    <field name="atlyginimo_lentele" string=" "
+                           attrs="{'invisible': [('struct', '!=', 'MEN')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_darbo_sutarties_salygu_pakeitimo_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl darbo sutarties sąlygų pakeitimo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'isakymas_del_darbo_sutarties_salygu_pakeitimo_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.isakymas_del_darbo_sutarties_salygu_pakeitimo_form"/>
+        </record>
+
+
+        <record id="isakymas_del_darbo_sutarties_salygu_pakeitimo_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl darbo sutarties sąlygų pakeitimo</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.isakymas_del_darbo_sutarties_salygu_pakeitimo_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas sutartis sąlygos keitimas atlyginimas etatas norma grafikas
+                užmokęstis,Pakeitimas,darbuotojas
+            </field>
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+
+        <record id="isakymas_del_darbo_sutarties_salygu_pakeitimo_template" model="e.document.template">
+            <field name="body" type="html">
+                <style type="text/css">
+                    table.week_work_time_table {
+                    margin-left: 3%;
+                    }
+
+                    table.week_work_time_table * {
+                    border: 1px solid black;
+                    border-collapse: collapse;
+                    padding-left: 4px;
+                    padding-right: 4px;
+                    }
+
+                    table.week_work_time_table th {
+                    text-align: center;
+                    }
+
+                    ol.move-right {
+                    margin-left: 3%
+                    }
+                </style>
+                <div style="padding-left: 20px;" id="body">
+                    K E I Č I U darbuotojo(-s) {{ko(employee_id2, 'Aa')}} darbo sutartį nr. {{ contract_id_computed }},
+                    nustatant šias darbo sutarties sąlygas:
+                    <p></p>
+                    N U S T A T A U:
+                    <ol class="move-right">
+                        {%if struct_id_being_changed %}
+                        <li>Darbo laiką skaičiuoti pagal {%if struct == 'Valandinis' %}valandinę{% else %}mėnesinę{%
+                            endif %} atlyginimo struktūrą.
+                        </li>
+                        {% endif %}
+                        {%if contract_type_being_changed %}
+                        <li>Pakeisti darbo sutarties rūšį į {{ka(darbo_rusis, 'aa')}}.</li>
+                        {% endif %}
+                        {%if wage_being_changed %}
+                        {% if struct == 'Valandinis' %}
+                        <li>Mokėti {{ float_1 }} EUR {{ka(struct, 'aa')}} darbo užmokestį.</li>
+                        {% else %}
+                        <li>Mokėti
+                            {% if freeze_net_wage == 'Taip' and du_input_type == 'Neto'%}
+                                {{ float_1 }} EUR (NETO)
+                            {% else %}
+                                {{wage_bruto}} EUR (BRUTO)
+                            {% endif %}
+                            {{ka(struct, 'aa')}} darbo užmokestį.</li>
+                        {% endif %}
+                        {% endif %}
+                        {%if advance_amount_being_changed %}
+                        <li>Mokėti {{ advance_amount }} EUR avansą.</li>
+                        {% elif selection_1_being_changed %}
+                        <li>Nemokėti avanso.</li>
+                        {% endif %}
+                        {%if job_id_being_changed %}
+                        <li>Vykdyti {{ko(job_id)}} pareigas.</li>
+                        {% endif %}
+                        {%if department_id2_being_changed %}
+                        <li>Nustatyti padalinį {{ department_id2 }}.</li>
+                        {% endif %}
+                        {%if npd_being_changed %}
+                        {% if npd_type == 'Pagrindinė darbovietė (taikyti NPD)' %}
+                        <li>Taikyti pagrindinės darbovietės NPD.</li>
+                        {% else %}
+                        <li>Netaikyti NPD</li>
+                        {% endif %}
+                        {% endif %}
+                        {%if contract_end_being_changed %}
+                        <li>Darbo santykių pabaigos data laikyti {{ date_6 }}.</li>
+                        {% endif %}
+                        {%if etatas_being_changed %}
+                        <li>{{ etatas_computed }} etato dalį.</li>
+                        {% endif %}
+                        {%if work_norm_being_changed %}
+                        <li>{{ work_norm }} darbo laiko normą.</li>
+                        {% endif %}
+                        {%if darbingumas_being_changed %}
+                        {%if selection_bool_2 == 'Taip'%}
+                        <li>Darbuotojo {{ selection_nedarbingumas }} darbingumo lygį</li>
+                        {% else %}
+                        <li>Darbuotojo 100% darbingumo lygį</li>
+                        {% endif %}
+                        {% endif %}
+                        {%if schedule_type_being_changed %}
+                        <li>{{ko(darbo_grafikas_string)}} grafiko tipą.</li>
+                        {% endif %}
+                        {%if schedule_times_being_changed %}
+                        <li>Darbuotojui atlikti savo darbo funkciją pagal žemiau nurodytą grafiką:</li>
+                        {% endif %}
+                    </ol>
+                    {%if schedule_times_being_changed %}
+                    <table class="week_work_time_table">
+                        <tr>
+                            <th>Savaitės diena</th>
+                            <th>Darbo pradžia</th>
+                            <th>Darbo pabaiga</th>
+                        </tr>
+                        {% for eilute in parse_schedule_lines_for_printing(fixed_attendance_ids) %}
+                        <tr>
+                            <td>{{ get_weekday_string(eilute.dayofweek) }}</td>
+                            <td>{{ format_float_to_hours(eilute.hour_from) }}</td>
+                            <td>{{ format_float_to_hours(eilute.hour_to) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% endif %}
+                    <p>
+                        <br/>
+                    </p>
+                    P A V E D U už personalą atsakingam asmeniui atitinkamai pakeisti darbo sutartį.
+                    <p></p>
+                    Kitos darbo sutarties sąlygos išlaikomos nepakeistos. Šios darbo sutarties sąlygos įsigalioja nuo {{
+                    date_3 }}.
+                    <p></p>
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl darbo sutarties sąlygų pakeitimo</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.isakymas_del_darbo_sutarties_salygu_pakeitimo_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS DĖL DARBO SUTARTIES SĄLYGŲ PAKEITIMO</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.isakymas_del_darbo_sutarties_salygu_pakeitimo_workflow()</field>
+            <field name="date_from_field_name" eval="False"/>
+            <field name="date_to_field_name" eval="False"/>
+            <field name="send_manager" eval="True"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+        </record>
+    </data>
+</odoo>

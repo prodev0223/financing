@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="company_asset_transfer_accounts" model="ir.ui.view">
+            <field name="name">account.config.settings.form</field>
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='account_config']" position="after">
+                    <div name="Asset transfer accounts">
+                        <div>
+                            <label for="account_asset_transfer_profit"/>
+                            <field name="account_asset_transfer_profit" class="oe_inline"/>
+                        </div>
+                    </div>
+                    <div name="Asset transfer accounts">
+                        <div>
+                            <label for="account_asset_transfer_loss"/>
+                            <field name="account_asset_transfer_loss" class="oe_inline"/>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

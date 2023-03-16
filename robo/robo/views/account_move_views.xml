@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.actions.server" id="cancel_moves_action">
+            <field name="name">Atšaukti įrašų registravimą</field>
+            <field name="model_id" ref="robo.model_account_move"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).with_context(no_return=True).button_cancel()
+            </field>
+        </record>
+        <function name="cancel_moves_func" model="account.move"/>
+    </data>
+</odoo>

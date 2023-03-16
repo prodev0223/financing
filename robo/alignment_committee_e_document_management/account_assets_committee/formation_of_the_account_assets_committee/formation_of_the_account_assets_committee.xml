@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="formation_of_the_account_assets_committee_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl ilgalaikio turto įvedimo į eksploataciją komisijos sudarymo</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//header" position="inside">
+                    <field name="compute_chairman" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group expand="0" colspan="4" col="4">
+                        <field name="date_from" options="{'no_create': True, 'no_open': True}"
+                               string="Date of entry into force of the Committee" required="True" invisible="0"/>
+                        <field name="date_to" options="{'no_create': True, 'no_open': True}"
+                               string="Date of expiry of Committee" invisible="0"
+                               attrs="{'invisible': ['&amp;', ('state', '!=', 'draft'), ('date_to', '=', False)]}"/>/>
+                    </group>
+                    <group expand="0" colspan="4" col="4">
+                        <field name="int_2" options="{'no_create': True, 'no_open': True}"
+                               string="Required number of votes" required="True" invisible="0"/>
+                        <field name="department_id2" string="Department"
+                               options="{'no_create': True, 'no_open': True}"
+                               attrs="{'invisible': ['&amp;', ('state', '!=', 'draft'), ('department_id2', '=', False)]}"/>
+                    </group>
+                    <group colspan="4" col="1">
+                        <field name="e_document_line_ids" nolabel="1" widget="one2many_list"
+                               options="{'no_open': True}">
+                            <tree editable="bottom" open="false" class="robo_tree_in_form">
+                                <field name="employee_id2" required="1" string="Members of the Committee"
+                                       options="{'no_create':True, 'no_open': True}"/>
+                                <field name="committee_structure" required="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group colspan="4" col="1" attrs="{'invisible': [('state', 'in', ('draft', 'confirm'))]}">
+                        <field name="user_ids" nolabel="1" readonly="1">
+                            <tree decoration-muted="signed_by_delegate" create="0">
+                                <field name="user_id" readonly="1"/>
+                                <field name="date"/>
+                                <field name="state"/>
+                                <field name="signed_by_delegate" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="formation_of_the_account_assets_committee_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl ilgalaikio turto įvedimo į eksploataciją komisijos sudarymo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'formation_of_the_account_assets_committee_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="formation_of_the_account_assets_committee_form"/>
+        </record>
+
+        <record id="formation_of_the_account_assets_committee_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl ilgalaikio turto įvedimo į eksploataciją komisijos sudarymo</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="e_document.isakymas"/>
+            <field name="action" ref="formation_of_the_account_assets_committee_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">formation of the account assets committee, order, committee, account assets</field>
+            <field name="groups_id"
+                   eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),
+                   ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+        <record id="formation_of_the_account_assets_committee_channel" model="mail.channel">
+            <field name="name">Message about the formation of the account assets committee</field>
+            <field name="description">Inform when account assets committee is formatted</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>e_documents</field>
+        </record>
+
+        <record id="e_document.formation_of_the_account_assets_committee_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    1. Įsakau sudaryti komisiją, kuri nustato {{ company_id }}
+                    {% if department_id2 %}
+                        {{ ko(department_id2, 'aa') }} skyriaus
+                    {% endif %}
+                    ilgalaikio turto likvidacinę vertę ir naudingo tarnavimo laiką, patvirtina turto naudojimo
+                    pradžios datą ir pasirašo ilgalaikio turto įvedimo į eksploataciją aktus.
+                    <br/>
+                    <br/>
+                    2. Tvirtinu šią komisijos sudėtį, kuri veiks nuo {{ date_from }}
+                    {% if date_to %}
+                        iki {{ date_to }}
+                    {% endif %}
+                    :
+                    <br/>
+                    Komisijos pirmininkas: {{ compute_chairman }}
+                    <br/>
+                    {% for e_document_line_id in e_document_line_ids %}
+                        {% if e_document_line_id.committee_structure == 'member' %}
+                            Komisijos narys: {{ e_document_line_id.employee_id2.job_id.name }}
+                                             {{ e_document_line_id.employee_id2.name }}
+                        <br/>
+                        {% endif %}
+                    {% endfor %}
+                    <br/>
+                    3. Darbuotojus, įtrauktus į komisijos sudėtį, su šiuo įsakymu supažindinti pasirašytinai.
+                    <br/>
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl ilgalaikio turto įvedimo į eksploataciją komisijos sudarymo</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{ manager_job_id }} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="formation_of_the_account_assets_committee_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1 }}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{ company_id }}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS DĖL ILGALAIKIO TURTO ĮVEDIMO Į EKSPLOATACIJĄ KOMISIJOS SUDARYMO</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">pass</field>
+            <field name="date_from_field_name" eval="False"/>
+            <field name="date_to_field_name" eval="False"/>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="sign_mail_channel_ids"
+                   eval="[(4, ref('formation_of_the_account_assets_committee_channel'))]"/>
+            <field name="date_lim_for_signing_field_name">_use_immediate_date</field>
+        </record>
+
+    </data>
+</odoo>

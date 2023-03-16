@@ -1,0 +1,161 @@
+<odoo>
+    <data>
+        <record id="raso_invoices_tree" model="ir.ui.view">
+            <field name="name">raso.invoices.tree</field>
+            <field name="model">raso.invoices</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'imported'"
+                      decoration-danger="state in ['failed', 'warning']"
+                      decoration-success="state == 'created'"
+                      string="Sąskaitos" create="1" edit="1" delete="1">
+                    <field name="invoice_no"/>
+                    <field name="partner_code"/>
+                    <field name="shop_no"/>
+                    <field name="pos_no"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="raso_invoices_action" model="ir.actions.act_window">
+            <field name="name">Sąskaitos Faktūros</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">raso.invoices</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="raso_invoices_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="raso_invoices_form" model="ir.ui.view">
+            <field name="name">raso.invoices.form</field>
+            <field name="model">raso.invoices</field>
+            <field name="arch" type="xml">
+                <form string="Sąskaitos" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_invoices" type="object" states="imported,failed"
+                                string="Sukurti Sąskaitą faktūrą" class="oe_highlight"/>
+                        <button name="create_payment_moves" type="object" string="Skurti mokėjimą"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                    <div>
+                        <label string="Sąskaitos numeris"/>
+                        <h1 class="mt0">
+                            <field name="invoice_no" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                    <field name="partner_code"/>
+                            <field name="partner_id" attrs="{'invisible': [('partner_id','=', False)]}"/>
+                    <field name="shop_id"/>
+                    <field name="pos_id"/>
+                            <field name="invoice_id" attrs="{'invisible': [('invoice_id','=', False)]}"/>
+                        </group>
+                        <notebook>
+                        <page string="Sąskaitos faktūros eilutės">
+                        <field name="raso_invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree decoration-success="state == 'created'"
+                                      decoration-info="state == 'imported'"
+                                      decoration-danger="state in ['failed', 'warning']"
+                                      string="Invoice Lines" class="robo_invoice_edit robo_tree_in_form" editable="bottom">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="qty"/>
+                                    <field name="qty_man"/>
+                                    <field name="amount"/>
+                                    <field name="amount_man"/>
+                                    <field name="discount"/>
+                                    <field name="vat_sum"/>
+                                    <field name="vat_sum_man"/>
+                                    <field name="tax_id"/>
+                                    <field name="man_tax_id"/>
+                                    <field name="state"/>
+                                </tree>
+                            <form>
+                                <div>
+                                    <label string="Produkto pavadinimas"/>
+                                    <h1 class="mt0">
+                                        <field name="name" class="oe_inline"/>
+                                    </h1>
+                                </div>
+                                    <group>
+                                    <field name="code"/>
+                                    <field name="qty"/>
+                                    <field name="amount"/>
+                                    <field name="discount"/>
+                                    <field name="vat_sum"/>
+                                        <field name="vat_sum_man" attrs="{'invisible': [('vat_sum_man','=', 0)]}"/>
+                                        <field name="qty_man" attrs="{'invisible': [('qty_man','=', 0)]}"/>
+                                        <field name="amount_man" attrs="{'invisible': [('amount_man','=', 0)]}"/>
+                                    <field name="tax_id" attrs="{'invisible': [('tax_id','=', False)]}"/>
+                                    <field name="man_tax_id" attrs="{'invisible': [('man_tax_id','=', False)]}"/>
+                                    </group>
+                                <footer>
+                                    <button name="open_inv_line" string="Nuoroda į įrašą" type="object"
+                                            groups="base.group_user" class="oe_highlight"/>
+                                </footer>
+                            </form>
+                        </field>
+
+                        </page>
+                        <page string="Sąskaitos faktūros apmokėjimai">
+                            <field name="raso_payment_line_ids" nolabel="1" widget="one2many_list"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree decoration-info="state in ['open', 'active']"
+                                      decoration-danger="state == 'warning'"
+                                      decoration-success="state == 'reconciled'"
+                                      string="Payment Lines" class="robo_invoice_edit robo_tree_in_form" editable="bottom">
+                                    <field name="payment_type_id"/>
+                                    <field name="amount"/>
+                                    <field name="state"/>
+                                </tree>
+                                <form string="Mokėjimas">
+                                <div>
+                                    <label string="Mokėjimo kodas"/>
+                                    <h1 class="mt0">
+                                        <field name="code" class="oe_inline"/>
+                                    </h1>
+                                </div>
+                                    <group>
+                                        <field name="payment_type_id"/>
+                                        <field name="amount"/>
+                                        <field name="qty"/>
+                                        <field name="raso_invoice_id" attrs="{'invisible': [('raso_invoice_id','=', False)]}"/>
+                                        <field name="move_id" attrs="{'invisible': [('move_id','=', False)]}"/>
+                                    </group>
+                                    <footer>
+                                            <button name="open_pay_line" string="Nuoroda į įrašą"
+                                                    type="object" groups="base.group_user" class="oe_highlight"/>
+                                    </footer>
+                                </form>
+                        </field>
+                        </page>
+                    </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+        <record model="ir.ui.view" id="raso_inv_search">
+            <field name="name">Sąskaitų Paieška</field>
+            <field name="model">raso.invoices</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="import" string="Būsena: Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="create" string="Būsena: Sukurta" domain="[('state','=','created')]"/>
+                    <filter name="fail" string="Būsena: Importuota su įspėjimais" domain="[('state','=','warning')]"/>
+                    <filter name="fail2" string="Būsena: Klaida kuriant sąskaitą" domain="[('state','=','failed')]"/>
+                    <separator/>
+                    <field name="invoice_no" filter_domain="[('invoice_no','ilike',self)]"/>
+                    <field name="partner_code" filter_domain="[('partner_code','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,49 @@
+<odoo>
+    <data>
+        <record id="form_seb_payment_transfer_wizard" model="ir.ui.view">
+            <field name="name">form.seb.payment.transfer.wizard</field>
+            <field name="model">seb.payment.transfer.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <field name="successfully_uploaded_batch" invisible="1"/>
+                        <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;"
+                             attrs="{'invisible': [('successfully_uploaded_batch', '=', True)]}">
+                            At least one of your exported transactions has been rejected by the bank.
+                            You can see the reason for the rejection on a specific line.
+                            If you think this is a system error, contact system administrators.
+                        </div>
+                        <div class="alert alert-info" role="alert" style="margin-bottom: 2px;"
+                             attrs="{'invisible': [('successfully_uploaded_batch', '=', False)]}">
+                            All exported transactions have been accepted by the bank.
+                            If transaction has a 'waiting' state, you will be informed
+                            as soon as bank processes the transaction.
+                        </div>
+                        <group string="Transactions">
+                            <field name="bank_export_job_ids" nolabel="1" options="{'always_reload': True}"
+                                   mode="tree,kanban" widget="one2many_list"
+                                   groups="robo_basic.group_robo_payment_export">
+                                <tree edit="0" create="0" delete="0" class="robo_tree_in_form"
+                                      decoration-success="export_state in ['processed', 'processed_partial']"
+                                      decoration-info="export_state in ['accepted', 'accepted_partial']"
+                                      decoration-danger="export_state in ['rejected', 'rejected_partial', 'rejected_sign']"
+                                      decoration-warning="export_state == 'waiting'">
+                                    <field name="tr_name"/>
+                                    <field name="date_exported"/>
+                                    <field name="tr_amount"/>
+                                    <field name="tr_partner_id"/>
+                                    <field name="tr_currency_id"/>
+                                    <field name="tr_bank_account_id"/>
+                                    <field name="export_state"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Return" type="object" class="btn-primary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

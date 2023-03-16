@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_journal_form" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='refund_sequence_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('type', 'not in', ['sale', 'purchase','cash']), ('refund_sequence', '!=', True)], 'required': [('type', 'in', ['sale', 'purchase']), ('refund_sequence', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//sheet[1]//div[1]" position="before">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-check">
+                                <field name="active" widget="boolean_button" options='{"terminology": "active"}'/>
+                            </button>
+                        </div>
+                </xpath>
+                <xpath expr="//field[@name='show_on_dashboard']" position="after">
+                    <field name="skip_cash_reports"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_journal_view_search_extend" model="ir.ui.view">
+            <field name="name">account.journal.search.extend</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='dashboard']" position="after">
+                    <separator/>
+                    <filter name="archived" string="Neaktyvus" domain="[('active', '=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_r_keeper_modifier" model="ir.ui.view">
+            <field name="name">r.keeper.modifier.tree</field>
+            <field name="model">r.keeper.modifier</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1">
+                    <field name="product_id"/>
+                    <field name="modifier_name"/>
+                    <field name="modifier_code"/>
+                    <field name="product_code"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tree_r_keeper_modifier_front" model="ir.ui.view">
+            <field name="name">r.keeper.modifier.tree.front</field>
+            <field name="model">r.keeper.modifier</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0">
+                    <field name="product_id"/>
+                    <field name="modifier_name"/>
+                    <field name="modifier_code"/>
+                    <field name="product_code"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="form_r_keeper_modifier" model="ir.ui.view">
+            <field name="name">r.keeper.modifier.form</field>
+            <field name="model">r.keeper.modifier</field>
+            <field name="arch" type="xml">
+                <form string="rKeeper modifikatorius" create="1" edit="1" delete="1">
+                    <sheet>
+                        <div>
+                            <label string="Modifikuojamas produktas"/>
+                            <h1 class="mt0">
+                                <field name="product_id" class="oe_inline" required="1"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="product_code"/>
+                            <field name="modifier_name"/>
+                            <field name="modifier_code"/>
+                        </group>
+                        <group string="Modifikatoriaus taisyklės"
+                               attrs="{'invisible': [('modifier_rule_ids', '=', False)]}">
+                            <field name="modifier_rule_ids" nolabel="1"
+                                   options="{'always_reload': True}" widget="one2many_list">
+                                <tree create="0" edit="0"
+                                      decoration-success="configured"
+                                      decoration-danger="not configured">
+                                    <field name="remove_product_id"/>
+                                    <field name="applied_action"/>
+                                    <field name="action_quantity"/>
+                                    <field name="add_product_id"/>
+                                    <field name="configured"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="form_r_keeper_modifier_front" model="ir.ui.view">
+            <field name="name">r.keeper.modifier.front.form</field>
+            <field name="model">r.keeper.modifier</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="rKeeper modifikatorius" create="1" edit="1" delete="1">
+                    <sheet>
+                        <div>
+                            <label string="Modifikuojamas produktas"/>
+                            <h1 class="mt0">
+                                <field name="product_id" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="product_code" readonly="1"/>
+                            <field name="modifier_name" readonly="1"/>
+                            <field name="modifier_code" readonly="1"/>
+                        </group>
+                        <group>
+                            <div class="alert alert-info" role="alert" style="margin-bottom: 2px;">
+                                Modifikuojamas produktas yra susiejamas per produkto kodą
+                            </div>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="search_r_keeper_modifier" model="ir.ui.view">
+            <field name="name">Modifikatorių paieška</field>
+            <field name="model">r.keeper.modifier</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="product_id"/>
+                    <separator/>
+                    <field name="modifier_name" filter_domain="[('modifier_name', 'ilike', self)]"/>
+                    <field name="modifier_code" filter_domain="[('modifier_code', 'ilike', self)]"/>
+                    <field name="product_code" filter_domain="[('product_code', 'ilike', self)]"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_r_keeper_modifier" model="ir.actions.act_window">
+            <field name="name">Modifikatoriai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.modifier</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_r_keeper_modifier"/>
+        </record>
+        <record id="action_open_r_keeper_modifier_front" model="ir.actions.act_window">
+            <field name="name">Modifikatoriai</field>
+            <field name="res_model">r.keeper.modifier</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree_robo</field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="header_r_keeper_modifier"/>
+            <field name="search_view_id" ref="search_r_keeper_modifier"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_r_keeper_modifier_front')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_r_keeper_modifier_front')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="action_new_r_keeper_modifier_front" model="ir.actions.act_window">
+            <field name="name">Modifikatorius</field>
+            <field name="res_model">r.keeper.modifier</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="with_settings">True</field>
+        </record>
+        <!--MENU ITEMS-->
+        <menuitem
+                id="menu_r_keeper_modifier"
+                name="Modifikatoriai"
+                sequence="1"
+                action="action_open_r_keeper_modifier"
+                parent="r_keeper_modifiers_root"
+        />
+        <menuitem id="menu_r_keeper_modifier_front"
+                  name="Modifikatoriai"
+                  parent="r_keeper.r_keeper_root_front"
+                  sequence="5"
+                  robo_front="True"
+                  action="action_open_r_keeper_modifier_front"
+                  groups="r_keeper.group_r_keeper_front_end"
+                  force_web_icon="icon-list2,none,none"
+                  searchable="True"
+                  tags="rkeeper,modifikatoriai"
+        />
+    </data>
+</odoo>

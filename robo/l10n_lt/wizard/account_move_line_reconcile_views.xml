@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_move_line_reconcile_full_extend" model="ir.ui.view">
+            <field name="name">account.move.line.reconcile.full.form.extend</field>
+            <field name="model">account.move.line.reconcile</field>
+            <field name="inherit_id" ref="account.view_account_move_line_reconcile_full"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="before">
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         invisible="not context.get('force_skip_full_reconcile_check', False)">
+                        Greitąjį sudengimą galite naudoti tik įrašams kompanijos valiuta.
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_view_account_move_line_reconcile_fast" model="ir.actions.act_window">
+            <field name="name">Sudengti įrašus</field>
+            <field name="res_model">account.move.line.reconcile</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_account_move_line_reconcile_full"/>
+            <field name="target">new</field>
+            <field name="context">{'reconcile_v2':True}</field>
+        </record>
+        <record id="action_view_account_move_line_reconcile_faster" model="ir.actions.act_window">
+            <field name="name">Greitai sudengti įrašus</field>
+            <field name="res_model">account.move.line.reconcile</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_account_move_line_reconcile_full"/>
+            <field name="target">new</field>
+            <field name="context">{'reconcile_v2':True, 'force_skip_full_reconcile_check': True}</field>
+        </record>
+
+        <delete id="account.action_view_account_move_line_reconcile" model="ir.actions.act_window"/>
+    </data>
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_vat_wizard_form" model="ir.ui.view">
+            <field name="name">Mokėtino PVM Suskaičiavimas</field>
+            <field name="model">account.vat.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Mokėtino PVM Suskaičiavimas">
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="journal_id" domain="[('company_id', '=', company_id.id)]"/>
+                    </group>
+                    <group>
+                        <field name="action"/>
+                        <field name="bank_journal_id"
+                               attrs="{'invisible': [('action', '=', 'nothing')], 'required': [('action', '!=', 'nothing')]}"/>
+                    </group>
+                    <footer>
+                        <button name="create_pvm_entries" string="Patvirtinti" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_create_pvm_record" model="ir.actions.act_window">
+            <field name="name">Mokėtino PVM Suskaičiavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.vat.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="account_vat_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_action_create_pvm_record"
+                  action="action_create_pvm_record"
+                  parent="account.menu_finance_entries"
+                  sequence="50"/>
+    </data>
+</odoo>

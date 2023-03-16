@@ -1,0 +1,99 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="amazon_sp_inventory_act_type_view_tree" model="ir.ui.view">
+            <field name="name">amazon.sp.inventory.act.type.view.tree</field>
+            <field name="model">amazon.sp.inventory.act.type</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="1" delete="0" import="0">
+                    <field name="name"/>
+                    <field name="write_off_reason"/>
+                    <field name="stock_reason_line_id"/>
+                    <field name="stock_reason_account_id"/>
+                    <field name="alignment_committee_id"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="amazon_sp_inventory_act_type_view_form" model="ir.ui.view">
+            <field name="name">amazon.sp.inventory.act.type.view.form</field>
+            <field name="model">amazon.sp.inventory.act.type</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Amazon SP-API Inventory act" create="0" delete="0">
+                    <sheet>
+                        <group>
+                            <div class="alert alert-info" role="alert" style="margin-bottom: 2px;">
+                                Select write off reason and the account for the inventory
+                                write-off type. If no specific account is set on this form,
+                                account from the stock reason will be used.
+                            </div>
+                        </group>
+                        <div>
+                            <label string="Type name"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="write_off_reason" readonly="1"/>
+                            <field name="stock_reason_line_id"
+                                   options="{'no_open': True, 'no_create': True}" required="1"/>
+                            <field name="stock_reason_account_id"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                            <field name="alignment_committee_id"
+                                   options="{'no_open': True, 'no_create': True}" required="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="amazon_sp_inventory_act_type_view_search" model="ir.ui.view">
+            <field name="name">amazon.sp.inventory.act.type.view.search</field>
+            <field name="model">amazon.sp.inventory.act.type</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="write_off_reason_cud"
+                            string="Quantity damaged by customer"
+                            domain="[('write_off_reason','=','customerDamagedQuantity')]"/>
+                    <filter name="write_off_reason_wad"
+                            string="Quantity damaged in warehouse"
+                            domain="[('write_off_reason','=','warehouseDamagedQuantity')]"/>
+                    <filter name="write_off_reason_did"
+                            string="Quantity damaged by distributor"
+                            domain="[('write_off_reason','=','distributorDamagedQuantity')]"/>
+                    <filter name="write_off_reason_cad"
+                            string="Quantity damaged by carrier"
+                            domain="[('write_off_reason','=','carrierDamagedQuantity')]"/>
+                    <filter name="write_off_reason_deq"
+                            string="Defective quantity"
+                            domain="[('write_off_reason','=','defectiveQuantity')]"/>
+                    <filter name="write_off_reason_exq"
+                            string="Expired quantity"
+                            domain="[('write_off_reason','=','expiredQuantity')]"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_amazon_sp_inventory_act_type_back" model="ir.actions.act_window">
+            <field name="name">Amazon SP-API inventory act types</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.inventory.act.type</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="amazon_sp_inventory_act_type_view_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+                id="menu_amazon_sp_inventory_act_types"
+                name="Inventory act types"
+                groups="group_amazon_sp_api_quantitative_integration"
+                sequence="4"
+                action="action_open_amazon_sp_inventory_act_type_back"
+                parent="menu_amazon_sp_stock_data_root"
+        />
+    </data>
+</odoo>

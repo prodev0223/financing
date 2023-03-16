@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="res.groups" id="project.group_project_user">
+            <field name="implied_ids" eval="[(4, ref('hr_timesheet.group_hr_timesheet_user')), (4, ref('robo_basic.group_robo_manage_all_partners'))]"/>
+        </record>
+        <record id="group_project_employee_amounts" model="res.groups">
+            <field name="name">Robo project employee amounts</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama matyti projektų darbuotojų sumas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_projects')"/>
+        </record>
+        <record id="group_project_employee_amounts_manager" model="res.groups">
+            <field name="name">Robo project employee amount manager</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Projektų darbuotojų sumų vadovas: pilnas darbuotojų sumų valdymas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_projects')"/>
+        </record>
+        <record id="robo_basic.group_robo_premium_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_projects.group_project_employee_amounts'))]"/>
+        </record>
+    </data>
+</odoo>

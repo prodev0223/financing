@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="zero_npd_periods_tree_view" model="ir.ui.view">
+            <field name="name">zero.npd.period.tree</field>
+            <field name="model">zero.npd.period</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" import="0">
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                </tree>
+            </field>
+        </record>
+        <record id="zero_npd_periods_form_view" model="ir.ui.view">
+            <field name="name">zero.npd.period.form</field>
+            <field name="model">zero.npd.period</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="zero_npd_period_action" model="ir.actions.act_window">
+            <field name="name">NPD netaikymo periodai</field>
+            <field name="res_model">zero.npd.period</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('zero_npd_periods_tree_view')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('zero_npd_periods_form_view')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="context">{'robo_header':{}}</field>
+        </record>
+    </data>
+</odoo>

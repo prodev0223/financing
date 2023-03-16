@@ -1,0 +1,1881 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* invoice_approval_workflow
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-21 10:09+0000\n"
+"PO-Revision-Date: 2022-02-21 10:09+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:136
+#, python-format
+msgid "\n"
+"                <br/><br/><a href=\"{}\" style=\"padding: 8px 12px; font-size: 12px; color: #FFFFFF;                 text-decoration: none !important; font-weight: 400; background-color: #3498DB; \n"
+"                border: 0px solid #3498DB; border-radius:3px; margin-top: 10px;\">Open</a>\n"
+"                "
+msgstr "\n"
+"                <br/><br/><a href=\"{}\" style=\"padding: 8px 12px; font-size: 12px; color: #FFFFFF;                 text-decoration: none !important; font-weight: 400; background-color: #3498DB; \n"
+"                border: 0px solid #3498DB; border-radius:3px; margin-top: 10px;\">Atidaryti</a>\n"
+"                "
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_condition.py:178
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:108
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:161
+#, python-format
+msgid " +{} others"
+msgstr " +{} kitų"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:198
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:306
+#, python-format
+msgid " Reason: {}"
+msgstr " Priežastis: {}"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:58
+#, python-format
+msgid " approval"
+msgstr " tvirtinimas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:129
+#, python-format
+msgid "(Accountant)"
+msgstr "(Buhalteris)"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_form
+msgid "<b>Approvers</b> approve or disapprove the invoices whereas the <b>Auditor</b>\n"
+"                                        can only see the invoices but is not allowed to make any decision"
+msgstr "<b>Tvirtintojai</b> gali patvirtinti arba atmesti sąskaitas, o <b>Auditoriai</b> gali jas\n"
+"                                        tik peržiūrėti, negalėdami atlikti jokių kitų veiksmų"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+msgid "<span colspan=\"1\" attrs=\"{'invisible': [('amount_filter', '!=', 'within')]}\" style=\"padding-left: 20px;\">and\n"
+"                                        </span>"
+msgstr "<span colspan=\"1\" attrs=\"{'invisible': [('amount_filter', '!=', 'within')]}\" style=\"padding-left: 20px;\">and\n"
+"                                        </span>"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_kanban
+msgid "<span style=\"color: #2980b9;\">Waiting</span>"
+msgstr "<span style=\"color: #2980b9;\">Laukiama</span>"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_kanban
+msgid "<span style=\"color: green\">Approved</span>"
+msgstr "<span style=\"color: green\">Patvirtinta</span>"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_kanban
+msgid "<span style=\"color: red\">Disapproved</span>"
+msgstr "<span style=\"color: red\">Atmesta</span>"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.disapprove_account_invoice_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.force_disapprove_account_invoice_view_form
+msgid "<span>Please enter the reason for your disapproval of this invoice</span>"
+msgstr "<span>Įveskite sąskaitos atmetimo priežastį</span>"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:33
+#, python-format
+msgid "A new invoice {} is waiting for your approval for invoice approval step {}"
+msgstr "Nauja sąskaita {} laukia Jūsų patvirtinimo sąskaitų tvirtinimo etape {}"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_settings_view_form
+msgid "A safety net defines what happens when an invoice does not match any approval rules\n"
+"                                    and there are no default approvers set for an approval step."
+msgstr "'Apsaugos tinklas' nurodo veiksmą, kuris turėtų būti automatiškai atliekamas, kai nei vieno\n"
+"                                    iš tvirtintojų taisyklė neatitinka sąskaitos ir tvirtinimo žingsnyje\n"
+"                                    nėra nurodytas numatytasis tvirtintojas."
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:132
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_account_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_account_display
+#, python-format
+msgid "Account"
+msgstr "Sąskaita"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+msgid "Account conditions"
+msgstr "Sąskaitų sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_invoice_id
+msgid "Account invoice"
+msgstr "Sąskaita"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_account_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_account_ids
+msgid "Accounts"
+msgstr "Sąskaitos"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_deadline_reached_action
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_deadline_reached_action
+msgid "Action after deadline has been reached"
+msgstr "Veiksmas, atliekamas pasiekus terminą"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_safety_net_deadline_reached_action
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_res_company_safety_net_deadline_reached_action
+msgid "Action after safety net deadline has been reached"
+msgstr "Veiksmas, kuris automatiškai turėtų būti atliekamas pasiekus laiko terminą, per kurį turėtų būti patvirtinta sąskaita"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_action_not_matching_conditions
+msgid "Action for invoices not matching safety net conditions"
+msgstr "Veiksmas taikomas sąskaitoms, pasiekus apsauginį tinklą, kurios nesutampa nei su viena iš apsaugos tinklo sąlygų"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_res_company_action_not_matching_conditions
+msgid "Action to perform if invoice does not match any of the approval conditions"
+msgstr "Veiksmas, kuris atliekamas sąskaitai nesulygus su nei viena iš apsauginio tinklo sąlygų"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_active
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_active
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_active
+msgid "Active"
+msgstr "Aktyvus"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_requester_identifiers
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_requester_identifiers
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_requester_identifiers
+msgid "Additional requester identifiers"
+msgstr "Papildomi sąskaitą pateikusio asmens identifikatoriai"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_form
+msgid "Additional settings"
+msgstr "Papildomi nustatymai"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_supplier_identifiers
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_supplier_identifiers
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_supplier_identifiers
+msgid "Additional supplier identifiers"
+msgstr "Papildomi tiekėjo identifikatoriai"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.robo_expenses_view_form
+msgid "After cancelling this invoice the invoice will have to be approved again\n"
+"                        following the invoice approval process. Do you want to continue?"
+msgstr "Atšaukus šią sąskaita ši sąskaita privalės vėl būti patvirtinta sąskaitų tvirtintojų.\n"
+"                        Ar norite tęsti?"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.step,approval_condition:0
+#: selection:invoice.approval.workflow.step,approval_condition:0
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_search
+msgid "All approvers have to approve"
+msgstr "Visi tvirtintojai privalo patvirtinti"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_account_invoice_allow_performing_approval_action
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_allow_performing_approval_action
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_allow_performing_approval_action
+msgid "Allow performing approval action"
+msgstr "Leisti atlikti tvirtinimo veiksmą"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_account_invoice_allow_performing_force_approval_action
+msgid "Allow performing force approval action"
+msgstr "Leisti atlikti priverstinio tvirtinimo veiksmą"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:84
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_amount_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_amount_filter
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_amount_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_amount_filter
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_amount_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_amount_filter
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_tree
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_tree
+#, python-format
+msgid "Amount"
+msgstr "Suma"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_tree
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+msgid "Amount (company currency)"
+msgstr "Suma (kompanijos valiuta)"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+msgid "Amount conditions"
+msgstr "Sumos sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_amount_over
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_amount_over
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_amount_over
+msgid "Amount over"
+msgstr "Suma viršija"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_condition.py:65
+#, python-format
+msgid "Amount to has to be more than amount from"
+msgstr "Suma 'iki' privalo būti daugiau nei suma 'nuo'"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_amount_under
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_amount_under
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_amount_under
+msgid "Amount under"
+msgstr "Suma iki"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:174
+#, python-format
+msgid "An approver can only be assigned to an approval step once."
+msgstr "Tvirtintojas į tvirtinimo žingsnį gali būti priskirtas tik vieną kartą."
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:132
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_account_analytic_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_analytic_account_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_account_analytic_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_analytic_account_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_account_analytic_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_analytic_account_display
+#, python-format
+msgid "Analytic account"
+msgstr "Analitinė sąskaita"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+msgid "Analytic conditions"
+msgstr "Analitinės sąlygos"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_condition.py:189
+#: code:addons/invoice_approval_workflow/models/invoice_approval_condition.py:195
+#: selection:inv.approval.workflow.condition,amount_filter:0
+#: selection:inv.approval.workflow.condition,requester_filter:0
+#: selection:inv.approval.workflow.condition,supplier_filter:0
+#: selection:invoice.approval.condition,amount_filter:0
+#: selection:invoice.approval.condition,requester_filter:0
+#: selection:invoice.approval.condition,supplier_filter:0
+#: selection:safety.net.condition,amount_filter:0
+#: selection:safety.net.condition,requester_filter:0
+#: selection:safety.net.condition,supplier_filter:0
+#, python-format
+msgid "Any"
+msgstr "Nesvarbu"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_analytic_wizard_all_any_invoice_in_approval
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_analytic_wizard_line_any_invoice_in_approval
+msgid "Any invoice in approval"
+msgstr "Viena iš sąskaitų laukia patvirtinimo"
+
+#. module: invoice_approval_workflow
+#: selection:account.invoice,state:0
+msgid "Apmokėta"
+msgstr "Apmokėta"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_apply_safety_net_conditions
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_res_company_apply_safety_net_conditions
+msgid "Apply additional safety net conditions"
+msgstr "Taikyti papildomas apsauginio tinklo sąlygas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_workflow_review_action
+msgid "Approval"
+msgstr "Tvirtinimas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_ids
+msgid "Approval States"
+msgstr "Tvirtinimo etapai"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_approval_condition
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approval_condition
+msgid "Approval condition"
+msgstr "Tvirtinimo sąlyga"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_search
+msgid "Approval condition search"
+msgstr "Tvirtinimo sąlygų paieška"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_approval_condition_ids
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_tree
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_form
+msgid "Approval conditions"
+msgstr "Tvirtinimo sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_search
+msgid "Approval decision"
+msgstr "Tvirtinimo sprendimas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_notification_type
+msgid "Approval notifications"
+msgstr "Tvirtinimo pranešimai"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_settings_menu_action
+msgid "Approval settings"
+msgstr "Nustatymai"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_step_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_step_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_workflow_step_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_step_id
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_search
+msgid "Approval step"
+msgstr "Tvirtinimo žingsnis"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_step.py:51
+#, python-format
+msgid "Approval step sequence must be greater than 0"
+msgstr "Tvirtinimo žingsnio seka privalo būti daugiau už nulį"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+msgid "Approval steps"
+msgstr "Tvirtinimo eiga"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_account_invoice_approval_workflow_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_workflow_id
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_search
+msgid "Approval workflow"
+msgstr "Tvirtinimo eiga"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approvals_container_menu
+msgid "Approvals"
+msgstr "Tvirtinimas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+msgid "Approvals"
+msgstr "Patvirtino"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.settings,action_not_matching_conditions:0
+#: model:ir.actions.server,name:invoice_approval_workflow.account_invoice_approval_approve
+#: model:ir.actions.server,name:invoice_approval_workflow.invoice_approval_workflow_approve
+#: model:ir.actions.server,name:invoice_approval_workflow.invoice_approval_workflow_step_approve
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.robo_expenses_view_form
+#: selection:res.company,action_not_matching_conditions:0
+msgid "Approve"
+msgstr "Patvirtinti"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.workflow,decision:0
+#: selection:invoice.approval.workflow.step,decision_made:0
+#: selection:invoice.approval.workflow.step.approver,approval_decision:0
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_search
+msgid "Approved"
+msgstr "Patvirtinta"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approver,type:0
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_approver_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_workflow_approver_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_approver_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_approver_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_approver_id
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.inv_approval_workflow_condition_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_search
+msgid "Approver"
+msgstr "Tvirtintojas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_currently_unavailable
+msgid "Approver is currently unavailable"
+msgstr "Tvirtintojas šiuo metu nepasiekiamas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_approver_type
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_approver_type
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_approver_type
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_type
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_approver_type
+msgid "Approver type"
+msgstr "Tvirtintojo tipas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approver_front_end_action
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approver_menu_action
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_settings_view_form
+msgid "Approvers"
+msgstr "Tvirtintojai"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_search
+msgid "Archived"
+msgstr "Suarchyvuotas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.robo_expenses_view_form
+msgid "Are you sure you wish to ask for invoice approval again?"
+msgstr "Ar tikrai norite dar kartą prašyti sąskaitos patvirtinimo?"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.robo_expenses_view_form
+msgid "Ask again for approval"
+msgstr "Prašyti dar kartą patvirtinti sąskaitą"
+
+#. module: invoice_approval_workflow
+#: selection:account.invoice,state:0
+msgid "Atšaukta"
+msgstr "Atšaukta"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approver,type:0
+msgid "Auditor"
+msgstr "Auditorius"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.settings,safety_net_action:0
+#: selection:invoice.approval.settings,safety_net_deadline_reached_action:0
+#: selection:invoice.approval.step,deadline_reached_action:0
+#: selection:invoice.approval.workflow.step,deadline_reached_action:0
+#: selection:res.company,safety_net_action:0
+#: selection:res.company,safety_net_deadline_reached_action:0
+msgid "Automatically approve"
+msgstr "Automatiškai patvirtinti"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.settings,safety_net_action:0
+#: selection:invoice.approval.settings,safety_net_deadline_reached_action:0
+#: selection:invoice.approval.step,deadline_reached_action:0
+#: selection:invoice.approval.workflow.step,deadline_reached_action:0
+#: selection:res.company,safety_net_action:0
+#: selection:res.company,safety_net_deadline_reached_action:0
+msgid "Automatically disapprove"
+msgstr "Automatiškai atmesti"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.expense_search_extension
+msgid "Awaiting approval"
+msgstr "Laukiama patvirtinimo"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+msgid "Between"
+msgstr "Tarp"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:185
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:295
+#, python-format
+msgid "Can not leave a decision comment if no decision has been made"
+msgstr "Negalima palikti tvirtinimo komentaro jei nenurodytas tvirtinimo sprendimas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:196
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:304
+#, python-format
+msgid "Can not leave a decision comment with out the decision reason if the decision is not for the approval of the workflow step"
+msgstr "Negalima palikti tvirtinimo komentaro nenurodant atmetimo priežasties, jei sąskaita nėra patvirtinama, o yra atmetama"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.disapprove_account_invoice_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.force_disapprove_account_invoice_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_settings_view_form
+msgid "Cancel"
+msgstr "Atšaukti"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.line_analytic_wizard_line_form
+msgid "Change analytic account"
+msgstr "Keisti analitinę sąskaitą"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_analytic_wizard_all_form
+msgid "Change analytics"
+msgstr "Keisti analitiką"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_res_company
+msgid "Companies"
+msgstr "Įmonės"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_company_currency_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_company_currency_id
+msgid "Company Currency"
+msgstr "Kompanijos valiuta"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_condition_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_condition_ids
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_condition_menu_action
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_form
+msgid "Conditions"
+msgstr "Sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_matched_condition_ids
+msgid "Conditions that were matched for this approver at this step"
+msgstr "Sąlygos, kurios atitiko šį tvirtintoją ir šią sąskaitą šiame tvirtinimo etape"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/wizard/disapprove_account_invoice.py:37
+#: code:addons/invoice_approval_workflow/wizard/disapprove_account_invoice.py:49
+#, python-format
+msgid "Could not determine the workflow step the disapproval is for"
+msgstr "Nebuvo įmanoma nustatyti tvirtinimo žingsnio, kuriam norima nustatyti sąskaitos atmetimą"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice_create_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_create_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_create_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_create_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_create_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_create_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_create_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_create_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_create_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_create_uid
+msgid "Created by"
+msgstr "Sukūrė"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice_create_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_create_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_create_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_create_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_create_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_create_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_create_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_create_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_create_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_create_date
+msgid "Created on"
+msgstr "Sukurta"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:82
+#, python-format
+msgid "Date"
+msgstr "Data"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_date_invoice
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_date_invoice
+msgid "Date invoice"
+msgstr "Sąskaitos data"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_deadline
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_settings_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+msgid "Deadline"
+msgstr "Terminas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_deadline_days
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_deadline_days
+msgid "Deadline (days)"
+msgstr "Terminas (dienomis)"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_step.py:58
+#, python-format
+msgid "Deadline (days) must be greater or equal to zero"
+msgstr "Terminas (dienomis) privalo būti lygus arba didesnis už nulį"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_deadline_hours
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_deadline_hours
+msgid "Deadline (hours)"
+msgstr "Terminas (valandomis)"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_step.py:60
+#, python-format
+msgid "Deadline (hours) must be greater or equal to zero"
+msgstr "Terminas (valandomis) privalo būti lygus arba didesnis už nulį"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_deadline_reached
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_search
+msgid "Deadline has been reached"
+msgstr "Terminas pasiektas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_decision
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_search
+msgid "Decision"
+msgstr "Sprendimas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_date_decision_made
+msgid "Decision date"
+msgstr "Sprendimo priėmimo data"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_approval_decision
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_decision_made
+msgid "Decision made"
+msgstr "Sprendimas priimtas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_default_approver
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_default_approver
+msgid "Default approver"
+msgstr "Numatytasis tvirtintojas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_delegate_id
+msgid "Delegate"
+msgstr "Įgaliotas asmuo"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.settings,action_not_matching_conditions:0
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.disapprove_account_invoice_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.robo_expenses_view_form
+#: selection:res.company,action_not_matching_conditions:0
+msgid "Disapprove"
+msgstr "Atmesti"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.disapprove_account_invoice_action
+msgid "Disapprove invoice"
+msgstr "Atmesti sąskaitą"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.workflow,decision:0
+#: selection:invoice.approval.workflow.step,decision_made:0
+#: selection:invoice.approval.workflow.step.approver,approval_decision:0
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_search
+msgid "Disapproved"
+msgstr "Atmesta"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:132
+#, python-format
+msgid "Discount"
+msgstr "Nuolaida, %"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice_display_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_display_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_display_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_display_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_display_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_display_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_display_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_display_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_display_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_display_name
+msgid "Display Name"
+msgstr "Vaizduojamas pavadinimas"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.settings,safety_net_deadline_reached_action:0
+#: selection:invoice.approval.step,deadline_reached_action:0
+#: selection:invoice.approval.workflow.step,deadline_reached_action:0
+#: selection:res.company,safety_net_deadline_reached_action:0
+msgid "Do nothing"
+msgstr "Nieko nedaryti"
+
+#. module: invoice_approval_workflow
+#: selection:inv.approval.workflow.condition,requester_filter:0
+#: selection:inv.approval.workflow.condition,supplier_filter:0
+#: selection:invoice.approval.condition,requester_filter:0
+#: selection:invoice.approval.condition,supplier_filter:0
+#: selection:safety.net.condition,requester_filter:0
+#: selection:safety.net.condition,supplier_filter:0
+msgid "Does not match"
+msgstr "Neatitinka"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_res_company_module_invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_robo_company_settings_module_invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.robo_company_settings_view_form
+msgid "Enable invoice approval"
+msgstr "Aktyvuoti sąskaitų tvirtinimą"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.robo_expenses_view_form
+msgid "Force Approve"
+msgstr "Priverstinai patvirtinti"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.robo_expenses_view_form
+msgid "Force Disapprove"
+msgstr "Priverstinai atmesti"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_force_decided
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_force_decided
+msgid "Force decided"
+msgstr "Priverstinai nuspręsta"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.force_disapprove_account_invoice_view_form
+msgid "Force disapprove"
+msgstr "Priverstinai atmesti"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.force_disapprove_account_invoice_action
+msgid "Force disapprove invoice"
+msgstr "Priverstinai atmesti sąskaitą"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_search
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_search
+msgid "Group By"
+msgstr "Grupuoti pagal"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_id
+msgid "ID"
+msgstr "ID"
+
+#. module: invoice_approval_workflow
+#: selection:account.invoice,expense_state:0
+#: selection:account.invoice,state:0
+#, python-format
+msgid "In approval"
+msgstr "Laukia patvirtinimo"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:57
+#: model:ir.model,name:invoice_approval_workflow.model_account_invoice
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_invoice_id
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_tree
+#, python-format
+msgid "Invoice"
+msgstr "Sąskaita faktūra"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_currency_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_currency_id
+msgid "Invoice Currency"
+msgstr "Sąskaitos valiuta"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_amount_total_signed
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_amount_total_signed
+msgid "Invoice amount"
+msgstr "Sąskaitos suma"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_amount_total_company_signed
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_amount_total_company_signed
+msgid "Invoice amount company currency"
+msgstr "Sąskaitos suma kompanijos valiuta"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approval_workflow_step_front_end_action
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_backend_menu
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_front_end_menu_container
+msgid "Invoice approval"
+msgstr "Sąskaitų tvirtinimas"
+
+#. module: invoice_approval_workflow
+#: model:res.groups,name:invoice_approval_workflow.invoice_approval_administrator
+msgid "Invoice approval administrator"
+msgstr "Sąskaitų tvirtinimo proceso administratorius"
+
+#. module: invoice_approval_workflow
+#: model:res.groups,name:invoice_approval_workflow.invoice_approval_approver
+msgid "Invoice approval approver"
+msgstr "Sąskaitų tvirtintojas"
+
+#. module: invoice_approval_workflow
+#: model:res.groups,name:invoice_approval_workflow.invoice_approval_auditor
+msgid "Invoice approval auditor"
+msgstr "Sąskaitų tvirtinimo auditorius"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+msgid "Invoice approval condition"
+msgstr "Sąskaitų tvirtinimo sąlyga"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approval_condition_action
+msgid "Invoice approval conditions"
+msgstr "Sąskaitų tvirtinimo sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:res.groups,name:invoice_approval_workflow.invoice_approval_enabled_group
+msgid "Invoice approval enabled"
+msgstr "Sąskaitų tvirtinimas įgalintas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/res_company.py:67
+#, python-format
+msgid "Invoice approval has been disabled. Cancelling all waiting approvals."
+msgstr "Sąskaitų tvirtinimas buvo sustabdytas. Atšaukiamos visos sąskaitos laukiančios patvirtinimo."
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_account_invoice_invoice_approval_is_enabled
+msgid "Invoice approval is enabled"
+msgstr "Sąskaitų tvirtinimas įgalintas"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approval_settings_action
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_approval_settings
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_settings_view_form
+msgid "Invoice approval settings"
+msgstr "Sąskaitų tvirtinimo nustatymai"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_account_invoice_invoice_approval_workflow_step
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+msgid "Invoice approval step"
+msgstr "Sąskaitų tvirtinimo žingsnis"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_search
+msgid "Invoice approval step search"
+msgstr "Sąskaitų tvirtinimo žingsnių paieška"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approval_step_action
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_tree
+msgid "Invoice approval steps"
+msgstr "Sąskaitų tvirtinimo etapai"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_account_invoice_invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+msgid "Invoice approval workflow"
+msgstr "Sąskaitų tvirtinimo eiga"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.inv_approval_workflow_condition_view_search
+msgid "Invoice approval workflow condition search"
+msgstr "Sąskaitų tvirtinimo eigos sąlygų paieška"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.inv_approval_workflow_condition_action
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.inv_approval_workflow_condition_view_tree
+msgid "Invoice approval workflow conditions"
+msgstr "Sąskaitų tvirtinimo eigos sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_search
+msgid "Invoice approval workflow search"
+msgstr "Sąskaitų tvirtinimo eigų paieška"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_form
+msgid "Invoice approval workflow step approver"
+msgstr "Sąskaitų tvirtinimo eigos etapo tvirtintojas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_search
+msgid "Invoice approval workflow step approver search"
+msgstr "Sąskaitų tvirtinimo eigos etapo tvirtintojo paieška"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_tree
+msgid "Invoice approval workflow step approvers"
+msgstr "Sąskaitų tvirtinimo eigos etapo tvirtintojai"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_search
+msgid "Invoice approval workflow step search"
+msgstr "Sąskaitų tvirtinimo eigos etapų paieška"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approval_workflow_step_action
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_tree
+msgid "Invoice approval workflow steps"
+msgstr "Sąskaitų tvirtinimo eigos etapai"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approval_workflow_tree_action
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_tree
+msgid "Invoice approval workflows"
+msgstr "Sąskaitų tvirtinimo eigos"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_form
+msgid "Invoice approver"
+msgstr "Sąskaitų tvirtintojas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_search
+msgid "Invoice approver search"
+msgstr "Sąskaitų tvirtintojo paieška"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approver_tree_view_action
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approver_tree_view_front_end_action
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_tree
+msgid "Invoice approvers"
+msgstr "Sąskaitų tvirtintojai"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.disapprove_account_invoice_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.force_disapprove_account_invoice_view_form
+msgid "Invoice disapproval"
+msgstr "Sąskaitų atmetimas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_account_invoice_approved
+msgid "Invoice has been approved"
+msgstr "Sąskaita buvo patvirtinta"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+msgid "Invoice info"
+msgstr "Sąskaitos informacija"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:232
+#, python-format
+msgid "Invoice is already waiting for approval. Can not start a new approval workflow"
+msgstr "Sąskaita jau laukia tvirtinimo. Negalima pradėti naujos sąskaitos tvirtinimo eigos"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_invoice_line_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_invoice_line_ids
+msgid "Invoice lines"
+msgstr "Sąskaitos eilutės"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_invoice_number
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_invoice_number
+msgid "Invoice number"
+msgstr "Sąskaitos numeris"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_invoice_pdf
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_invoice_pdf
+msgid "Invoice pdf"
+msgstr "Sąskaitos pdf"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_invoice_submitted
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_invoice_submitted
+msgid "Invoice submitted by"
+msgstr "Sąskaitą pateikė"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_invoice_supplier
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_invoice_supplier
+msgid "Invoice supplier"
+msgstr "Sąskaitos tiekėjas"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approval_workflow_step_approver_action
+msgid "Invoice workflow step approvers"
+msgstr "Sąskaitos eigos etapo tvirtintojai"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:163
+#, python-format
+msgid "Invoice {} is waiting for approval. You can not perform this action until the invoice has been approved"
+msgstr "Sąskaita {} laukia patvirtinimo. Negalite atlikti šio veiksmo, kol sąskaita dar nepatvirtinta"
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,name:invoice_approval_workflow.invoice_approval_workflow_front_end_action
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_front_end_invoices
+msgid "Invoices"
+msgstr "Sąskaitos faktūros"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_search
+msgid "Is active approver"
+msgstr "Aktyvus tvirtintojas"
+
+#. module: invoice_approval_workflow
+#: selection:account.invoice,state:0
+msgid "Išankstinė"
+msgstr "Išankstinė"
+
+#. module: invoice_approval_workflow
+#: selection:account.invoice,state:0
+msgid "Juodraštis"
+msgstr "Juodraštis"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_workflow_date_invoice
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_workflow_step_date_invoice
+msgid "Keep empty to use the current date"
+msgstr "Palikite tuščią, jei norite naudoti šiandienos datą"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice___last_update
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition___last_update
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition___last_update
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings___last_update
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step___last_update
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow___last_update
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step___last_update
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver___last_update
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver___last_update
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition___last_update
+msgid "Last Modified on"
+msgstr "Paskutinį kartą keista"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice_write_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_write_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_write_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_write_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_write_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_write_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_write_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_write_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_write_uid
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_write_uid
+msgid "Last Updated by"
+msgstr "Paskutinį kartą atnaujino"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice_write_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_write_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_write_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_write_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_write_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_write_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_write_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_write_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_write_date
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_write_date
+msgid "Last Updated on"
+msgstr "Paskutinį kartą atnaujinta"
+
+#. module: invoice_approval_workflow
+#: selection:account.invoice,state:0
+msgid "Laukiama mokėjimo"
+msgstr "Laukiama apmokėjimo"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_hr_holidays
+msgid "Leave"
+msgstr "Neatvykimas"
+
+#. module: invoice_approval_workflow
+#: model:res.groups,front_help:invoice_approval_workflow.invoice_approval_administrator
+msgid "Leidžia vartotojui atlikti visus veiksmus su sąskaitų tvirtinimu"
+msgstr "Leidžia vartotojui atlikti visus veiksmus su sąskaitų tvirtinimu"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_form
+msgid "Main settings"
+msgstr "Pagrindiniai nustatymai"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_search
+msgid "Matched condition"
+msgstr "Atitinkanti taisyklė"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_matched_condition_ids
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_approver_view_form
+msgid "Matched conditions"
+msgstr "Atitinkančios sąlygos"
+
+#. module: invoice_approval_workflow
+#: selection:inv.approval.workflow.condition,requester_filter:0
+#: selection:inv.approval.workflow.condition,supplier_filter:0
+#: selection:invoice.approval.condition,requester_filter:0
+#: selection:invoice.approval.condition,supplier_filter:0
+#: selection:safety.net.condition,requester_filter:0
+#: selection:safety.net.condition,supplier_filter:0
+msgid "Matches"
+msgstr "Atitinka"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_method_to_execute_on_approval
+msgid "Method to execute on approval"
+msgstr "Metodas, kurį įvykdyti patvirtinus sąskaitą"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_search
+msgid "My approvals"
+msgstr "Laukia mano veiksmo"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:132
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_name
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_name
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_search
+#, python-format
+msgid "Name"
+msgstr "Pavadinimas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:39
+#, python-format
+msgid "New invoice is waiting for approval"
+msgstr "Nauja sąskaita laukia patvirtinimo"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_number_of_approvals_required
+msgid "Number of approvals required"
+msgstr "Reikalauja tam tikro skaičiaus patvirtinimų"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_approvals_needed
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approvals_needed
+msgid "Number of approvals to approve"
+msgstr "Kiek tvirtintojų privalo patvirtinti"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_number_of_approvers
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+msgid "Number of approvers"
+msgstr "Tvirtintojų skaičius"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_step.py:78
+#, python-format
+msgid "Number of approvers needed can not be a negative number"
+msgstr "Reikalingas patvirtinimų skaičius negali būti neigiamas skaičius"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_number_of_approved_approvers
+msgid "Number of approvers who approved"
+msgstr "Patvirtinusių tvirtintojų skaičius"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_condition_number
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_condition_number
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_condition_number
+msgid "Number of conditions"
+msgstr "Sąlygų skaičius"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:402
+#, python-format
+msgid "Only managers are allowed to ask for approval again"
+msgstr "Tik įmonės vadovai gali antrą kartą prašyti patvirtinti sąskaitą"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_original_approver_id
+msgid "Original Approver"
+msgstr "Pradinis tvirtintojas"
+
+#. module: invoice_approval_workflow
+#: selection:inv.approval.workflow.condition,amount_filter:0
+#: selection:invoice.approval.condition,amount_filter:0
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+#: selection:safety.net.condition,amount_filter:0
+msgid "Over or equal to"
+msgstr "Yra daugiau už arba yra lygi"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/wizard/invoice_approval_settings.py:61
+#, python-format
+msgid "Please specify the approver to send the invoice for approval to"
+msgstr "Prašome nurodyti tvirtintoją, kam nusiųsti sąskaitą tvirtinimui"
+
+#. module: invoice_approval_workflow
+#: model:mail.channel,name:invoice_approval_workflow.approval_notification_mail_channel
+msgid "Pranešimai el. paštu apie sąskaitas laukiančias patvirtinimo"
+msgstr "Pranešimai el. paštu apie sąskaitas laukiančias patvirtinimo"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:132
+#, python-format
+msgid "Price unit"
+msgstr "Vieneto kaina"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:132
+#, python-format
+msgid "Quantity"
+msgstr "Kiekis"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice_reason
+msgid "Reason for disapproval"
+msgstr "Atmetimo priežastis"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:83
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_invoice_reference
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_invoice_reference
+#, python-format
+msgid "Reference"
+msgstr "Numeris"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+msgid "Requester conditions"
+msgstr "Pateikusio asmens sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_requester_filter
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_requester_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_requester_filter
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_requester_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_requester_filter
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_requester_ids
+msgid "Requesters"
+msgstr "Pateikę asmenys"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_settings_view_form
+msgid "Safety net"
+msgstr "Apsaugos tinklas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_safety_net_action
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_res_company_safety_net_action
+msgid "Safety net action"
+msgstr "Apsauginio tinklo veiksmas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:195
+#, python-format
+msgid "Safety net approval"
+msgstr "Apsauginio tinklo patvirtinimas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_sn_approvers
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_res_company_sn_approvers
+msgid "Safety net approvers"
+msgstr "Apsauginio tinklo tvirtintojai"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_safety_net_conditions
+msgid "Safety net conditions"
+msgstr "Apsauginio tinklo sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_safety_net_approval_deadline_days
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_res_company_safety_net_approval_deadline_days
+msgid "Safety net deadline (days)"
+msgstr "Apsauginio tinklo terminas (dienos)"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/wizard/invoice_approval_settings.py:68
+#, python-format
+msgid "Safety net deadline (days) must be greater or equal to 0"
+msgstr "Apsauginio tinklo terminas (dienomis) turi būti daugiau arba lygus nuliui"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_settings_safety_net_approval_deadline_hours
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_res_company_safety_net_approval_deadline_hours
+msgid "Safety net deadline (hours)"
+msgstr "Apsauginio tinklo terminas (valandos)"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/wizard/invoice_approval_settings.py:70
+#, python-format
+msgid "Safety net deadline (hours) must be greater or equal to 0"
+msgstr "Apsauginio tinklo terminas (valandomis) turi būti daugiau arba lygus nuliui"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_settings_view_form
+msgid "Save"
+msgstr "Išsaugoti"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.settings,safety_net_action:0
+#: selection:res.company,safety_net_action:0
+msgid "Send for approval"
+msgstr "Siųsti patvirtinimui"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_step_sequence
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_sequence
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_search
+msgid "Sequence"
+msgstr "Seka"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approval.step,approval_condition:0
+#: selection:invoice.approval.workflow.step,approval_condition:0
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_step_view_search
+msgid "Some approvers have to approve"
+msgstr "Kai kurie tvirtintojai privalo patvirtinti"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_analytic_wizard_all_form
+msgid "Some invoices are in approval. This action will cancel the current approval                             workflow and start a new one. Do you want to continue?"
+msgstr "Kai kurios sąskaitos laukia patvirtinimo. Šis veiksmas atšauks dabartinį                             ir sukurs naują tvirtinimo procesą. Ar norite tęsti?"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.line_analytic_wizard_line_form
+msgid "Split line"
+msgstr "Skaidyti eilutę"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_account_invoice_state
+msgid "Status"
+msgstr "Būsena"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_tree
+msgid "Step"
+msgstr "Žingsnis"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_workflow_step_approver_menu_action
+msgid "Step approvers"
+msgstr "Žingsnio tvirtintojai"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_step_menu_action
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_workflow_step_menu_action
+msgid "Steps"
+msgstr "Žingsniai"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_requester_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_requester_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_requester_display
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_tree
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_tree
+msgid "Submitter"
+msgstr "Pateikė"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:81
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_supplier_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_supplier_display
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_supplier_display
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_tree
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_tree
+#, python-format
+msgid "Supplier"
+msgstr "Tiekėjas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+msgid "Supplier conditions"
+msgstr "Tiekėjo sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_supplier_filter
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_supplier_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_supplier_filter
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_condition_supplier_ids
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_supplier_filter
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_safety_net_condition_supplier_ids
+msgid "Suppliers"
+msgstr "Tiekėjai"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approver,notification_type:0
+msgid "System and e-mail notification"
+msgstr "Sisteminiai pranešimai ir pranešimai el. paštu"
+
+#. module: invoice_approval_workflow
+#: selection:invoice.approver,notification_type:0
+msgid "System notification"
+msgstr "Sisteminiai pranešimai"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:133
+#, python-format
+msgid "Taxes"
+msgstr "Mokesčiai"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_deadline_action_executed
+msgid "The deadline action has been executed"
+msgstr "Termino veiksmas įvykdytas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approver.py:60
+#, python-format
+msgid "The delegated user can not be the approver user"
+msgstr "Įgaliotas asmuo negali būti pats tvirtintojas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.line_analytic_wizard_line_form
+msgid "The invoice you're trying to change the analytics for is in approval. This action                             will cancel the current approval workflow and start a new one. Do you want to continue?"
+msgstr "Sąskaita, kuriai norite keisti analitiką laukia patvirtinimo. Šis veiksmas                             atšauks einamąjį ir sukurs naują tvirtinimo procesą. Ar norite tęsti?"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.line_analytic_wizard_line_form
+msgid "The invoice you're trying to split the analytics for is in approval. This action                             will cancel the current approval workflow and start a new one. Do you want to continue?"
+msgstr "Sąskaita, kuriai norite skaidyti analitiką laukia patvirtinimo. Šis veiksmas                             atšauks einamąjį ir sukurs naują tvirtinimo procesą. Ar norite tęsti?"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:197
+#, python-format
+msgid "The invoice {} the invoice approval workflow."
+msgstr "Sąskaita {} sąskaitų tvirtinimo procese."
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_step_sequence
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_workflow_step_sequence
+msgid "The sequence in which to follow the workflow."
+msgstr "Seka, pagal kurią vykdyti sąskaitų tvirtinimo eigą."
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:227
+#, python-format
+msgid "This workflow step has been automatically {} because the approval deadline has passed"
+msgstr "Šis eigos etapas buvo automatiškai {} nes buvo pasiektas etapo patvirtinimo terminas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:133
+#, python-format
+msgid "Total"
+msgstr "Suma"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step_approver.py:133
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+#, python-format
+msgid "Total (with tax)"
+msgstr "Suma (su mokesčiais)"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_workflow_amount_total_company_signed
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_workflow_step_amount_total_company_signed
+msgid "Total amount in the currency of the company, negative for credit notes."
+msgstr "Bendra suma įmonės valiuta, neigiama kreditinių sąskaitų atžvilgiu."
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_search
+msgid "Type"
+msgstr "Tipas"
+
+#. module: invoice_approval_workflow
+#: selection:inv.approval.workflow.condition,amount_filter:0
+#: selection:invoice.approval.condition,amount_filter:0
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_condition_view_form
+#: selection:safety.net.condition,amount_filter:0
+msgid "Under"
+msgstr "Mažiau už"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:155
+#, python-format
+msgid "Unexpected error, the invoice that you are trying to disapprove does not have any steps. Contact the system administrators"
+msgstr "Nenumatyta klaida, sąskaita, kurią bandote atmesti neturi jokių tvirtinimo etapų. Prašome susisiekti su sistemos administratoriais"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approver_user_id
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approver_view_search
+msgid "User"
+msgstr "Naudotojas"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_approver_informed
+msgid "User has been informed about the waiting approval"
+msgstr "Naudotojas informuotas apie laukiančią patvirtinimo sąskaitą"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approver.py:14
+#: sql_constraint:invoice.approver:0
+#, python-format
+msgid "User is already in the approver list!"
+msgstr "Naudotojas jau yra tvirtintojų sąraše!"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approver_delegate_id
+msgid "User who should approve invoices if this approver is not available"
+msgstr "Naudotojas, kuris turėtų tvirtinti šiam tvirtintojui priskirtas sąskaitas, kai pastarasis nėra pasiekiamas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_form
+msgid "Waiting"
+msgstr "Laukiama"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_waiting_for_text
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_waiting_for_text
+msgid "Waiting for"
+msgstr "Laukiama patvirtinimo iš"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_view_search
+msgid "Waiting for a decision"
+msgstr "Laukiama sprendimo"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_action_needed
+msgid "Waiting for a decision from approvers"
+msgstr "Laukiama sprendimo iš tvirtintojų"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.view,arch_db:invoice_approval_workflow.invoice_approval_workflow_step_view_search
+msgid "Waiting for decision"
+msgstr "Laukiama sprendimo"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_step_deadline_reached_action
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_workflow_step_deadline_reached_action
+msgid "What happens after the deadline has been reached"
+msgstr "Veiksmas, kuris įvykdomas pasiekus terminą"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_settings_action_not_matching_conditions
+msgid "What happens when the invoice falls under safety net and doesn't match any of the conditions"
+msgstr "Kas nutinka, kai sąskaita patekusi į apsaugini tinklą nesutampa su nei viena iš apsauginio tinklo sąlygų"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_settings_safety_net_deadline_reached_action
+#: model:ir.model.fields,help:invoice_approval_workflow.field_res_company_safety_net_deadline_reached_action
+msgid "What happens when there has been no action taken after the safety net deadline has been reached"
+msgstr "Kas nutinka, kai vis dar nebūna atliekamas joks veiksmas po apsaugos tinklo termino pasibaigimo"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_settings_safety_net_action
+#: model:ir.model.fields,help:invoice_approval_workflow.field_res_company_safety_net_action
+msgid "What happens when there is no one to review an invoice"
+msgstr "Kas nutinka, kai nėra asmenų, kurie turėtų peržiūrėti sąskaitą"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approver_currently_unavailable
+msgid "When set the matched invoices will be assigned to the delegated approver"
+msgstr "Kai įgalinta, sulygtos sąskaitos bus priskirtos įgaliotam asmeniui"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_step_default_approver
+#: model:ir.model.fields,help:invoice_approval_workflow.field_invoice_approval_workflow_step_default_approver
+msgid "Who should approve an invoice for this step when no approvers are matched"
+msgstr "Kas turėtų patvirtinti sąskaitas šiame žingsnyje, kai nei viena iš tvirtintojų sąlygų neatitinka sąskaitos"
+
+#. module: invoice_approval_workflow
+#: selection:inv.approval.workflow.condition,amount_filter:0
+#: selection:invoice.approval.condition,amount_filter:0
+#: selection:safety.net.condition,amount_filter:0
+msgid "Within"
+msgstr "Tarp"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_step_front_end_action
+msgid "Workflow"
+msgstr "Eiga"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice_workflow_step_approver_id
+msgid "Workflow approver"
+msgstr "Eigos tvirtintojas"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,name:invoice_approval_workflow.inv_approval_workflow_condition_menu_action
+msgid "Workflow conditions"
+msgstr "Eigos sąlygos"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_disapprove_account_invoice_workflow_step_id
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_inv_approval_workflow_condition_workflow_step_id
+msgid "Workflow step"
+msgstr "Eigos etapai"
+
+#. module: invoice_approval_workflow
+#: model:ir.model.fields,field_description:invoice_approval_workflow.field_invoice_approval_workflow_step_matched_approver_ids
+msgid "Workflow step approvers"
+msgstr "Eigos etapų tvirtintojai"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_workflow_container_menu
+#: model:ir.ui.menu,name:invoice_approval_workflow.invoice_approval_workflow_menu_action
+msgid "Workflows"
+msgstr "Darbų eiga"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/wizard/disapprove_account_invoice.py:39
+#, python-format
+msgid "You are not allowed to disapprove this invoice for this workflow step"
+msgstr "Jums neleidžiama atmesti šios sąskaitos šiame sąskaitos tvirtinimo eigos etape"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:116
+#, python-format
+msgid "You are not allowed to force approve invoices"
+msgstr "Jums neleidžiama priverstinai tvirtinti sąskaitas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/wizard/invoice_change_tax_line_wizard.py:15
+#, python-format
+msgid "You can not change invoice taxes at this time because the account invoice is being approved"
+msgstr "Negalite keisti taikomų mokesčių, kol sąskaita yra tvirtinimo procese"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:329
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:347
+#, python-format
+msgid "You can not perform this action because the invoice does not have any active workflow steps that could be approved"
+msgstr "Jūs negalite atlikti šio veiksmo, nes sąskaita neturi jokių tvirtinimo eigos etapų, kurie galėtų būti patvirtinti"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:338
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:356
+#, python-format
+msgid "You can not perform this action because the invoice does not have any active workflow steps that could be disapproved"
+msgstr "Jūs negalite atlikti šio veiksmo, nes sąskaita neturi jokių tvirtinimo eigos etapų, kurie galėtų būti atmesti"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:147
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:156
+#, python-format
+msgid "You can not perform this action because the invoice has been approved"
+msgstr "Jūs negalite atlikti šio veiksmo, nes sąskaita jau buvo patvirtinta"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:192
+#, python-format
+msgid "You can not perform this action since a decision has already been made."
+msgstr "Jūs negalite atlikti šio veiksmo, nes jau buvo priimtas sąskaitos tvirtinimo sprendimas."
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/wizard/account_invoice_partner_change_wizard.py:17
+#, python-format
+msgid "You can not perform this action since the invoice has already been approved"
+msgstr "Jūs negalite atlikti šio veiksmo, nes sąskaita jau buvo patvirtinta"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:128
+#: code:addons/invoice_approval_workflow/models/account_invoice.py:139
+#, python-format
+msgid "You can not perform this action until the invoice has been approved"
+msgstr "Jūs negalite atlikti šio veiksmo, kol sąskaita dar nėra patvirtinta"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:184
+#, python-format
+msgid "You can not perform this approval action because you are not in the approver list"
+msgstr "Jūs negalite atlikti šio veiksmo, nes nesate tvirtintojų sąraše"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approver.py:115
+#, python-format
+msgid "You can not unlink this approver because this user is already an approver on some invoices. If you wish for this user not to be able to approve invoices - archive the approver."
+msgstr "Jūs negalite ištrinti šio tvirtintojo, nes šis naudotojas jau yra priskirtas kaip tvirtintojas kai kuriose sąskaitose. Jei norite, kad šis vartotojas daugiau nebetvirtintų sąskaitų - suarchyvuokite šį sąskaitų tvirtintoją."
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/wizard/invoice_approval_settings.py:77
+#, python-format
+msgid "You do not have sufficient rights to perform this action"
+msgstr "Jūs neturite pakankamai teisių atlikti šį veiksmą"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/wizard/disapprove_account_invoice.py:41
+#: code:addons/invoice_approval_workflow/wizard/disapprove_account_invoice.py:51
+#, python-format
+msgid "You must enter a reason for your disapproval."
+msgstr "Privalote įvesti priežastį dėl šios sąskaitos atmetimo."
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_account_invoice_partner_change_wizard
+msgid "account.invoice.partner.change.wizard"
+msgstr "account.invoice.partner.change.wizard"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:130
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:191
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:230
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:299
+#, python-format
+msgid "approved"
+msgstr "patvirtino"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:230
+msgid "approved"
+msgstr "patvirtintas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:198
+#, python-format
+msgid "did not pass"
+msgstr "nebuvo patvirtinta"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_disapprove_account_invoice
+msgid "disapprove.account.invoice"
+msgstr "disapprove.account.invoice"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:130
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:191
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:299
+#, python-format
+msgid "disapproved"
+msgstr "atmetė"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:234
+msgid "disapproved"
+msgstr "atmestas"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:198
+#, python-format
+msgid "has passed"
+msgstr "buvo patvirtinta"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_inv_approval_workflow_condition
+msgid "inv.approval.workflow.condition"
+msgstr "inv.approval.workflow.condition"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,tags:invoice_approval_workflow.invoice_approval_front_end_invoices
+msgid "invoice"
+msgstr "invoice"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,tags:invoice_approval_workflow.invoice_approval_workflow_review_action
+msgid "invoice,approval"
+msgstr "invoice,approval"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,tags:invoice_approval_workflow.invoice_approval_settings_menu_action
+msgid "invoice,approval,settings"
+msgstr "invoice,approval,settings"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,tags:invoice_approval_workflow.invoice_approval_step_front_end_action
+msgid "invoice,approval,step"
+msgstr "invoice,approval,step"
+
+#. module: invoice_approval_workflow
+#: model:ir.ui.menu,tags:invoice_approval_workflow.invoice_approver_front_end_action
+msgid "invoice,approver"
+msgstr "invoice,approver"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_analytic_wizard_all
+msgid "invoice.analytic.wizard.all"
+msgstr "invoice.analytic.wizard.all"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_analytic_wizard_line
+msgid "invoice.analytic.wizard.line"
+msgstr "invoice.analytic.wizard.line"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_approval_condition
+msgid "invoice.approval.condition"
+msgstr "invoice.approval.condition"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_approval_step
+msgid "invoice.approval.step"
+msgstr "invoice.approval.step"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_approval_workflow
+msgid "invoice.approval.workflow"
+msgstr "invoice.approval.workflow"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_approval_workflow_step
+msgid "invoice.approval.workflow.step"
+msgstr "invoice.approval.workflow.step"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_approval_workflow_step_approver
+msgid "invoice.approval.workflow.step.approver"
+msgstr "invoice.approval.workflow.step.approver"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_approver
+msgid "invoice.approver"
+msgstr "invoice.approver"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_invoice_change_tax_line_wizard
+msgid "invoice.change.tax.line.wizard"
+msgstr "invoice.change.tax.line.wizard"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_robo_company_settings
+msgid "robo.company.settings"
+msgstr "robo.company.settings"
+
+#. module: invoice_approval_workflow
+#: model:ir.model,name:invoice_approval_workflow.model_safety_net_condition
+msgid "safety.net.condition"
+msgstr "safety.net.condition"
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:192
+#, python-format
+msgid "{} has force {} this invoice."
+msgstr "{} priverstinai {} šią sąskaitą."
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow_step.py:297
+#, python-format
+msgid "{} has {} this invoice."
+msgstr "{} {} šią sąskaitą."
+
+#. module: invoice_approval_workflow
+#: code:addons/invoice_approval_workflow/models/invoice_approval_workflow.py:127
+#, python-format
+msgid "{}{} has force {} this invoice."
+msgstr "{}{} priverstinai {} šią sąskaitą."
+
+#. module: invoice_approval_workflow
+#: model:ir.actions.act_window,robo_help:invoice_approval_workflow.invoice_approval_step_action
+#: model:ir.actions.act_window,robo_help:invoice_approval_workflow.invoice_approval_workflow_front_end_action
+#: model:ir.actions.act_window,robo_help:invoice_approval_workflow.invoice_approval_workflow_step_approver_action
+#: model:ir.actions.act_window,robo_help:invoice_approval_workflow.invoice_approval_workflow_step_front_end_action
+#: model:ir.actions.act_window,robo_help:invoice_approval_workflow.invoice_approver_tree_view_front_end_action
+msgid "Ši jūsų užklausa negrąžino jokių rezultatų"
+msgstr "Ši jūsų užklausa negrąžino jokių rezultatų"

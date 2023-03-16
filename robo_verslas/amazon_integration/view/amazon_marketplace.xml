@@ -1,0 +1,66 @@
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_amazon_marketplace" model="ir.ui.view">
+            <field name="name">tree.amazon.marketplace</field>
+            <field name="model">amazon.marketplace</field>
+            <field name="arch" type="xml">
+                <tree string="Amazon prekiavietės"
+                      create="1" edit="1" delete="1"
+                      decoration-success="state == 'configured'"
+                      decoration-warning="state == 'warning'">
+                    <field name="name"/>
+                    <field name="marketplace_code"/>
+                    <field name="country_id"/>
+                    <field name="partner_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Forms-->
+        <record id="form_amazon_marketplace" model="ir.ui.view">
+            <field name="name">form.amazon.marketplace</field>
+            <field name="model">amazon.marketplace</field>
+            <field name="arch" type="xml">
+                <form string="Amazon prekiavietės">
+                    <sheet>
+                        <div>
+                            <label string="Pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" required="True"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="partner_id" readonly="True"/>
+                            <field name="marketplace_code" readonly="True"/>
+                            <field name="country_id" required="True"/>
+                            <field name="activated"/>
+                        </group>
+                        <group string="Mokesčiai">
+                            <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                                attrs="{'invisible': [('activated', '=', True)]}">
+                                    Prieš aktyvuodami parduotuvę būtinai patikrinkite kokie mokesčiai turi
+                                    būti priskiriami šios parduotuvės Paslaugų ir Produktų pardavimams.
+                                    Mokestis turi būti priskiriamas pagal šalies reikalavimus.
+                            </div>
+                        </group>
+                        <group>
+                            <field name="product_tax_id"/>
+                            <field name="service_tax_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_amazon_marketplace" model="ir.actions.act_window">
+            <field name="name">Amazon prekiavietės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.marketplace</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_amazon_marketplace"/>
+        </record>
+    </data>
+</odoo>

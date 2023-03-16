@@ -1,0 +1,28 @@
+<odoo>
+    <data>
+        <record id="open_employees_action_new_form" model="ir.ui.view">
+            <field name="name">form.hr.employee.apb_walless</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='pdf_files']" position="after">
+                    <page groups="robo_basic.group_robo_premium_accountant,robo_basic.group_robo_premium_manager"
+                          string="Walless honorarai">
+                        <group>
+                            <field name="default_royalty_amount"/>
+                            <field name="is_accountant" invisible="True"/>
+                            <field name="start_of_work"
+                                   groups='robo_basic.group_robo_premium_accountant,robo_basic.group_robo_premium_manager'/>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']/group[1]" position="inside">
+                    <group string="Privalomasis sveikatos draudimas">
+                        <field name="yearly_psd_amount"/>
+                        <field name="yearly_psd_amount_paid"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

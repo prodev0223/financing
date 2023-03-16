@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_approval_workflow_view_form" model="ir.ui.view">
+            <field name="name">invoice.approval.workflow.view.form</field>
+            <field name="model">invoice.approval.workflow</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Invoice approval workflow">
+                    <sheet>
+                        <header>
+                            <field name="decision" attrs="{'invisible': True}"/>
+                            <field name="allow_performing_approval_action" attrs="{'invisible': True}"/>
+                        </header>
+                        <group>
+                            <group colspan="4" col="3">
+                                <group colspan="2" col="1" class="invoice_approval_buttons">
+                                    <div>
+                                        <button name="action_approve" type="object"
+                                                class="approval_button button_approve" string="Force Approve"
+                                                attrs="{'invisible': [('allow_performing_approval_action', '=', False)]}"/>
+                                        <button name="action_disapprove" type="object"
+                                                class="approval_button button_disapprove" string="Force Disapprove"
+                                                attrs="{'invisible': [('allow_performing_approval_action', '=', False)]}"/>
+                                    </div>
+                                </group>
+                                <group colspan="1" col="1">
+                                    <group attrs="{'invisible': [('decision', '!=', 'approved')]}">
+                                        <div class="approval_status approval_status_approved">
+                                            Approved
+                                        </div>
+                                    </group>
+                                    <group attrs="{'invisible': [('decision', '!=', 'disapproved')]}">
+                                        <div class="approval_status approval_status_disapproved">
+                                            Disapproved
+                                        </div>
+                                    </group>
+                                    <group attrs="{'invisible': [('decision', '!=', False)]}">
+                                        <div class="approval_status approval_status_waiting">
+                                            Waiting
+                                        </div>
+                                    </group>
+                                </group>
+                            </group>
+                            <group colspan="4">
+                                <field name="invoice_id" options="{'no_create': True}"/>
+                                <field name="date_decision_made"
+                                       attrs="{'invisible': [
+                                            '|',
+                                            ('decision', '=', False),
+                                            ('date_decision_made', '=', False)
+                                       ]}"
+                                />
+                            </group>
+                            <group colspan="4" string="Approval steps">
+                                <field name="step_ids" attrs="{'readonly': True}" nolabel="1"
+                                       context="{
+                                           'form_view_ref': 'invoice_approval_workflow.invoice_approval_workflow_step_front_end_view_form'
+                                       }" mode="tree,kanban">
+                                    <tree edit="0" create="0" delete="0">
+                                        <field name="name"/>
+                                        <field name="number_of_approvers" string="Number of approvers"/>
+                                        <field name="number_of_approved_approvers" string="Approvals"/>
+                                        <field name="decision_made"/>
+                                        <field name="action_needed"/>
+                                    </tree>
+                                    <kanban class="o_kanban_mobile">
+                                        <field name="name"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.name.value or 'None'"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </group>
+
+                            <group string="Invoice info" colspan="4" col="4">
+                                <group colspan="4" col="4">
+                                    <field name="invoice_reference"/>
+                                    <field name="invoice_number"
+                                           attrs="{'invisible': [('invoice_number', '=', False)]}"
+                                    />
+                                    <field name="invoice_supplier" string="Supplier"/>
+                                    <field name="date_invoice"/>
+                                    <field name="amount_total_signed" widget="monetary" string="Amount"/>
+                                    <field name="amount_total_company_signed" widget="monetary"
+                                           string="Amount (company currency)"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="company_currency_id" invisible="1"/>
+                                    <field name="invoice_submitted" string="Submitter"/>
+                                    <field name="invoice_line_ids" colspan="4" nolabel="1"
+                                           options="{'no_create': True, 'no_open': True}"
+                                           mode="tree,kanban">
+                                        <tree>
+                                            <field name="name"/>
+                                            <field name="account_id"/>
+                                            <field name="account_analytic_id"/>
+                                            <field name="quantity"/>
+                                            <field name="price_unit"/>
+                                            <field name="discount"/>
+                                            <field name="invoice_line_tax_ids" widget="many2many_tags"/>
+                                            <field name="price_subtotal"/>
+                                            <field name="total_with_tax_amount" string="Total (with tax)"/>
+                                        </tree>
+                                        <kanban class="o_kanban_mobile">
+                                            <field name="product_id"/>
+                                            <field name="account_id"/>
+                                            <field name="account_analytic_id"/>
+                                            <field name="price_subtotal"/>
+                                            <field name="quantity"/>
+                                            <field name="name"/>
+                                            <field name="uom_id" groups="product.group_uom"/>
+                                            <templates>
+                                                <t t-name="kanban-box">
+                                                    <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <strong>
+                                                                    <span>
+                                                                        <t t-esc="record.name.value or 'None'"/>
+                                                                    </span>
+                                                                </strong>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-8 text-muted">
+                                                                <span>
+                                                                    <t t-esc="record.quantity.value"/>
+                                                                    <t t-esc="record.uom_id.value"/>
+                                                                </span>
+                                                            </div>
+                                                            <div class="col-xs-4 text-muted">
+                                                                <span class="text-right">
+                                                                    <t t-esc="record.price_subtotal.value"/>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-12 text-muted">
+                                                                <span>
+                                                                    <t t-esc="record.account_id.value or 'None'"/>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-12 text-muted">
+                                                                <span>
+                                                                    <t t-esc="record.account_analytic_id.value or 'None'"/>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </templates>
+                                    </kanban>
+                                    </field>
+                                </group>
+                                <group colspan="4" col="4">
+                                    <field name="invoice_pdf" widget="pdf_viewer"
+                                           attrs="{'invisible': [('invoice_pdf', '=', False)]}" nolabel="1"/>
+                                </group>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="invoice_approval_workflow_view_tree" model="ir.ui.view">
+            <field name="name">invoice.approval.workflow.view.tree</field>
+            <field name="model">invoice.approval.workflow</field>
+            <field name="arch" type="xml">
+                <tree string="Invoice approval workflows" create="0" import="0"
+                      decoration-info="decision == False"
+                      decoration-success="decision == 'approved'"
+                      decoration-danger="decision == 'disapproved'">
+                    <field name="invoice_id"/>
+                    <field name="invoice_supplier" string="Supplier"/>
+                    <field name="amount_total_signed" string="Amount" widget="monetary"/>
+                    <field name="invoice_submitted" string="Submitter"/>
+                    <field name="decision"/>
+                    <field name="waiting_for_text"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="invoice_approval_workflow_view_search" model="ir.ui.view">
+            <field name="name">invoice.approval.workflow.view.search</field>
+            <field name="model">invoice.approval.workflow</field>
+            <field name="arch" type="xml">
+                <search string="Invoice approval workflow search">
+                    <field name="invoice_id"/>
+                    <field name="invoice_supplier"/>
+                    <field name="invoice_submitted"/>
+                    <filter string="Waiting for a decision" name="ongoing" domain="[('decision', '=', False)]"/>
+                    <filter string="Approved" name="approved" domain="[('decision', '=', 'approved')]"/>
+                    <filter string="Disapproved" name="disapproved" domain="[('decision', '=', 'disapproved')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Decision" domain="[]" context="{'group_by': 'decision'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="invoice_approval_workflow_tree_action" model="ir.actions.act_window">
+            <field name="name">Invoice approval workflows</field>
+            <field name="res_model">invoice.approval.workflow</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_ongoing': True}</field>
+            <field name="view_id" ref="invoice_approval_workflow_view_tree"/>
+            <field name="search_view_id" ref="invoice_approval_workflow_view_search"/>
+        </record>
+
+        <record id="invoice_approval_workflow_front_end_action" model="ir.actions.act_window">
+            <field name="name">Invoices</field>
+            <field name="res_model">invoice.approval.workflow</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="context">{'search_default_ongoing': True, 'robo_header': {}}</field>
+            <field name="view_id" ref="invoice_approval_workflow_view_tree"/>
+            <field name="search_view_id" ref="invoice_approval_workflow_view_search"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+
+        <menuitem
+                id="invoice_approval_workflow_container_menu"
+                name="Workflows"
+                parent="invoice_approval_backend_menu"
+                sequence="2"
+                groups=""
+        />
+
+        <menuitem
+                id="invoice_approval_workflow_menu_action"
+                name="Workflows"
+                parent="invoice_approval_workflow_container_menu"
+                action="invoice_approval_workflow_tree_action"
+                sequence="1"
+                groups=""
+        />
+
+        <menuitem
+                id="invoice_approval_front_end_invoices"
+                name="Invoices"
+                action="invoice_approval_workflow_front_end_action"
+                groups="invoice_approval_workflow.invoice_approval_administrator"
+                parent="invoice_approval_workflow.invoice_approval_front_end_menu_container"
+                sequence="4"
+                force_web_icon="icon-papers,none,none"
+                robo_front="True"
+                searchable="True"
+                tags="invoice"
+        />
+
+        <record id="invoice_approval_workflow_approve" model="ir.actions.server">
+            <field name="name">Approve</field>
+            <field name="model_id" ref="invoice_approval_workflow.model_invoice_approval_workflow"/>
+            <field name="robo_front" eval="True"/>
+            <field name="code">
+approval_workflows = env['invoice.approval.workflow'].browse(context.get('active_ids', False))
+for workflow in approval_workflows.filtered(lambda s: not s.decision):
+    try:
+        workflow.action_approve()
+    except Exception:
+        pass
+            </field>
+        </record>
+        <function name="create_workflow_approve_action" model="invoice.approval.workflow"/>
+    </data>
+</odoo>

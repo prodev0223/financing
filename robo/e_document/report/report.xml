@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="narrow_paper_format" model="report.paperformat">
+            <field name="name">A4 narrower</field>
+            <field name="format">A4</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="header_line" eval="False"/>
+            <field name="dpi">90</field>
+            <field name="margin_right">15</field>
+            <field name="margin_top">40</field>
+            <field name="margin_left">15</field>
+            <field name="margin_bottom">23</field>
+            <field name="page_height">0</field>
+            <field name="header_spacing">35</field>
+        </record>
+        <report
+                id="e_documents_print"
+                model="e.document"
+                string="Spausdinti"
+                report_type="qweb-pdf"
+                name="e_document.general_print"
+                file="e_document.general_print"
+                paperformat="narrow_paper_format"
+        />
+        <template id="report_general_print">
+            <div>
+                <t t-raw="doc.final_document"/>
+            </div>
+            <div class="footer" t-if="doc.signed_user_id and doc.date_signed and not doc.no_mark and not doc._context.get('no_mark')">
+                <div style="float:right">
+                    <table style="border: 1px solid black;">
+                        <tbody>
+                            <tr>
+                                <td style="padding-top: 10px; padding-left: 10px; padding-right: 10px;">
+                                    <span>Pasirašė:</span> <span t-esc="doc.sudo().signed_user_id.name.upper()"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 10px; padding-right: 10px;">
+                                    <span>Laiko žyma:</span> <span t-field="doc.sudo().date_signed"/>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 10px; padding-left: 10px; padding-right: 10px;">
+                                    <span>Pasirašyta RoboLabs sistemoje</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <span>Vidiniai įmonės dokumentai įsigalioja ir turi juridinę galią pasirašymo teisę turinčiam
+                    asmeniui pasirašius pažangiuoju (nekvalifikuotu) elektroniniu parašu remiantis Elektroninių
+                    dokumentų valdymo taisyklėmis, patvirtintomis Lietuvos vyriausiojo archyvaro.
+                </span>
+            </div>
+        </template>
+        <template id="general_print">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="e_document.report_general_print"/>
+                </t>
+            </t>
+        </template>
+
+        <record id="ir_actions_report_xml_sign_extend" model="ir.ui.view">
+            <field name="name">ir.actions.report.xml.sign.extend</field>
+            <field name="model">ir.actions.report.xml</field>
+            <field name="inherit_id" ref="base.act_report_xml_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='unlink_action']" position="after">
+                    <field name="signable" invisible="1"/>
+                    <button name="create_signable" string="Make report signable" type="object"
+                            attrs="{'invisible':[('signable','=',True)]}" icon="fa-plus-square"
+                            help="Make report signable using e-signature" class="oe_stat_button"/>
+                    <button name="unlink_signable" string="Make report not signable" type="object"
+                            attrs="{'invisible':[('signable','=',False)]}" icon="fa-minus-square"
+                            help="Make report not signable using e-signature" class="oe_stat_button"/>
+                </xpath>
+            </field>
+        </record>
+
+        <report
+                id="e_documents_signing_summary"
+                model="e.document"
+                string="Spausdinti"
+                report_type="qweb-pdf"
+                name="e_document.signing_summary"
+                file="e_document.signing_summary"
+                paperformat="narrow_paper_format"
+        />
+
+        <template id="report_signing_summary">
+            <t t-name="e_document.report_signing_summary">
+                <t t-call="report.html_container">
+                    <div class="page xls_front" id="main">
+                        <div>
+                            <h4>
+                                Patvirtinu, kad su dokumentu <strong><span t-field="doc.sudo().topic"/></strong> susipažinau:
+                            </h4>
+                            <br/>
+                            <br/>
+                            <table class="table table-condensed main_table">
+                                <thead>
+                                    <tr style="border-bottom: 1pt solid black;">
+                                        <th style="border-bottom: 1pt solid black;">Vardas, Pavardė</th>
+                                        <th style="border-bottom: 1pt solid black;">Pasirašyta RoboLabs sistemoje</th>
+                                    </tr>
+                                </thead>
+                                <t t-foreach="doc.user_ids" t-as="user">
+                                    <tr>
+                                        <td style="white-space: nowrap;">
+                                            <div t-esc="user.user_id.partner_id.name"/>
+                                        </td>
+                                        <td style="white-space: nowrap;">
+                                            <div t-esc="user.date"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <template id="signing_summary">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="e_document.report_signing_summary"/>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

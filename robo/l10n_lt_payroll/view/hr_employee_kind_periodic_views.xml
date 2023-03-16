@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_employee_kind_periodic_tree" model="ir.ui.view">
+            <field name="name">hr.employee.kind.periodic.tree</field>
+            <field name="model">hr.employee.kind.periodic</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0" editable="bottom">
+                    <field name="kind_id" options="{'no_open': 0, 'no_create': 1}"/>
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <field name="date_stop"/>
+                    <button name="open_related_kind_payments" type="object" string="Created payments in kind"
+                            icon="icon-register one_and_half_size"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_hr_employee_kind_periodic" model="ir.actions.act_window">
+            <field name="name">Periodic payments in kind</field>
+            <field name="res_model">hr.employee.kind.periodic</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_employee_kind_periodic_tree')})]"/>
+        </record>
+
+        <menuitem id="menu_hr_employee_kind_periodic"
+                  parent="l10n_lt_payroll.menu_payment_employee"
+                  name="Periodic payments in kind"
+                  sequence="171"
+                  action="action_hr_employee_kind_periodic"/>
+
+        <record id="cron_periodic_payment_in_kind" model="ir.cron">
+            <field name="name">Create periodic payment in kind</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">hr.employee.kind.periodic</field>
+            <field name="function">cron_create_periodic_payment_in_kind</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=20)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,1725 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:doc="https://www.vmi.lt/cms/eivaz/dokumentacija" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xml="http://www.w3.org/XML/1998/namespace" elementFormDefault="qualified" attributeFormDefault="unqualified" version="iVAZ1.3.1">
+	<xsd:annotation>
+		<xsd:documentation xml:space="preserve">
+			<doc:Title>VMI prie FM i.VAZ duomenų rinkmena</doc:Title>
+			<doc:Subject>i.VAZ duomenų rinkmenos (e. važtaraščio rengimo) XML struktūros aprašas</doc:Subject>
+			<doc:Version>
+				<doc:Number>iVAZ1.3.1</doc:Number>
+				<doc:Status>galiojanti</doc:Status>
+			</doc:Version>
+			<doc:Author>VMI prie FM</doc:Author>
+			<doc:ModificationDate>2016-07-14</doc:ModificationDate>
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:element name="iVAZFile" type="iVAZFile">
+		<xsd:annotation>
+			<xsd:documentation xml:space="preserve">i.VAZ rinkmena</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:complexType name="iVAZFile">
+		<xsd:sequence>
+			<xsd:element name="FileDescription" type="FileDescription">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Rinkmenos apibūdinimas.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="eTransportDocuments" type="eTransportDocuments" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">i.VAZ aplinkoje išrašomi elektroniniai važtaraščiai.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TransportDocuments" type="TransportDocuments" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Sumažintos privalomų duomenų aibės važtaraščiai.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TransportDocumentAmendments" type="TransportDocumentAmendments" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Informacija apie važtaraščių duomenų keitimą (pvz., gavėjo, iškrovimo vietos).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CargoSplittings" type="CargoSplittings" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Važtaraščių skaidymai.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ReceiptConfirmations" type="ReceiptConfirmations" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Krovinių gavimų patvirtinimai. krovinių priėmimų vežti patvirtinimai bei perpėjimai dėl krovinio gavimo.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Cancellations" type="Cancellations" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Važtaraščių atšaukimai.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Orders" type="Orders" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Krovinių vežimo užsakymai.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ComplaintInfo">
+		<xsd:sequence>
+			<xsd:element name="ComplaintType" type="ComplaintType">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas nepasitenkinimo priežasties tipas pagal klasifikatorių (0 — Kita; 1 — Perviršis; 2 — Trūkumas; 3 — Apgadintos prekės; 4 — Pažeista plomba / komercinis antspaudas).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AdditionalInfo" type="IvazText256" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma papildoma nepasitenkinimo priežasties informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="FileDescription">
+		<xsd:sequence>
+			<xsd:element name="FileVersion" type="IvazText24" fixed="iVAZ1.3.1">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Rinkmenos XML versija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="FileDateCreated" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Rinkmenos sukūrimo data ir laikas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SoftwareCompanyName" type="IvazText256">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Programinės įrangos kūrėjo pavadinimas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SoftwareName" type="IvazText256">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Programinės įrangos pavadinimas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SoftwareVersion" type="IvazText24">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Programinės įrangos versija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CreatorRegistrationNumber" type="IvazNumber11">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Važtaraščio rengėjo, kuris teikia važtaraščio duomenis, registracijos numeris / kodas (mokesčių mokėtojo identifikacinis kodas).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="eTransportDocument">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseTransportDocument">
+				<xsd:sequence>
+					<xsd:element name="TransportDocumentUID" type="LocalTransportDocumentUID">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas važtaraščio rengėjo važtaraščiui suteiktas unikalus identifikacinis numeris (UID) rengėjo informacinėje sistemoje. Šis numeris gali būti naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti (pvz., į i.VAZ perduodant informaciją apie važtaraščio duomenų keitimą ar jo atšaukimą).</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="LocalTransportDocumentNumber" type="IvazText35">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma važtaraščio rengėjo važtaraščiui suteikta važtaraščio serija ir numeris arba tik numeris.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="LocalTransportDocumentDate" type="IvazDate201601" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma važtaraščio išrašymo data. Data negali būti vėlesnė, nei važtaraščio duomenų pateikimo į i.VAZ data. Jei data nenurodoma, automatiškai įrašoma važtaraščio duomenų patvirtinimo i.VAZ data.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="PlaceOfIssueTransportDocument" type="AddressStructure">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas važtaraščio išrašymo vietos adresas. Jei nėra galimybės nurodyti adresą struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="TimeOfDispatch" type="IvazDateTime201601">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma anksčiausia numatoma krovinio pakrovimo / išgabenimo data ir laikas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="EstimatedTimeOfArrival" type="IvazDateTime201601" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma numatoma krovinio pristatymo data ir laikas. Data ir laikas negali būti ankstesni, nei nurodyta numatoma krovinio pakrovimo / išgabenimo data ir laikas(TimeOfDispatch). Jei data ir laikas nenurodomi, i.VAZ automatiškai nurodoma numatomos krovinio pakrovimo / išgabenimo dienos (TimeOfDispatch) pabaiga (23 val. 59 min.)</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Consignor" type="ActorInformation">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Siuntėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie siuntėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Consignee" type="ActorInformation">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Gavėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie gavėją.
+              </xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Transporter" type="eTransporter">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Vežėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie vežėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ShipFrom" type="ShipFrom">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio pakrovimo / išgabenimo vietos duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ShipTo" type="ShipTo">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio iškrovimo / pristatymo vietos duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="DeliveryData" type="DeliveryData">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ComplementaryTransportInformation" type="ComplementaryTransportInformation" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma kita su vežimu susijusi informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="eTransportDocuments">
+		<xsd:sequence>
+			<xsd:element name="eTransportDocument" type="eTransportDocument" maxOccurs="10000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">i.VAZ aplinkoje išrašomas elektroninis važtaraštis.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Order">
+		<xsd:sequence>
+			<xsd:element name="TimeOfDispatch" type="IvazDateTime201601" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma anksčiausia numatoma krovinio pakrovimo / išgabenimo data ir laikas. Data ir laikas negali būti vėlesni nei faktinis krovinio išvežimo laikas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TimeOfReceipt" type="IvazDate201601" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma vėliausia numatoma krovinio pristatymo / iškrovimo data.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="EstimatedTimeOfArrival" type="IvazDateTime201601" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma numatoma krovinio pristatymo data ir laikas. Data ir laikas negali būti ankstesni, nei nurodyta numatoma krovinio pakrovimo / išgabenimo data ir laikas(TimeOfDispatch).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Consignor" type="ActorInformation" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Siuntėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie siuntėją.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Consignee" type="ActorInformation" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Gavėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie gavėją.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Transporter" type="BaseTransporter" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Vežėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie vežėją.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ShipFrom" type="ShipFrom" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio pakrovimo / išsiuntimo vietos duomenys.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ShipTo" type="ShipTo" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio iškrovimo / pristatymo vietos duomenys.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="DeliveryData" type="DeliveryData">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio duomenys.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ComplementaryTransportInformation" type="ComplementaryOptionalTransportInformation" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma kita su vežimu susijusi informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Orders">
+		<xsd:sequence>
+			<xsd:element name="Order" type="Order" maxOccurs="1000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Krovinio vežimo užsakymas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ProductInfo">
+		<xsd:sequence>
+			<xsd:element name="ProductLineNumber" type="IvazNumber3">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas eilutės / įrašo numeris. Naudojamas pirminio važtaraščio eilutės / įrašo numeris, su kuriuo susiję duomenys yra pateikiami.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AmountDifference" type="IvazNumber10f3" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas gabenamo kiekio perviršis / trūkumas važtaraštyje prie pasirinktos eilutės (įrašo) nurodytais kiekio matavimo vienetais. Teigiama reikšmė laikoma perviršiu, neigiama reikšmė (su minuso ženklu) — trūkumu.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="RefusedAmount" type="IvazNumber10f3" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas atsisakytas priimti kiekis važtaraštyje prie pasirinktos eilutės (įrašo) nurodytais kiekio matavimo vienetais. Pildoma, jeigu atsisakoma tam tikros dalies krovinio.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ComplaintInfo" type="ComplaintInfo" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma nepasitenkinimo priežasčių informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ProductsInfo">
+		<xsd:sequence>
+			<xsd:element name="ProductInfo" type="ProductInfo" maxOccurs="1000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma papildoma su krovinio gavimu arba priėmimu vežti susijusi informacija. Taip pat gali būti nurodoma su perspėjimu dėl krovinio gavimo susijusi informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ReceiptConfirmation">
+		<xsd:sequence>
+			<xsd:element name="TransportDocumentUID" type="TransportDocumentUID">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas važtaraščio rengėjo suteiktas važtaraščio UID (LocalTransportDocumentUID) arba i.VAZ sistemos važtaraščiui suteiktas važtaraščio registracijos numeris (IvazTransportDocumentUID). Nurodytas numeris naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ReceiptType" type="ReceiptType">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas pranešimo tipas pagal klasifikatorių (1 — vežėjo krovinio priėmimas vežti; 2 — gavėjo krovinio gavimo patvirtinimas). Klasifikatoriaus reikšmė "2 — gavėjo krovinio gavimo patvirtinimas" taip pat gali būti naudojama perspėjimui dėl krovinio gavimo perduoti.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ReceiptDate" type="IvazDate201601">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Krovinio priėmimo vežti atveju - nurodoma faktinė krovinio priėmimo vežti data. Krovinio gavimo patvirtinimo atveju - nurodoma faktinė krovinio priėmimo (iškrovimo) ar atsisakymo priimti data. Perspėjimo dėl krovinio gavimo atveju - nurodoma perspėjimo pateikimo data. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ReceivedCargoConclusion" type="ReceivedCargoConclusion">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas bendra krovinio priėmimo vežti arba gavimo išvada pagal klasifikatorių (1 — Prekių gavimas / priėmimas vežti patvirtintas ir patenkinamas; 2 — Prekių gavimas / priėmimas vežti patvirtintas, bet nepatenkinamas; 3 — prekių gavimas / priėmimas vežti nepatvirtintas (atsisakyta priimti krovinį); 4 — prekių gavimas / priėmimas vežti iš dalies nepatvirtintas; 5 — perspėjimas dėl krovinio gavimo). Nurodžius klasifikatoriaus reikšmę "5 — perspėjimas dėl krovinio gavimo" i.VAZ laikoma, kad perduotas perspėjimas dėl krovinio gavimo.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AdditionalInfo" type="IvazText256" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma papildoma su pranešimu susijusi informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ProductsInfo" type="ProductsInfo" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Gautų / trūkstamų prekių informacija. Pildoma, jeigu gautos arba priimtos vežti nevisos arba gauta per daug prekių, taip pat nurodomos atsisakomos priimti prekės ir jų kiekiai.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ReceiptConfirmations">
+		<xsd:sequence>
+			<xsd:element name="ReceiptConfirmation" type="ReceiptConfirmation" maxOccurs="10000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Pateikiama vieno iš šių pranešimų informacija: (1) krovinio gavimo patvirtinimas; (2) krovinio priėmimo vežti patvirtinimas; (3) perpėjimas dėl krovinio gavimo.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TransportDocument">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseTransportDocument">
+				<xsd:sequence>
+					<xsd:element name="TransportDocumentUID" type="LocalTransportDocumentUID">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas važtaraščio rengėjo važtaraščiui suteiktas unikalus identifikacinis numeris (UID) rengėjo informacinėje sistemoje. Šis numeris gali būti naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti (pvz., į i.VAZ perduodant informaciją apie važtaraščio duomenų keitimą ar jo atšaukimą).</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="LocalTransportDocumentNumber" type="IvazText35">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma važtaraščio rengėjo suteikta važtaraščio serija ir numeris arba tik numeris.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="LocalTransportDocumentDate" type="IvazDate201601">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma važtaraščio išrašymo data. Data negali būti vėlesnė, nei važtaraščio duomenų pateikimo į i.VAZ data.
+              </xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="PlaceOfIssueTransportDocument" type="AddressStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas važtaraščio išrašymo vietos adresas. Jei nėra galimybės nurodyti adresą struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="TimeOfDispatch" type="IvazDateTime201601">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma anksčiausia numatoma krovinio pakrovimo / išgabenimo data ir laikas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="EstimatedTimeOfArrival" type="IvazDateTime201601" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma numatoma krovinio pristatymo data ir laikas. Data ir laikas negali būti ankstesni, nei nurodyta numatoma krovinio pakrovimo / išgabenimo data ir laikas(TimeOfDispatch). Jei data ir laikas nenurodomi, i.VAZ automatiškai nurodoma numatomos krovinio pakrovimo / išgabenimo dienos (TimeOfDispatch) pabaiga (23 val. 59 min.)</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Consignor" type="ActorInformation">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Siuntėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie siuntėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Consignee" type="ActorInformation">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Gavėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie gavėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Transporter" type="Transporter">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Vežėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie vežėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ShipFrom" type="ShipFrom">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio pakrovimo / išgabenimo vietos duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ShipTo" type="ShipTo">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio iškrovimo / pristatymo vietos duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="DeliveryData" type="DeliveryData">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ComplementaryTransportInformation" type="ComplementaryOptionalTransportInformation" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma kita su vežimu susijusi informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="TransportDocuments">
+		<xsd:sequence>
+			<xsd:element name="TransportDocument" type="TransportDocument" maxOccurs="10000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Sumažintos privalomų duomenų aibės važtaraštis.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ActorInformation">
+		<xsd:sequence>
+			<xsd:element name="RegistrationNumber" type="IvazText35">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas pervežimo operacijos dalyvio registracijos numeris / kodas (mokesčių mokėtojo identifikacinis kodas arba kodas užsienio valstybėje). Jeigu reikšmė nežinoma, elementas užpildomas reikšme "ND".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="IvazText256">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas pervežimo operacijos dalyvio — juridinio asmens, tikslus pavadinimas arba fizinio asmens vardas ir pavardė, atitinkantys mokesčių mokėtojų registro duomenis ir naudojamą struktūrą.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Address" type="AddressStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas pervežimo operacijos dalyvio adresas. Jei nėra galimybės nurodyti adreso struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas. Jei kodo reikšmė (RegistrationNumber) nurodyta "ND", ši duomenų grupė privaloma. Duomenų grupė taip pat privaloma, jei nurodomas Mokesčių mokėtojų registre neregistruoto asmens kodas (pvz., užsienyje registruoto asmens kodas).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ContactInformation" type="IvazText256" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Jei reikalinga, nurodoma pervežimo operacijos dalyvio kontaktinė informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Address">
+		<xsd:sequence>
+			<xsd:element name="StreetName" type="IvazText70">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas gatvės pavadinimas. Jeigu gyvenamoji vietovė neturi gatvės pavadinimo, laukas užpildomas "ND".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="HouseNumber" type="IvazText24">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas pastato numeris gatvėje ar gyvenamojoje vietovėje ir korpuso numeris. Jeigu adresas neturi pastato numerio, laukas užpildomas "ND".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="City" type="IvazText70">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas miesto, kaimo ar kitos gyvenamosios vietovės pavadinimas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PostalCode" type="IvazText10">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas pašto kodas. Jeigu pašto kodas nežinomas, laukas užpildomas "ND".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Region" type="IvazText70" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas savivaldybės pavadinimas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Country" type="ISOCountryCode" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Valstybės kodas. Nurodomas šalies kodas iš dviejų raidžių pagal ISO 3166-1 alpha 2 standartą, pavyzdžiui, LV — Latvija. Jei šalies kodas nenurodomas, i.VAZ automatiškai nurodomas šalies kodas "LT".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AddressStructure">
+		<xsd:annotation>
+			<xsd:documentation xml:space="preserve">Adreso struktūra.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element name="Address" type="Address">
+					<xsd:annotation>
+						<xsd:documentation xml:space="preserve">Nurodomas struktūrizuotas adresas.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="FullAddress" type="IvazText256">
+					<xsd:annotation>
+						<xsd:documentation xml:space="preserve">Nurodomas nestruktūrizuotas adresas. Adresas rašomas laisvu tekstu (gatvė, namo numeris, buto numeris, miestas ir kt.). Užpildomas, jeigu neužpildomas struktūrizuotas adresas.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Annex">
+		<xsd:sequence>
+			<xsd:element name="TypeOfDocument" type="IvazText70" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma dokumento rūšis (pavadinimas arba kodas).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="DocumentDate" type="IvazDate199001" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma dokumento data.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="DocumentNumber" type="IvazText35" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas dokumento Nr.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Annexes">
+		<xsd:sequence>
+			<xsd:element name="Annex" type="Annex" maxOccurs="100">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma informacija apie pridedamą dokumentą</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BaseDeliveryData" abstract="true">
+		<xsd:sequence>
+			<xsd:element name="Products" type="BaseProducts" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Krovinių / prekių aprašymai.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Packages" type="Packages" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Krovinį (pakuotes) aprašantys duomenys.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Weight" type="WeightStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas bendras krovinio svoris. Nurodomas svoris arba bruto, arba neto, arba abu.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ClassesAndNumbers" type="ClassesAndNumbers" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma pavojingojo krovinio klasės ir Jungtinių Tautų numeriai, jeigu vežamas pavojingas krovinys.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Value" type="IvazNumber18f2" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma krovinio vertė.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Currency" type="ISOCurrencyCode" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma krovinio vertės valiuta. Nurodomas valiutos kodas iš trijų raidžių pagal ISO 4217 standartą, pavyzdžiui, USD — JAV doleriai. Jeigu valiuta            nenurodyta, i.VAZ automatiškai nustatoma valiuta EUR.          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ComplementaryDeliveryInformation" type="IvazText256" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma papildoma informacija apie krovinį.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BaseTransportDocument" abstract="true">
+		<xsd:sequence>
+			<xsd:element name="TransportDocumentUID" type="TransportDocumentUID">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Nurodomas važtaraščio rengėjo suteiktas važtaraščio UID (LocalTransportDocumentUID)arba i.VAZ sistemos važtaraščiui suteiktas važtaraščio registracijos
+            numeris (IvazTransportDocumentUID). Nurodytas numeris naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="LocalTransportDocumentNumber" type="IvazText35" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Nurodoma važtaraščio rengėjo suteikta važtaraščio serija ir numeris arba tik numeris.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="LocalTransportDocumentDate" type="IvazDate201601" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Nurodoma važtaraščio išrašymo data. Data negali būti vėlesnė, nei važtaraščio duomenų pateikimo į i.VAZ data.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PlaceOfIssueTransportDocument" type="AddressStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Šioje duomenų grupėje nurodomas važtaraščio išrašymo vietos adresas. Jei nėra galimybės nurodyti adresą struktūrizuota forma (struktūrizuoto adreso
+            duomenų pogrupis), nurodomas nestruktūrizuotas adresas. Važtaraščio duomenų teikimo pagal prievolę atveju šio adreso duomenų grupės laukai gali būti neužpildomi.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TimeOfDispatch" type="IvazDateTime201601" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Nurodoma anksčiausia numatoma krovinio pakrovimo / išgabenimo data ir laikas. Data ir laikas negali būti vėlesni nei faktinis krovinio išvežimo laikas.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="EstimatedTimeOfArrival" type="IvazDateTime201601" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Nurodomas laikas valandomis arba dienomis, kurio paprastai reikia kelionei, atsižvelgiant į transporto priemonę ir atstumą. Kai kelionės laikas
+            nenurodomas, i.VAZ automatiškai nurodo 12 val. kelionės trukmę. Teikiant laiką valandomis, prieš laiką pridedamas simbolis "h", teikiant dienomis — "d", pvz., "h3",
+            "h9", "d5", "d15". Po "h" rašomas skaičius neturi būti didesnis nei 24, o po "d" — 92. Kelionės laiką nurodant dienomis laikas apvalinamas iki artimiausio sveikojo
+            dienų skaičiaus, į didesnę pusę (pvz., jei kelionė faktiškai truks 1,5 dienos, nurodoma "d2").
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Consignor" type="ActorInformation" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Siuntėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie siuntėją.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Consignee" type="ActorInformation" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Gavėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie gavėją.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Transporter" type="BaseTransporter" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Vežėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie vežėją.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ShipFrom" type="ShipFrom" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Šioje duomenų grupėje pateikiami krovinio pakrovimo / išgabenimo vietos duomenys.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ShipTo" type="ShipTo" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Šioje duomenų grupėje pateikiami krovinio iškrovimo / pristatymo vietos duomenys.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="DeliveryData" type="BaseDeliveryData" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Šioje duomenų grupėje pateikiami krovinio duomenys.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ComplementaryTransportInformation" type="ComplementaryOptionalTransportInformation" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">
+            Šioje duomenų grupėje nurodoma kita su vežimu susijusi informacija.
+          </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ClassesAndNumbers">
+		<xsd:sequence>
+			<xsd:element name="ClassAndNumber" type="IvazText35" maxOccurs="100">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma pavojingojo krovinio klasė ir Jungtinių Tautų numeris, jeigu vežamas pavojingas krovinys.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BaseTransporter">
+		<xsd:sequence>
+			<xsd:element name="RegistrationNumber" type="IvazText35">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas vežėjo registracijos numeris / kodas (mokesčių mokėtojo identifikacinis kodas arba kodas užsienio valstybėje). Jeigu reikšmė nežinoma, elementas užpildomas reikšme "ND".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="IvazText256">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas vežėjo — juridinio asmens, tikslus pavadinimas arba fizinio asmens vardas ir pavardė, atitinkantys mokesčių mokėtojų registro duomenis ir naudojamą struktūrą.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TransporterAddress" type="AddressStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas vežėjo adresas. Jei nėra galimybės nurodyti adreso struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas. Jei kodo reikšmė (RegistrationNumber) nurodyta "ND", ši duomenų grupė privaloma. Duomenų grupė taip pat privaloma, jei nurodomas Mokesčių mokėtojų registre neregistruoto asmens kodas (pvz., užsienyje registruoto asmens kodas).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ContactInformation" type="IvazText256" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Jei reikalinga, nurodoma pervežimo operacijos dalyvio kontaktinė informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TransportMeans" type="TransportMeans" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma transporto priemonių informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Drivers" type="Drivers" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma transporto priemonės vairuotojų informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Cancellation">
+		<xsd:sequence>
+			<xsd:element name="TransportDocumentUID" type="TransportDocumentUID">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas važtaraščio rengėjo suteiktas važtaraščio UID (LocalTransportDocumentUID)arba i.VAZ sistemos važtaraščiui suteiktas važtaraščio registracijos numeris (IvazTransportDocumentUID). Nurodytas numeris naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CancellationReason" type="CancellationReason">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma važtaraščio atšaukimo priežastis pagal klasifikatorių (1 — Spausdinimo klaida; 2 — Nutraukta komercinė operacija; 3 — Sudubliuoti dokumentai; 4 — Išsiuntimo dieną gabenimas nepradėtas; 5 — Krovinio gražinimas siuntėjui; 6 — Kita.) Nurodžius klasifikatoriaus reikšmę "6 — Kita" atšaukimo priežastis turi būti nurodoma lauke "AdditionalInfo".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TimeOfCancellation" type="xsd:dateTime" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma važtaraščio atšaukimo data ir laikas. Nurodoma tais atvejais, kai atšaukimo data ir laikas skiriasi nuo duomenų pateikimo datos ir laiko, pvz., kai važtaraštis buvo atšauktas atsarginių procedūrų naudojimo metu. Nepateikus šio duomens automatiškai nurodoma duomenų pateikimo į i.VAZ data ir laikas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AdditionalInfo" type="IvazText256" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma papildoma su važtaraščio atšaukimu susijusi informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Cancellations">
+		<xsd:sequence>
+			<xsd:element name="Cancellation" type="Cancellation" maxOccurs="10000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Važtaraščio atšaukimas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CargoSplitting">
+		<xsd:sequence>
+			<xsd:element name="TransportDocumentUID" type="TransportDocumentUID">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas važtaraščio rengėjo suteiktas važtaraščio UID (LocalTransportDocumentUID) arba i.VAZ sistemos važtaraščiui suteiktas važtaraščio registracijos numeris(IvazTransportDocumentUID). Nurodytas numeris naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TransportDocumentSplits" type="TransportDocumentSplits">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma važtaraščio skaidymo informacija. Užpildomi tik tie duomenys (duomenų grupės), kurie keičiasi skaidant važtaraštį. Neužpildyti duomenų laukai automatiškai užpildomi duomenimis, pateiktais skaidomame važtaraštyje. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CargoSplittings">
+		<xsd:sequence>
+			<xsd:element name="CargoSplitting" type="CargoSplitting" maxOccurs="1000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Važtaraščio skaidymas. Nurodomas i.VAZ registruotas skaidomas važtaraštis bei jo skaidymo informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ComplementaryOptionalTransportInformation">
+		<xsd:sequence>
+			<xsd:element name="PaymentsForDelivery" type="PaymentsForDelivery" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Mokesčiai už vežimą ir suteiktas paslaugas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Annexes" type="Annexes" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma informacija apie pridedamus dokumentus.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OtherInstructions" type="IvazText256" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Pateikiami kiti nurodymai / instrukcijos vežėjui.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ComplementaryTransportInformation">
+		<xsd:complexContent>
+			<xsd:restriction base="ComplementaryOptionalTransportInformation">
+				<xsd:sequence>
+					<xsd:element name="PaymentsForDelivery" type="PaymentsForDelivery">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Mokesčiai už vežimą ir suteiktas paslaugas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Annexes" type="Annexes" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma informacija apie pridedamus dokumentus.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="OtherInstructions" type="IvazText256" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Pateikiami kiti nurodymai / instrukcijos vežėjui.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="DeliveryData">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseDeliveryData">
+				<xsd:sequence>
+					<xsd:element name="Products" type="Products">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Krovinių / prekių aprašymai.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Packages" type="Packages" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Krovinį (pakuotes) aprašantys duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Weight" type="WeightStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas bendras krovinio svoris. Nurodomas svoris arba bruto, arba neto, arba abu.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ClassesAndNumbers" type="ClassesAndNumbers" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma pavojingojo krovinio klasės ir Jungtinių Tautų numeriai, jeigu vežamas pavojingas krovinys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Value" type="IvazNumber18f2" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma krovinio vertė.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Currency" type="ISOCurrencyCode" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma krovinio vertės valiuta. Nurodomas valiutos kodas iš trijų raidžių pagal ISO 4217 standartą, pavyzdžiui, USD — JAV doleriai. Jeigu valiuta            nenurodyta, i.VAZ automatiškai nustatoma valiuta EUR.          </xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ComplementaryDeliveryInformation" type="IvazText256" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma papildoma informacija apie krovinį.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AmendmentDeliveryData">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseDeliveryData">
+				<xsd:sequence>
+					<xsd:element name="Products" type="Products" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Krovinių / prekių aprašymai.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Packages" type="Packages" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Krovinį (pakuotes) aprašantys duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Weight" type="WeightStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas bendras krovinio svoris. Nurodomas svoris arba bruto, arba neto, arba abu.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ClassesAndNumbers" type="ClassesAndNumbers" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma pavojingojo krovinio klasės ir Jungtinių Tautų numeriai, jeigu vežamas pavojingas krovinys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Value" type="IvazNumber18f2" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma krovinio vertė.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Currency" type="ISOCurrencyCode" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma krovinio vertės valiuta. Nurodomas valiutos kodas iš trijų raidžių pagal ISO 4217 standartą, pavyzdžiui, USD — JAV doleriai. Jeigu valiuta            nenurodyta, i.VAZ automatiškai nustatoma valiuta EUR.          </xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ComplementaryDeliveryInformation" type="IvazText256" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma papildoma informacija apie krovinį.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Driver">
+		<xsd:sequence>
+			<xsd:element name="Name" type="IvazText70">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas vairuotojo vardas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Surname" type="IvazText70">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma vairuotojo pavardė.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Drivers">
+		<xsd:sequence>
+			<xsd:element name="Driver" type="Driver" maxOccurs="100">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma vairuotojo informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="eTransporter">
+		<xsd:complexContent>
+			<xsd:restriction base="Transporter">
+				<xsd:sequence>
+					<xsd:element name="RegistrationNumber" type="IvazText35">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas vežėjo registracijos numeris / kodas (mokesčių mokėtojo identifikacinis kodas arba kodas užsienio valstybėje). Jeigu reikšmė nežinoma, elementas užpildomas reikšme "ND".</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Name" type="IvazText256">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas vežėjo — juridinio asmens, tikslus pavadinimas arba fizinio asmens vardas ir pavardė, atitinkantys mokesčių mokėtojų registro duomenis ir naudojamą struktūrą.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="TransporterAddress" type="AddressStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas vežėjo adresas. Jei nėra galimybės nurodyti adreso struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas. Jei kodo reikšmė (RegistrationNumber) nurodyta "ND", ši duomenų grupė privaloma. Duomenų grupė taip pat privaloma, jei nurodomas Mokesčių mokėtojų registre neregistruoto asmens kodas (pvz., užsienyje registruoto asmens kodas).</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ContactInformation" type="IvazText256" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Jei reikalinga, nurodoma pervežimo operacijos dalyvio kontaktinė informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="TransportMeans" type="eTransportMeans">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma transporto priemonių informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Drivers" type="Drivers" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma transporto priemonės vairuotojų informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="eTransportMean">
+		<xsd:complexContent>
+			<xsd:restriction base="TransportMean">
+				<xsd:sequence>
+					<xsd:element name="IdentityOfTransportUnits" type="IvazText10">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas transporto priemonės ar priekabos valstybinis numeris.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="MarqueModelTransportUnits" type="IvazText70" minOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma transporto priemonės markė, modelis. Jeigu aprašoma priekaba, elementas užpildomas reikšme "Priekaba" arba "ND".</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Seals" type="Seals" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma transporto priemonės plombų / komercinių antspaudų informacija, jeigu transporto priemonė yra plombuota / antspauduota.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="eTransportMeans">
+		<xsd:complexContent>
+			<xsd:restriction base="TransportMeans">
+				<xsd:sequence>
+					<xsd:element name="TransportMean" type="eTransportMean" maxOccurs="100">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma vienos transporto priemonės informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Package">
+		<xsd:sequence>
+			<xsd:element name="KindOfPackagesCode" type="IvazText24">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma pakuotės rūšis (pavadinimas arba kodas), pvz., "dėžė". Siūloma naudoti i.VAZ sistemoje siūlomas pakuočių rūšis, tačiau suteikiama galimybė pagal poreikį nurodyti kitas pakuočių rūšis ir (ar) kodus.        </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PackagesID" type="IvazText256" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas pakuotės numeris.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="NumberOfPackages" type="IvazNumber10">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas pakuočių skaičius.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Seals" type="Seals" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma pakuotės plombų / komercinių antspaudų informacija, jeigu pakuotė yra plombuota / antspauduota.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Packages">
+		<xsd:sequence>
+			<xsd:element name="Package" type="Package" maxOccurs="1000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Pakuotę aprašantys duomenys.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PaymentForDelivery">
+		<xsd:sequence>
+			<xsd:element name="TypeOfTax" type="IvazText70" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma mokesčio rūšis.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PaymentValue" type="IvazNumber18f2" nillable="true" minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma mokesčio suma. Jei mokesčio sumos pasirinkta nenurodyti, šio elemento reikšmė taip pat nenurodoma (elementas paliekamas "nillable").</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Currency" type="ISOCurrencyCode" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma mokesčio valiuta. Nurodomas valiutos kodas iš trijų raidžių pagal ISO 4217 standartą, pavyzdžiui, USD — JAV doleriai. Jeigu valiuta nenurodyta, i.VAZ automatiškai nustatoma valiuta EUR. Valiuta nurodoma tik tokiu atveju, jeigu elemente "PaymentValue" nurodyta mokesčio suma (elementas nepaliktas "nillable").</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PaymentsForDelivery">
+		<xsd:sequence>
+			<xsd:element name="PaymentForDelivery" type="PaymentForDelivery" maxOccurs="100">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Mokestis už vežimą ir suteiktas paslaugas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BaseProduct" abstract="true">
+		<xsd:sequence>
+			<xsd:element name="ProductLineNumber" type="IvazNumber3">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas eilutės / įrašo numeris. Naudojamas skaidomo važtaraščio eilutės, kurioje aprašytos prekės yra skaidomos, numeris.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Quantity" type="IvazNumber10f3">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas krovinio kiekis skaidomame važtaraštyje nurodytais matavimo vienetais.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="UnitOfMeasure" type="IvazText24" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas matavimo vieneto kodas (pvz.: KGM, LTR) ar pavadinimas (pvz.: 12 vnt. pakuotė), jei skiriasi nuo skaidomame važtaraštyje nurodyto matavimo vieneto. Jei matavimo vienetas nenurodomas, i.VAZ automatiškai įvedamas skaidomame važtaraštyje nurodytoje eilutėje įvestas matavimo vienetas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ProductCode" type="IvazText70" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas prekės / krovinio kodas (jeigu naudojamas).
+              </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AdditionalProductCode" type="IvazText70" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas papildomas prekės / krovinio kodas (jeigu naudojamas).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ProductDescription" type="IvazText350" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas krovinio pavadinimas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BaseProducts">
+		<xsd:sequence>
+			<xsd:element name="Product" type="BaseProduct" maxOccurs="1000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Krovinio / prekės aprašymas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Product">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseProduct">
+				<xsd:sequence>
+					<xsd:element name="ProductLineNumber" type="IvazNumber3">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas eilutės / įrašo numeris. Eilutės / įrašo numeris: (1) turi nesutapti su kitu eilutės / įrašo numeriu tame pačiame važtaraštyje; (2) turi būti sveikasis teigiamas skaičius.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Quantity" type="IvazNumber10f3">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas krovinio kiekis pasirinktais matavimo vienetais.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="UnitOfMeasure" type="IvazText24">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas matavimo vieneto kodas (pvz.: KGM, LTR) ar pavadinimas (pvz.: 12 vnt. pakuotė). Siūloma naudoti i.VAZ sistemoje siūlomus matavimo vienetų kodus, tačiau suteikiama galimybė pagal poreikį nurodyti kitus matavimo vienetus.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ProductCode" type="IvazText70" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas prekės / krovinio kodas (jeigu naudojamas).
+              </xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="AdditionalProductCode" type="IvazText70" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas papildomas prekės / krovinio kodas (jeigu naudojamas).</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ProductDescription" type="IvazText350">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas krovinio pavadinimas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Products">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseProducts">
+				<xsd:sequence>
+					<xsd:element name="Product" type="Product" maxOccurs="1000">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Krovinio / prekės aprašymas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Seal">
+		<xsd:sequence>
+			<xsd:element name="IdentityOfCommercialSeal" type="IvazText35">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomi plombos / komercinio antspaudo identifikavimo duomenys (pvz., plombos numeris).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SealInformation" type="IvazText256" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas plombos / komercinio antspaudo aprašymas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Seals">
+		<xsd:sequence>
+			<xsd:element name="Seal" type="Seal" maxOccurs="100">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma vienos plombos / komercinio antspaudo informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ShipFrom">
+		<xsd:sequence>
+			<xsd:element name="WarehouseID" type="IvazText24" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas sandėlis (Nr. arba pavadinimas), kuriame pakraunamos prekės (jei įmanoma identifikuoti).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="LoadAddress" type="AddressStructure">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas pakrovimo vietos adresas. Jei nėra galimybės nurodyti adresą struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ImportCustomOffice" type="IvazText10" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas importo / eksporto muitinės kodas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ShipTo">
+		<xsd:sequence>
+			<xsd:element name="WarehouseID" type="IvazText24" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas sandėlis (Nr. arba pavadinimas), kuriame iškraunamos prekės (jei įmanoma identifikuoti).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="UnloadAddress" type="AddressStructure">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas iškrovimo vietos adresas. Jei nėra galimybės nurodyti adresą struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ExportCustomOffice" type="IvazText10" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas importo / eksporto muitinės kodas.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SplitDeliveryData">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseDeliveryData">
+				<xsd:sequence>
+					<xsd:element name="Products" type="SplitProducts">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Krovinių / prekių aprašymai.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Packages" type="Packages" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Krovinį (pakuotes) aprašantys duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Weight" type="WeightStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas bendras krovinio svoris. Nurodomas svoris arba bruto, arba neto, arba abu.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ClassesAndNumbers" type="ClassesAndNumbers" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma pavojingojo krovinio klasės ir Jungtinių Tautų numeriai, jeigu vežamas pavojingas krovinys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Value" type="IvazNumber18f2" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma krovinio vertė.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Currency" type="ISOCurrencyCode" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma krovinio vertės valiuta. Nurodomas valiutos kodas iš trijų raidžių pagal ISO 4217 standartą, pavyzdžiui, USD — JAV doleriai. Jeigu valiuta            nenurodyta, i.VAZ automatiškai nustatoma valiuta EUR.          </xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ComplementaryDeliveryInformation" type="IvazText256" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma papildoma informacija apie krovinį.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="SplitProduct">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseProduct">
+				<xsd:sequence>
+					<xsd:element name="ProductLineNumber" type="IvazNumber3">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas eilutės / įrašo numeris. Naudojamas skaidomo važtaraščio eilutės, kurioje aprašytos prekės yra skaidomos, numeris.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Quantity" type="IvazNumber10f3">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas krovinio kiekis. Kiekį siūloma nurodyti skaidomame važtaraštyje nurodytais matavimo vienetais, tačiau suteikiama galimybė nurodyti ir kitus matavimo vienetus.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="UnitOfMeasure" type="IvazText24" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas matavimo vieneto kodas (pvz.: KGM, LTR) ar pavadinimas (pvz.: 12 vnt. pakuotė), jei skiriasi nuo skaidomame važtaraštyje nurodyto matavimo vieneto. Jei matavimo vienetas nenurodomas, i.VAZ automatiškai įvedamas skaidomame važtaraštyje nurodytoje eilutėje įvestas matavimo vienetas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="SplitProducts">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseProducts">
+				<xsd:sequence>
+					<xsd:element name="Product" type="SplitProduct" maxOccurs="1000">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Krovinio (prekės) aprašymas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="TransportDocumentAmendment">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseTransportDocument">
+				<xsd:sequence>
+					<xsd:element name="TransportDocumentUID" type="TransportDocumentUID">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas važtaraščio rengėjo suteiktas važtaraščio UID (LocalTransportDocumentUID) arba i.VAZ sistemos važtaraščiui suteiktas važtaraščio registracijos numeris (IvazTransportDocumentUID). Nurodytas numeris naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="LocalTransportDocumentNumber" type="IvazText35" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma važtaraščio rengėjo suteikta važtaraščio serija ir numeris arba tik numeris.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="LocalTransportDocumentDate" type="IvazDate201601" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma važtaraščio išrašymo data.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="PlaceOfIssueTransportDocument" type="AddressStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas važtaraščio išrašymo vietos adresas. Jei nėra galimybės nurodyti adresą struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="TimeOfDispatch" type="IvazDateTime201601" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma anksčiausia numatoma krovinio pakrovimo / išgabenimo data ir laikas. Data ir laikas negali būti vėlesni nei faktinis krovinio išvežimo laikas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="EstimatedTimeOfArrival" type="IvazDateTime201601" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma numatoma krovinio pristatymo data ir laikas. Data ir laikas negali būti ankstesni, nei nurodyta numatoma krovinio pakrovimo / išgabenimo data ir laikas(TimeOfDispatch).</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Consignor" type="ActorInformation" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Siuntėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie siuntėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Consignee" type="ActorInformation" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Gavėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie gavėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Transporter" type="BaseTransporter" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Vežėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie vežėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ShipFrom" type="ShipFrom" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio pakrovimo / išgabenimo vietos duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ShipTo" type="ShipTo" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio iškrovimo / pristatymo vietos duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="DeliveryData" type="AmendmentDeliveryData" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ComplementaryTransportInformation" type="ComplementaryOptionalTransportInformation" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma kita su vežimu susijusi informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="TransportDocumentAmendments">
+		<xsd:sequence>
+			<xsd:element name="TransportDocumentAmendment" type="TransportDocumentAmendment" maxOccurs="10000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Informacija apie važtaraščio duomenų keitimą (pvz., gavėjo, iškrovimo vietos). </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TransportDocumentSplit">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseTransportDocument">
+				<xsd:sequence>
+					<xsd:element name="TransportDocumentUID" type="LocalTransportDocumentUID">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas važtaraščio rengėjo važtaraščiui suteiktas unikalus identifikacinis numeris (UID) rengėjo informacinėje sistemoje. Šis numeris gali būti naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti (pvz., į i.VAZ perduodant informaciją apie važtaraščio duomenų keitimą ar jo atšaukimą).</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="LocalTransportDocumentNumber" type="IvazText35">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma važtaraščio rengėjo suteikta važtaraščio serija ir numeris arba tik numeris.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="LocalTransportDocumentDate" type="IvazDate201601" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma važtaraščio išrašymo data.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="PlaceOfIssueTransportDocument" type="AddressStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas važtaraščio išrašymo vietos adresas. Jei nėra galimybės nurodyti adresą struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="TimeOfDispatch" type="IvazDateTime201601" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma anksčiausia numatoma krovinio pakrovimo / išgabenimo data ir laikas. Data ir laikas negali būti vėlesni nei faktinis krovinio išvežimo laikas.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="EstimatedTimeOfArrival" type="IvazDateTime201601" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma numatoma krovinio pristatymo data ir laikas. Data ir laikas negali būti ankstesni, nei nurodyta numatoma krovinio pakrovimo / išgabenimo data ir laikas(TimeOfDispatch).</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Consignor" type="ActorInformation" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Siuntėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie siuntėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Consignee" type="ActorInformation" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Gavėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie gavėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Transporter" type="Transporter" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Vežėjo duomenys. Šioje duomenų grupėje pateikiama informacija apie vežėją.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ShipFrom" type="ShipFrom" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio pakrovimo / išgabenimo vietos duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ShipTo" type="ShipTo" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio iškrovimo/pristatymo vietos duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="DeliveryData" type="SplitDeliveryData">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje pateikiami krovinio duomenys.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ComplementaryTransportInformation" type="ComplementaryOptionalTransportInformation" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma kita su vežimu susijusi informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="TransportDocumentSplits">
+		<xsd:sequence>
+			<xsd:element name="TransportDocumentSplit" type="TransportDocumentSplit" maxOccurs="1000">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Važtaraščio skaidymo dokumentas. Užpildoma tiek važtaraščio skaidymo dokumentų, į kiek važtaraščių skaidomas krovinys. Pvz., jeigu krovinys skaidomas į 3 dalis — užpildomos 3 važtaraščio skaidymo dokumentai.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TransportDocumentUID">
+		<xsd:choice>
+			<xsd:element name="LocalTransportDocumentUID" type="IvazText40">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas važtaraščio rengėjo važtaraščiui suteiktas unikalus identifikacinis numeris (UID) rengėjo informacinėje sistemoje. Šis numeris gali būti naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti (pvz., į i.VAZ perduodant informaciją apie važtaraščio duomenų keitimą ar jo atšaukimą).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="IvazTransportDocumentUID" type="IvazText40">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas i.VAZ sistemos važtaraščiui suteiktas važtaraščio unikalus ID - važtaraščio registracijos numeris (RN). Šis numeris gali būti naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti (pvz., į i.VAZ perduodant informaciją apie važtaraščio duomenų keitimą ar jo atšaukimą).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="LocalTransportDocumentUID">
+		<xsd:complexContent>
+			<xsd:restriction base="TransportDocumentUID">
+				<xsd:choice>
+					<xsd:element name="LocalTransportDocumentUID" type="IvazText40">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas važtaraščio rengėjo važtaraščiui suteiktas unikalus identifikacinis numeris (UID) rengėjo informacinėje sistemoje. Šis numeris gali būti naudojamas konkrečiam važtarščio įrašui i.VAZ nustatyti (pvz., į i.VAZ perduodant informaciją apie važtaraščio duomenų keitimą ar jo atšaukimą).</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Transporter">
+		<xsd:complexContent>
+			<xsd:restriction base="BaseTransporter">
+				<xsd:sequence>
+					<xsd:element name="RegistrationNumber" type="IvazText35">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas vežėjo registracijos numeris / kodas (mokesčių mokėtojo identifikacinis kodas arba kodas užsienio valstybėje). Jeigu reikšmė nežinoma, elementas užpildomas reikšme "ND".</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Name" type="IvazText256">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodomas vežėjo — juridinio asmens, tikslus pavadinimas arba fizinio asmens vardas ir pavardė, atitinkantys mokesčių mokėtojų registro duomenis ir naudojamą struktūrą.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="TransporterAddress" type="AddressStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodomas vežėjo adresas. Jei nėra galimybės nurodyti adreso struktūrizuota forma (struktūrizuoto adreso duomenų pogrupis), nurodomas nestruktūrizuotas adresas. Jei kodo reikšmė (RegistrationNumber) nurodyta "ND", ši duomenų grupė privaloma. Duomenų grupė taip pat privaloma, jei nurodomas Mokesčių mokėtojų registre neregistruoto asmens kodas (pvz., užsienyje registruoto asmens kodas).</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ContactInformation" type="IvazText256" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Jei reikalinga, nurodoma pervežimo operacijos dalyvio kontaktinė informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="TransportMeans" type="TransportMeans">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma transporto priemonių informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Drivers" type="Drivers" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation xml:space="preserve">Nurodoma transporto priemonės vairuotojų informacija.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="TransportMean">
+		<xsd:sequence>
+			<xsd:element name="IdentityOfTransportUnits" type="IvazText10">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas transporto priemonės ar priekabos valstybinis numeris.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="MarqueModelTransportUnits" type="IvazText70" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma transporto priemonės markė, modelis. Jeigu aprašoma priekaba, elementas užpildomas reikšme "Priekaba" arba "ND".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Seals" type="Seals" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodoma transporto priemonės plombų / komercinių antspaudų informacija, jeigu transporto priemonė yra plombuota / antspauduota.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TransportMeans">
+		<xsd:sequence>
+			<xsd:element name="TransportMean" type="TransportMean" maxOccurs="100">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Šioje duomenų grupėje nurodoma vienos transporto priemonės informacija.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="WeightStructure">
+		<xsd:sequence>
+			<xsd:element name="GrossWeight" type="IvazNumber13f3" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas krovinio svoris bruto.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="NetWeight" type="IvazNumber13f3" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas krovinio svoris neto.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="UnitOfMeasure" type="IvazText10">
+				<xsd:annotation>
+					<xsd:documentation xml:space="preserve">Nurodomas matavimo vieneto kodas (pvz.: KGM, TNE). Nurodyti reikšmę privaloma, jei įvesta reikšmė į laukus "Svoris bruto" ir (arba) "Svoris neto". Siūloma naudoti i.VAZ sistemoje siūlomus svorio matavimo vienetų kodus, tačiau suteikiama galimybė pagal poreikį nurodyti kitus matavimo vienetus.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="CancellationReason">
+		<xsd:restriction base="IvazNumber2">
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value="2"/>
+			<xsd:enumeration value="3"/>
+			<xsd:enumeration value="4"/>
+			<xsd:enumeration value="5"/>
+			<xsd:enumeration value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CreatorType">
+		<xsd:restriction base="IvazText2">
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value="2"/>
+			<xsd:enumeration value="3"/>
+			<xsd:enumeration value="4"/>
+			<xsd:enumeration value="5"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DataType">
+		<xsd:restriction base="IvazText2">
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value="2"/>
+			<xsd:enumeration value="3"/>
+			<xsd:enumeration value="4"/>
+			<xsd:enumeration value="5"/>
+			<xsd:enumeration value="6"/>
+			<xsd:enumeration value="7"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ISOCountryCode">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ISOCurrencyCode">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazText2">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazText3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazText10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazText24">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="24"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazText35">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="35"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazText40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazText70">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="70"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazText256">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="256"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazText350">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="350"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazNumber2">
+		<xsd:restriction base="xsd:int">
+			<xsd:totalDigits value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazNumber3">
+		<xsd:restriction base="xsd:int">
+			<xsd:totalDigits value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazNumber10">
+		<xsd:restriction base="xsd:unsignedLong">
+			<xsd:totalDigits value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazNumber10f3">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:totalDigits value="10"/>
+			<xsd:fractionDigits value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazNumber11">
+		<xsd:restriction base="xsd:unsignedLong">
+			<xsd:totalDigits value="11"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazNumber13f3">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:totalDigits value="13"/>
+			<xsd:fractionDigits value="3"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazNumber18f2">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:totalDigits value="18"/>
+			<xsd:fractionDigits value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazDate201601">
+		<xsd:restriction base="xsd:date">
+			<xsd:minInclusive value="2016-01-01"/>
+			<xsd:maxInclusive value="2100-01-01"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazDate199001">
+		<xsd:restriction base="xsd:date">
+			<xsd:minInclusive value="1990-01-01"/>
+			<xsd:maxInclusive value="2100-01-01"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IvazDateTime201601">
+		<xsd:restriction base="xsd:dateTime">
+			<xsd:minInclusive value="2016-01-01T00:00:00"/>
+			<xsd:maxInclusive value="2100-01-01T00:00:00"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ComplaintType">
+		<xsd:restriction base="IvazNumber2">
+			<xsd:enumeration value="0"/>
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value="2"/>
+			<xsd:enumeration value="3"/>
+			<xsd:enumeration value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ReceivedCargoConclusion">
+		<xsd:restriction base="IvazNumber2">
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value="2"/>
+			<xsd:enumeration value="3"/>
+			<xsd:enumeration value="4"/>
+			<xsd:enumeration value="5"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ReceiptType">
+		<xsd:restriction base="IvazNumber2">
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

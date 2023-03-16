@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="change_cash_receipt_number" model="ir.ui.view">
+            <field name="name">change.cash.receipt</field>
+            <field name="model">cash.receipt.number.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Keisti kvito numerį">
+                    <group>
+                        <field name="number"/>
+                    </group>
+                    <footer>
+                        <button name="change_number" type="object" string="Keisti numerį" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="change_cash_receipt_number_wizard">
+            <field name="name">Keisti kvito numerį</field>
+            <field name="res_model">cash.receipt.number.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="change_cash_receipt_number"/>
+        </record>
+    </data>
+</odoo>

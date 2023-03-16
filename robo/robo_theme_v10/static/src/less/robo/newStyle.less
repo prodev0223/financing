@@ -1,0 +1,447 @@
+//Search properties
+@robo-search-border-color: #cdd4d9;
+@robo-search-border-size: 1px;
+@robo-search-border-radius: 6px;
+@robo-search-border-other-radius: 4px;
+@robo-search-button-background: rgba(0,0,0,0);
+@robo-search-button-hover-color: #dae2e4;
+
+
+//Robo copyright
+.robo_copyright{
+  font-size: 1em;
+  height: 2em;
+  line-height: 2em;
+  //align-self: center;
+  //margin-right: 3em;
+  color: white;
+  //> .robo_copyright_text {
+    @media (max-width: @screen-sm-max) {
+      display: none;
+    }
+  //}
+}
+
+
+//Robo scrollbars
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #acacac;
+  background-color: #f8f9fa;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a80b9;
+}
+
+.oe_secondary_menu {
+    & ::-webkit-scrollbar-thumb {
+      border-left: 1px solid #acacac;
+    }
+}
+// Buttons ====================================================================
+
+button {
+  &.btn {
+    &:focus, &:active:focus, &.active:focus, &.focus, &:active.focus, &.active.focus {
+      outline: none !important;
+    }
+  }
+  &.btn-primary, &.oe_highlight {
+    .my-btn(@robo-navbar-color) !important;
+    .o-border-radius(@robo-border-radius) !important;
+    border: none !important;
+
+    &:active {
+      .box-shadow(inset 0 3px 5px darken(@robo-navbar-color, 10%)) !important;
+    }
+  }
+  &.btn-default {
+    .robo-control-panel-button-style !important;
+    .o-border-radius(@robo-border-radius) !important;
+    background-color: @robo-control-panel-button-color !important;
+    border: none !important;
+    &:focus.btn:focus {
+      outline: none !important;
+    }
+  }
+  &.btn-icon {
+    .robo-control-panel-button-style !important;
+  }
+}
+
+a.btn{
+  &.btn-default.app-drawer-toggle{
+    &:hover, &:focus{
+     .hover_menu;
+    }
+  }
+}
+
+// Checkbox ==========================================
+
+// Typography =================================================================
+
+// Tables =====================================================================
+
+
+// ListView ===================================================================
+o_list_view.table {
+  border: none;
+}
+
+.o_list_view.table thead, .o_list_view.table tfoot, .o_list_view.table td, .o_list_view.table th {
+  border: none;
+}
+
+.o_list_view.table thead {
+  background-color: @robo-background-color;//(@robo-background-color, 5%);
+}
+
+.o_list_view.table thead > tr > th.o_column_sortable:hover {
+  background-color: @robo-item-hover-background !important;//#D6D6D3;
+}
+
+.o_list_view.table tbody tr.o_group_header {
+  //background-color: #dfdfdf;
+  background-image: none;
+  border-top: 1px solid #e2e2e0;
+  height: 31px;
+  background-color: darken(@robo-background-color, 5%);
+  box-shadow: inset 0 2px 0 #ffffff;
+}
+
+.table-striped > tbody > tr:nth-of-type(2n+1) {
+  background-color: #fcfcfc;
+}
+
+.o_list_view tfoot {
+    background-color: transparent;
+    color: #2c3e50;
+    cursor: default;
+    font-weight: bold;
+    border-top: 1px solid lightgray !important;
+}
+
+.o_list_view {
+  tbody {
+    > tr {
+      &:hover {
+        background-color: @robo-item-hover-background;
+      }
+      //&.selected-row {
+      //  background-color: @robo-item-selected-background;
+      //}
+    }
+  }
+}
+
+.enterprice_list_view;
+
+
+// Navs =======================================================================
+.dropdown-menu {
+  > .active {
+    a {
+      &, &:hover, &:focus {
+        text-decoration: none;
+        .robo-menu-item-hover;
+        background: @robo-item-selected-background;
+      }
+    }
+  }
+  > li {
+    a {
+      &:hover, &:focus {
+        text-decoration: none;
+        .robo-menu-item-hover;
+      }
+    }
+  }
+}
+
+.navbar-default {
+  background-color: @robo-navbar-color;
+  .navbar-nav > li {
+    &.active, &.open, & {
+      > a {
+        &:hover, &:focus {
+          .hover_menu;
+          //opacity: 0.5;
+        }
+      }
+    }
+    &.active, &.open {
+      > a {
+        .hover_menu;
+        //opacity: 0.5;
+      }
+    }
+  }
+}
+//ui-menu //TODO: change to robo style
+//.ui-menu .ui-menu-item{
+//  &:hover{
+//    background-color: @robo-item-hover-background;
+//  }
+//}
+// Control panel =============================================================
+.o_web_client .o_control_panel, .o_modal_header {
+
+  background-color: @robo-background-color;
+  border: none;
+
+  .o_dropdown_toggler_btn {
+    .robo-control-panel-button-style;
+    background-color: @robo-control-panel-button-color !important;
+    border: none !important;
+    .o-border-radius;
+  }
+
+  .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    text-decoration: none;
+    .robo-menu-item-hover;
+  }
+
+  //search-box
+  .o_searchview {
+    .robo-border(@robo-search-border-color, @size:@robo-search-border-size);
+    padding: 8px 25px 8px 14px;
+    border-radius: @robo-search-border-radius;
+
+    .o_searchview_more {
+      top: 8px;
+      color: #3498db;
+      font-size: 20px;
+    }
+
+    //search box active filters boxes inside
+    .o_searchview_facet {
+      //border-radius: @robo-button-small-radius;
+      border-radius: @robo-search-border-other-radius !important;
+      .robo-border(@size: @robo-search-border-size);
+      .o_searchview_facet_label {
+        background-color: @robo-navbar-color;
+        color: white;
+        border-radius: @robo-search-border-other-radius 0 0 @robo-search-border-other-radius;
+      }
+      .o_facet_values {
+        background-color: @robo-background-color;
+        border-radius: 0 @robo-search-border-other-radius @robo-search-border-other-radius 0;
+      }
+      &:hover {
+        .robo-border(darken(@robo-border-color, 10%), @size:@robo-search-border-size)
+      }
+    }
+
+    .o_searchview_autocomplete li.o-selection-focus {
+      .robo-menu-item-hover; //background-color: @robo-menu-item-active-background;
+      > a {
+        color: @robo-menu-item-active-color;
+      }
+    }
+  }
+
+  div.o_search_options  {
+    background-color: @robo-search-button-background !important;
+
+    & div.btn-group {
+      background-color: @robo-search-button-background !important;
+
+      & button.o_dropdown_toggler_btn {
+        background-color: @robo-search-button-background !important;
+        .robo-border(@size: @robo-search-border-size) !important;
+        border-radius: @robo-search-border-other-radius;
+
+        &:hover, &:focus {
+          background-color: @robo-search-button-hover-color !important
+        }
+      }
+    }
+
+    & div.o_dropdown:first-of-type {
+      & button.o_dropdown_toggler_btn {
+        -webkit-border-radius: @robo-search-border-other-radius 0 0 @robo-search-border-other-radius !important;
+        border-radius: @robo-search-border-other-radius 0 0 @robo-search-border-other-radius !important;
+      }
+    }
+
+    & div.o_dropdown:last-of-type {
+      & button.o_dropdown_toggler_btn {
+        -webkit-border-radius: 0 @robo-search-border-other-radius @robo-search-border-other-radius 0 !important;
+        border-radius: 0 @robo-search-border-other-radius @robo-search-border-other-radius 0 !important;
+      }
+    }
+  }
+
+  div.o_cp_pager span.btn-group, div.o_pager span.btn-group {
+    & button.o_pager_previous {
+      .robo-border(@size: @robo-search-border-size) !important;
+      border-radius: @robo-search-border-other-radius 0 0 @robo-search-border-other-radius !important;
+    }
+    & button.o_pager_next {
+      .robo-border(@size: @robo-search-border-size) !important;
+      border-radius: 0 @robo-search-border-other-radius @robo-search-border-other-radius 0 !important;
+    }
+  }
+}
+
+.o_kanban_view.o_kanban_dashboard .o_kanban_record {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+
+    & .o_kanban_graph_section {
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        overflow: hidden;
+    }
+}
+
+.o_control_panel {
+  & .o_cp_left {
+    margin-bottom: 1%;
+    width: 48%;
+  }
+
+  border-bottom: 1px solid #dadada !important;
+
+  & .o_cp_right {
+    width: 52%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+
+    div.o_cp_switch_buttons {
+      align-self: center;
+
+      & button.btn {
+        border: @robo-search-border-size solid @robo-search-border-color !important;
+      }
+    }
+  }
+
+  & .o_cp_searchview {
+    width: 52%;
+  }
+
+  & .breadcrumb {
+    width: 48%;
+  }
+
+  & .robo_breadcrumb {
+    width: 100%;
+  }
+}
+
+.o_sub_menu.user:not(.super-hide) ~ .o_main_content .o_control_panel {
+    border-bottom: none !important;
+}
+
+
+// Kanban ====================================================================
+.o_kanban_view {
+  background: @robo-background-color;
+}
+
+// Indicators =================================================================
+
+// Progress bars ==============================================================
+//datetimepicker
+.bootstrap-datetimepicker-widget{
+  .datepicker .table-condensed {
+    > thead{
+      background-color: @robo-blue !important;
+    }
+    > tbody > tr> td{
+      &.active{
+        background-color: @robo-blue !important;
+      }
+    }
+  }
+}
+
+
+// Containers =================================================================
+.o_web_client {
+  background: @robo-background-color;
+  > .o_main .o_main_content {
+    background-color: @robo-background-color;
+    min-width: 0;
+  }
+}
+
+.robo-container{
+  .robo-sheet-media;
+}
+.container {
+  //.container-fixed();
+
+  .robo-sheet-media;
+  //@media (min-width: @screen-sm-min) {
+  //  width: @container-sm;
+  //}
+  //@media (min-width: @screen-md-min) {
+  //  width: @container-md;
+  //}
+  //@media (min-width: 1400px) { //@screen-lg-min netinka
+  //  width: @container-lg;
+  //}
+}
+// Other =======================================================================
+.upload_colors(){
+  .sent{
+    color:@robo-upload-sent;
+  }
+  .accepted{
+    color: @robo-upload-accepted;
+  }
+  .done{
+    color: @robo-upload-done;
+  }
+  .need_action{
+    color: @robo-upload-need-action;
+  }
+  .rejected{
+    color: @robo-upload-rejected;
+  }
+}
+.o_web_client {
+  .tooltip {
+    .tooltip-inner {
+      .upload_colors;
+      background-color: white; //@robo-item-selected-background;
+      color: @robo-dark-blue;
+      border: 1px solid @robo-blue;
+      font-family: @robo-text-font;
+      .oe_tooltip_string {
+        background-color: @robo-popover-header-color;
+        color: black;
+      }
+    }
+  }
+
+  input {
+    &:focus {
+      border-bottom: none;
+    }
+  }
+
+
+}
+//upload color
+
+//
+.one_and_half_size{
+  font-size: 1.5em;
+}
+
+.analytic_button{
+  font-size: 1.5em;
+  color: @robo-blue;
+}
+.double_size{
+  font-size: 2em;
+}

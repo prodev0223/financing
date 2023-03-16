@@ -1,0 +1,98 @@
+.label-robo {
+  &-draft {
+    background-color: @robo-invoice-status-draft-color;
+  }
+  &-cancel{
+    background-color: @robo-invoice-status-cancel-color;
+  }
+  &-proforma, &-proforma2{
+    background-color: @robo-invoice-status-draft-color;
+  }
+  &-open{
+    background-color: @robo-invoice-status-open-color;
+  }
+  &-paid{
+    background-color: @robo-invoice-status-paid-color;
+  }
+  &-imported{
+    background-color: @robo-invoice-status-imported-color;
+  }
+  //upload documents
+  &-sent{
+    background-color: @robo-upload-sent;
+  }
+  &-accepted{
+    background-color: @robo-upload-accepted;
+  }
+  &-done{
+    background-color: @robo-upload-done;
+  }
+  &-rejected{
+    background-color: @robo-upload-rejected;
+  }
+  &-need_action{
+    background-color: @robo-upload-need-action;
+  }
+  //e-doc aditional
+  &-confirm{
+    background-color: @robo-invoice-status-open-color;
+  }
+  &-e_signed{
+    background-color: @robo-invoice-status-paid-color;
+  }
+  //kasos operacijos
+  &-posted{
+    background-color: @robo-invoice-status-open-color;
+  }
+  &-reconciled{
+    background-color: @robo-invoice-status-paid-color;
+  }
+}
+
+.robo_header{
+  .o_kanban_view{
+
+    .o_kanban_ungrouped{
+      .o_kanban_record{
+        @media (max-width: @screen-xs-max){
+          border-bottom: 5px;
+        }
+      }
+    }
+
+    .o_kanban_record{
+//       background-color: darken(@robo-background-color,5%);
+      .short_name{
+         display: block;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         white-space: nowrap;
+       }
+    }
+    .robo-sheet-media;
+    margin: 0 auto;
+  }
+}
+ .robo_header_fit{
+   .o_kanban_view {
+
+     .o_kanban_ungrouped {
+       .o_kanban_record {
+         @media (max-width: @screen-xs-max) {
+           border-bottom: 5px;
+         }
+       }
+     }
+
+     .o_kanban_record {
+       //background-color: darken(@robo-background-color, 5%);
+       .short_name{
+         display: block;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         white-space: nowrap;
+       }
+     }
+
+   }
+ }

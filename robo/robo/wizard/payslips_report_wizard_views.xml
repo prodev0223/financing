@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_payslips_report_wizard_form_view" model="ir.ui.view">
+            <field name="name">payslips.report.wizard</field>
+            <field name="model">payslips.report.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="year" string="Metai"/>
+                            <field name="month" string="Mėnuo"/>
+                            <field name="report_template"/>
+                            <field name="force_lang"/>
+                            <field name="all_employees"/>
+                            <field name="employee_ids" domain="[('main_accountant','=',False)]"
+                                   context="{'active_test': False}" options="{'no_open': True, 'no_create': True}"
+                                   widget="many2many_tags" attrs="{'invisible':[('all_employees', '=', True)]}"/>
+                            <field name="department_id" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'invisible':[('all_employees', '=', True)]}"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:15%;">
+                            <button name="open_report" string="Peržiūrėti" type="object" class="oe_highlight"
+                                    style="margin-right: 10px;" context="{'force_html': True}"/>
+                            <button name="open_report" string="PDF" type="object" class="oe_highlight"
+                                    style="margin-right: 10px;" context="{'force_pdf': True}"/>
+                            <button name="download_excel" string="Excel" type="object"
+                                    class="oe_highlight" style="margin-right: 10px;"/>
+                            <button name="%(robo.open_reports_action)d" type="action" string="Atšaukti"
+                                    class="oe_highlight" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_payslips_report">
+            <field name="name">Atlyginimų suvestinė</field>
+            <field name="res_model">payslips.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="view_id" ref="robo_payslips_report_wizard_form_view"/>
+        </record>
+
+        <menuitem id="menu_payslips_search_report"
+                  name="Atlyginimų suvestinė"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_payslips_report"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="atlyginimų,suvestinė"
+        />
+    </data>
+</odoo>

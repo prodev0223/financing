@@ -1,0 +1,40 @@
+<odoo>
+    <data>
+        <record id="invoice_date_change_wizard_view_form" model="ir.ui.view">
+            <field name="name">invoice.date.change.wizard.view.form</field>
+            <field name="model">invoice.date.change.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Invoice date change wizard" create="0" delete="0">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                            In this wizard you can change dates of the invoice without manual
+                            invoice cancellation. Date due changing does not reset invoice to draft.
+                        </div>
+                        <field name="supplier_invoice" invisible="1"/>
+                        <group string="Date invoice" col="4" colspan="2">
+                            <field name="current_date_invoice"/>
+                            <field name="date_invoice" required="1"/>
+                        </group>
+                        <group string="Date due" col="4" colspan="2">
+                            <field name="current_date_due"/>
+                            <field name="date_due" required="1"/>
+                        </group>
+                        <group string="Date issued" col="4" colspan="2">
+                            <field name="current_date_issued"/>
+                            <field name="date_issued" required="1"/>
+                        </group>
+                        <group string="Registration date" col="4" colspan="2"
+                               attrs="{'invisible': [('supplier_invoice', '=', False)]}">
+                            <field name="current_registration_date"/>
+                            <field name="registration_date" required="1"/>
+                        </group>
+                        <footer style="text-align: center;">
+                            <button name="change_invoice_dates" class="oe_highlight" type="object"
+                                    string="Change the dates" default_focus="1"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

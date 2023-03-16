@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="form_account_invoice_partner_change_wizard" model="ir.ui.view">
+            <field name="name">account.invoice.partner.change.wizard.form</field>
+            <field name="model">account.invoice.partner.change.wizard</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="Keisti Partnerį">
+                            <div>
+                                <p>
+                                Šis vedlys pakeis sąskaitos bei visų susijusių mokėjimų partnerį.
+                                Jei nenorite kad būtų pakeistas susijusiu mokėjimų partneris,
+                                    atšaukite sąskaitą ir pakeiskite partnerį rankiniu būdu.
+                                </p>
+                            </div>
+                        </group>
+                        <group>
+                            <field string="Partneris" name="partner_id"
+                                   context="{'form_view_ref': 'robo.new_clients_customer_form','default_customer':1}"
+                                   options="{'always_reload': True, 'no_open': False,
+                                   'no_quick_create':False,'no_create_edit':True, 'quick_create': True}"
+                                    required="1"/>
+                            <field name="has_picking" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="change_partner_id" type="object" string="Keisti"
+                                class="oe_highlight" context="{'check_move_validity': False}"/>
+                        <button name="change_partner_id" type="object"
+                                string="Keisti (priverstinai)"
+                                context="{'skip_stock': True, 'check_move_validity': False}"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('has_picking', '=', False)]}"
+                                confirm="Šis veiksmas nemodifikuos susijusio važtaraščio, ar tikrai norite tęsti?"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

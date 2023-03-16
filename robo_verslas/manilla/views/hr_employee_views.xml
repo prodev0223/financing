@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="open_employees_action_new_form" model="ir.ui.view">
+            <field name="name">open.employees.action.new.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="show_extra_information_tab" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[@name='Personal_info']" position="after">
+                    <page name="extra_information" string="Papildoma informacija"
+                          attrs="{'invisible': [('show_extra_information_tab', '=', False)]}">
+                        <group colspan="4">
+                            <group col="2">
+                                <field name="recruitment_date"/>
+                                <field name="contract_wage"/>
+                                <field name="employee_manager"/>
+                            </group>
+                            <group col="2">
+                                <field name="job_name"/>
+                                <field name="payroll_schema"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

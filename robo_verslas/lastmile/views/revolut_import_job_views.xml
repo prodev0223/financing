@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="revolut_import_job_view_form" model="ir.ui.view">
+            <field name="name">revolut.import.job.view.form</field>
+            <field name="model">revolut.import.job</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Revolut Import job">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="Informacija">
+                            <field name="journal_id"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="completion_date"/>
+                            <field name="error_message" attrs="{'invisible': [('state', '!=', 'error')]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="revolut_import_job_view_tree" model="ir.ui.view">
+            <field name="name">revolut.import.job.view.tree</field>
+            <field name="model">revolut.import.job</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <tree string="Revolut Import jobs">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="completion_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="revolut_import_job_view_search" model="ir.ui.view">
+            <field name="name">revolut.import.job.view.search</field>
+            <field name="model">revolut.import.job</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <search string="Revolut Import Jobs">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="journal_id"/>
+                    <separator/>
+                    <filter name="error" string="Failed"
+                            domain="[('state', '=', 'error')]"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="revolut_import_job_action" model="ir.actions.act_window">
+            <field name="name">Revolut Import Jobs</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">revolut.import.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_ids" eval="[(5,0,0),
+                          (0,0,{'view_mode':'tree', 'view_id': ref('revolut_import_job_view_tree')}),
+                          (0,0,{'view_mode':'form', 'view_id': ref('revolut_import_job_view_form')})]"/>
+            <field name="target">current</field>
+        </record>
+        <menuitem id="revolut_import_job_menu"
+                  name="Import jobs"
+                  parent="sepa.revolut_api_main_menu"
+                  action="lastmile.revolut_import_job_action"
+                  sequence="25"
+        />
+    </data>
+</odoo>

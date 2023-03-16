@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_invoice_form" model="ir.ui.view">
+            <field name="name">Account invoice income form Neopay extension</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='activate_e_invoices']" position="after">
+                    <field name="paid_using_online_payment_collection_system" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='has_outstanding']" position="before">
+                    <div class="alert alert-success" role="alert" style="margin-bottom: 10px;"
+                         attrs="{'invisible': [
+                            '|',
+                            ('paid_using_online_payment_collection_system', '=', False),
+                            ('state', '!=', 'open')
+                         ]}">
+                        We have received a confirmation from an online payment collection system about the successful
+                        payment of this invoice. This invoice will be marked as paid as soon as we receive the bank
+                        statement confirming the transaction.
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_invoice_view_search" model="ir.ui.view">
+            <field name="name">Account invoice income search Neopay extension</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_pajamos_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='not_validated']" position="after">
+                    <filter domain="[('paid_using_online_payment_collection_system', '=', True)]"
+                            name="paid_using_online_payment_collection_system"
+                            string="Paid using an online payment collection system"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

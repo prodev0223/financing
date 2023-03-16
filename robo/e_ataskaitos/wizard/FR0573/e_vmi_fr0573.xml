@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="vmi_fr0573">
+            <field name="name">vmi.fr0573.form</field>
+            <field name="model">e.vmi.fr0573</field>
+            <field name="arch" type="xml">
+                <form string="FR0573" version="7.0">
+                    <group>
+                        <field name="data_nuo"/>
+                        <field name="data_iki"/>
+                        <field name="kompanija"/>
+                        <field name="skyrius"/>
+                        <!--<field name="gpm_saskaita"/>-->
+                    </group>
+                    <footer>
+                        <button name="fr0573" string="Generuoti" type="object"/>
+                        <button name="fr0573" string="Siųsti į VMI" type="object" context="{'eds': True}"/>
+                        <button name="open_report" string="Atidaryti ataskaitą" type="object"/>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr0573_download">
+            <field name="name">vmi.fr0573.download.form</field>
+            <field name="model">e.vmi.fr0573</field>
+            <field name="arch" type="xml">
+                <form string="FR0573" version="7.0">
+                    <group>
+                        <field name="failas" nolabel="1" filename="failo_pavadinimas"/>
+                        <field name="failo_pavadinimas" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vmi_fr0573_wizard">
+            <field name="name">VMI FR0573</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.vmi.fr0573</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vmi_fr0573"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

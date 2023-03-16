@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.rule" id="account_invoice_distributed_line_comp_rule">
+            <field name="name">Invoice distributed Line company rule</field>
+            <field name="model_id" ref="model_account_invoice_distributed_payment_line"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('invoice_id.company_id','=',False),('invoice_id.company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+        <record id="account_invoice_premium_manager_invoice_distributed_line" model="ir.rule">
+            <field name="name">Premium manager can see all invoice distributed line records</field>
+            <field name="model_id" ref="model_account_invoice_distributed_payment_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1,'=', 1)]</field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+        <record id="account_invoice_premium_user_invoice_distributed_line" model="ir.rule">
+            <field name="name">Premium user can see only his (or paid by himself) invoice distributed lines records
+            </field>
+            <field name="model_id" ref="model_account_invoice_distributed_payment_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">['|','|','|',('invoice_id.submitted_employee_id.user_id','=',user.id),('invoice_id.user_id','=', user.id),'&amp;',('invoice_id.type','in',['in_invoice','in_refund']),('invoice_id.ap_employee_id.user_id','=',user.id),('invoice_id.hr_expense_id.employee_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_simple_invoicing'))]"/>
+        </record>
+    </data>
+</odoo>

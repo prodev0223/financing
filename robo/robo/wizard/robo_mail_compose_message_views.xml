@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="robo_email_compose_message_wizard_form">
+            <field name="name">robo.mail.compose.message.form</field>
+            <field name="model">robo.mail.compose.message</field>
+            <field name="groups_id" eval="[(4,ref('base.group_user'))]"/>
+            <field name="arch" type="xml">
+                <form string="Rašyti laišką">
+                    <field name="show_final_window" invisible="1"/>
+                    <field name="template_id" invisible="1"/>
+                    <field name="composition_mode" invisible="1"/>
+                    <field name="model" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="is_log" invisible="1"/>
+                    <field name="parent_id" invisible="1"/>
+                    <field name="mail_server_id" invisible="1"/>
+                    <field name="active_domain" invisible="1"/>
+                    <field name="email_from" invisible="1"/>
+                    <field name="partner_ids" invisible="1"/>
+                    <field name="subject" invisible="1"/>
+                    <field name="reply_to" invisible="1"/>
+                    <field name="no_auto_thread" invisible="1"/>
+                    <group attrs="{'invisible': [('show_final_window', '=', True)]}">
+                        <field name="result_selection"/>
+                        <field name="date_from"/>
+                        <field name="target_move"/>
+                    </group>
+                    <!--<field name="use_template" invisible="1"/>-->
+
+                    <field name="mass_mailling_partner_ids" mode="tree"
+                           attrs="{'invisible': [('show_final_window', '=', True)]}">
+                        <tree editable="top" create="0">
+                            <field name="partner_id" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="email"/>
+                            <field name="amount" widget="monetary" options="{'currency_field':'currency_id'}"/>
+                            <field name="forced_amount" widget="monetary" options="{'currency_field':'currency_id'}"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="generated_report" filename="file_name"/>
+                            <field name="last_email_date"/>
+                            <field name="last_attachment" filename="last_attachment_file_name"/>
+                            <field name="last_balance_reconciliation_date" widget="date"/>
+                            <field name="file_name" invisible="1"/>
+                        </tree>
+                    </field>
+                    <group>
+                        <button string="Perkurti failus su priverstine skola" name="recompute_reports" type="object"
+                                class="btn-primary"/>
+                    </group>
+                    <field name="body" options="{'style-inline': true}"
+                           attrs="{'invisible': [('show_final_window', '=', True)]}"/>
+
+                    <group col="4" attrs="{'invisible': [('show_final_window', '=', True)]}">
+                        <field name="template_id" options="{'no_create': True, 'no_open': True}" invisible="0"
+                               string="Šablonas"
+                               context="{'default_model': model, 'default_body_html': body }" readonly="1"/>
+                    </group>
+
+                    <group attrs="{'invisible': [('show_final_window', '=', False)]}">
+
+                        <div class="alert alert-info" attrs="{'invisible': [('failed_emails', '!=', False)]}">
+                            Jūsų žinutė sėkmingai išsiųsta visiems partneriams.
+                        </div>
+
+                    </group>
+
+                    <group attrs="{'invisible': [('show_final_window', '=', False)]}">
+
+                        <div class="alert alert-danger alert-dismissible"
+                             attrs="{'invisible': [('failed_emails', '=', False)]}">
+                            <p>Jūsų žinutė nepasiekė šių partnerių:</p>
+                            <field name="failed_emails"/>
+                        </div>
+
+                    </group>
+
+                    <footer>
+                        <button string="Siųsti" name="send_mail_action" type="object" class="btn-primary"
+                                attrs="{'invisible': [('show_final_window', '=', True)]}"
+                                context="{'post_date': True}"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="email_compose_message_wizard_form" model="ir.ui.view">
+            <field name="name">robo.mail.compose.message.form.overpay.transfer.request</field>
+            <field name="model">robo.mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+            <field name="robo_front">True</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ids']/.." position="replace">
+                    <div attrs="{'invisible': [('show_final_window', '=', True)]}">
+                        <field name="show_final_window" invisible="1"/>
+                        <field name="mass_mailling_partner_ids" mode="tree">
+                            <tree editable="top" create="0">
+                                <field name="partner_id" string="Partner" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="email" string="Email"/>
+                                <field name="generated_report" filename="file_name" string="Request"/>
+                                <field name="file_name" invisible="1"/>
+                            </tree>
+                        </field>
+                    </div>
+                </xpath>
+                <xpath expr="//label[@for='partner_ids']" position="replace"/>
+                <xpath expr="//field[@name='email_from']" position="replace">
+                    <field name="email_from" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='no_auto_thread']" position="replace">
+                    <field name="no_auto_thread" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='reply_to']" position="replace">
+                    <field name="reply_to" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='subject']" position="replace">
+                    <field name="subject" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='attachment_ids']" position="replace">
+                    <field name="attachment_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='mass_mailing_name']" position="replace">
+                    <field name="mass_mailing_name" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='template_id']" position="replace">
+                    <group col="4" attrs="{'invisible': [('show_final_window', '=', True)]}">
+                        <field name="template_id" options="{'no_create': True, 'no_open': True}" invisible="1"
+                               string="Šablonas"
+                               context="{'default_model': model, 'default_body_html': body }" readonly="1"/>
+                    </group>
+                    <group attrs="{'invisible': [('show_final_window', '=', False)]}">
+                        <div class="alert alert-info text-center" colspan="4"
+                             attrs="{'invisible': [('failed_emails', '!=', False)]}">
+                            Jūsų žinutė sėkmingai išsiųsta visiems partneriams.
+                        </div>
+                    </group>
+                    <group attrs="{'invisible': [('show_final_window', '=', False)]}">
+                        <div class="alert alert-danger alert-dismissible"
+                             attrs="{'invisible': [('failed_emails', '=', False)]}">
+                            <p>Jūsų žinutė nepasiekė šių partnerių:</p>
+                            <field name="failed_emails"/>
+                        </div>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='body']" position="replace">
+                       <field name="body" options="{'style-inline': true}"
+                              attrs="{'invisible': [('show_final_window', '=', True)]}" string="Contents"/>
+                </xpath>
+                <xpath expr="//footer" position="replace">
+                    <footer attrs="{'invisible': [('show_final_window', '=', True)]}">
+                        <button string="Send" name="send_mail_action" type="object" class="btn-primary"/>
+                    </footer>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

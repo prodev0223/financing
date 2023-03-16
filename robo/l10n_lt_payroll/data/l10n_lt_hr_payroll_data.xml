@@ -1,0 +1,2655 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="sodra_partner" model="res.partner">
+            <field name="name">VSDF valdyba prie SADM (Sodra)</field>
+        </record>
+        <record id="vmi_partner" model="res.partner">
+            <field name="name">VMI prie LR FM</field>
+        </record>
+
+        <!-- CONTRIBUTION REGISTERS -->
+        <record id="contrib_register_atlyginimai" model="hr.contribution.register">
+            <field name="name">Atlyginimai</field>
+        </record>
+        <record id="contrib_register_sodra1" model="hr.contribution.register">
+            <field name="name">Sodra 2%</field>
+            <field name="partner_id" ref="sodra_partner"/>
+        </record>
+        <record id="contrib_register_sodra9" model="hr.contribution.register">
+            <field name="name">Darbuotojo Sodra</field>
+            <field name="partner_id" ref="sodra_partner"/>
+        </record>
+        <record id="contrib_register_sodra31" model="hr.contribution.register">
+            <field name="name">Darbdavio Sodra</field>
+            <field name="partner_id" ref="sodra_partner"/>
+        </record>
+        <record id="contrib_register_pajamu" model="hr.contribution.register">
+            <field name="name">Pajamų mokestis</field>
+            <field name="partner_id" ref="vmi_partner"/>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 00 ============================================= -->
+        <!-- Base salary -->
+        <record id="hr_payroll_base" model="hr.salary.rule.category">
+            <field name="name">Pareigyb. atlyginimas</field>
+            <field name="code">B</field>
+        </record>
+        <record id="hr_payroll_rules_basev" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_base"/>
+            <field name="name">Pareigyb. atlyginimas</field>
+            <field name="code">BV</field>
+            <field name="sequence" eval="0"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result=0
+try:
+    result += base_amount_FD
+except:
+    pass
+try:
+    result += base_amount_K
+except:
+    pass
+try:
+    result += base_amount_DN
+except:
+    pass
+try:
+    result += base_amount_VD
+except:
+    pass
+try:
+    result += base_amount_VDN
+except:
+    pass
+try:
+    result += base_amount_KS
+except:
+    pass
+try:
+    result += base_amount_DP
+except:
+    pass
+try:
+    result += base_amount_VSS
+except:
+    pass
+try:
+    result += base_amount_SNV
+except:
+    pass
+try:
+    result += base_amount_KV
+except:
+    pass
+try:
+    result += base_amount_MD
+except:
+    pass
+try:
+    result += base_amount_BI #We have the code BĮ which conflicts with variable mapping, so we have to use BI here and convert in compute rule
+except:
+    pass
+try:
+    result += base_amount_BN
+except:
+    pass
+try:
+    result += inputs.BV.amount
+except:
+    result += 0
+if result &lt; 0:
+    result = 0.0
+result = round(result,2)
+            </field>
+        </record>
+        <record id="hr_payroll_rules_basem" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_base"/>
+            <field name="name">Pareigyb. atlyginimas</field>
+            <field name="code">BM</field>
+            <field name="sequence" eval="0"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result=0
+try:
+    result += base_amount_FD
+except:
+    pass
+try:
+    result += base_amount_K
+except:
+    pass
+try:
+    result += base_amount_DN
+except:
+    pass
+try:
+    result += base_amount_VD
+except:
+    pass
+try:
+    result += base_amount_VDN
+except:
+    pass
+try:
+    result += base_amount_KS
+except:
+    pass
+try:
+    result += base_amount_DP
+except:
+    pass
+try:
+    result += base_amount_VSS
+except:
+    pass
+try:
+    result += base_amount_SNV
+except:
+    pass
+try:
+    result += base_amount_KV
+except:
+    pass
+try:
+    result += base_amount_MD
+except:
+    pass
+try:
+    result += base_amount_BI #We have the code BĮ which conflicts with variable mapping, so we have to use BI here and convert in compute rule
+except:
+    pass
+try:
+    result += base_amount_BN
+except:
+    pass
+try:
+    result += inputs.BM.amount
+except:
+    pass
+if result &lt; 0:
+    result = 0.0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- ============================================= SEQUENCE 01 ============================================= -->
+        <!-- Qualification -->
+        <record id="hr_payroll_kvalifikacijos_kelimas" model="hr.salary.rule.category">
+            <field name="name">Kvalifikacijos kėlimas</field>
+            <field name="code">KV</field>
+        </record>
+        <record id="hr_payroll_rules_kv" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_kvalifikacijos_kelimas"/>
+            <field name="name">Kvalifikacijos kėlimas</field>
+            <field name="code">KV</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = 0.0
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code == 'KV' and l.is_paid_for]
+    appointments = set(l.appointment_id for l in lines)
+    previous_vdu = payslip.dict.with_context(vdu_type='h').vdu_previous
+    for app in appointments:
+        app_lines = [l for l in lines if l.appointment_id.id == app.id]
+        if app.struct_id.code == 'VAL':
+            hourly_wage = app.wage
+        else:
+            try:
+                hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+            except:
+                hourly_wage = 0.0
+        vdu_to_use = previous_vdu or vdu_h or hourly_wage
+        result += sum([l.number_of_hours * vdu_to_use for l in app_lines])
+except:
+    result = 0
+try:
+    result += inputs.KV.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Disability -->
+        <record id="hr_payroll_inval" model="hr.salary.rule.category">
+            <field name="name">Invalidumo išmoka</field>
+            <field name="code">INV</field>
+        </record>
+        <record id="hr_payroll_rules_inval" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_inval"/>
+            <field name="name">Invalidumo išmoka</field>
+            <field name="code">INV</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try :
+   result = inputs.INV.amount
+except :
+   result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Approved leave -->
+        <record id="hr_payroll_knddl" model="hr.salary.rule.category">
+            <field name="name">Patvirtinto neatvykimo kompensacija administracijai leidus</field>
+            <field name="code">KNDDL</field>
+        </record>
+        <record id="hr_payroll_rules_knddl" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_knddl"/>
+            <field name="name">Patvirtinto neatvykimo kompensacija administracijai leidus</field>
+            <field name="code">KNDDL</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try :
+   result = inputs.KNDDL.amount
+except :
+   result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Severance -->
+        <record id="hr_payroll_iseit" model="hr.salary.rule.category">
+            <field name="name">Išeitinės</field>
+            <field name="code">IST</field>
+        </record>
+        <record id="hr_payroll_rules_iseit" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_iseit"/>
+            <field name="name">Išeitinės</field>
+            <field name="code">IST</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="appears_on_payslip" eval="True"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try :
+   result = inputs.IST.amount
+except :
+   result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Advance -->
+        <record id="hr_payroll_avansas" model="hr.salary.rule.category">
+            <field name="name">Darbo užmokesčio avansas</field>
+            <field name="code">AVN</field>
+        </record>
+        <record id="hr_payroll_rules_avansas" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_avansas"/>
+            <field name="name">Darbo užmokesčio avansas</field>
+            <field name="code">AVN</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="appears_on_payslip" eval="True"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try :
+   result = inputs.AVN.amount
+except :
+   result = 0
+result = round(result,2)
+            </field>
+            <field name="account_debit" search="[('code', '=', '4484')]"/>
+            <field name="account_credit" search="[('code', '=', '4480')]"/>
+        </record>
+
+        <!-- Overtime -->
+        <record id="hr_payroll_virsd" model="hr.salary.rule.category">
+            <field name="name">Viršvalandžiai darbo dienomis</field>
+            <field name="code">VD</field>
+        </record>
+        <record id="hr_payroll_rules_virsd" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_virsd"/>
+            <field name="name">Viršvalandžiai darbo dienomis</field>
+            <field name="code">VD</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    # Get lines that should be compensated in holidays
+    overtime_record_lines = payslip.env['hr.employee.overtime.time.line'].search([
+        ('overtime_id.employee_id', '=', payslip.employee_id),
+        ('date', '&lt;=', payslip.date_to),
+        ('date', '&gt;=', payslip.date_from),
+        ('overtime_id.state', '=', 'confirmed'),
+        ('overtime_id.overtime_compensation', '=', 'holidays')
+    ])
+    result = 0.0
+    # Get overtime lines from payslip
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code in ['VD'] and l.appointment_id.paid_overtime]
+    appointments = set(l.appointment_id for l in lines)
+    for app in appointments:
+        # Payslip lines for appointment
+        app_lines = [l for l in lines if l.appointment_id.id == app.id]
+
+        # Overtime lines by overtime record for appointment period
+        app_record_lines = [l for l in overtime_record_lines if l.date &gt;= app.date_start]
+        if app.date_end:
+            app_record_lines = [l for l in app_record_lines if not app.date_end or l.date &lt;= app.date_end]
+
+        # Determine pay rate
+        if app.struct_id.code == 'VAL':
+          hourly_wage = app.wage
+        else:
+          try:
+             hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+          except:
+             hourly_wage = 0.0
+        vdu_to_use = vdu_h or hourly_wage
+
+        # Determine how many hours to calculate for
+        duration_compensated_in_holidays = sum(
+                l.get_duration_by_time_of_day().get('day', 0.0) for l in app_record_lines
+        )
+        appointment_overtime_duration = sum(l.number_of_hours for l in app_lines)
+        hours_to_calculate_amount_for = max(appointment_overtime_duration - duration_compensated_in_holidays, 0.0)
+
+        result += hours_to_calculate_amount_for * vdu_to_use * (VD_coefficient - 1.0)
+except:
+    result = 0
+
+try:
+    result += inputs.VD.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Overtime Night -->
+        <record id="hr_payroll_virsdn" model="hr.salary.rule.category">
+            <field name="name">Viršvalandžiai naktį</field>
+            <field name="code">VDN</field>
+        </record>
+        <record id="hr_payroll_rules_virsdn" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_virsdn"/>
+            <field name="name">Viršvalandžiai naktį</field>
+            <field name="code">VDN</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    # Get lines that should be compensated in holidays
+    overtime_record_lines = payslip.env['hr.employee.overtime.time.line'].search([
+        ('overtime_id.employee_id', '=', payslip.employee_id),
+        ('date', '&lt;=', payslip.date_to),
+        ('date', '&gt;=', payslip.date_from),
+        ('overtime_id.state', '=', 'confirmed'),
+        ('overtime_id.overtime_compensation', '=', 'holidays')
+    ])
+    result = 0.0
+    # Get overtime lines from payslip
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code in ['VDN'] and l.appointment_id.paid_overtime]
+    appointments = set(l.appointment_id for l in lines)
+    for app in appointments:
+        # Payslip lines for appointment
+        app_lines = [l for l in lines if l.appointment_id.id == app.id]
+
+        # Overtime lines by overtime record for appointment period
+        app_record_lines = [l for l in overtime_record_lines if l.date &gt;= app.date_start]
+        if app.date_end:
+            app_record_lines = [l for l in app_record_lines if not app.date_end or l.date &lt;= app.date_end]
+
+        # Determine pay rate
+        if app.struct_id.code == 'VAL':
+          hourly_wage = app.wage
+        else:
+          try:
+             hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+          except:
+             hourly_wage = 0.0
+        vdu_to_use = vdu_h or hourly_wage
+
+        # Determine how many hours to calculate for
+        duration_compensated_in_holidays = sum(
+                l.get_duration_by_time_of_day().get('night', 0.0) for l in app_record_lines
+        )
+        appointment_overtime_duration = sum(l.number_of_hours for l in app_lines)
+        hours_to_calculate_amount_for = max(appointment_overtime_duration - duration_compensated_in_holidays, 0.0)
+
+        result += hours_to_calculate_amount_for * vdu_to_use * (VDN_coefficient - 1.0)
+except:
+    result = 0
+
+try:
+    result += inputs.VDN.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Work on holiday days -->
+        <record id="hr_payroll_dp" model="hr.salary.rule.category">
+            <field name="name">Darbas poilsio dienomis</field>
+            <field name="code">DP</field>
+        </record>
+        <record id="hr_payroll_rules_poilsio_dienomis" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_dp"/>
+            <field name="name">Darbas poilsio dienomis</field>
+            <field name="code">DP</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    # Get lines that should be compensated in holidays
+    overtime_record_lines = payslip.env['hr.employee.overtime.time.line'].search([
+        ('overtime_id.employee_id', '=', payslip.employee_id),
+        ('date', '&lt;=', payslip.date_to),
+        ('date', '&gt;=', payslip.date_from),
+        ('overtime_id.state', '=', 'confirmed'),
+        ('overtime_id.overtime_compensation', '=', 'holidays')
+    ])
+    result = 0.0
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code in ['DP'] and l.appointment_id.paid_overtime]
+    appointments = set(l.appointment_id for l in lines)
+    for app in appointments:
+       app_lines = [l for l in lines if l.appointment_id.id == app.id]
+
+       # Overtime lines by overtime record for appointment period
+       app_overtime_lines = [l for l in overtime_record_lines if l.date &gt;= app.date_start]
+       if app.date_end:
+           app_overtime_lines = [l for l in app_overtime_lines if not app.date_end or l.date &lt;= app.date_end]
+
+       if app.struct_id.code == 'VAL':
+          hourly_wage = app.wage
+       else:
+          try:
+             hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+          except:
+             hourly_wage = 0.0
+       vdu_to_use = vdu_h or hourly_wage
+
+       # Determine how many hours to calculate for
+       duration_compensated_in_holidays = sum(
+               l.get_duration_by_time_of_day().get('day', 0.0) for l in app_overtime_lines
+       )
+       appointment_extra_work_duration = sum(l.number_of_hours for l in app_lines)
+       hours_to_calculate_amount_for = max(appointment_extra_work_duration - duration_compensated_in_holidays, 0.0)
+
+       result += hours_to_calculate_amount_for * vdu_to_use * (DP_coefficient - 1.0)
+except:
+    result = 0
+
+try:
+    result += inputs.DP.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="account_debit"/>
+            <field name="account_credit"/>
+            <field name="appears_on_payslip" eval="True"/>
+        </record>
+
+        <!-- Work on weekends -->
+        <record id="hr_payroll_virss" model="hr.salary.rule.category">
+            <field name="name">Viršvalandžiai šventiniai / savaitgaliais</field>
+            <field name="code">VSS</field>
+        </record>
+        <record id="hr_payroll_rules_virss" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_virss"/>
+            <field name="name">Viršvalandžiai šventiniai / savaitgaliais</field>
+            <field name="code">VSS</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try :
+    result = 0.0
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code in ['VSS', 'VDS'] and l.appointment_id.paid_overtime]
+    appointments = set(l.appointment_id for l in lines)
+    for app in appointments:
+       app_lines = [l for l in lines if l.appointment_id.id == app.id]
+       if app.struct_id.code == 'VAL':
+          hourly_wage = app.wage
+       else:
+          try:
+             hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+          except:
+             hourly_wage = 0.0
+       vdu_to_use = vdu_h or hourly_wage
+       result += sum([l.number_of_hours * vdu_to_use * (VSS_coefficient - 1.0) for l in app_lines])
+except :
+   result = 0
+try:
+    result += inputs.VSS.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Work on night hours -->
+        <record id="hr_payroll_naktis" model="hr.salary.rule.category">
+            <field name="name">Naktinė pamaina</field>
+            <field name="code">DN</field>
+        </record>
+        <record id="hr_payroll_rules_naktis" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_naktis"/>
+            <field name="name">Naktinė pamaina</field>
+            <field name="code">DN</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try :
+    result = 0.0
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code in ['DN'] and l.appointment_id.paid_overtime]
+    appointments = set(l.appointment_id for l in lines)
+    for app in appointments:
+       app_lines = [l for l in lines if l.appointment_id.id == app.id]
+       if app.struct_id.code == 'VAL':
+          hourly_wage = app.wage
+       else:
+          try:
+             hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+          except:
+             hourly_wage = 0.0
+       vdu_to_use = vdu_h or hourly_wage
+       result += sum([l.number_of_hours * vdu_to_use * (DN_coefficient - 1.0) for l in app_lines])
+except :
+   result = 0
+try:
+    result += inputs.DN.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Allowances for parents raising children -->
+        <record id="hr_payroll_t" model="hr.salary.rule.category">
+            <field name="name">Papildomas poilsio laikas tėvams</field>
+            <field name="code">T</field>
+        </record>
+        <record id="hr_payroll_rules_vaikai_priemokos" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_t"/>
+            <field name="name">Papildomas poilsio laikas tėvams</field>
+            <field name="code">T</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.M.amount
+except:
+    result = 0
+
+try:
+    result = inputs.MP.amount
+except:
+    result = 0
+try:
+    result += inputs.T.amount
+except:
+    pass
+
+hourly_vdu = payslip.dict.with_context(vdu_type='h').vdu_previous
+daily_vdu = payslip.dict.with_context(vdu_type='d').vdu_previous
+for l in payslip.dict.worked_days_line_ids:
+    if l.code == 'M':
+        if l.appointment_id.schedule_template_id.template_type in ['fixed', 'suskaidytos']:
+            result += l.number_of_days * daily_vdu
+        else:
+            result += l.number_of_hours * hourly_vdu
+    elif l.code == 'MP':
+        result += l.number_of_hours * hourly_vdu
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Extra free days -->
+        <record id="hr_payroll_v" model="hr.salary.rule.category">
+            <field name="name">Papildomas poilsio laikas už darbą</field>
+            <field name="code">V</field>
+        </record>
+        <record id="hr_payroll_rules_papildomos_p_d" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_v"/>
+            <field name="name">Papildomos poilsio dienos</field>
+            <field name="code">V</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.V.amount
+except:
+    result = 0
+
+for l in payslip.dict.worked_days_line_ids:
+    if l.code == 'V':
+        app = l.appointment_id
+        if app.struct_id.code == 'VAL':
+            hourly_wage = app.wage
+        else:
+            try:
+                hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+            except:
+                hourly_wage = 0.0
+        result += hourly_wage * l.number_of_hours
+
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Watch duty -->
+        <record id="hr_payroll_budejimas" model="hr.salary.rule.category">
+            <field name="name">Budėjimas</field>
+            <field name="code">BUD</field>
+        </record>
+        <record id="hr_payroll_rules_budejimas" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_budejimas"/>
+            <field name="name">Budėjimas</field>
+            <field name="code">BUD</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.BUD.amount
+except:
+    result = 0
+
+for l in payslip.dict.worked_days_line_ids:
+    if l.code in ['BĮ', 'BN']:
+        app = l.appointment_id
+        if app.struct_id.code == 'VAL':
+            hourly_wage = app.wage
+        else:
+            try:
+                hourly_wage = app.wage / l.payslip_id.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+            except:
+                hourly_wage = 0.0
+        result += hourly_wage * l.number_of_hours
+result = round(result,2)
+result = 0.0 # Budejimas should be calculated as regular work time so it is included in BM and BV
+            </field>
+        </record>
+
+        <!-- Other payments -->
+        <record id="hr_payroll_plius" model="hr.salary.rule.category">
+            <field name="name">Priemokos</field>
+            <field name="code">P</field>
+        </record>
+        <record id="hr_payroll_rules_plius" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_plius"/>
+            <field name="name">Priemokos</field>
+            <field name="code">P</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.P.amount
+except:
+    result = 0
+
+for l in payslip.dict.worked_days_line_ids:
+    if l.code in ['D']:
+        app = l.appointment_id
+        if app.struct_id.code == 'VAL':
+            hourly_wage = app.wage
+        else:
+            try:
+                hourly_wage = app.wage / l.payslip_id.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+            except:
+                hourly_wage = 0.0
+        result += hourly_wage * l.number_of_hours
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Other non VDU payments -->
+        <record id="hr_payroll_plius_ne_vdu" model="hr.salary.rule.category">
+            <field name="name">Priemokos ne VDU</field>
+            <field name="code">PNVDU</field>
+        </record>
+        <record id="hr_payroll_rules_plius_ne_vdu" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_plius_ne_vdu"/>
+            <field name="name">Priemokos ne VDU</field>
+            <field name="code">PNVDU</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute"/>
+        </record>
+
+        <!-- Other types of holidays -->
+        <record id="hr_payroll_kr" model="hr.salary.rule.category">
+            <field name="name">Kitų rūšių atostogos</field>
+            <field name="code">KR</field>
+        </record>
+        <record id="hr_payroll_rules_kr" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_kr"/>
+            <field name="name">Kitų rūšių atostogos</field>
+            <field name="code">KR</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.KR.amount
+except:
+    result = 0
+
+result += sum([l.number_of_days * payslip.dict.with_context(vdu_type='d').vdu_previous for l in payslip.dict.worked_days_line_ids if l.code == 'KR'])
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Study leave -->
+        <record id="hr_payroll_ma" model="hr.salary.rule.category">
+            <field name="name">Mokymosi atostogos</field>
+            <field name="code">MA</field>
+        </record>
+        <record id="hr_payroll_rules_ma" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_ma"/>
+            <field name="name">Mokymosi atostogos</field>
+            <field name="code">MA</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.MA.amount
+except:
+    result = 0
+
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Regular Bonuses -->
+        <record id="hr_payroll_pd" model="hr.salary.rule.category">
+            <field name="name">Priedai</field>
+            <field name="code">PD</field>
+        </record>
+        <record id="hr_payroll_rules_priedai" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_pd"/>
+            <field name="name">Priedai</field>
+            <field name="code">PD</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.PD.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Non taxable bonuses -->
+        <record id="hr_payroll_pdnm" model="hr.salary.rule.category">
+            <field name="name">Neapmokestinami Priedai</field>
+            <field name="code">PDNM</field>
+        </record>
+        <record id="hr_payroll_rules_pdnm" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_pdnm"/>
+            <field name="name">Neapmokestinami priedai</field>
+            <field name="code">PDNM</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.PDNM.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+            <field name="account_debit" search="[('code', '=', '63048')]"/>
+            <field name="account_credit" search="[('code', '=', '4488')]"/>
+        </record>
+
+        <!-- Non VDU bonuses -->
+        <record id="hr_payroll_pdn" model="hr.salary.rule.category">
+            <field name="name">Į VDU nepatenkantys priedai</field>
+            <field name="code">PDN</field>
+        </record>
+        <record id="hr_payroll_rules_priedai_ne_vdu" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_pdn"/>
+            <field name="name">Į VDU nepatenkantys priedai</field>
+            <field name="code">PDN</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.PDN.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Quarterly bonuses -->
+        <record id="hr_payroll_pr" model="hr.salary.rule.category">
+            <field name="name">Ketvirtinės premijos</field>
+            <field name="code">PR</field>
+        </record>
+        <record id="hr_payroll_rules_premijos" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_pr"/>
+            <field name="name">Ketvirtinės premijos</field>
+            <field name="code">PR</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.PR.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Longer period bonuses -->
+        <record id="hr_payroll_pri" model="hr.salary.rule.category">
+            <field name="name">Ilgesnio laikotarpio premijos</field>
+            <field name="code">PRI</field>
+        </record>
+        <record id="hr_payroll_rules_premijos_ilgenes" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_pri"/>
+            <field name="name">Ilgesnio laikotarpio premijos</field>
+            <field name="code">PRI</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.PRI.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Amounts paid before -->
+        <record id="hr_salary_rule_category_ial" model="hr.salary.rule.category">
+            <field name="name">Išmokėta ankstesniais laikotarpiais</field>
+            <field name="code">IAL</field>
+        </record>
+        <record id="hr_payroll_rules_ankstestniais_laikotarpiais" model="hr.salary.rule">
+            <field name="category_id" ref="hr_salary_rule_category_ial"/>
+            <field name="name">Išmokėta ankstesniais laikotarpiais</field>
+            <field name="code">IAL</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.IAL.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Amount paid for future periods -->
+        <record id="hr_salary_rule_category_ibl" model="hr.salary.rule.category">
+            <field name="name">Išmokėta už būsimus laikotarpiais</field>
+            <field name="code">IBL</field>
+        </record>
+        <record id="hr_payroll_rules_busimi_laikotarpiai" model="hr.salary.rule">
+            <field name="category_id" ref="hr_salary_rule_category_ibl"/>
+            <field name="name">Išmokėta už būsimus laikotarpius</field>
+            <field name="code">IBL</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.IBL.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Holidays -->
+        <record id="hr_payroll_atostogos" model="hr.salary.rule.category">
+            <field name="name">Privalomos atostogos</field>
+            <field name="code">ATS</field>
+        </record>
+        <record id="hr_payroll_rules_atostogos" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_atostogos"/>
+            <field name="name">Privalomos atostogos</field>
+            <field name="code">A</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.A.amount
+except:
+    result = 0
+result += sum([l.amount_bruto for l in payslip.dict.payment_line_ids if l.code == 'A'])
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Absences -->
+        <record id="hr_payroll_liga" model="hr.salary.rule.category">
+            <field name="name">Nedarbingumo išmoka</field>
+            <field name="code">LIG</field>
+        </record>
+        <record id="hr_payroll_rules_liga" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_liga"/>
+            <field name="name">Nedarbingumo išmoka</field>
+            <field name="code">L</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = 0
+try:
+    result = inputs.L.amount
+except:
+    result = 0.0
+try:
+    result += worked_days.L.amount
+except:
+    result += 0.0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Business trips -->
+        <record id="hr_payroll_koman" model="hr.salary.rule.category">
+            <field name="name">Dienpinigiai</field>
+            <field name="code">KM</field>
+        </record>
+        <record id="hr_payroll_rules_koman" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_koman"/>
+            <field name="name">Dienpinigiai</field>
+            <field name="code">KM</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.KM.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Non-taxable business trips -->
+        <record id="hr_payroll_neapmok_koman" model="hr.salary.rule.category">
+            <field name="name">Neapmokestinami dienpinigiai</field>
+            <field name="code">NAKM</field>
+        </record>
+        <record id="hr_payroll_rules_neapmok_koman" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_neapmok_koman"/>
+            <field name="name">Neapmokestinami Dienpinigiai</field>
+            <field name="code">NAKM</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.NAKM.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Income in kind -->
+        <record id="hr_payroll_natura" model="hr.salary.rule.category">
+            <field name="name">Pajamos natūra</field>
+            <field name="code">NTR</field>
+        </record>
+        <record id="hr_payroll_rules_natura" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_natura"/>
+            <field name="name">Pajamos natūra</field>
+            <field name="code">NTR</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.NTR.amount
+except:
+    result = 0
+try:
+    result += inputs.NTRD.amount
+except:
+    result += 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Income in kind where employer pays taxes -->
+        <record id="hr_payroll_natura_employer" model="hr.salary.rule.category">
+            <field name="name">Pajamos natūra (mokesčius moka darbdavys)</field>
+            <field name="code">NTRD</field>
+        </record>
+        <record id="hr_payroll_rules_natura_employer" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_natura_employer"/>
+            <field name="name">Pajamos natūra, kai darbdavys sumoka mokesčius</field>
+            <field name="code">NTRD</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="appears_on_payslip" eval="False"/>
+            <field name="amount_python_compute">
+try:
+    result = inputs.NTRD.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Night hours during public holidays -->
+        <record id="hr_payroll_virsns" model="hr.salary.rule.category">
+            <field name="name">Šventiniai naktiniai</field>
+            <field name="code">SNV</field>
+        </record>
+        <record id="hr_payroll_rules_virsn" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_virsns"/>
+            <field name="name">Šventinės naktinės valandos</field>
+            <field name="code">SNV</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = 0.0
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code in ['SNV']]
+    appointments = set(l.appointment_id for l in lines)
+    for app in appointments:
+       app_lines = [l for l in lines if l.appointment_id.id == app.id]
+       if app.struct_id.code == 'VAL':
+          hourly_wage = app.wage
+       else:
+          try:
+             hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+          except:
+             hourly_wage = 0.0
+       vdu_to_use = vdu_h or hourly_wage
+       result += sum([l.number_of_hours * vdu_to_use * (SNV_coefficient - 1.0) for l in app_lines])
+except:
+    result = 0
+try:
+    result += inputs.SNV.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Outstanding working time rate -->
+        <record id="hr_payroll_neisdirbtas_darbo_laikas" model="hr.salary.rule.category">
+            <field name="name">Neįvykdyta darbo laiko norma</field>
+            <field name="code">NDL</field>
+        </record>
+        <record id="hr_payroll_rules_neisdirbtas_darbo_laikas" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_neisdirbtas_darbo_laikas"/>
+            <field name="name">Neįvykdyta darbo laiko norma</field>
+            <field name="code">NDL</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = 0.0
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code in ['NDL']]
+    appointments = set(l.appointment_id for l in lines)
+    for app in appointments:
+       app_lines = [l for l in lines if l.appointment_id.id == app.id]
+       if app.struct_id.code == 'VAL':
+          hourly_wage = app.wage
+       else:
+          try:
+             hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+          except:
+             hourly_wage = 0.0
+       vdu_to_use = vdu_h or hourly_wage
+       result += sum([l.number_of_hours * vdu_to_use * 0.5 for l in app_lines])
+except:
+    result = 0
+try:
+    result += inputs.NDL.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Working time limit exceeded -->
+        <record id="hr_payroll_virsytas_darbo_laikas" model="hr.salary.rule.category">
+            <field name="name">Viršyta darbo laiko norma</field>
+            <field name="code">VDL</field>
+        </record>
+        <record id="hr_payroll_rules_virsytas_darbo_laikas" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_virsytas_darbo_laikas"/>
+            <field name="name">Viršyta darbo laiko norma</field>
+            <field name="code">VDL</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try :
+    result = 0.0
+    lines = [l for l in payslip.dict.worked_days_line_ids if l.code in ['VDL']]
+    appointments = set(l.appointment_id for l in lines)
+    for app in appointments:
+       app_lines = [l for l in lines if l.appointment_id.id == app.id]
+       if app.struct_id.code == 'VAL':
+          hourly_wage = app.wage
+       else:
+          try:
+             hourly_wage = app.wage / payslip.ziniarastis_period_line_id.with_context(appointment_id=app.id, maximum=True).num_regular_work_hours
+          except:
+             hourly_wage = 0.0
+       vdu_to_use = vdu_h or hourly_wage
+       result += sum([l.number_of_hours * vdu_to_use * (VD_coefficient - 1.0) for l in app_lines])
+except :
+   result = 0
+
+try:
+    result += inputs.VDL.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Holiday amounts aleady paid -->
+        <record id="hr_payroll_ismok" model="hr.salary.rule.category">
+            <field name="name">Išmokėti atostoginiai</field>
+            <field name="code">AM</field>
+        </record>
+        <record id="hr_payroll_rules_ismok" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_ismok"/>
+            <field name="name">Išmokėti atostoginiai</field>
+            <field name="code">AM</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = 0
+try:
+    result = inputs.AM.amount
+except:
+    pass
+result += sum([l.amount_paid for l in payslip.dict.payment_line_ids if l.code == 'A'])
+result = round(result,2)
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+            <field name="account_debit" search="[('code', '=', '4480')]"/>
+            <field name="account_credit" search="[('code', '=', '4485')]"/>
+        </record>
+
+        <!-- Deductions -->
+        <record id="hr_salary_rule_isskaitos" model="hr.salary.rule.category">
+            <field name="name">Išskaitos</field>
+            <field name="code">ISSK</field>
+        </record>
+        <record id="hr_payroll_rules_isskaitos" model="hr.salary.rule">
+            <field name="category_id" ref="hr_salary_rule_isskaitos"/>
+            <field name="name">Išskaitos</field>
+            <field name="code">IŠSK</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="appears_on_payslip" eval="True"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.ISSK.amount
+except:
+    result = 0.0
+            </field>
+            <field name="account_debit"/>
+            <field name="account_credit"/>
+        </record>
+
+        <!-- Already paid income tax -->
+        <record id="hr_payroll_gpmp" model="hr.salary.rule.category">
+            <field name="name">Jau sumokėtas gyventojų pajamų mokestis</field>
+            <field name="code">GPMP</field>
+        </record>
+        <record id="hr_payroll_rules_gpmp" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_gpmp"/>
+            <field name="name">Jau sumokėtas GPM</field>
+            <field name="code">GPMP</field>
+            <field name="sequence" eval="1"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = round(gpm_already_paid, 2)
+            </field>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 02 ============================================= -->
+        <!-- Accumulated holiday compensation -->
+        <record id="hr_payroll_komp" model="hr.salary.rule.category">
+            <field name="name">Kompensacija už sukauptas atostogas</field>
+            <field name="code">AK</field>
+        </record>
+        <record id="hr_payroll_rules_komp" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_komp"/>
+            <field name="name">Kompensacija už sukauptas atostogas</field>
+            <field name="code">AK</field>
+            <field name="sequence" eval="2"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = 0
+if payslip.ismoketi_kompensacija:
+    appointment = payslip.dict.worked_days_line_ids.mapped('appointment_id').sorted(lambda r: r.date_start)
+    if appointment:
+        appointment = appointment[-1]
+        post = appointment.schedule_template_id.etatas
+        work_norm = appointment.schedule_template_id.work_norm
+    else:
+        post = 1.0
+        work_norm = 1.0
+    if use_holiday_accumulation_records:
+        likutis = adjusted_holiday_balance
+        use_daily_vdu = False
+        if appointment:
+            contracts = appointment.contract_id.get_contracts_related_to_work_relation()
+            related_appointments = contracts.mapped('appointment_id')
+            posts = related_appointments.mapped('schedule_template_id.etatas')
+            no_post_changes = len(set(posts)) == 1
+            use_daily_vdu = no_post_changes
+
+        if use_daily_vdu:
+            vdu_adjusted = payslip.dict.with_context(AK=True, vdu_type='d').vdu_previous
+            if appointment:
+                post = appointment.schedule_template_id.etatas
+                if post &gt; 0:
+                    vdu_adjusted /= post
+        else:
+            vdu = payslip.dict.with_context(AK=True, vdu_type='h').vdu_previous
+            vdu_adjusted = vdu * work_norm * 8.0
+        result = likutis * vdu_adjusted
+    else:
+        if appointment and appointment.leaves_accumulation_type == 'calendar_days':
+            work_days_coef = 5.0 / 7.0  # TODO used to be 0.7 convert to proper localdict value
+        else:
+            work_days_coef = 1.0
+        likutis = round(adjusted_holiday_balance, 2) * work_days_coef
+        vdu = payslip.dict.with_context(AK=True, vdu_type='d').vdu_previous
+        holiday_coefficient = appointment.employee_id.holiday_coefficient or 1.0
+        if holiday_coefficient != 1.0:
+            if post != 0.0:
+                vdu = vdu / post
+        result = likutis * vdu * holiday_coefficient
+if result &lt;=0:
+    result = 0
+try:
+    result += inputs.AK.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- VDU (Average wage) -->
+        <record id="hr_salary_rule_category_vdu" model="hr.salary.rule.category">
+            <field name="name">VDU įtraukus algalapį</field>
+            <field name="code">VDUMEN</field>
+        </record>
+        <record id="hr_payroll_rules_vdu_men" model="hr.salary.rule">
+            <field name="category_id" ref="hr_salary_rule_category_vdu"/>
+            <field name="name">VDU įtraukus algalapį</field>
+            <field name="code">VDUMEN</field>
+            <field name="sequence" eval="2"/>
+            <field name="condition_select">none</field>
+            <field name="amount_python_compute">
+payslip_pay = categories.B + categories.DN + categories.VSS + categories.VD + categories.P + categories.BUD + categories.PD + categories.SNV + categories.NDL + categories.VDL + categories.INV
+ketvirtines = categories.PR
+if abs(ketvirtines) &lt; 0.01:
+    ketvirtines = amount_ketvirtine
+ilp = categories.ILP/4.0
+total_pay = payslip_pay + amount_prev_two_months + ketvirtines + ilp
+total_days = number_of_days + num_days_worked_prev_two_months
+try:
+    vdu = total_pay / total_days
+except:
+    vdu = 0.0
+try:
+    result += inputs.VDUMEN.amount
+except:
+    pass
+result = vdu
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+            <field name="amount_select">code</field>
+            <field name="account_debit"/>
+            <field name="account_credit"/>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 04 ============================================= -->
+        <!-- Downtime -->
+        <record id="hr_payroll_pn" model="hr.salary.rule.category">
+            <field name="name">Prastova</field>
+            <field name="code">PN</field>
+        </record>
+        <record id="hr_payroll_rules_pn" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_pn"/>
+            <field name="name">Prastova</field>
+            <field name="code">PN</field>
+            <field name="sequence" eval="4"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = 0.0
+pay_salary_for_downtime_amount = 0.0
+total_regular_hours = 0.0
+
+try:
+    result += inputs.PN.amount
+except:
+    pass
+
+downtime_lines = [l for l in payslip.dict.worked_days_line_ids if l.code == 'PN']
+
+for downtime_line in downtime_lines:
+    date_from = max(payslip.date_from, downtime_line.appointment_id.date_start)
+    date_to = min(payslip.date_to, downtime_line.appointment_id.date_end or payslip.date_to)
+
+    downtimes = payslip.env['hr.employee.downtime'].search([
+        ('employee_id', '=', payslip.employee_id),
+        ('date_from_date_format', '&lt;=', date_to),
+        ('date_to_date_format', '&gt;=', date_from),
+        ('holiday_id.state', '=', 'validate')
+    ])
+
+    for downtime in downtimes:
+        downtime_start = max(payslip.date_from, downtime_line.appointment_id.date_start, downtime.date_from_date_format)
+        downtime_end = min(payslip.date_to, downtime_line.appointment_id.date_end or payslip.date_to,
+                           downtime.date_to_date_format)
+
+        if downtime.downtime_subtype == 'ordinary':
+            if downtime.downtime_type == 'full':
+                pass
+            else:
+                pass
+        else:
+            calculate_in_days = bool(downtime.possible_to_calculate_in_days)
+            appointment = downtime_line.appointment_id
+            if downtime.pay_type == 'mma':
+                appointment_work_norm = payslip.env['hr.employee'].with_context(
+                    maximum=True).employee_work_norm(
+                    calc_date_from=payslip.date_from,
+                    calc_date_to=payslip.date_to,
+                    contract=appointment.contract_id,
+                    appointment=appointment)
+
+                appointment_mma = mma * appointment.schedule_template_id.etatas
+
+                ziniarastis_days = payslip.env['ziniarastis.day'].search([
+                    ('date', '&lt;=', downtime_end),
+                    ('date', '&gt;=', downtime_start),
+                    ('contract_id', '=', appointment.contract_id.id)
+                ])
+                downtime_lines = ziniarastis_days.mapped('ziniarastis_day_lines').filtered(
+                    lambda r: r.tabelio_zymejimas_id.code == 'PN')
+                downtime_ziniarastis_duration = sum(downtime_lines.mapped('worked_time_hours')) + \
+                                                sum(downtime_lines.mapped('worked_time_minutes')) / 60.0
+                downtime_ziniarastis_day_duration = len(downtime_lines.filtered(lambda l: bool(l.worked_time_hours) or bool(l.worked_time_minutes)).mapped('ziniarastis_id').ids)
+
+                try:
+                    mma_d = appointment_mma / float(appointment_work_norm['days'])
+                except:
+                    mma_d = 0.0
+
+                try:
+                    mma_h = appointment_mma / appointment_work_norm['hours']
+                except:
+                    mma_h = 0.0
+
+                if calculate_in_days:
+                    downtime_slip_duration = downtime_ziniarastis_day_duration
+                    mma_to_use = mma_d
+                else:
+                    downtime_slip_duration = downtime_ziniarastis_duration
+                    mma_to_use = mma_h
+
+                result += downtime_slip_duration * mma_to_use
+            elif downtime.pay_type == 'custom':
+                total_downtime_duration = downtime.downtime_duration_based_on_schedule()
+                app_downtime_duration = downtime.downtime_duration_based_on_schedule(downtime_start, downtime_end)
+                if bool(total_downtime_duration) and bool(app_downtime_duration):
+                    result += app_downtime_duration / float(total_downtime_duration) * downtime.pay_amount
+                else:
+                    downtime_appointments = payslip.env['hr.contract.appointment'].search([
+                        ('employee_id', '=', payslip.employee_id),
+                        ('date_start', '&lt;=', downtime.date_to_date_format),
+                        '|',
+                        ('date_end', '=', False),
+                        ('date_end', '&gt;=', downtime.date_from_date_format)
+                    ])
+                    total_time = 0.0
+                    for downtime_appointment in downtime_appointments:
+                        date_from = max(downtime_appointment.date_start, downtime.date_from_date_format)
+                        date_to = min(downtime_appointment.date_end or downtime.date_to_date_format,
+                                      downtime.date_to_date_format)
+                        appointment_work_norm = payslip.env['hr.employee'].with_context(
+                            maximum=True).employee_work_norm(
+                            calc_date_from=date_from,
+                            calc_date_to=date_to,
+                            contract=downtime_appointment.contract_id,
+                            appointment=downtime_appointment)
+                        if calculate_in_days:
+                            total_time += appointment_work_norm['days']
+                        else:
+                            total_time += appointment_work_norm['hours']
+                    try:
+                        date_from = max(downtime_appointment.date_start, downtime.date_from_date_format, payslip.date_from)
+                        date_to = min(downtime_appointment.date_end or downtime.date_to_date_format,
+                                      downtime.date_to_date_format, payslip.date_to)
+                        appointment_work_norm = payslip.env['hr.employee'].with_context(
+                            maximum=True).employee_work_norm(
+                            calc_date_from=date_from,
+                            calc_date_to=date_to,
+                            contract=downtime_line.appointment_id.contract_id,
+                            appointment=downtime_line.appointment_id)
+                        if calculate_in_days:
+                            norm = float(appointment_work_norm['days'])
+                        else:
+                            norm = appointment_work_norm['hours']
+                        result += norm / float(total_time) * downtime.pay_amount
+                    except:
+                        pass
+            elif downtime.pay_type == 'salary':
+                ziniarastis_days = payslip.env['ziniarastis.day'].search([
+                    ('date', '&lt;=', downtime_end),
+                    ('date', '&gt;=', downtime_start),
+                    ('contract_id', '=', appointment.contract_id.id)
+                ])
+                downtime_lines = ziniarastis_days.mapped('ziniarastis_day_lines').filtered(
+                    lambda r: r.tabelio_zymejimas_id.code == 'PN')
+                downtime_ziniarastis_duration = sum(downtime_lines.mapped('worked_time_hours')) + \
+                                                sum(downtime_lines.mapped('worked_time_minutes')) / 60.0
+                downtime_ziniarastis_day_duration = len(downtime_lines.filtered(lambda l: bool(l.worked_time_hours) or bool(l.worked_time_minutes)).mapped('ziniarastis_id').ids)
+
+                use_hours = not appointment.schedule_template_id.wage_calculated_in_days
+
+                to_pay = min(appointment.wage, mma * 1.5)
+
+                payslip_period_regular_hours = payslip.ziniarastis_period_line_id.with_context(
+                    appointment_id=appointment.id,
+                    maximum=True,
+                    date_from=downtime_start,
+                    date_to=downtime_end
+                ).num_regular_work_hours
+                total_regular_hours += payslip_period_regular_hours
+
+                num_regular_hours = appointment.with_context(date=payslip.date_from, maximum=True).num_regular_work_hours
+
+                if appointment.struct_id.code == 'MEN':
+                    zero_days = round(downtime_ziniarastis_day_duration, 3) == 0.0
+                    zero_hours = round(downtime_ziniarastis_duration, 3) == 0.0
+                    use_hours = appointment.use_hours_for_wage_calculations or downtime.downtime_type != 'full' or any(special_code in payslip.worked_days_line_ids.mapped('code') for special_code in ['MP', 'V'])
+                    num_regular_days = appointment.with_context(date=payslip.date_from, maximum=True).num_regular_work_days
+                    if (zero_days and not zero_hours) or use_hours:
+                        if round(num_regular_hours, 3) != 0.0:
+                            pay_salary_for_downtime_amount += to_pay * downtime_ziniarastis_duration / num_regular_hours
+                    else:
+                        if round(num_regular_days, 3) != 0.0:
+                            pay_salary_for_downtime_amount += to_pay * downtime_ziniarastis_day_duration / num_regular_days
+                else:
+                    downtime_amount = appointment.wage * downtime_ziniarastis_duration
+                    maximum_amount = downtime_amount
+                    if num_regular_hours != 0.0:
+                        maximum_amount = mma * 1.5 * downtime_ziniarastis_duration / num_regular_hours
+                    downtime_amount = min(maximum_amount, downtime_amount)
+                    pay_salary_for_downtime_amount += downtime_amount
+
+max_downtime_pay = pay_salary_for_downtime_amount
+if round(pay_salary_for_downtime_amount, 3) != 0.0:
+    appointment_for_start_of_quarantine = payslip.contract_id.with_context(date='2020-11-07').appointment_id
+    if not appointment_for_start_of_quarantine:
+        appointment_for_start_of_quarantine = payslip.env['hr.contract.appointment'].search([
+            ('date_start', '&lt;=', payslip.date_from),
+            ('date_start', '&gt;=', '2020-11-07'),
+            ('employee_id', '=', payslip.employee_id)
+        ], order='date_start asc', limit=1)
+
+    if appointment_for_start_of_quarantine:
+        if appointment_for_start_of_quarantine.struct_id.code == 'MEN':
+            max_downtime_pay = appointment_for_start_of_quarantine.wage
+        else:
+            minimum_hourly_wage = payslip.contract_id.with_context(date=payslip.date_from).get_payroll_tax_rates(['min_hourly_rate'])['min_hourly_rate']
+            wage = max(minimum_hourly_wage, appointment_for_start_of_quarantine.wage)
+            max_downtime_pay = wage * total_regular_hours
+
+pay_salary_for_downtime_amount = min(max_downtime_pay, pay_salary_for_downtime_amount, mma * 1.5)
+result += pay_salary_for_downtime_amount
+result = round(result, 2)
+            </field>
+            <field name="appears_on_payslip" eval="True"/>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 05 ============================================= -->
+        <!-- BRUTO (Hourly salary structure) -->
+        <record id="hr_payroll_wage" model="hr.salary.rule.category">
+            <field name="name">Atlyginimas</field>
+            <field name="code">WAGE</field>
+        </record>
+        <record id="hr_payroll_rules_valb" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_wage"/>
+            <field name="name">Valandinis bruto</field>
+            <field name="code">VAL</field>
+            <field name="sequence" eval="5"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = categories.B + categories.DN + categories.VSS + categories.VD + categories.VDN + categories.P + categories.BUD + categories.KR + categories.MA + categories.T + categories.V + categories.PD + categories.PR + categories.PDN + categories.PRI + categories.SNV + categories.NDL + categories.VDL + categories.ATS + categories.LIG + categories.KM - categories.NAKM + categories.NTR + categories.INV + categories.IST + categories.AK + categories.DP + categories.PN + categories.KNDDL
+try:
+    result += inputs.VAL.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="account_debit" search="[('code', '=', '62031')]"/>
+            <field name="account_credit" search="[('code', '=', '4480')]"/>
+        </record>
+
+        <!-- BRUTO (Monthly salary structure) -->
+        <record id="hr_payroll_rules_menb" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_wage"/>
+            <field name="name">Mėnesinis bruto</field>
+            <field name="code">MEN</field>
+            <field name="sequence" eval="5"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = categories.B + categories.DN + categories.VSS + categories.VD + categories.VDN + categories.P + categories.BUD + categories.KR + categories.MA + categories.T + categories.V + categories.PD + categories.PR + categories.PDN + categories.PRI + categories.SNV + categories.NDL + categories.VDL + categories.ATS + categories.LIG + categories.KM - categories.NAKM + categories.NTR + categories.INV + categories.IST + categories.AK + categories.DP + categories.PN + categories.KNDDL
+try:
+    result += inputs.MEN.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="account_debit" search="[('code', '=', '62031')]"/>
+            <field name="account_credit" search="[('code', '=', '4480')]"/>
+        </record>
+
+        <!-- ============================================= SEQUENCE 07 ============================================= -->
+
+        <!-- NPD - Untaxable amount -->
+        <record id="hr_payroll_min" model="hr.salary.rule.category">
+            <field name="name">Neapmokestinamas minimumas</field>
+            <field name="code">NPD</field>
+        </record>
+        <record id="hr_payroll_rules_min" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_min"/>
+            <field name="name">Neapmokestinamų pajamų dydis</field>
+            <field name="code">NPD</field>
+            <field name="sequence" eval="7"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = 0.0
+wage = categories.WAGE
+result = 0.0
+
+if force_npd:
+    npd_max = force_npd
+
+if wage &lt;= npd_max:
+    result = wage
+elif wage &lt;= mma:
+    result = npd_max
+else:
+    if npd_date &lt; '2022-01-01':
+        result = (npd_max-((wage - mma)*npd_koeficientas))
+    else:
+        if wage &lt; average_wage:
+            npd_max = under_avg_wage_npd_max
+            npd_coefficient = under_avg_wage_npd_coefficient
+            minimum_wage_for_npd = under_avg_wage_minimum_wage_for_npd
+        else:
+            npd_max = above_avg_wage_npd_max
+            npd_coefficient = above_avg_wage_npd_coefficient
+            minimum_wage_for_npd = above_avg_wage_minimum_wage_for_npd
+        result = (npd_max-((wage - minimum_wage_for_npd)*npd_coefficient))
+
+if contract.with_context(date=npd_date).appointment_id.invalidumas:
+    npd_max = invalidumo_npd
+    result = invalidumo_npd
+elif wage &lt;= result:
+    result = wage
+
+if result &lt; 0 or enforce_zero_npd or not contract.appointment_id.use_npd or payslip.npd_nulis:
+    result = 0
+
+result = min(npd_max, result)
+
+try:
+    result += inputs.NPD.amount
+except:
+    pass
+
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Extra untaxable amount -->
+        <record id="hr_payroll_pnpd" model="hr.salary.rule.category">
+            <field name="name">PNPD</field>
+            <field name="code">PNPD</field>
+        </record>
+        <record id="hr_payroll_rules_pnpd" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_pnpd"/>
+            <field name="name">PNPD</field>
+            <field name="code">PNPD</field>
+            <field name="sequence" eval="7"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+date_compute = payslip.date_computation or payslip.date_to
+if date_compute &lt; '2018-01-01':
+    if employee.seimynine_padetis:
+        if  contract.antraeiles == False and employee.tevystes == True:
+            result = categories.NPD + employee.children*employee.seimynine_padetis.pnpd_uz_vaika
+        else:
+            result = employee.children*employee.seimynine_padetis.pnpd_uz_vaika
+    else:
+        result = 0
+
+
+    if categories.WAGE &gt; (float(npd_max)/npd_koeficientas+mma_first_day_of_year):
+        result = result - categories.NPD
+    if contract.override_taxes and contract.use_pnpd:
+        result = contract.pnpd
+
+
+    if result &lt; 0:
+        result = 0
+
+    if payslip.pnpd_nulis:
+        result = 0
+else:
+    result = 0
+try:
+    result += inputs.PNPD.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- ============================================= SEQUENCE 08 ============================================= -->
+        <!-- Illness NPD - Untaxable amount -->
+        <record id="hr_payroll_illness_npd_category" model="hr.salary.rule.category">
+            <field name="name">Neapmokestinamas pajamų dydis pagal ligų sumą</field>
+            <field name="code">ILLNESS_NPD</field>
+        </record>
+        <record id="hr_payroll_illness_npd_rule" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_illness_npd_category"/>
+            <field name="name">Neapmokestinamas pajamų dydis pagal ligų sumą</field>
+            <field name="code">ILLNESS_NPD</field>
+            <field name="sequence" eval="8"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+wage = categories.WAGE
+illness = categories.LIG
+total_npd = categories.NPD
+if wage &gt; 0:
+    result = total_npd * (illness / wage)
+else:
+    result = 0.0
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- Income in kind (employer pays taxes) NPD - Untaxable amount -->
+        <record id="hr_payroll_benefit_in_kind_employer_npd_category" model="hr.salary.rule.category">
+            <field name="name">Neapmokestinamas pajamų dydis nuo pajamų natūra, kai darbdavys moka mokesčius</field>
+            <field name="code">NTRD_NPD</field>
+        </record>
+        <record id="hr_payroll_benefit_in_kind_employer_npd_rule" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_benefit_in_kind_employer_npd_category"/>
+            <field name="name">Neapmokestinamas pajamų dydis nuo pajamų natūra, kai darbdavys moka mokesčius</field>
+            <field name="code">NTRD_NPD</field>
+            <field name="sequence" eval="8"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = categories.NPD * categories.NTRD / categories.WAGE
+except:
+    result = 0.0
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- Income in kind (employee pays taxes) NPD - Untaxable amount -->
+        <record id="hr_payroll_benefit_in_kind_employee_npd_category" model="hr.salary.rule.category">
+            <field name="name">Neapmokestinamas pajamų dydis nuo pajamų natūra, kai darbuotojas moka mokesčius</field>
+            <field name="code">NTR_NPD</field>
+        </record>
+        <record id="hr_payroll_benefit_in_kind_employee_npd_rule" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_benefit_in_kind_employee_npd_category"/>
+            <field name="name">Neapmokestinamas pajamų dydis nuo pajamų natūra, kai darbuotojas moka mokesčius</field>
+            <field name="code">NTR_NPD</field>
+            <field name="sequence" eval="8"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    benefit_in_kind_amount = categories.NTR - categories.NTRD
+    result = categories.NPD * benefit_in_kind_amount / categories.WAGE
+except:
+    result = 0.0
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- ============================================= SEQUENCE 09 ============================================= -->
+        <!-- Employer SoDra taxes -->
+        <record id="hr_payroll_tax" model="hr.salary.rule.category">
+            <field name="name">Mokesčiai</field>
+            <field name="code">TAX</field>
+        </record>
+        <record id="hr_payroll_rules_sodra9" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_tax"/>
+            <field name="name">Darbuotojo Sodra</field>
+            <field name="code">SDB</field>
+            <field name="sequence" eval="9"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+vsd = (categories.WAGE - categories.NTRD - categories.LIG) * darbuotojo_sveikatos_proc / 100.0
+psd = (categories.WAGE - categories.NTRD  - categories.LIG) * darbuotojo_pensijos_proc / 100.0
+result = vsd + psd
+try:
+    result += inputs.SDB.amount
+except:
+    pass
+if result &lt; 0:
+    result = 0
+result = round(result,2)
+            </field>
+            <field name="register_id" ref="contrib_register_sodra9"/>
+            <field name="account_debit" search="[('code', '=', '4480')]"/>
+            <field name="account_credit" search="[('code', '=', '4482')]"/>
+        </record>
+
+        <!-- Income tax that the employer pays (from income in kind) -->
+        <!-- Untaxed income amount is not applied -->
+        <record id="hr_payroll_income_tax_employer_pays" model="hr.salary.rule.category">
+            <field name="name">Pajamų mokestis kuomet jį sumoka darbdavys</field>
+            <field name="code">EMPLRGPM</field>
+        </record>
+        <record id="hr_payroll_rules_income_tax_employer_pays" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_income_tax_employer_pays"/>
+            <field name="name">Pajamų mokestis apmokamas darbdavio</field>
+            <field name="code">EMPLRGPM</field>
+            <field name="sequence" eval="9"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+benefit_in_kind_amount = categories.NTRD
+result = (benefit_in_kind_amount * gpm_proc) / 100.0
+try:
+    result += inputs.EMPLRGPM.amount
+except:
+    pass
+result = round(result, 2)
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- Income tax (from income in kind) -->
+        <record id="hr_payroll_income_tax_benefit_in_kind" model="hr.salary.rule.category">
+            <field name="name">Pajamų mokestis nuo pajamų natūra</field>
+            <field name="code">NTR_GPM</field>
+        </record>
+        <record id="hr_payroll_rules_income_tax_benefit_in_kind" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_income_tax_benefit_in_kind"/>
+            <field name="name">Pajamų mokestis nuo pajamų natūra</field>
+            <field name="code">NTR_GPM</field>
+            <field name="sequence" eval="9"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+benefit_in_kind_amount = categories.NTR - categories.NTRD
+benefit_in_kind_npd = categories.NTR_NPD
+result = ((benefit_in_kind_amount - benefit_in_kind_npd) * gpm_proc) / 100.0
+try:
+    result += inputs.NTR_GPM.amount
+except:
+    pass
+result = round(result, 2)
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 10 ============================================= -->
+        <!-- BRUTO (without income in kind) -->
+        <record id="hr_payroll_wage_no_benefits" model="hr.salary.rule.category">
+            <field name="name">Atlyginimas be natūros</field>
+            <field name="code">WAGEN</field>
+        </record>
+        <record id="hr_payroll_rules_bruto_be_n" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_wage_no_benefits"/>
+            <field name="name">Bruto be natūros</field>
+            <field name="code">BRUTON</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = categories.WAGE - categories.NTR + categories.NAKM - categories.KM
+try:
+    result += inputs.BRUTON.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="account_debit" search="[('code', '=', '62031')]"/>
+            <field name="account_credit" search="[('code', '=', '4480')]"/>
+        </record>
+
+        <!-- Employee SoDra paid by the employer (from income in kind) -->
+        <record id="hr_payroll_employer_pays_main_sodra" model="hr.salary.rule.category">
+            <field name="name">Darbuotojo pagrindinė SoDra dalis apmokama darbdavio</field>
+            <field name="code">EMPLRSDB</field>
+        </record>
+        <record id="hr_payroll_rules_employer_paid_employee_sodra" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_employer_pays_main_sodra"/>
+            <field name="name">Darbuotojo SODRA apmokama darbdavio</field>
+            <field name="code">EMPLRSDB</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+benefit_in_kind_amount = categories.NTRD
+sodra_percentage = darbuotojo_sveikatos_proc + darbuotojo_pensijos_proc
+
+result = benefit_in_kind_amount * sodra_percentage / 100.0
+
+if result &lt; 0:
+    result = 0
+
+try:
+    result += inputs.EMPLRSDB.amount
+except:
+    pass
+
+result = round(result,2)
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- Employee SoDra from income in kind -->
+        <record id="hr_payroll_employee_benefit_in_kind_sodra" model="hr.salary.rule.category">
+            <field name="name">Darbuotojo SoDra nuo pajamų natūra</field>
+            <field name="code">NTR_SODRA_EMPL</field>
+        </record>
+        <record id="hr_payroll_rules_employee_benefit_in_kind_sodra" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_employee_benefit_in_kind_sodra"/>
+            <field name="name">Darbuotojo SoDra nuo pajamų natūra</field>
+            <field name="code">NTR_SODRA_EMPL</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+benefit_in_kind_amount = categories.NTR - categories.NTRD
+
+sodra_percentage = darbuotojo_sveikatos_proc + darbuotojo_pensijos_proc
+if contract.sodra_papildomai:
+    sodra_percentage += sodra_papild_proc
+
+result = benefit_in_kind_amount * sodra_percentage / 100.0
+
+if result &lt; 0:
+    result = 0
+
+try:
+    result += inputs.NTR_SODRA_EMPL.amount
+except:
+    pass
+
+result = round(result,2)
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- Additional/Voluntary Employee SoDra paid by the employer (from income in kind) -->
+        <record id="hr_payroll_employer_pays_voluntary_sodra" model="hr.salary.rule.category">
+            <field name="name">Darbuotojo papildoma SoDra dalis apmokama darbdavio</field>
+            <field name="code">EMPLRSDP</field>
+        </record>
+        <record id="hr_payroll_rules_employer_paid_employee_sodra_extra" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_employer_pays_voluntary_sodra"/>
+            <field name="name">Darbuotojo SODRA apmokama darbdavio</field>
+            <field name="code">EMPLRSDP</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = 0.0
+amount = categories.NTRD
+if amount &gt; 0:
+    if contract.sodra_papildomai:
+        result = amount * sodra_papild_proc / 100.0
+try:
+    result += inputs.EMPLRSDP.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- Employee SoDra adjustment to meet the minimum required tax amount -->
+        <record id="categ_sodra_grindys_add_employee" model="hr.salary.rule.category">
+            <field name="name">Darbuotojo sodra papildymas iki grindų</field>
+            <field name="code">SDBGRPADD</field>
+        </record>
+        <record id="rules_sodra_grindys_add_employee" model="hr.salary.rule">
+            <field name="category_id" ref="categ_sodra_grindys_add_employee"/>
+            <field name="name">Darbuotojo sodra papildymas iki grindų</field>
+            <field name="code">SDBGRPADD</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = 0.0
+amount = categories.WAGE - categories.LIG
+if payslip.date_to &gt;= '2018-07-01' and not payslip.use_favourable_sdd and amount &lt; mma:
+    try:
+        exception_lines = [line for line in payslip.dict.worked_days_line_ids if line.code in ['L', 'NA', 'NS', 'N', 'PB']]
+        num_exception_days = 0.0
+        for line in exception_lines:
+            num_exception_days += line.number_of_work_days
+        total_days = payslip.ziniarastis_period_line_id.num_regular_work_days_by_accounting_month
+        mma_adjusted = mma * (insurable_period_days - num_exception_days) / total_days
+    except:
+        mma_adjusted = mma
+    diff = mma_adjusted - amount
+    if diff &gt; 0:
+        rate = darbuotojo_pensijos_proc + darbuotojo_sveikatos_proc
+        #if contract.sodra_papildomai:
+        #    rate += sodra_papild_proc
+        result = diff * rate / 100.0
+try:
+   result += inputs.SDBGRPADD.amount
+except:
+   pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Employer SoDra adjustment to meet the minimum required tax amount -->
+        <record id="categ_sodra_grindys_add_employer" model="hr.salary.rule.category">
+            <field name="name">Darbdavio sodra papildymas iki grindų</field>
+            <field name="code">SDDGRADD</field>
+        </record>
+        <record id="rules_sodra_grindys_add_employer" model="hr.salary.rule">
+            <field name="category_id" ref="categ_sodra_grindys_add_employer"/>
+            <field name="name">Darbdavio sodra papildymas iki grindų</field>
+            <field name="code">SDDGRADD</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = 0.0
+amount = categories.WAGE - categories.LIG
+if payslip.date_to &gt;= '2018-01-01' and not payslip.use_favourable_sdd and amount &lt; mma:
+    try:
+        exception_lines = [line for line in payslip.dict.worked_days_line_ids if line.code in ['L', 'NA', 'NS', 'N', 'PB']]
+        num_exception_days = 0.0
+        for line in exception_lines:
+            num_exception_days += line.number_of_work_days
+        total_days = payslip.ziniarastis_period_line_id.num_regular_work_days_by_accounting_month
+        mma_adjusted = mma * (insurable_period_days - num_exception_days) / total_days
+    except:
+        mma_adjusted = mma
+    diff = mma_adjusted - amount
+    if diff &gt; 0:
+        result = diff * darbdavio_sodra_proc / 100.0
+try:
+   result += inputs.SDDGRADD.amount
+except:
+   pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Employer SoDra from income in kind records where the employer pays taxes -->
+        <record id="hr_payroll_benefit_in_kind_employer_sdd" model="hr.salary.rule.category">
+            <field name="name">Darbdavio SoDra nuo pajamų natūra apmokamų darbdavio</field>
+            <field name="code">EMPLRSDDMAIN</field>
+        </record>
+        <record id="hr_payroll_rules_benefit_in_kind_employer_sodra" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_benefit_in_kind_employer_sdd"/>
+            <field name="name">Darbdavio Sodra nuo natūros įrašų</field>
+            <field name="code">EMPLRSDDMAIN</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+amount = categories.WAGE - categories.LIG
+amount_no_benefit_in_kind = amount - categories.NTRD
+result = 0.0
+if amount &gt; 0:
+    full_sdd = amount * darbdavio_sodra_proc / 100.0
+    sdd_without_benefit_in_kind = amount_no_benefit_in_kind * darbdavio_sodra_proc / 100.0
+    try:
+       full_sdd += inputs.SDD.amount
+       sdd_without_benefit_in_kind += inputs.SDD.amount
+    except:
+       pass
+    if sdd_without_benefit_in_kind &lt; 0:
+        sdd_without_benefit_in_kind = 0.0
+    result = full_sdd - sdd_without_benefit_in_kind
+try:
+    result += inputs.EMPLRSDDMAIN.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="register_id" ref="contrib_register_sodra31"/>
+            <field name="account_debit" search="[('code', '=', '62031')]"/>
+            <field name="account_credit" search="[('code', '=', '4482')]"/>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- Employer SoDra from income in kind records -->
+        <record id="hr_payroll_employee_benefit_in_kind_employer_sodra" model="hr.salary.rule.category">
+            <field name="name">Darbdavio SoDra nuo darbuotojo pajamų natūra</field>
+            <field name="code">NTR_SODRA_EMPLR</field>
+        </record>
+        <record id="hr_payroll_rules_employee_benefit_in_kind_employer_sodra" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_employee_benefit_in_kind_employer_sodra"/>
+            <field name="name">Darbdavio Sodra nuo darbuotojo pajamų natūra</field>
+            <field name="code">NTR_SODRA_EMPLR</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+amount = categories.WAGE - categories.LIG
+amount_no_benefit_in_kind = amount - categories.NTR + categories.NTRD
+result = 0.0
+if amount &gt; 0:
+    full_sdd = amount * darbdavio_sodra_proc / 100.0
+    sdd_without_benefit_in_kind = amount_no_benefit_in_kind * darbdavio_sodra_proc / 100.0
+    try:
+       full_sdd += inputs.SDD.amount
+       sdd_without_benefit_in_kind += inputs.SDD.amount
+    except:
+       pass
+    if sdd_without_benefit_in_kind &lt; 0:
+        sdd_without_benefit_in_kind = 0.0
+    result = full_sdd - sdd_without_benefit_in_kind
+try:
+    result += inputs.NTR_SODRA_EMPLR.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+        </record>
+
+        <!-- Compensations -->
+        <record id="hr_payroll_compensations" model="hr.salary.rule.category">
+            <field name="name">Kompensacijos</field>
+            <field name="code">KOMP</field>
+        </record>
+        <record id="hr_payroll_rules_compensations" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_compensations"/>
+            <field name="name">Kompensacijos</field>
+            <field name="code">KOMP</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = inputs.KOMP.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+            <field name="account_debit" search="[('code', '=', '63048')]"/>
+            <field name="account_credit" search="[('code', '=', '4488')]"/>
+        </record>
+
+        <!-- Dynamic workplace compensations -->
+        <record id="hr_payroll_dynamic_workplace_comp" model="hr.salary.rule.category">
+            <field name="name">Kompensacijos už kilnojamojo pobūdžio darbą</field>
+            <field name="code">KKPD</field>
+        </record>
+        <record id="hr_payroll_rules_dynamic_workplace_comp" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_dynamic_workplace_comp"/>
+            <field name="name">Kompensacijos už kilnojamojo pobūdžio darbą</field>
+            <field name="code">KKPD</field>
+            <field name="sequence" eval="10"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = min(inputs.KKPD.amount, categories.WAGE / 2.0)
+except:
+    result = 0
+result = round(result,2)
+            </field>
+            <field name="account_debit" search="[('code', '=', '63048')]"/>
+            <field name="account_credit" search="[('code', '=', '4488')]"/>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 12 ============================================= -->
+        <!-- Employer SoDra main part -->
+        <record id="hr_payroll_sodra_main" model="hr.salary.rule.category">
+            <field name="name">Sodra pagrindinė</field>
+            <field name="code">SDDMAIN</field>
+        </record>
+        <record id="hr_payroll_rules_sodraim_main" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_sodra_main"/>
+            <field name="name">Darbdavio Sodra Pagrindinė dalis</field>
+            <field name="code">SDDMAIN</field>
+            <field name="sequence" eval="12"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+amount = categories.WAGE - categories.LIG - categories.NTRD
+result = amount * darbdavio_sodra_proc/100.0
+try:
+    result += inputs.SDDMAIN.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+        <!-- Employer SoDra -->
+        <record id="hr_payroll_imtax" model="hr.salary.rule.category">
+            <field name="name">Įmonės mokesčiai</field>
+            <field name="code">IMTAX</field>
+        </record>
+        <record id="hr_payroll_rules_sodra31" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_imtax"/>
+            <field name="name">Darbdavio Sodra</field>
+            <field name="code">SDD</field>
+            <field name="sequence" eval="12"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+amount = categories.WAGE - categories.LIG - categories.NTRD
+result = amount * darbdavio_sodra_proc / 100.0
+result += categories.SDDGRADD
+result += categories.SDBGRPADD
+try:
+    result += inputs.SDD.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="register_id" ref="contrib_register_sodra31"/>
+            <field name="account_debit" search="[('code', '=', '62031')]"/>
+            <field name="account_credit" search="[('code', '=', '4482')]"/>
+        </record>
+
+        <!-- Income tax -->
+        <record id="hr_payroll_pajamu" model="hr.salary.rule.category">
+            <field name="name">Pajamų mokestis</field>
+            <field name="code">GPM</field>
+        </record>
+        <record id="hr_payroll_rules_pajamu" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_pajamu"/>
+            <field name="name">Pajamų mokestis</field>
+            <field name="code">GPM</field>
+            <field name="sequence" eval="12"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+uzmokestis = categories.WAGE - categories.NTRD
+ligos = categories.LIG
+pnpd = categories.PNPD
+npd_visas = categories.NPD
+if uzmokestis &gt; 0:
+    npd_ligu = npd_visas * (ligos / uzmokestis)
+else:
+    npd_ligu = 0.0
+npd_be_ligu = npd_visas - npd_ligu
+gpm_be_ligu = ((uzmokestis - ligos - pnpd - npd_be_ligu) * gpm_proc) / 100.0
+gpm_ligos = ((ligos - npd_ligu) * gpm_ligos_proc) / 100.0
+result = gpm_be_ligu + gpm_ligos
+try:
+    result += inputs.GPM.amount
+except:
+    pass
+if result &lt; 0:
+    result = 0
+result = round(result,2)
+            </field>
+            <field name="register_id" ref="contrib_register_pajamu"/>
+            <field name="account_debit" search="[('code', '=', '4480')]"/>
+            <field name="account_credit" search="[('code', '=', '4481')]"/>
+        </record>
+        <!-- Income illness tax -->
+        <record id="hr_payroll_illness_income_tax" model="hr.salary.rule.category">
+            <field name="name">Pajamų mokestis nuo ligos</field>
+            <field name="code">GPML</field>
+        </record>
+        <record id="hr_payroll_rules_illness_income_tax" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_illness_income_tax"/>
+            <field name="name">Pajamų mokestis nuo ligos</field>
+            <field name="code">GPML</field>
+            <field name="sequence" eval="12"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+wage = categories.WAGE - categories.NTRD
+illness = categories.LIG
+total_npd = categories.NPD
+if wage &gt; 0:
+    npd_illness = total_npd * (illness / wage)
+else:
+    npd_illness = 0.0
+gpm_illness = ((illness - npd_illness) * gpm_ligos_proc) / 100.0
+if gpm_illness &lt; 0:
+    gpm_illness = 0
+result = round(gpm_illness,2)
+            </field>
+        </record>
+
+        <!-- Additional/Voluntary employee SoDra -->
+        <record id="hr_payroll_rules_sodra1" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_tax"/>
+            <field name="name">Sodra Papildomai</field>
+            <field name="code">SDP</field>
+            <field name="sequence" eval="12"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+if contract.sodra_papildomai:
+    result = (categories.WAGE - categories.NTRD - categories.LIG) * sodra_papild_proc / 100.0
+else:
+    result = 0
+try:
+   result += inputs.SDP.amount
+except:
+   pass
+if result &lt; 0:
+    result = 0
+result = round(result,2)
+            </field>
+            <field name="register_id" ref="contrib_register_sodra1"/>
+            <field name="account_debit" search="[('code', '=', '4480')]"/>
+            <field name="account_credit" search="[('code', '=', '4482')]"/>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 14 ============================================= -->
+        <!-- NET wage -->
+        <record id="hr_payroll_net" model="hr.salary.rule.category">
+            <field name="name">Galutinis</field>
+            <field name="code">NET</field>
+        </record>
+        <record id="hr_payroll_rules_neto" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_net"/>
+            <field name="name">NETO atlyginimas</field>
+            <field name="code">NET</field>
+            <field name="sequence" eval="14"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = round(categories.WAGE,2) - round(categories.NTR,2) - round(categories.TAX,2) - round(categories.GPM,2) - round(categories.AM,2) + round(categories.PDNM,2) + round(categories.KOMP,2) + round(categories.KKPD,2) + round(categories.NAKM,2) - round(categories.KM,2)
+result = round(result,2)</field>
+            <field name="register_id" ref="contrib_register_atlyginimai"/>
+            <field name="account_debit" search="[('code', '=', '62031')]"/>
+            <field name="account_credit" search="[('code', '=', '4480')]"/>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 16 ============================================= -->
+        <!-- Total SoDra -->
+        <record id="hr_payroll_mok_sodra" model="hr.salary.rule.category">
+            <field name="name">Mokėtina SODRA</field>
+            <field name="code">SDM</field>
+        </record>
+        <record id="hr_payroll_rules_sodra_mok" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_mok_sodra"/>
+            <field name="name">Visa VSD įmokų suma</field>
+            <field name="code">SDM</field>
+            <field name="sequence" eval="16"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+visa_sodra = categories.IMTAX + categories.TAX
+result = visa_sodra
+try:
+    result += inputs.SDM.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+            <field name="register_id" ref="contrib_register_sodra9"/>
+            <field name="account_debit"/>
+            <field name="account_credit"/>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 18 ============================================= -->
+        <!-- Wage to be paid (NET - Advance) -->
+        <record id="hr_payroll_mok" model="hr.salary.rule.category">
+            <field name="name">Mokėtinas atlyginimas</field>
+            <field name="code">M</field>
+        </record>
+        <record id="hr_payroll_rules_mok" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_mok"/>
+            <field name="name">Mokėtinas atlyginimas</field>
+            <field name="code">M</field>
+            <field name="sequence" eval="18"/>
+            <field name="condition_select">none</field>
+            <field name="appears_on_payslip" eval="True"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = categories.NET - categories.AVN
+try:
+    result += inputs.M.amount
+except:
+    pass
+
+result = round(result,2)
+            </field>
+            <!--<field name="account_debit" search="[('code', '=', '62031')]"/>-->
+            <!--<field name="account_credit" search="[('code', '=', '4480')]"/>-->
+        </record>
+
+        <!-- GPM to be paid (GPM - GPM paid) -->
+        <record id="hr_payroll_mok_gpm" model="hr.salary.rule.category">
+            <field name="name">Mokėtinas GPM</field>
+            <field name="code">MGPM</field>
+        </record>
+        <record id="hr_payroll_rules_mok_gpm" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_mok_gpm"/>
+            <field name="name">Mokėtinas GPM</field>
+            <field name="code">MGPM</field>
+            <field name="sequence" eval="18"/>
+            <field name="condition_select">none</field>
+            <field name="appears_on_payslip" eval="False"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = categories.GPM - categories.GPMP
+result = round(result,2)
+            </field>
+            <field name="account_debit"/>
+            <field name="account_credit"/>
+        </record>
+
+        <!-- Holiday compensation at the start of the month -->
+        <record id="hr_salary_rule_atostoginiai_pradzioje" model="hr.salary.rule.category">
+            <field name="name">Atostoginiai mėnesio pradžioje</field>
+            <field name="code">ATMP</field>
+        </record>
+        <record id="hr_payroll_rules_atostoginiai_men_pradzioje" model="hr.salary.rule">
+            <field name="category_id" ref="hr_salary_rule_atostoginiai_pradzioje"/>
+            <field name="name">Atostoginiai mėnesio pradžioje</field>
+            <field name="code">ATMP</field>
+            <field name="sequence" eval="18"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">
+result = payslip.ismoketi_kompensacija
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+try:
+    result = payslip.atostogu_praeita_menesi_amount
+except:
+    result = 0.0
+try:
+    result += inputs.ATMP.amount
+except:
+    pass
+result = round(0.0, 2)
+            </field>
+            <field name="account_debit"/>
+            <field name="account_credit"/>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 20 ============================================= -->
+        <!-- Total payable salary -->
+        <record id="hr_payroll_bend_mok" model="hr.salary.rule.category">
+            <field name="name">Bendras mokėtinas atlyginimas</field>
+            <field name="code">BENDM</field>
+        </record>
+        <record id="hr_payroll_rules_bend_mok" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_bend_mok"/>
+            <field name="name">Bendras mokėtinas atlyginimas</field>
+            <field name="code">BENDM</field>
+            <field name="sequence" eval="20"/>
+            <field name="condition_select">none</field>
+            <field name="appears_on_payslip" eval="True"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = categories.M - categories.ISSK + categories.AM
+try:
+    result += inputs.BENDM.amount
+except:
+    pass
+result = round(result,2)
+            </field>
+        </record>
+
+
+        <!-- ============================================= SEQUENCE 30 ============================================= -->
+        <!-- Total deductions -->
+        <record id="hr_salary_rule_visos_isskaitos" model="hr.salary.rule.category">
+            <field name="name">Išskaityta iš viso</field>
+            <field name="code">VIŠSK</field>
+        </record>
+        <record id="hr_payroll_rules_visos_isskaitos" model="hr.salary.rule">
+            <field name="category_id" ref="hr_salary_rule_visos_isskaitos"/>
+            <field name="name">Išskaityta iš viso</field>
+            <field name="code">VIŠSK</field>
+            <field name="sequence" eval="30"/>
+            <field name="condition_select">none</field>
+            <field name="appears_on_payslip" eval="True"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = round(categories.TAX,2) + round(categories.GPM,2)
+try:
+    result += inputs.VISSK.amount
+except:
+    result += 0.0
+result = round(result, 2)
+            </field>
+        <field name="account_debit"/>
+        <field name="account_credit"/>
+        </record>
+
+        <!-- ============================================= SEQUENCE 50 ============================================= -->
+        <!-- UNUSED - "NPD used" -->
+        <record id="hr_salary_rule_category_eff_npd" model="hr.salary.rule.category">
+            <field name="name">Pritaikytas NPD</field>
+            <field name="code">PRTNPD</field>
+        </record>
+        <record id="hr_payroll_rules_eff_npd" model="hr.salary.rule">
+            <field name="category_id" ref="hr_salary_rule_category_eff_npd"/>
+            <field name="name">Pritaikytas NPD</field>
+            <field name="code">PRTNPD</field>
+            <field name="sequence" eval="50"/>
+            <field name="condition_select">none</field>
+            <field name="amount_python_compute">
+result = 0.0
+            </field>
+            <field name="appears_on_payslip" eval="False"/>
+            <field name="amount_select">code</field>
+            <field name="account_debit"/>
+            <field name="account_credit"/>
+        </record>
+
+        <!-- ============================================= SEQUENCE 99 ============================================= -->
+        <!-- Late salary payments -->
+        <record id="hr_payroll_pavel" model="hr.salary.rule.category">
+            <field name="name">Pavėluotai išmokėtas atlyginimas už ankstesnius mėnesius</field>
+            <field name="code">PVL</field>
+        </record>
+        <record id="hr_payroll_rules_pavel" model="hr.salary.rule">
+            <field name="category_id" ref="hr_payroll_pavel"/>
+            <field name="name">Pavėluotas darbo užmokestis</field>
+            <field name="code">PVL</field>
+            <field name="sequence" eval="99"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="appears_on_payslip" eval="False"/>
+            <field name="amount_python_compute">
+try:
+    result = inputs.PVL.amount
+except:
+    result = 0
+result = round(result,2)
+            </field>
+        </record>
+
+
+        <!-- ================================================ OTHER ================================================ -->
+        <!--UNUSED, kept only so that existing payslip lines don't break-->
+        <record id="hr_payroll_gross" model="hr.salary.rule.category">
+            <field name="name">Atlyginimas su bonusais</field>
+            <field name="code">GROSS</field>
+        </record>
+        <record id="hr_payroll_ded" model="hr.salary.rule.category">
+            <field name="name">Atėmimai</field>
+            <field name="code">DED</field>
+        </record>
+        <record id="hr_payroll_comp" model="hr.salary.rule.category">
+            <field name="name">Kompanijos išmoka</field>
+            <field name="code">CMP</field>
+        </record>
+        <record id="hr_payroll_employer_pays_employee_tax" model="hr.salary.rule.category">
+            <field name="name">Darbuotojo mokesčiai apmokami darbdavio</field>
+            <field name="code">EMPLRTAX</field>
+        </record>
+        <record id="hr_payroll_kompensuojamos" model="hr.salary.rule.category">
+            <field name="name">Kompensuojamos dienos</field>
+            <field name="code">KD</field>
+        </record>
+        <record id="hr_payroll_neapmokamos" model="hr.salary.rule.category">
+            <field name="name">Neapmokamos</field>
+            <field name="code">ANM</field>
+        </record>
+        <!--END UNUSED-->
+
+        <!-- SALARY STRUCTURES-->
+        <record id="hr_payroll_salary_structure_menesinis" model="hr.payroll.structure">
+            <field name="code">MEN</field>
+            <field name="name">Mėnesinis atlyginimas</field>
+            <field eval="[(6, 0, [
+            ref('hr_payroll_rules_sodra_mok'),ref('hr_payroll_rules_koman'),ref('hr_payroll_rules_neapmok_koman'),
+            ref('hr_payroll_rules_komp'),
+            ref('hr_payroll_rules_mok_gpm'),ref('hr_payroll_rules_mok'),ref('hr_payroll_rules_avansas'),
+            ref('hr_payroll_rules_inval'),ref('hr_payroll_rules_iseit'),ref('hr_payroll_rules_pavel'),
+            ref('hr_payroll_rules_menb'),ref('hr_payroll_rules_bruto_be_n'),ref('hr_payroll_rules_atostogos'),
+            ref('hr_payroll_rules_sodra9'),
+            ref('hr_payroll_rules_sodra31'),ref('hr_payroll_rules_pajamu'),
+            ref('hr_payroll_rules_neto'),ref('hr_payroll_rules_vaikai_priemokos'),
+            ref('hr_payroll_rules_papildomos_p_d'),ref('hr_payroll_rules_priedai'),
+            ref('hr_payroll_rules_priedai_ne_vdu'),ref('hr_payroll_rules_premijos'),
+            ref('hr_payroll_rules_premijos_ilgenes'),
+            ref('hr_payroll_rules_plius'),ref('hr_payroll_rules_budejimas'),ref('hr_payroll_rules_basem'),
+            ref('hr_payroll_rules_natura'),ref('hr_payroll_rules_min'),ref('hr_payroll_rules_gpmp'),
+            ref('hr_payroll_rules_ismok'),ref('hr_payroll_rules_liga'),ref('hr_payroll_rules_sodra1'),
+            ref('hr_payroll_rules_pnpd'),ref('hr_payroll_rules_virsd'),ref('hr_payroll_rules_virsdn'),ref('hr_payroll_rules_virss'),
+            ref('hr_payroll_rules_poilsio_dienomis'),
+            ref('hr_payroll_rules_naktis'),ref('hr_payroll_rules_virsn'), ref('hr_payroll_rules_isskaitos'),
+            ref('hr_payroll_rules_visos_isskaitos'),
+            ref('hr_payroll_rules_atostoginiai_men_pradzioje'), ref('hr_payroll_rules_vdu_men'),
+            ref('hr_payroll_rules_eff_npd'),
+            ref('hr_payroll_rules_kr'), ref('hr_payroll_rules_ma'),
+            ref('hr_payroll_rules_sodraim_main'),
+            ref('hr_payroll_rules_bend_mok'),
+            ref('rules_sodra_grindys_add_employee'), ref('rules_sodra_grindys_add_employer'),
+            ref('hr_payroll_rules_neisdirbtas_darbo_laikas'), ref('hr_payroll_rules_virsytas_darbo_laikas'),
+            ref('hr_payroll_rules_kv'), ref('hr_payroll_rules_pn'), ref('hr_payroll_rules_knddl'), ref('hr_payroll_rules_pdnm'),
+            ref('hr_payroll_rules_compensations'), ref('hr_payroll_rules_dynamic_workplace_comp'),
+            ref('hr_payroll_rules_natura_employer'), ref('hr_payroll_rules_employer_paid_employee_sodra'),
+            ref('hr_payroll_rules_income_tax_employer_pays'),
+            ref('hr_payroll_rules_employer_paid_employee_sodra_extra'),
+            ref('hr_payroll_rules_benefit_in_kind_employer_sodra'),
+            ref('hr_payroll_rules_income_tax_benefit_in_kind'),
+            ref('hr_payroll_rules_employee_benefit_in_kind_employer_sodra'),
+            ref('hr_payroll_rules_employee_benefit_in_kind_sodra'),
+            ref('hr_payroll_illness_npd_rule'),
+            ref('hr_payroll_benefit_in_kind_employer_npd_rule'),
+            ref('hr_payroll_benefit_in_kind_employee_npd_rule'),
+            ref('hr_payroll_rules_illness_income_tax'),
+            ])]" name="rule_ids"/>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="hr_payroll_salary_structure_valandinis" model="hr.payroll.structure">
+            <field name="code">VAL</field>
+            <field name="name">Valandinis atlyginimas</field>
+            <field eval="[(6, 0, [
+            ref('hr_payroll_rules_valb'),ref('hr_payroll_rules_bruto_be_n'),ref('hr_payroll_rules_atostogos'),
+            ref('hr_payroll_rules_sodra_mok'),
+            ref('hr_payroll_rules_koman'),ref('hr_payroll_rules_neapmok_koman'),ref('hr_payroll_rules_komp'),
+            ref('hr_payroll_rules_mok_gpm'),
+            ref('hr_payroll_rules_mok'),ref('hr_payroll_rules_avansas'),ref('hr_payroll_rules_inval'),
+            ref('hr_payroll_rules_iseit'),ref('hr_payroll_rules_sodra9'),ref('hr_payroll_rules_sodra31'),
+            ref('hr_payroll_rules_pajamu'),ref('hr_payroll_rules_neto'),
+            ref('hr_payroll_rules_virsd'),ref('hr_payroll_rules_virsdn'),ref('hr_payroll_rules_virss'),ref('hr_payroll_rules_naktis'),
+            ref('hr_payroll_rules_poilsio_dienomis'),
+            ref('hr_payroll_rules_basev'),ref('hr_payroll_rules_vaikai_priemokos'),ref('hr_payroll_rules_papildomos_p_d'),
+            ref('hr_payroll_rules_priedai'),
+            ref('hr_payroll_rules_priedai_ne_vdu'), ref('hr_payroll_rules_premijos'),
+            ref('hr_payroll_rules_premijos_ilgenes'),
+            ref('hr_payroll_rules_plius'),ref('hr_payroll_rules_budejimas'),ref('hr_payroll_rules_natura'),
+            ref('hr_payroll_rules_min'),ref('hr_payroll_rules_gpmp'),ref('hr_payroll_rules_virsn'),
+            ref('hr_payroll_rules_ismok'),
+            ref('hr_payroll_rules_liga'),ref('hr_payroll_rules_sodra1'),ref('hr_payroll_rules_pnpd'),
+            ref('hr_payroll_rules_isskaitos'), ref('hr_payroll_rules_visos_isskaitos'),
+            ref('hr_payroll_rules_atostoginiai_men_pradzioje'),
+            ref('hr_payroll_rules_eff_npd'),
+            ref('hr_payroll_rules_kr'), ref('hr_payroll_rules_ma'),
+            ref('hr_payroll_rules_vdu_men'),
+            ref('hr_payroll_rules_sodraim_main'), ref('hr_payroll_rules_bend_mok'),
+            ref('rules_sodra_grindys_add_employee'), ref('rules_sodra_grindys_add_employer'),
+            ref('hr_payroll_rules_neisdirbtas_darbo_laikas'), ref('hr_payroll_rules_virsytas_darbo_laikas'),
+            ref('hr_payroll_rules_kv'), ref('hr_payroll_rules_pn'), ref('hr_payroll_rules_knddl'), ref('hr_payroll_rules_pdnm'),
+            ref('hr_payroll_rules_compensations'), ref('hr_payroll_rules_dynamic_workplace_comp'),
+            ref('hr_payroll_rules_natura_employer'), ref('hr_payroll_rules_employer_paid_employee_sodra'),
+            ref('hr_payroll_rules_income_tax_employer_pays'),
+            ref('hr_payroll_rules_employer_paid_employee_sodra_extra'),
+            ref('hr_payroll_rules_benefit_in_kind_employer_sodra'),
+            ref('hr_payroll_rules_income_tax_benefit_in_kind'),
+            ref('hr_payroll_rules_employee_benefit_in_kind_employer_sodra'),
+            ref('hr_payroll_rules_employee_benefit_in_kind_sodra'),
+            ref('hr_payroll_illness_npd_rule'),
+            ref('hr_payroll_benefit_in_kind_employer_npd_rule'),
+            ref('hr_payroll_benefit_in_kind_employee_npd_rule'),
+            ref('hr_payroll_rules_illness_income_tax'),
+            ])]" name="rule_ids"/>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+    </data>
+</odoo>

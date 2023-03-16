@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--BOM-->
+        <record id="robo_mrp_bom_form_view" model="ir.ui.view">
+            <field name="name">mrp.bom.form</field>
+            <field name="model">mrp.bom</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Komplektacija">
+                    <header>
+                        <button name="action_open_bom_export_wizard"
+                                string="Spausdinti komplektaciją" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_open_bom_proportion_wizard"
+                                string="Calculate BOM proportions" type="object"
+                                groups="robo_mrp.group_bom_expiry_dates"
+                                class="oe_highlight"/>
+                        <button name="action_open_bom_copy_wizard"
+                                string="Kurti išplėstinę kopiją" type="object"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="product_tmpl_id"
+                                   context="{'default_type': 'product', 'form_view_ref': 'robo_stock.robo_stock_product_form'}"
+                                   options="{'no_quick_create': True}"/>
+                            <field name="product_id" groups="product.group_product_variant"
+                                   context="{'default_type': 'product'}"
+                                   options="{'no_create': True}"/>
+                            <label for="product_qty" string="Kiekis"/>
+                            <div class="o_row">
+                                <field name="product_qty"/>
+                                <field name="product_uom_id" options="{'no_open':True,'no_create':True}"
+                                       groups="product.group_uom"/>
+                            </div>
+                            <field name="routing_id" groups="mrp.group_mrp_routings"/>
+                            <field name="code"/>
+                            <field invisible='1' name="type" widget="radio"
+                                   help="Apdorojant šio produkto pardavimo užsakymą,
+                                   pristatymo užsakyme bus nurodytos žaliavos, o ne galutinis produktas"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group groups="robo_mrp.group_bom_expiry_dates" string="Galiojimo informacija">
+                            <group>
+                                <field name="valid_from"
+                                       attrs="{'required': [('bom_expiry_dates_enabled', '=', True)]}"/>
+                                <field name="valid_to"/>
+                                <field name="bom_expiry_dates_enabled" invisible="1"/>
+                            </group>
+                            <group>
+                                <div class="alert alert-warning" role="alert"
+                                     style="margin-bottom: 2px;">
+                                    Jeigu šioje komplektacijoje nebus nustatoma galiojimo pabaigos data ir
+                                    sistemoje bus rasta kita komplektacija kuri turi vėlesnę galiojimo
+                                    pradžios datą, šios komplektacijos galiojimo pabaigos data bus nustatyta
+                                    į dieną prieš vėlesnės komplektacijos galiojimo pradžią
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Komponentai">
+                                <group groups="robo_mrp.group_recursive_bom_production" string="Informacija">
+                                    <div class="alert alert-info" role="alert"
+                                         style="margin-bottom: 2px;">
+                                        Mėlynos eilutės indikuoja, kad komponentas yra sudėtinis. Priklausomai nuo
+                                        sudėtinių komplektacijų gamybos tipo, sudėtiniai komponentai gali būti
+                                        * Niekada neskaidomi, * Visada išskaidomi,
+                                        * Skaidomi tik tada, kai sudėtinio komponento neužtenka sandelyje.
+                                    </div>
+                                </group>
+                                <field name="bom_line_ids" widget="one2many_list"
+                                       context="{'form_view_ref':'robo_mrp.robo_mrp_bom_line_view_form'}"
+                                       mode="tree,kanban">
+                                    <kanban>
+                                        <field name="has_attachments" invisible="1"/>
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="product_id" context="{'default_type': 'product'}"/>
+                                        <field name="product_qty"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                    <t t-esc="record.product_qty.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <button name="action_see_attachments" type="object"
+                                                                attrs="{'invisible': [('has_attachments', '=', False)]}">
+                                                            <span class="fa fa-files-o"></span>
+                                                        </button>
+                                                        <button name="action_see_attachments" type="object"
+                                                                attrs="{'invisible': [('has_attachments', '=', True)]}">
+                                                            <span class="fa fa-file"></span>
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                    <tree string="Komponentai" editable="bottom" decoration-info="recursive_component">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="recursive_component" invisible="1"/>
+                                        <field name="product_id" string="Komponentas"
+                                               context="{'default_type': 'product', 'form_view_ref': 'robo_stock.robo_stock_product_form'}"
+                                               domain="[('type', 'in', ['product','consu'])]"
+                                               options="{'no_quick_create': True}"/>
+                                        <field name="has_attachments" invisible="1"/>
+                                        <button name="action_see_attachments"
+                                                groups="robo_basic.group_robo_premium_accountant" type="object"
+                                                icon="fa-files-o"
+                                                attrs="{'invisible': [('has_attachments', '=', False)]}"/>
+                                        <button name="action_see_attachments"
+                                                groups="robo_basic.group_robo_premium_accountant" type="object"
+                                                icon="fa-file" attrs="{'invisible': [('has_attachments', '=', True)]}"/>
+                                        <field name="location_src_id" groups="robo_stock.robo_stock_extended"/>
+                                        <field name="product_qty" string="Sunaudojamas kiekis" sum="product_qty"/>
+                                        <field name="product_uom_id" options="{'no_open':True,'no_create':True}"
+                                               groups="product.group_uom"/>
+                                        <field name="attribute_value_ids" widget="many2many_tags"
+                                               domain="[('product_ids.product_tmpl_id', '=', parent.product_tmpl_id)]"
+                                               groups="product.group_product_variant"/>
+                                        <field name="average_cost" sum="average_cost"/>
+                                        <!--<field name="operation_id" groups="mrp.group_mrp_routings" domain="[('routing_id', '=', parent.routing_id)]" options="{'no_quick_create':True,'no_create_edit':True}"/>-->
+                                    </tree>
+                                </field>
+                                <field name="duplicate_components_warning" invisible="1"/>
+                                <group attrs="{'invisible': [('duplicate_components_warning', '=', False)]}">
+                                    <div class="alert alert-warning" role="alert"
+                                         style="margin-bottom: 2px;">
+                                        Komplektacija turi produktų dublikatų - patikrinkite komplektacijos eilutes.
+                                        Jeigu manote, kad komplektacija yra korektiška, ignoruokite šį pranešimą.
+                                    </div>
+                                </group>
+                            </page>
+                            <page string="Visi sudėtiniai komponentai" groups="robo_mrp.group_recursive_bom_production"
+                                  attrs="{'invisible': [('bom_line_ids', '=', [])]}">
+                                <group string="Informacija" colspan="4" col="1">
+                                    <div class="alert alert-info" role="alert"
+                                         style="margin-bottom: 2px;">
+                                        Apačioje pateiktoje lentelėje galite matyti visus išskaidytus komponentus
+                                        kurie įeiną į šią komplektaciją.
+                                        Hierarchijos lygis indikuoja išskaidymo gylį. Pvz. 2 lygio komponentai
+                                        naudojami viršuje pateikto, 1 hierarchijos lygio komponento gamybai ir tt.
+                                    </div>
+                                </group>
+                                <field name="exploded_bom_lines_table"
+                                       widget="payslip_note" nolabel="1" model="mrp.bom.line"/>
+                                <group colspan="4" col="1">
+                                    <button name="recalculate_bom_line_table" type="object"
+                                            string="Perskaičiuoti komponentus" class="oe_highlight"/>
+                                </group>
+                            </page>
+                            <page string="Komentarai">
+                                <group string="Informacija" colspan="4" col="1">
+                                    <div class="alert alert-info" role="alert"
+                                         style="margin-bottom: 2px;">
+                                        Apačioje pateiktoje lentelėje galite palikti komplektacijos komentarus.
+                                        Jie bus spausdinami komplektacijos dokumento apačioje.
+                                    </div>
+                                </group>
+                                <group>
+                                    <field name="comments" nolabel="1" type="html"/>
+                                </group>
+                            </page>
+                            <page string="Kita">
+                                <group>
+                                    <group>
+                                        <field name="sequence"/>
+                                    </group>
+                                    <group>
+                                        <field name="ready_to_produce" string="Pasiruošimas gamybai" invisible="1"/>
+                                        <field name="picking_type_id" string="Operacija"
+                                               options="{'no_open': True, 'no_create': True}"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="robo_mrp_bom_tree_view" model="ir.ui.view">
+            <field name="name">mrp.bom.tree</field>
+            <field name="model">mrp.bom</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Bill of Materials" default_order="product_tmpl_id" import="0" create="0">
+                    <field name="active" invisible="1"/>
+                    <field name="sequence" invisible="1"/>
+                    <field name="product_tmpl_id"/>
+                    <field name="code"/>
+                    <field name="product_id" groups="product.group_product_variant"/>
+                    <field name="product_qty"/>
+                    <field name="product_uom_id" groups="product.group_uom"/>
+                    <field name="valid_from" groups="robo_mrp.group_bom_expiry_dates"/>
+                    <field name="valid_to" groups="robo_mrp.group_bom_expiry_dates"/>
+                    <!--<field name="routing_id" groups="mrp.group_mrp_routings"/>-->
+                </tree>
+            </field>
+        </record>
+        <record id="robo_view_mrp_bom_filter" model="ir.ui.view">
+            <field name="name">mrp.bom.select</field>
+            <field name="model">mrp.bom</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Search Bill Of Material">
+                    <field name="code" filter_domain="['|',('code','ilike',self),('product_tmpl_id','ilike',self)]"/>
+                    <field name="bom_line_ids" string="Komponentai"/>
+                    <field name="product_tmpl_id" string="Produktas"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <filter string="Suarchyvuoti" name="inactive" domain="[('active','=',False)]"/>
+                    <separator/>
+                    <filter name="valid_bom" string="Galiojanti komplektacija"
+                            domain="[
+                            ('valid_from', '&lt;=', (context_today()).strftime('%Y-%m-%d')),
+                            '|',
+                            ('valid_to', '=', False),
+                            ('valid_to', '&gt;=', (context_today()).strftime('%Y-%m-%d'))]"
+                            groups="robo_mrp.group_bom_expiry_dates"/>
+                    <filter name="non_currently_valid_bom" string="Negaliojanti komplektacija"
+                            domain="['|',
+                            ('valid_from', '&gt;', (context_today()).strftime('%Y-%m-%d')),
+                            ('valid_to', '&lt;', (context_today()).strftime('%Y-%m-%d'))]"
+                            groups="robo_mrp.group_bom_expiry_dates"/>
+                    <separator/>
+                    <group expand="0">
+                        <filter string="Produktą" domain="[]" context="{'group_by':'product_tmpl_id'}"/>
+                        <filter string='Matavimo vienetą' domain="[]" context="{'group_by' : 'product_uom_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="robo_mrp_bom_kanban_view" model="ir.ui.view">
+            <field name="name">mrp.bom.kanban</field>
+            <field name="model">mrp.bom</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" import="0" create="0">
+                    <field name="product_tmpl_id"/>
+                    <field name="code"/>
+                    <field name="product_qty"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.product_tmpl_id.value"/>
+                                                <t t-esc="record.code.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-muted">
+                                        <span>Kiekis:
+                                            <t t-esc="record.product_qty.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="robo_mrp_bom_form_action" model="ir.actions.act_window">
+            <field name="name">Komplektacija</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">mrp.bom</field>
+            <field name="domain">[]</field> <!-- force empty -->
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="search_view_id" ref="robo_view_mrp_bom_filter"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_mrp_bom_tree_view')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('robo_mrp_bom_kanban_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_mrp_bom_form_view')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="header" ref="robo_mrp_header_bom"/>
+            <field name="robo_menu" ref="menu_robo_mrp_start"/>
+            <field name="context" eval="{
+                'showDuplicate': True,
+                'search_add_custom': False,
+                }"/>
+        </record>
+        <!--END BOM-->
+        <!--SERVER VIEWS-->
+        <record id="action_archive_mrp_bom_multi" model="ir.actions.server">
+            <field name="name">Archyvuoti komplektacijas</field>
+            <field name="model_id" ref="robo_mrp.model_mrp_bom"/>
+            <field name="group_ids" eval="[(4, ref('robo_mrp.group_robo_mrp'))]"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo_mrp.robo_mrp_bom_tree_view')])]"/>
+            <field name="code">
+                object.browse(context.get('active_ids')).write({'active': False})
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_action_archive_mrp_bom_multi" model="mrp.bom"/>
+        <!--MENU-->
+        <menuitem id="robo_menu_mrp_bom_form_action"
+                  name="Komplektacijos"
+                  action="robo_mrp_bom_form_action"
+                  parent="menu_robo_mrp_start"
+                  robo_front="True"
+                  force_web_icon="icon-cog,none,none"
+                  groups="robo_mrp.group_robo_mrp_bom_readonly,mrp.group_mrp_manager"
+                  sequence="30"
+                  searchable="True"
+                  tags="gaminių,komplektacijos"
+        />
+        <!--END MENU-->
+    </data>
+</odoo>

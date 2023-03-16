@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_report_dk_wizard" model="ir.ui.view">
+            <field name="name">robo.report.dk.wizard</field>
+            <field name="model">account.report.general.ledger</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Didžioji knyga">
+                    <sheet>
+                        <group col="4" string="Filtrai">
+                            <field name="detail_level"/>
+                            <newline/>
+                            <field name="display_account" string="Rodyti sąskaitas" widget="radio"/>
+                            <field name="filtered_account_ids"
+                                   attrs="{'invisible': [('display_account','!=','filter')], 'required': [('display_account','=','filter')]}"
+                                   widget="many2many_tags"/>
+                            <field name="display_partner" string="Rodyti partnerius" widget="radio"/>
+                            <field name="filtered_partner_ids"
+                                   attrs="{'invisible': [('display_partner','!=','filter')], 'required': [('display_partner','=','filter')]}"
+                                   widget="many2many_tags"/>
+                            <field name="initial_balance"/>
+                            <field name="sortby" widget="radio" string="Rūšiuoti pagal"
+                                   attrs="{'invisible': [('detail_level','=','sum')]}"/>
+                            <newline/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <newline/>
+                            <field name="journal_ids" string="Operacijų žurnalai" colspan="4" widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                            <field name="activated_threaded_reports" invisible="1"/>
+                        </group>
+                        <footer style="text-align: center;">
+                            <button name="check_report" string="Peržiūrėti" type="object" default_focus="1"
+                                    class="oe_highlight" context="{'front':True, 'force_html': True}"
+                                    style="margin-right: 10px;"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    attrs="{'invisible': [('activated_threaded_reports', '=', True)]}"/>
+                            <button name="button_generate_pdf_report" string="PDF" type="object" default_focus="1"
+                                    class="oe_highlight" context="{'front':True, 'force_pdf': True}"
+                                    style="margin-right: 10px;"/>
+                            <button name="button_generate_xls_report" type="object" class="oe_highlight" string="Excel"
+                                    style="margin-right: 10px;"/>
+                            <button name="btn_download_xlsx" type="object" class="oe_highlight" string="Xlsx"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    style="margin-right: 10px;"/>
+                            <button name="action_open_account_move_line_report" string="Analitika"
+                                    type="object" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_general_ledger_report">
+            <field name="name">Didžioji knyga</field>
+            <field name="res_model">account.report.general.ledger</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="view_id" ref="robo_report_dk_wizard"/>
+            <field name="robo_menu" ref="menu_kita"/>
+        </record>
+
+        <menuitem id="menu_general_ledger_search_report"
+                  name="Didžioji knyga"
+                  groups="robo_basic.group_robo_premium_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_general_ledger_report"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="didžioji,knyga"
+        />
+
+        <menuitem id="menu_general_ledger_backend_search_report"
+                  name="Didžioji knyga"
+                  groups="robo_basic.group_robo_premium_accountant"
+                  parent="robo.meniu_kitos_ataskaitos"
+                  action="open_general_ledger_report"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="didžioji,knyga"
+        />
+    </data>
+</odoo>

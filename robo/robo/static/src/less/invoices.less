@@ -1,0 +1,165 @@
+.r-float-left{
+  float: left;
+}
+.r-cursor{
+  cursor: pointer;
+}
+.r-truncate{
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  overflow: hidden;
+}
+
+@supports (-webkit-line-clamp: 2) {
+    .r-truncate-special {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      max-height: 3.5em;
+      height: auto;
+    }
+}
+@supports not (-webkit-line-clamp: 2) {
+  .r-truncate-special {
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+  }
+}
+
+.draftClass{
+  color: @robo-invoice-status-draft-color;
+  .box-active>&{
+    background-color: lighten(@robo-invoice-status-draft-color, @robo-lighten-percent);
+  }
+}
+.proformaClass, .proforma2Class{
+  color: @robo-invoice-status-draft-color;
+  .box-active>&{
+    background-color: lighten(@robo-invoice-status-draft-color, @robo-lighten-percent);
+  }
+}
+.openClass{
+  color: @robo-invoice-status-open-color;
+  .box-active>&{
+    background-color: lighten(@robo-invoice-status-open-color, @robo-lighten-percent);
+  }
+}
+.paidClass{
+  color: @robo-invoice-status-paid-color;
+  .box-active>&{
+    background-color: lighten(@robo-invoice-status-paid-color, @robo-lighten-percent);
+  }
+}
+.cancelClass{
+  color: @robo-invoice-status-cancel-color;
+  .box-active>&{
+    background-color: lighten(@robo-invoice-status-cancel-color, @robo-lighten-percent);
+  }
+}
+
+.importedClass{
+  //color: #e5f2ff;
+  color: @robo-invoice-status-imported-color;
+  .box-active>&{
+    //background-color: lighten(#e5f2ff, @robo-lighten-percent);
+    background-color: lighten(@robo-invoice-status-imported-color, @robo-lighten-percent);
+  }
+}
+
+.is_not_validated_by_accountant_invoice_warning {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+    position: relative;
+    font-size: 300%;
+    margin-left: 10px;
+    color: #ffaa15;
+    width: max-content;
+
+    .invoice_tag_help_text {
+        background-color: rgba(0, 0, 0, 0.65);
+        color: white;
+        border-radius: 2px;
+        position: absolute;
+        display: none;
+        padding: 10px;
+        z-index: 99;
+        width: 200px;
+        top: 100%;
+        left: 50%;
+        margin-left: -50%;
+        font-size: small;
+    }
+
+    .invoice_tag_help_text::after {
+        content: " ";
+        position: absolute;
+        bottom: 100%;
+        left: 10%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent rgba(0, 0, 0, 0.65) transparent;
+    }
+
+    &:hover .invoice_tag_help_text {
+        display: block !important;
+    }
+
+}
+
+div.invoice_tag {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+    border-radius: 50px;
+    padding: 5px 10px;
+    position: relative;
+    width: max-content;
+    display: inline-block;
+    margin: 0 2px;
+
+    .invoice_tag_description {
+        background-color: rgba(0, 0, 0, 0.65);
+        color: white;
+        border-radius: 2px;
+        position: absolute;
+        display: none;
+        padding: 10px;
+        z-index: 99;
+        width: 200px;
+        top: calc(100% + 10px);
+        left: 50%;
+        margin-left: -50%;
+        font-size: small;
+    }
+
+    .invoice_tag_description::after {
+        content: " ";
+        position: absolute;
+        bottom: 100%;
+        left: 10%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent rgba(0, 0, 0, 0.65) transparent;
+    }
+
+    &:hover .invoice_tag_description {
+        display: block !important;
+    }
+}

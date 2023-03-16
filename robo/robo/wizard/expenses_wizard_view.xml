@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="expenses_wizard_form_view" model="ir.ui.view">
+            <field name="name">expenses.change.payment.details.wizard</field>
+            <field name="model">expenses.wizard</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="payment_mode"/>
+                        <field name="employee" options="{'no_create': True, 'no_open': True}"
+                               groups="robo_basic.group_robo_premium_manager,robo.group_menu_kita_analitika,robo.group_robo_see_all_expenses"
+                               attrs="{'invisible':[('payment_mode', '!=', 'own_account')], 'required':[('payment_mode', '=', 'own_account')]}"/>
+                    </group>
+                    <footer>
+                        <button name="confirm" attrs="{'invisible':[('employee', '=', False), ('payment_mode', '=', 'own_account')]}" string="Patvirtinti" type="object" class="oe_highlight"/>
+                        <button name="cancel" special="cancel" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

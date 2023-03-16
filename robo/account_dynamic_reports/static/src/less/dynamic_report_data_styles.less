@@ -1,0 +1,205 @@
+.dynamic-report-data-container {
+
+    // Main Data table
+    @background-color: white;
+    @text-color: black;
+    @border-color: #c4c4c4;
+    @row-hover-color: #00ede8;
+
+    // Main and group headers
+    @header-background-color: #447ba0;
+    @group-header-background-color: rgba(41, 128, 185, 0.22);
+    @header-border-color: rgba(102, 102, 102, 0.6);
+    @header-text-color: white;
+
+    overflow-y: scroll;
+    height: auto;
+
+    & .dynamic-report-main-data-table {
+        background-color: @background-color;
+        color: @text-color;
+        padding: 0 10px 0 10px;
+
+        .line-border-top {
+            border-top: 1px solid @border-color;
+        }
+        .line-border-bottom {
+            border-bottom: 1px solid @border-color;
+        }
+
+        .group-title-border-top {
+            border-top: 1px solid @header-border-color;
+            box-shadow: #0000002e 0px -1px 6px 2px;
+        }
+        .group-title-border-bottom {
+            border-bottom: 1px solid @header-border-color;
+        }
+
+        thead {
+            color: @header-text-color;
+            background-color: @header-background-color;
+
+            tr {
+                border-bottom: 1px solid @header-border-color;
+            }
+
+            th, td {
+                color: @header-text-color;
+                background-color: @header-background-color;
+                position: sticky;
+                top: 0;
+                padding: 2px 4px;
+            }
+        }
+        tbody {
+            tr {
+                font-weight: initial;
+                background-color: @background-color;
+                color: @text-color;
+
+                &.data-line {
+                    .line-border-top;
+
+                    td {
+                        padding: 2px 4px;
+                    }
+
+                    .toggle_child_elements_button {
+                        color: lightgray;
+                    }
+                }
+
+                &.totals-row {
+                    position: sticky;
+                    bottom: 0;
+                    color: @header-text-color;
+                    background-color: @header-background-color !important;
+
+                    & th {
+                        padding: 2px 4px;
+                    }
+                }
+
+                &.group-title-row {
+                    cursor: pointer;
+                    background-color: @group-header-background-color;
+
+                    & th {
+                        padding: 6px 3px;
+                        font-weight: 600;
+                        font-size: 12px;
+                    }
+                }
+
+                &.child_row {
+                    color: gray;
+                    font-size: 90%;
+                    padding-top: 0;
+                    font-style: italic;
+                    padding-bottom: 0;
+                    border-bottom: 1px solid #e4e4e4;
+                }
+
+                &.odd-row td {
+                    background-color: #d4d4d452;
+                }
+            }
+        }
+
+
+
+        .py-mline {
+            & > td {
+                padding: 5px 0 5px 0;
+                &:first-child {
+                    padding-left:10px;
+                }
+
+                & > span {
+                    margin-left: 15px;
+                }
+            }
+        }
+
+        .data-row-with-action {
+            &:hover {
+                cursor:pointer;
+            }
+        }
+        .amt {
+            text-align: right;
+            white-space: nowrap;
+            word-break: keep-all;
+        }
+        .py-mline-data-table {
+            margin: 0 15px 0 15px;
+            width:97%;
+        }
+        .py-mline-data-table>thead>tr>th {
+            padding-left: 15px;
+            &:last-child {
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+        .py-mline-data-table>tr {
+            &:hover {
+                background-color: @row-hover-color;
+            }
+        }
+        .py-mline {
+            background-color: @background-color;
+        }
+        .column-header {
+            cursor: pointer;
+            user-select: none;
+            border: 1px solid #376280;
+            border-left: none;
+
+            &.empty-cell {
+                border-right: none;
+                cursor: default;
+            }
+        }
+        .sorting-arrow-inactive {
+            display: none;
+            visibility: hidden;
+        }
+        .sorting-arrow-active {
+            color: @header-text-color;
+            display: initial;
+            visibility: initial;
+        }
+    }
+    .dynamic-report-main-data-table>a {
+        color: inherit;
+    }
+    .dynamic-report-main-data-table>thead>tr {
+        &:first-child>th {
+            text-align: left;
+            padding: 6px 3px;
+        }
+        &:nth-child(2)>th {
+            padding-left: 15px;
+        }
+    }
+    .amt-head {
+        text-align: right !important;
+    }
+    .dynamic-report-main-data-table>th {
+        &:last-child {
+            padding-left: 0;
+            padding-right: 5px;
+        }
+    }
+    .bld {
+        font-weight: bold;
+    }
+    .empty-cell {
+        width: 20px;
+    }
+    .data-row-collapsed {
+        visibility: collapse;
+        display: none;
+    }
+}

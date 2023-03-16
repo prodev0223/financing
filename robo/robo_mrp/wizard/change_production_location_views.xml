@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_view_change_production_location_wizard" model="ir.ui.view">
+            <field name="name">Keisti gaminamą vietai</field>
+            <field name="model">change.production.location</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pakeisti gamybos vietai">
+                    <group>
+                        <field name="mo_id" invisible="1"/>
+                        <field name="location_src_id"/>
+                        <field name="location_dest_id"/>
+                    </group>
+                    <footer>
+                        <button name="change_prod_location" string="Tvirtinti" colspan="1" type="object"
+                                class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="robo_action_change_production_location" model="ir.actions.act_window">
+            <field name="name">Pakeiskite gamybos vietai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">change.production.location</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="robo_view_change_production_location_wizard"/>
+            <field name="target">new</field>
+            <field name="robo_menu" ref="menu_robo_mrp_start"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="menu_start" model="ir.ui.menu">
+            <field name="name">Robo Vadovas</field>
+            <field name="web_icon">robo,static/src/img/pagalbininkas.png</field>
+            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+            <field name="action" ref="robo.open_robo_vadovas_client_action"/>
+            <field name="sequence">0</field>
+            <field name="robo_front">True</field>
+            <field name="robo_main_menu">True</field>
+        </record>
+
+        <record id="menu_pagalbininkas" model="ir.ui.menu">
+            <field name="name">Robo Vadovas</field>
+            <field name="web_icon">icon-briefcase,none,none</field>
+            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+            <field name="action" ref="robo.open_robo_vadovas_client_action"/>
+            <field name="sequence">10</field>
+            <field name="parent_id" ref="robo.menu_start"/>
+            <field name="robo_front">True</field>
+        </record>
+
+        <!--Back end-->
+        <menuitem
+                name="Kitos ataskaitos"
+                id="meniu_kitos_ataskaitos"
+                parent="account.menu_finance_reports"
+                sequence="14"
+        />
+        <!--End Backend-->
+
+        <menuitem id="menu_ataskaitos" name="Ataskaitos" parent="menu_kita" sequence="60"
+                  force_web_icon="icon-pie-chart,none,none" action="open_reports_action"
+                  robo_front="True"
+                  searchable="True"
+                  tags="reports"
+        />
+
+        <!--Root menu for all searchable menus-->
+        <menuitem id="menu_search_root"
+                  name="Paieška"
+                  sequence="100"
+                  robo_front="True"
+        />
+
+        <!--A menu for all searchable sub-menus-->
+        <menuitem id="menu_ataskaitos_search"
+                  name="Ataskaitos"
+                  parent="menu_search_root"
+                  sequence="100"
+                  robo_front="True"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="account_bank_statement_import_sepa_view" model="ir.ui.view">
+            <field name="name">Importuoti SEPA</field>
+            <field name="model">account.sepa.import</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Importuoti SEPA">
+                    <field name="display_psd2_warning" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('skip_currency_rate_checks', '=', False)]}">
+                        Išjungus valiutų kursų tikrinimą gali būti importuoti potencialiai klaidingi duomenys.
+                        Jeigu manote, kad jie teisingi, ignoruokite šį pranešimą.
+                    </div>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('display_psd2_warning', '=', False)]}">
+                        This bank uses Enable Banking integration, all manually imported statements, if matched
+                        to an existing PSD2 statement by date will be skipped.
+                    </div>
+                    <group col="2">
+                        <field name="coda_data" filename="coda_fname"/>
+                        <field name="coda_fname" invisible="1"/>
+                        <field name="skip_currency_rate_checks"/>
+                        <field name="skip_group_payment_import"/>
+                        <field name="force_sepa_import"/>
+                        <field name="forced_import_type"
+                               attrs="{'invisible': [('force_sepa_import', '=', False)],
+                                       'required': [('force_sepa_import', '=', True)]}"
+                        />
+                    </group>
+                    <footer>
+                        <button name="coda_parsing" string="Importuoti" type="object" class="oe_highlight"/>
+                        <button name="coda_parsing" string="Deduplicate check (Admin)"
+                                context="{'find_corrupt_entries': True}"
+                                type="object" class="oe_highlight" groups="base.group_system"/>
+                        <button name="coda_parsing" string="Deduplicate delete (Admin)"
+                                context="{'find_corrupt_entries': True, 'delete_entries': True}"
+                                type="object" class="oe_highlight" groups="base.group_system"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_bank_statement_import_sepa" model="ir.actions.act_window">
+            <field name="name">Importuoti SEPA</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.sepa.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="account_bank_statement_import_sepa_view"/>
+        </record>
+
+    </data>
+</openerp>

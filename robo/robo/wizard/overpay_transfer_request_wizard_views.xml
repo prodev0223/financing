@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="overpay_transfer_request_wizard_view_form" model="ir.ui.view">
+            <field name="name">overpay.transfer.request.wizard.view.form</field>
+            <field name="model">overpay.transfer.request.wizard</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Overpayment transfer">
+                    <group>
+                        <field name="date" required="True"/>
+                        <field name="bank_account" widget="selection"
+                               context="{'display_bank_account': True}" required="True"/>
+                        <field name="force_lang"/>
+                    </group>
+                    <group col="4">
+                        <field name="overpay_line_ids" nolabel="1" widget="one2many_list" options="{'no_open': True}">
+                            <tree editable="bottom" open="0" options="{'reload_on_button': True}">
+                                <field name="date" required="1"/>
+                                <field name="purpose"/>
+                                <field name="amount" required="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group>
+                        <field name="amount" readonly="1"/>
+                    </group>
+                    <footer>
+                        <field name="show_button_send_report_en" invisible="1"/>
+                        <button name="generate_overpay_transfer_request" string="Generate request PDF"
+                                type="object" class="btn-primary"
+                                groups="robo_basic.group_robo_premium_accountant, robo.group_overpay_transfer_requests"/>
+                        <button name="send_overpay_transfer_request" string="Prepare to send"
+                                type="object" class="btn-primary" context="{'lang': 'en_US'}"
+                                attrs="{'invisible': [('show_button_send_report_en', '=', False)]}"
+                                groups="robo_basic.group_robo_premium_accountant, robo.group_overpay_transfer_requests"/>
+                        <button name="send_overpay_transfer_request" string="Prepare to send"
+                                attrs="{'invisible': [('show_button_send_report_en', '=', True)]}"
+                                type="object" class="btn-primary" context="{'lang': 'lt_LT'}"
+                                groups="robo_basic.group_robo_premium_accountant, robo.group_overpay_transfer_requests"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="overpay_transfer_request_wizard_action" model="ir.actions.act_window">
+            <field name="name">Overpay transfer request</field>
+            <field name="res_model">overpay.transfer.request.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="overpay_transfer_request_wizard_view_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

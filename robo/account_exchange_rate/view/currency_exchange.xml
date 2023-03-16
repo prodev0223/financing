@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_config_settings_exchange_ext" model="ir.ui.view">
+            <field name="name">view.account.config.settings.exchange.ext</field>
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='bank_options']" position="inside" >
+                    <div>
+                        <label for="account_exchange_revenue"/>
+                        <field name="account_exchange_revenue" class="oe_inline"/>
+                    </div>
+                    <div>
+                        <label for="account_exchange_expenses"/>
+                        <field name="account_exchange_expenses" class="oe_inline"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_payment_form_exchange_ext" model="ir.ui.view">
+            <field name="name">view.account.payment.form.exchange.ext</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='amount_div']" position="after">
+                    <field name="calculate_exchange_diff" attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('payment_type','!=','transfer')]}" string="Skaičiuoti valiutų kursų pokytį"/>
+                    <field name="exchange_type" widget="selection"
+                           attrs="{'invisible': [('calculate_exchange_diff', '=', False)],
+                                    'readonly': [('state', '!=', 'draft')]}"/>
+                    <label for="exchange_rate" attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')]}"/>
+                    <div class="o_row" attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')]}">
+                        <field name="exchange_rate"
+                           attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')],
+                                    'readonly': [('state', '!=', 'draft')]}" />
+                        <field name="rate_label" nolabel="1" attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'ratio')]}" />
+                    </div>
+
+                    <field name="currency_dest_id" invisible="1"/>
+                    <field name="exchange_fixed_amount"
+                       attrs="{'invisible': ['|',('calculate_exchange_diff', '=', False), ('exchange_type', '!=', 'fixed')],
+                                'readonly': [('state', '!=', 'draft')]}"
+                       options="{'currency_field': 'currency_dest_id'}" widget="monetary"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

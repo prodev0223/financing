@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="spalvos_pasirinkimas_hr_employee" model="ir.ui.view">
+            <field name="name">spalvos.pasirinkimas</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="after">
+                    <group string="Color" groups="">
+                        <field name="spalva" invisible="1"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="form_view_user_creation_auto_fill_in" model="ir.ui.view">
+            <field name="name">auto.fill.in</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="context">{'default_groups_ref': ['base.group_user'], 'default_login': work_email, 'default_name': name}</attribute>
+                </xpath>
+            </field>
+        </record>
+       </data> 
+</odoo>
+

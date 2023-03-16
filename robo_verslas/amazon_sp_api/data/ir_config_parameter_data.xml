@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="amazon_sp_api_redirect_url" model="ir.config_parameter">
+            <field name="key">amazon_sp_api_redirect_url</field>
+            <field name="value">https://robolabs.lt</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="amazon_oauth_exchange_endpoint" model="ir.config_parameter">
+            <field name="key">amazon_oauth_exchange_endpoint</field>
+            <field name="value">https://api.amazon.com/auth/o2/token</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="amazon_qty_integration_inventory_fetch_day" model="ir.config_parameter">
+            <field name="key">amazon_qty_integration_inventory_fetch_day</field>
+            <field name="value">1</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+    </data>
+</odoo>

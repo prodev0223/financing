@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="partneris_kodas_view" model="ir.ui.view">
+            <field name="name">partneris.kodas.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='website']" position="after">
+                    <field name="kodas" attrs="{'required': 0}"/>
+                    <field name="vat" placeholder="e.g. LT123456789"/>
+                    <field name="kliento_kodas"/>
+                </xpath>
+            </field>
+        </record>
+        <delete id="base_vat.view_partner_form" model="ir.ui.view"/>
+        <record id="employee_identification_id_extension" model="ir.ui.view">
+            <field name="name">employee.identification.extension</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='address_home_id']" position="attributes">
+                    <!--<attribute name="context">{'kodas': identification_id, 'vardas': name}</attribute>-->
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
+

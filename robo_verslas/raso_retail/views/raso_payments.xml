@@ -1,0 +1,136 @@
+<odoo>
+    <data>
+        <record id="raso_payments_tree" model="ir.ui.view">
+            <field name="name">raso.payment.tree</field>
+            <field name="model">raso.payments</field>
+            <field name="arch" type="xml">
+                 <tree string="Mokėjimai"
+                       decoration-info="state in ['open','active']"
+                       decoration-danger="state == 'warning'"
+                       decoration-success="state == 'reconciled'" create="1" edit="1" delete="1">
+                     <field name="code"/>
+                     <field name="payment_type_id"/>
+                     <field name="payment_date"/>
+                     <field name="amount"/>
+                     <field name="qty"/>
+                     <field name="residual"/>
+                     <field name="partner_id"/>
+                     <field name="shop_no"/>
+                     <field name="pos_no"/>
+                     <field name="shop_id"/>
+                     <field name="pos_id"/>
+                     <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="raso_payments_action" model="ir.actions.act_window">
+            <field name="name">Mokėjimai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">raso.payments</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="raso_payments_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="raso_payments_form" model="ir.ui.view">
+            <field name="name">raso.payments.form</field>
+            <field name="model">raso.payments</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_moves" type="object" string="Sukurti Įrašus"
+                                attrs="{'invisible':[('state','!=','active')]}" class="oe_highlight"/>
+                        <button name="button_reconcile_payments" type="object" string="Sudengti"
+                                states="open,partially_reconciled" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                    <div>
+                        <label string="Mokėjimo kodas"/>
+                        <h1 class="mt0">
+                            <field name="code" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="payment_type_id"/>
+                            <field name="amount"/>
+                            <field name="qty"/>
+                            <field name="residual"/>
+                            <field name="partner_id"/>
+                            <field name="shop_no"/>
+                            <field name="pos_no"/>
+                            <field name="shop_id"/>
+                            <field name="pos_id"/>
+                            <field name="payment_date"/>
+                            <field name="raso_invoice_id" attrs="{'invisible': [('raso_invoice_id','=', False)]}"/>
+                            <field name="move_id" attrs="{'invisible': [('move_id','=', False)]}"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+        <record model="ir.ui.view" id="raso_pay_search">
+            <field name="name">Mokėjimų Paieška</field>
+            <field name="model">raso.payments</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="active" string="Būsena: Panaudojamas" domain="[('state','=','active')]"/>
+                    <filter name="warning" string="Būsena: Trūksta konfigūracijos" domain="[('state','=','warning')]"/>
+                    <filter name="open" string="Būsena: Sukurta, laukiama sudengimo" domain="[('state','=','open')]"/>
+                    <filter name="reconciled" string="Būsena: Mokėjimas sudengtas" domain="[('state','=','reconciled')]"/>
+                    <separator/>
+                    <field name="code" filter_domain="[('code','ilike',self)]"/>
+                    <field name="payment_type_id"/>
+                    <field name="partner_id"/>
+                    <field name="shop_id"/>
+                    <separator/>
+                    <field name="payment_date" string="Data nuo" filter_domain="[('payment_date', '&gt;=', self)]"/>
+                    <field name="payment_date" string="Data iki" filter_domain="[('payment_date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Mokėjimo data" context="{'group_by':'payment_date'}"/>
+                        <filter name="group_payment_type_id" string="Mokėjimo tipas"
+                                context="{'group_by':'payment_type_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

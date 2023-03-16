@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_invoice_tag_tree">
+            <field name="name">Account invoice tags tree</field>
+            <field name="model">account.invoice.tags</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="color"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="account_invoice_tag_form">
+            <field name="name">Account invoice tags form</field>
+            <field name="model">account.invoice.tags</field>
+            <field name="arch" type="xml">
+                <form string="Žyma">
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="color"/>
+                        <field name="description"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="show_invoice_tag_tree_action">
+            <field name="name">Sąskaitų žymos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice.tags</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree, form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree', 'view_id': ref('account_invoice_tag_tree')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('account_invoice_tag_form')})]"/>
+            <field name="target">current</field>
+        </record>
+
+        <menuitem
+                name="Sąskaitų žymos"
+                id="menu_invoice_tags"
+                sequence="1"
+                action="show_invoice_tag_tree_action"
+                parent="menu_invoices"
+                groups="base.group_system"
+        />
+    </data>
+</odoo>

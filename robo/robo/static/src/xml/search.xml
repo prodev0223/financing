@@ -1,0 +1,68 @@
+<template>
+    <t t-name="SearchField">
+                <div class="search-container">
+                    <div class="search-box">
+                        <!--<input type="search" class="search-form large" id="search" placeholder="paieška, pvz.: atostogų prašymas, sąskaita faktūra" autocomplete="off" />-->
+                        <input type="text" class="search-form small" id="search2" placeholder="pvz.: atostogų prašymas" autocomplete="off"/>
+
+                        <div class="search-icon-container svg-container">
+                            <i class="fa fa-search icon_style" aria-hidden="true"></i>
+                        </div>
+
+                        <div class="close-icon-container svg-container">
+                            <i class="fa fa-times icon_style" aria-hidden="true"></i>
+                        </div>
+
+                        <div class="spinner-icon-container svg-container">
+                            <i class="fa fa-cog fa-spin icon_style fa-fw" aria-hidden="true"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="results text-left">
+                        <ul class="list-unstyled"></ul>
+                        <div class="text-center show-more"><i class="lnr lnr-chevron-down"></i></div>
+                        <div class="text-center show-less"><i class="lnr lnr-chevron-up"></i></div>
+                    </div>
+            </div>
+                    <!--<div class="search_results">-->
+                    <!--</div>-->
+            <!--</div>-->
+    </t>
+
+    <t t-name="SearchField.Content">
+
+            <t t-foreach="widget.state.menu_items" t-as="item">
+                    <li class="main-part">
+                        <!--ROBO: nepanaikinti klases menu_search_field. Ja naudoja tip.js-->
+                        <!--<a class="o_menuitem menu_search_field" t-attf-data-menu="#{item.id}" t-attf-action-id="{{item.action}}" href='#' t-attf-href="#menu_id=#{item.id}&amp;action=#{item.action}">-->
+                        <a class="o_menuitem menu_search_field" t-attf-data-menu="#{item.id}" t-attf-data-action-id="{{item.action}}" href='#'>
+                            <t t-esc="item.name"/>
+                        </a>
+                    </li>
+
+            </t>
+            <li class="main-part">
+                <!--todo: remove display:none after updating ticketing-->
+                <!--<a class="o_menuitem menu_search_field o_no_menu_data" t-attf-data-menu="#{widget.no_menu_data.id}" t-attf-href="#menu_id=#{widget.no_menu_data.id}&amp;action=#{widget.no_menu_data.action}">-->
+                <a class="o_menuitem menu_search_field o_no_menu_data" style="display:none" t-attf-data-menu="#{widget.no_menu_data.id}" t-attf-data-action-id="{{widget.no_menu_data.action}}" href="#">
+                    <t t-esc="widget.no_menu_data.name"/>
+                </a>
+            </li>
+            <!--<t t-if="widget.state.menu_items.length != 0">-->
+                <!--<li class="main-part">-->
+                    <!--<a class="o_menuitem menu_search_field" t-attf-data-menu="#{widget.no_menu_data.id}" t-attf-href="#menu_id=#{widget.no_menu_data.id}&amp;action=#{widget.no_menu_data.action}">-->
+                        <!--<t t-esc="widget.no_menu_data.name"/>-->
+                    <!--</a>-->
+                <!--</li>-->
+            <!--</t>-->
+            <!--<t t-if="widget.state.menu_items.length == 0">-->
+                 <!--<li class="main-part">-->
+                    <!--<a class="o_menuitem menu_search_field" t-attf-data-menu="#{widget.no_menu_data.id}" t-attf-href="#menu_id=#{widget.no_menu_data.id}&amp;action=#{widget.no_menu_data.action}">-->
+                        <!--<t t-esc="widget.no_menu_data.name"/>-->
+                    <!--</a>-->
+                <!--</li>-->
+            <!--</t>-->
+
+    </t>
+</template>

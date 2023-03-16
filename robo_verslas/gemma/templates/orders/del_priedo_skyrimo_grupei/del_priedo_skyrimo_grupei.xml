@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="isakymas_del_priedo_skyrimo_grupei_form" model="ir.ui.view">
+        <field name="name">Įsakymas dėl priedo skyrimo</field>
+        <field name="model">e.document</field>
+        <field name="robo_front" eval="True"/>
+        <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="show_exclude_data_from_du_aspi" invisible="1"/>
+            </xpath>
+            <xpath expr="//group[@name='main_document_info']" position="before">
+                <group colspan="4" string="DU ASPI" attrs="{'invisible': [('show_exclude_data_from_du_aspi', '=', False)]}">
+                    <field name="bool_1" string='Do not include in DU-ASPI'/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

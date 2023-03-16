@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_asset_asset_form" model="ir.ui.view">
+            <field name="name">view.account.asset.asset.form</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_asset_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='validate']" position="attributes">
+                    <attribute name="groups">account.group_account_manager</attribute>
+                </xpath>
+                <xpath expr="//button[@name='set_to_draft']" position="attributes">
+                    <attribute name="groups">account.group_account_manager</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_set_to_close']" position="after">
+                    <button name="create_exploitation_act" type="object" string="Sukurti įvedimo į eksploataciją aktą"
+                            attrs="{'invisible': [('ivedimas_id','!=',False)]}" context="{'act_type': 'in'}"
+                            groups="ilgalaikis_turtas.group_asset_manager"/>
+                    <button name="create_exploitation_act" type="object" string="Sukurti išvedimo iš eksploatacijos aktą"
+                            attrs="{'invisible': [('isvedimas_id','!=',False)]}" context="{'act_type': 'out'}"
+                            groups="ilgalaikis_turtas.group_asset_manager"/>
+                </xpath>
+                <xpath expr="//field[@name='code']" position="after">
+                    <field name="ivedimas_id" string="Įvedimo į eksploataciją aktas"
+                           attrs="{'invisible': [('ivedimas_id','=',False)]}"/>
+                    <field name="isvedimas_id" string="Išvedimo iš eksploatacijos aktas"
+                           attrs="{'invisible': [('isvedimas_id','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_asset_search_ekspl" model="ir.ui.view">
+            <field name="name">account.asset.asset.search.ekspl</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="." position="inside">
+                    <filter string="Be įvedimo į eksploataciją akto" domain="[('ivedimas_id','=',False)]"/>
+                    <filter string="Be išvedimo iš eksploatacijos akto" domain="[('isvedimas_id','=',False)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="search_account_asset_asset" model="ir.ui.view">
+            <field name="name">search.account.asset.asset</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="ilgalaikis_turtas.search_account_asset_asset"/>
+            <field name="arch" type="xml">
+                <xpath expr="." position="inside">
+                    <filter string="Be įvedimo į eksploataciją akto" domain="[('ivedimas_id','=',False)]"/>
+                    <filter string="Be išvedimo iš eksploatacijos akto" domain="[('isvedimas_id','=',False)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="form_account_asset_asset_front" model="ir.ui.view">
+            <field name="name">view.account.asset.asset.form</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="ilgalaikis_turtas.form_account_asset_asset_front"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_set_to_close']" position="inside">
+                    <button name="create_exploitation_act" type="object" string="Sukurti įvedimo į eksploataciją aktą"
+                            attrs="{'invisible': [('ivedimas_id','!=',False)]}" context="{'act_type': 'in'}"
+                            groups="ilgalaikis_turtas.group_asset_manager"/>
+                    <button name="create_exploitation_act" type="object" string="Sukurti išvedimo iš eksploatacijos aktą"
+                            attrs="{'invisible': [('isvedimas_id','!=',False)]}" context="{'act_type': 'out'}"
+                            groups="ilgalaikis_turtas.group_asset_manager"/>
+                </xpath>
+                <xpath expr="//field[@name='code']" position="after">
+                    <field name="ivedimas_id" string="Įvedimo į eksploataciją aktas"
+                           attrs="{'invisible': [('ivedimas_id','=',False)]}"/>
+                    <field name="isvedimas_id" string="Išvedimo iš eksploatacijos aktas"
+                           attrs="{'invisible': [('isvedimas_id','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

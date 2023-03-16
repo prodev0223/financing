@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+        <record id="robo_stock_inventory_form" model="ir.ui.view">
+            <field name="name">robo_stock.inventory.form</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_inventory_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='category_id']" position="attributes">
+                        <attribute name="domain">[('r_keeper_pos_category','=',False)]</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='product_id']" position="attributes">
+                        <attribute name="domain">[('type', '=', 'product'), ('r_keeper_pos_filter', '=', False)]</attribute>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+    </data>
+</odoo>

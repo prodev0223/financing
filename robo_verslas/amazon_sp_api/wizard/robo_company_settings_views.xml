@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">Kompanijos nustatymai</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='api_integrations']" position="attributes">
+                    <!--Make integrations group always visible when Amazon is installed-->
+                    <attribute name="attrs"/>
+                </xpath>
+                <!--Always put Amazon integration button as first, since it's in separate module-->
+                <xpath expr="//button[@name='btn_open_paypal_settings']" position="before">
+                    <newline/>
+                    <button name="button_open_amazon_sp_api_settings"
+                            string="Amazon SP-API settings"
+                            type="object" class="oe_link"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

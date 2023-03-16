@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="revolut_api_view_form" model="ir.ui.view">
+            <field name="name">revolut.api.view.form</field>
+            <field name="model">revolut.api</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Revolut API nustatymai">
+                    <sheet>
+                        <group string="Įvestis">
+                            <button name="generate_key" string="Generuoti" type="object" class="oe_highlight"/>
+                            <newline/>
+                            <field name="x509_public_key_display"/>
+                            <field name="callback_address"/>
+                        </group>
+                        <group string="Išvestis">
+                            <field name="client_id"/>
+                            <field name="auth_code" readonly="False"/>
+                            <newline/>
+                            <button name="generate_jwt" string="Create JWT" type="object" class="oe_highlight"
+                                    attrs="{'invisible': [('show_create_jwt', '=', False)]}"/>
+                            <field name="show_create_jwt" invisible="1"/>
+                            <newline/>
+                            <field name="access_token"/>
+                            <field name="access_token_expires"/>
+                            <field name="refresh_token"/>
+                            <field name="refresh_token_expires"/>
+                        </group>
+                        <group string="Veiksmai">
+                            <button name="get_tokens" string="Gauti raktą" type="object" class="oe_highlight"
+                                    attrs="{'invisible': ['|', '|', ('auth_code', '=', False), ('client_id', '=', False), ('refresh_token', '!=', False)]}"/>
+                            <button name="refresh_tokens" string="Atnaujinti raktą" type="object" class="oe_highlight"
+                                    attrs="{'invisible': [('refresh_token', '=', False)]}"/>
+                            <button name="request_new_app_confirm" string="Pratęsti leidimą" type="object" class="oe_highlight"
+                                    attrs="{'invisible': [('client_id', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="min_date_from"/>
+                            <field name="disabled"/>
+                        </group>
+                        <group>
+                            <button name="get_accounts" string="Gauti vidines Revolut sąskaitas" type="object" class="oe_highlight"
+                                    attrs="{'invisible': [('refresh_token', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="revolut_account_ids" nolabel="1" readonly="1" options="{'no_open': True, 'no_create':True}">
+                                <tree decoration-muted="is_currency_crypto==True">
+                                    <field name="is_currency_crypto" invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="currency_id"/>
+                                    <field name="uuid"/>
+                                    <field name="bank_account_iban"/>
+                                    <field name="bank_account_bic"/>
+                                    <button name="set_iban_bic" type="object" string="Gauti sąskaitos IBAN ir BIC" icon="fa-arrow-down"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="attachment_ids" groups="base.group_no_one"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="revolut_api_view_tree" model="ir.ui.view">
+            <field name="name">revolut.api.view.tree</field>
+            <field name="model">revolut.api</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <tree string="Revolut API nustatymai">
+                    <field name="name"/>
+                    <field name="client_id" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+        <record id="account_bank_statement_api_revolut" model="ir.actions.act_window">
+            <field name="name">Sinchronizuoti per API</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">revolut.api</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="revolut_api_view_form"/>
+        </record>
+        <record id="revolut_api_action" model="ir.actions.act_window">
+            <field name="name">Revolut API</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">revolut.api</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5,0,0),
+                          (0,0,{'view_mode':'tree', 'view_id': ref('revolut_api_view_tree')}),
+                          (0,0,{'view_mode':'form', 'view_id': ref('revolut_api_view_form')})]"/>
+            <field name="target">current</field>
+        </record>
+    </data>
+</odoo>

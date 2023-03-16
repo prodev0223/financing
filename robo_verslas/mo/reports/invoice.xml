@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <template id="mo_report_invoice_document_changes" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//span[@class='account_nr']" position="replace">
+                <span class="account_nr">Banko sąskaita:</span>
+            </xpath>
+        </template>
+        <record id="robo_analytic.act_business_analytics" model="ir.actions.act_window">
+            <field name="domain">['|',('general_account_id.code', '=ilike', '5%'),
+                                  ('general_account_id.code', '=ilike', '6%'),
+                                  '|',
+                                  ('date', '>=', '2020-01-01'),
+                                  ('general_account_id.code', 'not in', ['62033', '62034', '63042', '63043'])]</field>
+        </record>
+    </data>
+</odoo>

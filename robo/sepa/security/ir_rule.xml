@@ -1,0 +1,24 @@
+<odoo>
+    <data>
+        <record id="rule_bank_export_job_manager" model="ir.rule">
+            <field name="name">Bank export job: Manager - All Records</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="model_id" ref="sepa.model_bank_export_job"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(6, 0, [ref('robo_basic.group_robo_premium_manager')])]"/>
+        </record>
+        <record id="rule_bank_export_job_payment_export" model="ir.rule">
+            <field name="name">Bank export job: Export group - Own Records</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="model_id" ref="sepa.model_bank_export_job"/>
+            <field name="domain_force">[('partner_id.user_ids', '=', user.id)]</field>
+            <field name="groups" eval="[(6, 0, [ref('robo_basic.group_robo_payment_export')])]"/>
+        </record>
+    </data>
+</odoo>

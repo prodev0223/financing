@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_invoice_report_search_extend" model="ir.ui.view">
+            <field name="name">account.invoice.report.search.extend</field>
+            <field name="model">account.invoice.report</field>
+            <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="account_id" groups="robo_basic.group_robo_premium_accountant"/>
+                </xpath>
+                <xpath expr="//filter[@name='thisyear']" position="after">
+                    <filter string="Praeiti metai" name="previousyear" domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(years=1, month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Šis mėnuo" name="thismonth" domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Praeitas mėnuo" name="previousmonth" domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter string="Vėluojantys mokėjimai" name="due" domain="['&amp;',('date_due','&lt;',context_today().strftime('%Y-%m-%d')), ('state', '=', 'open')]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

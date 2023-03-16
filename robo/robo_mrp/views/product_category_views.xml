@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_category_view_form_extend" model="ir.ui.view">
+            <field name="name">product.category.view.form.extend</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_category_form"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="default_production_location_id"
+                           options="{'no_create': True}"
+                           domain="[('usage', '=', 'internal')]"
+                           groups="robo_stock.robo_stock_extended"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_category_view_backend_form_extend" model="ir.ui.view">
+            <field name="name">product.category.view.backend.form.extend</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet[1]" position="inside">
+                    <group name="prod" string="Gamyba"
+                           groups="robo_stock.robo_stock_extended">
+                        <field name="default_production_location_id"
+                               options="{'no_create': True}"
+                               domain="[('usage', '=', 'internal')]"
+                               groups="robo_stock.robo_stock_extended"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

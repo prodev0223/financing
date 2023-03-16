@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="gpais_credentials">
+            <field name="name">res.users.gpais.credentials</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="robo.view_users_form_simple_modif"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='time_settings']" position="after">
+                    <group string="Informavimas el. paštu" name="messaging" col="4" colspan="4">
+                        <field name="gpais_username" readonly="0"/>
+                        <field name="gpais_cert" readonly="0"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

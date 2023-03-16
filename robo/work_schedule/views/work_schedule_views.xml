@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="constraints_are_being_checked_notification_view_form" model="ir.ui.view">
+            <field name="name">constraints.are.being.checked.notification.view.form</field>
+            <field name="model">work.schedule</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Constraints are being checked" create="false" delete="false" edit="false">
+                    <group>
+                        <span>
+                            Constraints are being checked for the selected lines. If there are any issues with the
+                            lines a warning will appear next to each line individually.
+                        </span>
+                    </group>
+                    <footer><button string="Close" special="cancel" class="oe_link"/></footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_show_constraints_are_being_checked_notification" model="ir.actions.act_window">
+            <field name="name">Constraints are being checked</field>
+            <field name="res_model">work.schedule</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="constraints_are_being_checked_notification_view_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,56 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="form_analytic_lock_date_wizard" model="ir.ui.view">
+            <field name="name">analytic.lock.dates.wizard</field>
+            <field name="model">analytic.lock.dates.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <div><p>
+                            Naudojantis šiuo vedliu galite užrakinti analitinių sąskaitų keitimą.<br/>
+                            Galimi užrakinimo tipai: <br/>
+                            <br/><br/>
+                            <i>Užšaldyti analitiką:
+                               Leidžia manipuliuoti įrašais kurie turi analitikos opciją,
+                               arba vykdyti šių įrašų veiksmus kurie paraleliai keičia analitiką, praleidžiant
+                               analitinės apskaitos koregavimą.
+                               <br/><br/>
+                               Blokuoti analitiką:
+                               Leidžia įrašų manipuliavima, bet neleidžia vykdyti veiksmų kurie
+                               tiesiogiai arba paraleliai keičia analitinę apskaitą.</i>
+                            </p></div>
+                    </group>
+                    <group>
+                        <field name="analytic_lock_type" required="1"/>
+                        <field name="user_lock_date_analytic"/>
+                        <field name="manager_lock_date_analytic"/>
+                    </group>
+                    <footer>
+                        <button name="set_dates" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'invoice': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_analytic_lock_date_wizard" model="ir.actions.act_window">
+            <field name="name">Užrakinti sąskaitų analitiką</field>
+            <field name="res_model">analytic.lock.dates.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="form_analytic_lock_date_wizard"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+        <!--Menus-->
+        <menuitem id="menu_analytic_lock_dates_wizard"
+                  name="Užrakinti analitiką"
+                  sequence="90"
+                  action="action_analytic_lock_date_wizard"
+                  parent="account.menu_analytic_accounting"/>
+    </data>
+</odoo>

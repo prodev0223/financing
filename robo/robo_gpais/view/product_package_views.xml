@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_package_gpais_ext" model="ir.ui.view">
+            <field name="name">product.package.gpais</field>
+            <field name="model">product.package</field>
+            <field name="inherit_id" ref="robo_package.product_package"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="klasifikacija"/>
+                </xpath>
+                <xpath expr="//field[@name='combined_material']" position="after">
+                    <field name="savom_reikmem" attrs="{'invisible': [('use_type', '=', 'daukartine')]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="access_robo_accountant_payment" model="ir.rule">
+            <field name="name">Accountants access to payments</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="domain_force">[(1,'=',1)]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+        </record>
+        <record id="access_backend_client_action" model="ir.rule">
+            <field name="name">Access backend client action for accountants</field>
+            <field name="model_id" ref="base.model_ir_actions_client"/>
+            <field name="domain_force">[(1,'=',1)]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+        </record>
+        <record id="access_frontend_client_action" model="ir.rule">
+            <field name="name">Access frontend client action only for employees</field>
+            <field name="model_id" ref="base.model_ir_actions_client"/>
+            <field name="domain_force">[('robo_front', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record id="account_move_line_premium_user" model="ir.rule">
+            <field name="name">Premium user can see only his invoice's records</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">['|', '|', '|', '|', '|', '|',
+                ('invoice_id.submitted_employee_id.user_id','=',user.id),('receipt_id.partner_id', '=',
+                user.partner_id.id), ('receipt_id.cashier_id.user_id', '=', user.id),
+                ('move_id.expense_invoice_id.ap_employee_id.user_id', '=', user.id), ('payment_id.cashier_id.user_id',
+                '=', user.id), ('invoice_id.user_id','=', user.id),'&amp;',('invoice_id.type','in',['in_invoice','in_refund']),('invoice_id.ap_employee_id.user_id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('group_robo_simple_invoicing'))]"/>
+        </record>
+        <record id="account_move_line_premium_manager" model="ir.rule">
+            <field name="name">Premium manager can see all records</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_premium_manager'))]"/>
+        </record>
+        <record id="account_move_line_cash_manager" model="ir.rule">
+            <field name="name">Cash Manager can see his own records</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_cash_manager'))]"/>
+        </record>
+        <record id="account_move_premium_user" model="ir.rule">
+            <field name="name">Premium user can see only his invoice's records</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">['|', '|', '|', '|', '|', '|', '|', ('line_ids', '=', False),
+                ('line_ids.invoice_id.submitted_employee_id.user_id','=',user.id), ('line_ids.receipt_id.partner_id',
+                '=', user.partner_id.id), ('line_ids.receipt_id.cashier_id.user_id', '=', user.id),
+                ('expense_invoice_id.ap_employee_id.user_id', '=', user.id), ('line_ids.payment_id.cashier_id.user_id',
+                '=', user.id), ('line_ids.invoice_id.user_id','=', user.id),'&amp;',('line_ids.invoice_id.type','in',['in_invoice','in_refund']),('line_ids.invoice_id.ap_employee_id.user_id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('group_robo_simple_invoicing'))]"/>
+        </record>
+        <record id="account_move_premium_manager" model="ir.rule">
+            <field name="name">Premium manager can see all records</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_premium_manager'))]"/>
+        </record>
+        <record id="account_move_cash_manager" model="ir.rule">
+            <field name="name">Cash Manager can see his own records</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_cash_manager'))]"/>
+        </record>
+        <record id="account_analytic_line_premium_user" model="ir.rule">
+            <field name="name">Premium user can see only his invoice's records</field>
+            <field name="model_id" ref="account.model_account_analytic_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">['|', '|', '|', ('move_id.invoice_id.submitted_employee_id.user_id','=',user.id),
+                ('user_id', '=', user.id) ,('move_id.invoice_id.user_id','=', user.id),'&amp;',('move_id.invoice_id.type','in',['in_invoice','in_refund']),('move_id.invoice_id.ap_employee_id.user_id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('group_robo_simple_invoicing'))]"/>
+        </record>
+        <record id="account_analytic_line_premium_manager" model="ir.rule">
+            <field name="name">Premium manager can see all records</field>
+            <field name="model_id" ref="account.model_account_analytic_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_premium_manager'))]"/>
+        </record>
+        <record id="account_invoice_tax_premium_user" model="ir.rule">
+            <field name="name">Premium user can see only his invoice's records</field>
+            <field name="model_id" ref="account.model_account_invoice_tax"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">
+                ['|','|',('invoice_id.submitted_employee_id.user_id','=',user.id),('invoice_id.user_id','=', user.id),'&amp;',('invoice_id.type','in',['in_invoice','in_refund']),('invoice_id.ap_employee_id.user_id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('group_robo_simple_invoicing'))]"/>
+        </record>
+        <record id="account_invoice_tax_premium_manager" model="ir.rule">
+            <field name="name">Premium manager can see all records</field>
+            <field name="model_id" ref="account.model_account_invoice_tax"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_premium_manager'))]"/>
+        </record>
+        <record id="account_partial_reconcile_premium_user" model="ir.rule">
+            <field name="name">Premium user can see only his invoice's records</field>
+            <field name="model_id" ref="account.model_account_partial_reconcile"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">['|', '|', '|', '|', '|', '|', ('debit_move_id.receipt_id.partner_id', '=',
+                user.partner_id.id), ('debit_move_id.receipt_id.cashier_id.user_id', '=', user.id),
+                ('debit_move_id.move_id.expense_invoice_id.ap_employee_id.user_id', '=', user.id),
+                ('debit_move_id.payment_id.cashier_id.user_id', '=', user.id), ('debit_move_id.invoice_id.user_id','=',
+                user.id),'&amp;',('debit_move_id.invoice_id.type','in',['in_invoice','in_refund']),('debit_move_id.invoice_id.ap_employee_id.user_id','=',user.id),
+                '|', '|', '|', '|', '|', ('credit_move_id.receipt_id.partner_id', '=', user.partner_id.id),
+                ('credit_move_id.receipt_id.cashier_id.user_id', '=', user.id),
+                ('credit_move_id.move_id.expense_invoice_id.ap_employee_id.user_id', '=', user.id),
+                ('credit_move_id.payment_id.cashier_id.user_id', '=', user.id),
+                ('credit_move_id.invoice_id.user_id','=', user.id),'&amp;',('credit_move_id.invoice_id.type','in',['in_invoice','in_refund']),('credit_move_id.invoice_id.ap_employee_id.user_id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('group_robo_simple_invoicing'))]"/>
+        </record>
+        <record id="account_partial_reconcile_premium_manager" model="ir.rule">
+            <field name="name">Premium manager can see all records</field>
+            <field name="model_id" ref="account.model_account_partial_reconcile"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_premium_manager'))]"/>
+        </record>
+        <record id="account_full_reconcile_premium_user" model="ir.rule">
+            <field name="name">Premium user can see only his invoice's records</field>
+            <field name="model_id" ref="account.model_account_full_reconcile"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">['|', '|', '|', '|', '|', ('reconciled_line_ids.receipt_id.partner_id', '=',
+                user.partner_id.id), ('reconciled_line_ids.receipt_id.cashier_id.user_id', '=', user.id),
+                ('reconciled_line_ids.move_id.expense_invoice_id.ap_employee_id.user_id', '=', user.id),
+                ('reconciled_line_ids.payment_id.cashier_id.user_id', '=', user.id),
+                ('reconciled_line_ids.invoice_id.user_id','=', user.id),'&amp;',('reconciled_line_ids.invoice_id.type','in',['in_invoice','in_refund']),('reconciled_line_ids.invoice_id.ap_employee_id.user_id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('group_robo_simple_invoicing'))]"/>
+        </record>
+        <record id="account_full_reconcile_premium_manager" model="ir.rule">
+            <field name="name">Premium manager can see all records</field>
+            <field name="model_id" ref="account.model_account_full_reconcile"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_premium_manager'))]"/>
+        </record>
+        <record id="account_invoice_premium_user_invoice" model="ir.rule">
+            <field name="name">Premium user can see only his invoice's records</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">['|','|','|',('submitted_employee_id.user_id','=',user.id),('user_id','=',
+                user.id),'&amp;',('type','in',['in_invoice','in_refund']),('ap_employee_id.user_id','=',user.id),('hr_expense_id.employee_id.user_id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('group_robo_simple_invoicing'))]"/>
+        </record>
+        <record id="account_invoice_premium_manager_invoice" model="ir.rule">
+            <field name="name">Premium manager can see all invoice's records</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1,'=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_premium_manager'))]"/>
+        </record>
+        <record id="account_invoice_premium_user_invoice_line" model="ir.rule">
+            <field name="name">Premium user can see only his (or paid by himself) invoice lines records</field>
+            <field name="model_id" ref="account.model_account_invoice_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">
+                ['|','|','|',('invoice_id.submitted_employee_id.user_id','=',user.id),('invoice_id.user_id','=',
+                user.id),'&amp;',('invoice_id.type','in',['in_invoice','in_refund']),('invoice_id.ap_employee_id.user_id','=',user.id),('invoice_id.hr_expense_id.employee_id.user_id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('group_robo_simple_invoicing'))]"/>
+        </record>
+        <record id="account_invoice_premium_manager_invoice_line" model="ir.rule">
+            <field name="name">Premium manager can see all invoice line records</field>
+            <field name="model_id" ref="account.model_account_invoice_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1,'=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_premium_manager'))]"/>
+        </record>
+        <record id="property_rule_holidays_hr_vadovas" model="ir.rule">
+            <field name="name">Holidays HR Vadovas</field>
+            <field name="model_id" ref="hr_holidays.model_hr_holidays"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4,ref('group_robo_hr_manager'))]"/>
+        </record>
+    </data>
+</odoo>
+
+

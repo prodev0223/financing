@@ -1,0 +1,153 @@
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_walless_royalty_sheet" model="ir.ui.view">
+            <field name="name">tree.walless.royalty.sheet</field>
+            <field name="model">walless.royalty.sheet</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree string="Honorarų Suvestinės"
+                      decoration-muted="state == 'draft'"
+                      decoration-info="state == 'open'"
+                      decoration-warning="state == 'engaged'"
+                      decoration-danger="state == 'failed'"
+                      decoration-success="state == 'created'"
+                      create="0" edit="0" delete="0">
+                    <field name="name"/>
+                    <field name="period_start"/>
+                    <field name="period_end"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="form_walless_royalty_sheet" model="ir.ui.view">
+            <field name="name">form.walless.royalty.sheet</field>
+            <field name="model">walless.royalty.sheet</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Honorarų Suvestinė"
+                      create="0" edit="1" delete="0" class="robo_form extended_form">
+                    <header>
+                        <button name="action_sheet_open" type="object"
+                                class="oe_highlight" string="Patvirtinti suvestinę"
+                                states="draft"/>
+                        <button name="action_recreate_lines" type="object"
+                                class="oe_highlight" string="Perkurti eilutes"
+                                states="draft"/>
+                        <button name="action_create_invoices" type="object"
+                                class="oe_highlight" string="Sukurti sąskaitas"
+                                states="open,failed"/>
+                        <button name="action_sheet_draft" type="object"
+                                class="oe_highlight" string="Atstatyti į juodraštį"
+                                states="open,failed"/>
+                        <button name="action_export_xls" type="object"
+                                class="oe_highlight" string="Eksportuoti XLS"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button type="object" name="action_open_created_invoices"
+                                    attrs="{'invisible':[('state', '!=', 'created')]}"
+                                    class="oe_stat_button"
+                                    icon="fa-bars" string="Sąskaitos"/>
+                        </div>
+                        <div>
+                            <label string="Suvestinės numeris"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group groups="robo_basic.group_robo_premium_accountant">
+                            <div attrs="{'invisible':['|', ('invoice_creation_fail_message','=', False),
+                                                           ('state', '!=', 'failed')]}" style="color:red">
+                                Klaida kuriant sąskaitas:
+                                <br/>
+                                <field name="invoice_creation_fail_message" nolabel="1"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="automatic_email_sending" groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="period_start" readonly="1"/>
+                            <field name="period_end" readonly="1"/>
+                            <field name="included_employee_ids" invisible="1"/>
+                        </group>
+                        <field name="royalty_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                               options="{'no_open': True, 'always_reload': True}"
+                               attrs="{'readonly': [('state','not in', ['draft'])]}">
+                            <tree string="Darbuotojai"
+                                  create="1" edit="1" delete="1"
+                                  class="robo_tree_in_form"
+                                  editable="bottom">
+                                <field name="employee_id" required="True" domain="[
+                                    ('id', 'not in', parent.included_employee_ids and parent.included_employee_ids[0][2]),
+                                    ('job_id.use_royalty', '=', True)]"/>
+                                <field name="invoice_id" invisible="1"/>
+                                <field name="monthly_royalty"/>
+                                <field name="monthly_days"/>
+                                <field name="days_worked"/>
+                                <field name="monthly_royalty_factual"/>
+                                <field name="extra_monthly_bonus"/>
+                                <field name="extra_monthly_deductions"/>
+                                <field name="final_amount" sum="final_amount"/>
+                                <field name="vsd_amount"/>
+                                <field name="hypothetical_vsd_amount"/>
+                                <field name="psd_amount"/>
+                                <field name="gpm_amount"/>
+                                <field name="payable_amount"/>
+                                <field name="email_sent" groups="robo_basic.group_robo_premium_accountant"/>
+                                <button name="send_royalty_sheet_line" type="object"
+                                        string="Siųsti suvestinę darbuotojui"
+                                        groups="robo_basic.group_robo_premium_accountant"
+                                        confirm="Ar tikrai norite siųsti suvestinę darbuotojui?"
+                                        icon="fa-envelope-o one_and_half_size"
+                                        attrs="{'invisible': ['|', ('employee_id', '=', False),
+                                        ('invoice_id', '=', False)]}"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_walless_royalty_sheet" model="ir.actions.act_window">
+            <field name="name">Honorarų suvestinės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">walless.royalty.sheet</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="robo_front" eval="1"/>
+            <field name="view_id" ref="tree_walless_royalty_sheet"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_walless_royalty_sheet')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_walless_royalty_sheet')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="robo_header_walless_royalty_sheet"/>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Honorarų suvestinės"
+                id="menu_walless_royalty_sheet"
+                sequence="40"
+                robo_front="1"
+                action="action_open_walless_royalty_sheet"
+                groups="robo_basic.group_robo_premium_accountant,apb_walless.group_walless_royalty_sheet"
+                parent="robo.menu_kita"
+        />
+        <record id="action_open_walless_royalty_sheet" model="ir.actions.act_window">
+            <field name="robo_menu" ref="menu_walless_royalty_sheet"/>
+        </record>
+        <record id="menu_walless_royalty_sheet" model="ir.ui.menu">
+            <field name="web_icon">icon-papers,none,none</field>
+        </record>
+    </data>
+</odoo>

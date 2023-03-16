@@ -1,0 +1,34 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="form_product_attribute" model="ir.ui.view">
+            <field name="name">product.attribute.front.form</field>
+            <field name="model">product.attribute</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Produktų atributai">
+                    <sheet>
+                        <group>
+                            <group name="main_fields">
+                                <field name="name" string="Atributo pavadinimas"/>
+                                <field name="create_variant"
+                                       groups="base.group_no_one"
+                                       string="Sukurti produkto variantą"/>
+                            </group>
+                        </group>
+                        <group name="values_ids">
+                            <field name="value_ids" widget="one2many_list" nolabel="1">
+                                <tree string="Reikšmės" editable="bottom" class="robo_tree_in_form">
+                                    <field name="name" string="Reikšmė"/>
+                                </tree>
+                                <form string="Reikšmės">
+                                    <field name="name" string="Reikšmė"/>
+                                </form>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_agedpartnerbalance_sl">
+        <t t-call="report.html_container">
+            <div class="page xls_front" id="main">
+                <t t-call="report.internal_layout"/>
+                <h2>Partnerio skolų balansas</h2>
+
+                <div class="row mt32">
+                    <div class="col-xs-3">
+                        <strong>Skolos datai:</strong>
+                        <p t-esc="data['date_from']"/>
+                    </div>
+                    <div class="col-xs-3">
+                        <strong>Period Length (days)</strong>
+                        <p t-esc="data['period_length']"/>
+                    </div>
+                </div>
+                <div class="row mb32">
+                    <div class="col-xs-3">
+                        <strong>Partner's:</strong>
+                        <p>
+                            <span t-if="data['result_selection'] == 'customer'">Receivable Accounts</span>
+                            <span t-if="data['result_selection'] == 'supplier'">Payable Accounts</span>
+                            <span t-if="data['result_selection'] in ['customer_supplier', 'all']">
+                                Receivable and Payable Accounts
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-xs-3">
+                        <strong>Target Moves:</strong>
+                        <p>
+                            <span t-if="data['target_move'] == 'all'">All Entries</span>
+                            <span t-if="data['target_move'] == 'posted'">All Posted Entries</span>
+                        </p>
+                    </div>
+                </div>
+                <t t-if="invoices_only">
+                    <table class="table table-condensed main_table" id="table_body">
+                    <thead>
+                        <tr>
+                            <th>Partners</th>
+                            <t t-if="not short">
+                            <th>
+                                <span>El. paštas</span>
+                            </th>
+                            <th>
+                                <span>Telefonas</span>
+                            </th>
+                            </t>
+                            <th>
+                                <span>Sąskaita</span>
+                            </th>
+                            <th class="text-right">
+                                <span>Not due</span>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['names'][0]"/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['names'][1]"/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['names'][2]"/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['names'][3]"/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['names'][4]"/>
+                            </th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                        <tr t-if="invoices">
+                            <th>Account Total</th>
+                            <t t-if="not short">
+                            <th></th>
+                            <th></th>
+                            </t>
+                            <th></th>
+                            <th class="text-right">
+                                <span t-esc="invoices['totals']['no_delay']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['totals']['0']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['totals']['1']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['totals']['2']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['totals']['3']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['totals']['4']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="invoices['totals']['total']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="invoices['rows']" t-as="invoice">
+                            <td class="oe_inline">
+                                <span t-esc="invoice['partner_name']" class="oe_inline"/>
+                            </td>
+                            <t t-if="not short">
+                            <td>
+                                <div t-if="invoice.get('email', '')" class="oe_inline">
+                                    <span class="oe_inline">
+                                        <t t-esc="invoice['partner_mail']"/>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div t-if="invoice.get('phone', '')" class="oe_inline">
+                                    <span class="oe_inline" style="white-space: nowrap">
+                                        <t t-esc="invoice['partner_phone']"/>
+                                    </span>
+                                </div>
+                            </td>
+                            </t>
+                            <td>
+                                <div t-if="invoice.get('invoice_name', '')" class="oe_inline">
+                                    <span class="oe_inline" style="white-space: nowrap">
+                                        <t t-esc="invoice['invoice_name']"/>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="invoice['no_delay']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="invoice['0']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="invoice['1']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="invoice['2']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="invoice['3']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="invoice['4']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="invoice['total']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </t>
+                <t t-else="">
+                <table class="table table-condensed main_table" id="table_body">
+                    <thead>
+                        <tr>
+                            <t t-if="short">
+                                <th>Grupė</th>
+                            </t>
+                            <t t-else="">
+                               <th>Partners</th>
+                            <th>
+                                <span>El. paštas</span>
+                            </th>
+                            <th>
+                                <span>Telefonas</span>
+                            </th>
+                            </t>
+                            <th class="text-right">
+                                <span>Not due</span>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="data['4']['name']"/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="data['3']['name']"/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="data['2']['name']"/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="data['1']['name']"/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="data['0']['name']"/>
+                            </th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                        <tr t-if="get_partner_lines and not short">
+                            <th>Account Total</th>
+                            <th></th>
+                            <th></th>
+                            <th class="text-right">
+                                <span t-esc="get_direction[6]"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="get_direction[4]"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="get_direction[3]"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="get_direction[2]"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="get_direction[1]"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="get_direction[0]"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                            <th class="text-right">
+                                <span t-esc="get_direction[5]"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-if="short and get_partner_lines">
+                            <tr>
+                            <td class="oe_inline">
+                                <span t-esc="get_partner_lines['title']" class="oe_inline"/>
+                            </td>
+                                                        <td class="text-right">
+                                <span t-esc="get_partner_lines['direction']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="get_partner_lines['4']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="get_partner_lines['3']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="get_partner_lines['2']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="get_partner_lines['1']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="get_partner_lines['0']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="get_partner_lines['total']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            </tr>
+                        </t>
+                        <t t-elif="get_partner_lines">
+                        <tr t-foreach="get_partner_lines" t-as="partner">
+                            <td class="oe_inline">
+                                <span t-esc="partner['name']" class="oe_inline"/>
+                            </td>
+                            <td>
+                                <div t-if="partner.get('email', '')" class="oe_inline">
+                                    <span class="oe_inline">
+                                        <t t-esc="partner['email']"/>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div t-if="partner.get('phone')" class="oe_inline">
+                                    <span class="oe_inline" style="white-space: nowrap">
+                                        <t t-esc="partner['phone']"/>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="partner['direction']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="partner['4']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="partner['3']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="partner['2']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="partner['1']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="partner['0']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="partner['total']"
+                                      t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}'/>
+                            </td>
+                        </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
+            </div>
+        </t>
+    </template>
+</odoo>

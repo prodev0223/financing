@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_approval_workflow_step_approver_view_form" model="ir.ui.view">
+            <field name="name">invoice.approval.workflow.step.approver.view.form</field>
+            <field name="model">invoice.approval.workflow.step.approver</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Invoice approval workflow step approver">
+                    <sheet>
+                        <group col="4">
+                            <group colspan="4">
+                                <field name="approver_id"/>
+                                <field name="workflow_step_id"/>
+                            </group>
+                            <group colspan="4" col="4" string="Matched conditions">
+                                <field name="matched_condition_ids" attrs="{'readonly': True}" colspan="4" nolabel="1"
+                                       context="{'form_view_ref': 'invoice_approval_workflow.inv_approval_workflow_condition_view_form'}">
+                                    <tree edit="0" create="0" delete="0">
+                                        <field name="analytic_account_display"/>
+                                        <field name="account_display"/>
+                                        <field name="supplier_display"/>
+                                        <field name="requester_display"/>
+                                        <field name="amount_display"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="invoice_approval_workflow_step_approver_view_tree" model="ir.ui.view">
+            <field name="name">invoice.approval.workflow.step.approver.view.tree</field>
+            <field name="model">invoice.approval.workflow.step.approver</field>
+            <field name="arch" type="xml">
+                <tree string="Invoice approval workflow step approvers" import="0">
+                    <field name="approver_id"/>
+                    <field name="workflow_step_id"/>
+                    <field name="approval_decision"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="invoice_approval_workflow_step_approver_view_search" model="ir.ui.view">
+            <field name="name">invoice.approval.workflow.step.approver.view.search</field>
+            <field name="model">invoice.approval.workflow.step.approver</field>
+            <field name="arch" type="xml">
+                <search string="Invoice approval workflow step approver search">
+                    <field name="approver_id" string="Approver"/>
+                    <field name="workflow_step_id" string="Approval step"/>
+                    <filter string="Approved" name="approved" domain="[('approval_decision', '=', 'approved')]"/>
+                    <filter string="Disapproved" name="disapproved"
+                            domain="[('approval_decision', '=', 'disapproved')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Approver" domain="[]" context="{'group_by':'approver_id'}"/>
+                        <filter string="Matched condition" domain="[]" context="{'group_by':'matched_condition_ids'}"/>
+                        <filter string="Approval decision" domain="[]" context="{'group_by':'approval_decision'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="invoice_approval_workflow_step_approver_action" model="ir.actions.act_window">
+            <field name="name">Invoice workflow step approvers</field>
+            <field name="res_model">invoice.approval.workflow.step.approver</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="invoice_approval_workflow_step_approver_view_tree"/>
+            <field name="search_view_id" ref="invoice_approval_workflow_step_approver_view_search"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+                id="invoice_approval_workflow_step_approver_menu_action"
+                name="Step approvers"
+                parent="invoice_approval_workflow_container_menu"
+                action="invoice_approval_workflow_step_approver_action"
+                sequence="3"
+                groups=""
+        />
+    </data>
+</odoo>

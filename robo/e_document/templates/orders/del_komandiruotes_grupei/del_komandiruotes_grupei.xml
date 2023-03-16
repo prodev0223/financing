@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="isakymas_del_komandiruotes_grupei_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl komandiruotės grupei</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="show_annotation" invisible="1"/>
+                    <button name="action_copy" type="object" string="Kurti kopiją" states="draft,confirm,e_signed"/>
+                </xpath>
+
+                <xpath expr="//header" position="after">
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': ['|',('state','!=','draft'),('show_annotation','!=', True)]}">
+                        Nuo 2018-01-01 Dėl dvigubai didesnių dienpinigių mokėjimo turi būti susitarta su įmonės
+                        akcininkais. Be akcininkų sutikimo, direktorius sau dvigubų dienpinigių mokėti negali.
+                    </div>
+                </xpath>
+
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="text_6" options="{'no_create': True, 'no_open': True}"
+                               string="Komandiruotės tikslas" required="True" invisible="0"/>
+                    </group>
+                    <group>
+                        <field name="country_allowance_id" options="{'no_create': True, 'no_open': True}"
+                               string="Į kur važiuojama" required="True" invisible="0"/>
+                        <field name="date_from" options="{'no_create': True, 'no_open': True}" string="Data nuo"
+                               required="True" invisible="0"/>
+                        <field name="date_to" options="{'no_create': True, 'no_open': True}" string="Data iki"
+                               required="True" invisible="0"/>
+                        <field name="num_calendar_days" options="{'no_create': True, 'no_open': True}"
+                               string="Kalendorinių dienų skaičius" required="True" invisible="True"/>
+                        <field name="dates_contain_weekend" invisible="1"/>
+                        <field name="business_trip_worked_on_weekends" string="Ar dirbs poilsio dienomis?"
+                               attrs="{'invisible': [('dates_contain_weekend','!=',True)], 'required': [('dates_contain_weekend','=',True)]}"/>
+                    </group>
+                    <div>
+                        <button name="add_all_employees_as_to_document_lines"
+                                type="object"
+                                string="Add All Employees"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state','!=','draft')]}"
+                                confirm="Are you sure you want to add all employees?"/>
+                    </div>
+                    <field name="e_document_line_ids" nolabel="1" widget="one2many_list"
+                           options="{'no_open': True}">
+                        <tree string="El. dokumento eilutės" editable="bottom" open="false"
+                              class="robo_tree_in_form">
+                            <field name="employee_id2" required="1" string="Darbuotojo Vardas"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   context="{'percentage': True, 'form_view_ref': 'robo.open_employees_action_new_form'}"/>
+                            <field name="float_1" required="1" string="Dienpinigių suma"
+                                   context="{'norm': True}"/>
+                            <field name="int_1" required="1" string="Dienpinigių normos dalis procentais"
+                                   context="{'percentage': True}"/>
+                        </tree>
+                        <form string="El. dokumento eilutės" editable="bottom" open="false">
+                            <group>
+                                <field name="employee_id2" required="1" string="Darbuotojo Vardas"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       context="{'percentage': True, 'form_view_ref': 'robo.open_employees_action_new_form'}"/>
+                                <field name="float_1" required="1" string="Dienpinigių suma"
+                                       context="{'norm': True}"/>
+                                <field name="int_1" required="1" string="Dienpinigių normos dalis procentais"
+                                       context="{'percentage': True}"/>
+                            </group>
+                        </form>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_komandiruotes_grupei_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl komandiruotės grupei</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'isakymas_del_komandiruotes_grupei_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.isakymas_del_komandiruotes_grupei_form"/>
+        </record>
+
+
+        <record id="isakymas_del_komandiruotes_grupei_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl komandiruotės grupei</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="False"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.isakymas_del_komandiruotes_grupei_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas,Komandiruotė grupė</field>
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+
+        <record id="isakymas_del_komandiruotes_grupei_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    {{ extra_business_trip_weekend_text }} K o m a n d i r u o j u darbuotojų grupę į
+                    {{ka(country_allowance_id, 'Aa')}} nuo {{ date_from }} iki {{ date_to }} ({{ num_calendar_days }}
+                    {%if num_calendar_days | int % 10 == 0 %} dienų{% elif num_calendar_days | int % 100 &gt; 10 and
+                    num_calendar_days | int % 100 &lt; 20 %} dienų{% elif num_calendar_days | int % 10 == 1 %} dieną{%
+                    else %} dienas{% endif %}).
+                    Komandiruotės tikslas: {{ text_6 }}. Numatomos apmokėti išlaidos yra: kelionės į komandiruotės vietą
+                    ir grįžimo išlaidos (įskaitant transakcijos mokestį ir lėktuvo bilietų komisinį mokestį), ryšio
+                    išlaidos, reprezentacijai skirtos/patirtos išlaidos ir dienpinigiai.
+                    <br/>
+                    {{ compute_text_1 }} {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl komandiruotės grupei</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.isakymas_del_komandiruotes_grupei_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS
+                                DĖL KOMANDIRUOTĖS GRUPEI
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                    </span>
+                                                </p>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p>
+                                                    <span>{{ manager_id }}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                                <br/>
+                                <span>ĮSAKYMAS
+                                    DĖL KOMANDIRUOTĖS GRUPEI
+                                </span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span t-field="doc.employee_id.work_location"/>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        {{ extra_business_trip_weekend_text }} K o m a n d i r u o j u darbuotojų grupę į
+                        {{ka(country_allowance_id, 'Aa')}} nuo {{ date_from }} iki {{ date_to }} ({{ num_calendar_days
+                        }} {%if num_calendar_days | int % 10 == 0 %} dienų{% elif num_calendar_days | int % 100 &gt; 10
+                        and num_calendar_days | int % 100 &lt; 20 %} dienų{% elif num_calendar_days | int % 10 == 1 %}
+                        dieną{% else %} dienas{% endif %}).
+                        Komandiruotės tikslas: {{ text_6 }}. Numatomos apmokėti išlaidos yra: kelionės į komandiruotės
+                        vietą ir grįžimo išlaidos (įskaitant transakcijos mokestį ir lėktuvo bilietų komisinį mokestį),
+                        ryšio išlaidos, reprezentacijai skirtos/patirtos išlaidos ir dienpinigiai.
+                        <br/>
+                        {{ compute_text_1 }} {{ extra_text_html }}
+                    </div>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="65%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{manager_job_id}} {{ manager_id }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.isakymas_del_komandiruotes_grupei_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="True"/>
+        </record>
+    </data>
+</odoo>

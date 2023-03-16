@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--<record id="mrp_production_view_form_inherit_gantt" model="ir.ui.view">-->
+        <!--<field name="name">mrp.production.form.view.inherit.gantt</field>-->
+        <!--<field name="model">mrp.production</field>-->
+        <!--<field name="inherit_id" ref="mrp.mrp_production_form_view"/>-->
+        <!--<field name="arch" type="xml">-->
+            <!--<field name="date_planned_finished" position="after">-->
+                    <!--<field name="date_planned_deadline"/>-->
+            <!--</field>-->
+            <!--<xpath expr="//field[@name='date_planned_finished']" position="attributes">-->
+                  <!--<attribute name="invisible">False</attribute>-->
+            <!--</xpath>-->
+
+
+        <!--</field>-->
+    <!--</record>-->
+
+
+
+    <record id="view_mrp_workorder_ganttaps" model="ir.ui.view">
+    <field name="name">mrp.workorder.ganttaps</field>
+    <field name="model">mrp.workorder</field>
+    <field name="type">ganttaps</field>
+    <field eval="2" name="priority"/>
+
+    <field name="arch" type="xml">
+        <ganttaps
+
+                default_group_by = "workcenter_id"
+                main_group_id_name = "workcenter_id"
+
+                name = "name"
+                date_start="date_planned_start"
+                date_stop="date_planned_finished"
+
+                date_done="date_finished"
+
+                state="state"
+                state_status="done"
+
+
+                sorting_seq="sorting_seq"
+                sorting_level="sorting_level"
+
+                project_id="workcenter_id"
+
+                is_milestone="is_milestone"
+                on_gantt="on_gantt"
+
+                progress="duration_percent"
+
+                no_group_sort_mode=""
+
+                ghost_id="workorder_id"
+                ghost_model="mrp.workcenter.productivity"
+                ghost_name="display_name"
+                ghost_date_start="date_start"
+                ghost_date_end="date_end"
+                ghost_durations="duration"
+
+
+
+
+
+             >
+
+        </ganttaps>
+
+    </field>
+
+</record>
+
+
+<record id="mrp.action_mrp_workorder_production_specific" model="ir.actions.act_window">
+    <field name="view_mode">tree,form,gantt,calendar,pivot,graph,ganttaps</field>
+</record>
+
+    <record id="mrp.mrp_workorder_todo" model="ir.actions.act_window">
+    <field name="view_mode">kanban,tree,form,calendar,pivot,graph,ganttaps</field>
+</record>
+
+
+
+</odoo>

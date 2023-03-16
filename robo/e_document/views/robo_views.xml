@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="extend_department_view">
+            <field name="name">extend.department.view.politika</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="robo.new_department_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='manager_id']" position="replace">
+                    <field name="manager_id" string="Tvirtina atostogas"
+                           context="{'form_view_ref': 'robo.open_employees_action_new_form'}"
+                           attrs="{'required': [('politika_atostogu_suteikimas', '!=', 'ceo')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="politika_atostogu_suteikimas" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='manager_id']" position="after">
+                    <field name="department_delegate_ids" widget="one2many_list"
+                           options="{'no_open': True}">
+                        <tree string="Delegates" editable="bottom" open="0" class="robo_tree_in_form">
+                            <field name="employee_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="date_start" required="1"/>
+                            <field name="date_stop" required="1"/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_payslip_run_form" model="ir.ui.view">
+            <field name="name">hr.payslip.run.form</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='close_payslip_run']" position="after">
+                    <field name="sign_id" invisible="1"/>
+                    <field name="show_invite_sign" invisible="1"/>
+                    <button name="invite_sign" type="object" string="Kviesti pasirašyti" class="oe_highlight"
+                            attrs="{'invisible': ['|', ('state', '!=', 'close'), ('show_invite_sign','=',False)]}"/>
+                    <button name="cancel_summary_document" type="object"
+                            string="Atšaukti darbo užmokesčio suvestinės dokumentą" class="oe_highlight"
+                            confirm="Ar tikrai norite atšaukti darbo užmokesčio suvestinės dokumentą?"
+                            attrs="{'invisible': [('sign_id', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="extend_hr_employee_bonus">
+            <field name="name">extend.hr.employee.bonus</field>
+            <field name="model">hr.employee.bonus</field>
+            <field name="inherit_id" ref="l10n_lt_payroll.hr_employee_bonus_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='comment']" position="after">
+                    <field name="related_document" attrs="{'invisible': [('related_document', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="hr_job_edoc_tree_view">
+            <field name="name">hr.job.edoc.tree</field>
+            <field name="priority" eval="99"/>
+            <field name="model">hr.job</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0">
+                    <field name="name" string="Pareigos"/>
+                    <field name="department_id"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.server" id="action_multi_confirm">
+            <field name="name">Formuoti pasirinktus dokumentus</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).confirm()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_action_multi_confirm" model="e.document"/>
+        <record model="ir.actions.server" id="action_multi_sign">
+            <field name="name">Pasirašyti pasirinktus dokumentus</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).mass_sign()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_action_multi_sign" model="e.document"/>
+    </data>
+</odoo>

@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="e_invoice_import_wizard_form" model="ir.ui.view">
+            <field name="name">Importuoti eSąskaitą</field>
+            <field name="model">e.invoice.wizard</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Importuoti eSąskaitą">
+                    <group col="2">
+                        <field name="xml_data" filename="coda_fname"/>
+                        <field name="xml_name" invisible="1"/>
+                        <field name="embedded_pdf"/>
+                    </group>
+                    <footer>
+                        <button name="data_import" string="Importuoti" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="e_invoice_import_wizard_action" model="ir.actions.act_window">
+            <field name="name">Importuoti eSąskaitą</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.invoice.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="e_invoice_import_wizard_form"/>
+        </record>
+
+        <menuitem
+            name="Elektroninės sąskaitos faktūros"
+            id="e_invoice_menu"
+            sequence="50"
+            action="e_invoice_import_wizard_action"
+            groups="robo_basic.group_robo_premium_accountant"
+            parent="account.menu_finance_entries"/>
+    </data>
+</openerp>

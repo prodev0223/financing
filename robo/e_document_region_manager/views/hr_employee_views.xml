@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="open_employees_action_new_form" model="ir.ui.view">
+            <field name="name">open.employees.action.new.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="groups_id"
+                   eval="[(6, 0, [ref('e_document_region_manager.group_e_document_region_manager')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="show_region_info" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                    <field name="is_non_resident" invisible="1"/>
+                    <field name="show_bank_account_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='department_id']" position="attributes">
+                    <attribute name="domain">[('id', 'in',department_ids and department_ids[0][2])]</attribute>
+                </xpath>
+                <xpath expr="//field[@name='robo_access']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('show_region_info', '=', False)]}</attribute>
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('show_region_info', '=', False)]}</attribute>
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//field[@name='is_underage']" position="attributes">
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//field[@name='nationality_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('show_region_info', '=', False)]}</attribute>
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//field[@name='bank_account_number']"
+                       position="attributes">
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//field[@name='bank_account_id']"
+                       position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': ['|', ('show_bank_account_id', '=', False), ('show_region_info', '=', False)]}
+                    </attribute>
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//field[@name='savivaldybe']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': [('show_region_info', '=', False)], 'required': [('is_non_resident', '=', False)]}
+                    </attribute>
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//page[@name='education_information']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': ['|', ('show_region_info', '=', False), ('is_underage', '=', False)]}</attribute>
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//button[@name='contract_wizard']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': [('show_region_info', '=', False)]}</attribute>
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//div[@name='alert_signup_valid']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': ['|',
+                            ('show_region_info', '=', False),
+                            ('signup_valid', '=', False)
+                        ]}
+                    </attribute>
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+                <xpath expr="//button[@name='action_reset_password']" position="attributes">
+                    <attribute name="groups"
+                               eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

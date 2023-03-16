@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_payroll_dashboard_kanban_view" model="ir.ui.view">
+            <field name="name">hr.payroll.dashboard.kanban</field>
+            <field name="model">hr.payroll.dashboard</field>
+            <field name="arch" type="xml">
+                <kanban create="false" class="oe_background_grey o_kanban_dashboard o_account_kanban">
+                <field name="id"/>
+                    <field name="name"/>
+                    <field name="exist_payments"/>
+                    <field name="kanban_dashboard_payment_graph"/>
+                    <field name="busy"/>
+                    <field name="allow_automatic_payroll"/>
+                    <field name="show_stage"/>
+                    <field name="payroll_id"/>
+                    <field name="allow_perform_sam_action"/>
+                    <field name="show_sam_url"/>
+                    <field name="sam_url"/>
+                    <field name="allow_perform_gpm313_action"/>
+                    <field name="payroll_history_obj_exists"/>
+                    <field name="thread_is_active"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="#{kanban_color(0)}">
+                                <t t-call="PayrolDashboardTop"/>
+                                <div class="container o_kanban_card_manage_pane o_invisible">
+                                    <t t-call="OtherInfo"/>
+                                </div>
+                                <div class="container o_kanban_card_content o_visible">
+                                    <t t-if="record.exist_payments.raw_value">
+                                        <div>
+                                            <field name="kanban_dashboard_payment_graph" graph_type="bar" stacked="true" widget="robo_dashboard_graph_multi"/>
+                                        </div>
+                                    </t>
+                                    <t t-if="record.exist_payments.raw_value == false">
+                                        <div style="text-align:center; vertical-align: middle; height:150px">
+                                            <span style="font-size:25px; margin-top:100px;">Nėra mokėjimų</span>
+                                        </div>
+                                    </t>
+                                    <div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_view">
+                                        <div class="o_kanban_card_manage_title">
+                                            <span>1. <a type="object" name="open_ziniarastis">Rodyti Žiniaraštį</a></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_view">
+                                        <div class="o_kanban_card_manage_title">
+                                            <span>2. <a type="object" name="open_payslips">Rodyti Algalapius</a></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_view">
+                                        <div class="o_kanban_card_manage_title">
+                                            <span>3. <a type="object" name="open_bank_statements">Mokėjimų sąrašas</a></span>
+                                        </div>
+                                    </div>
+                                    <t t-if="record.allow_automatic_payroll.raw_value != false">
+                                        <div style="text-align:center; vertical-align: bottom; margin-top: 40px;">
+                                            <button class="execute_automatic_payroll_button" type="object" confirm="Bus bandoma automatiškai paskaičiuoti atlyginimus už šį mėnesį, norite testi?" name="execute_automatic_payroll_button">Paskaičiuoti atlyginimus</button>
+                                            <t t-if="record.payroll_history_obj_exists.raw_value != false">
+                                                <button class="execute_automatic_payroll_button" style="background-color: gray !important" type="object" name="action_open_latest_automatic_payroll_history_object">Paskutinis skaičiavimas</button>
+                                            </t>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-if="record.busy.raw_value">
+                                            <div style="text-align:center; vertical-align: bottom; margin-top: 40px;">
+                                                <span style="font-size: 15px;">Vykdomi Skaičiavimai...</span>
+                                                <i class="fa fa-spinner fa-spin payroll_dashboard_spin"/>
+                                            </div>
+                                            <t t-if="record.show_stage.raw_value">
+                                                <div style="text-align:center; vertical-align: bottom; margin-top: 10px;">
+                                                    <span t-esc="record.payroll_id.stage"/>
+                                                </div>
+                                            </t>
+                                            <t t-if="!record.thread_is_active.raw_value">
+                                                <div style="text-align:center; vertical-align: bottom; margin-top: 10px;">
+                                                    <button class="execute_automatic_payroll_button" type="object"
+                                                            confirm="The system will now attempt to stop the running
+                                                            calculations. Do you wish to continue?"
+                                                            name="reset_automatic_payroll">Reset stuck calculations
+                                                    </button>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <t t-else="">
+                                            <div style="text-align:center; vertical-align: bottom; margin-top: 40px;">
+                                                <span style="font-size: 15px;">Suvestinė uždaryta</span>
+                                            </div>
+                                        </t>
+                                    </t>
+                                    <t t-if="record.allow_perform_sam_action.raw_value != false">
+                                        <div style="text-align:center; vertical-align: bottom;">
+                                            <button class="execute_automatic_payroll_button"
+                                                    type="object"
+                                                    confirm="Bus pateiktas SAM ir sukurta nuorodą - norite testi?"
+                                                    name="action_generate_sam_url">Generuoti SAM</button>
+                                            <t t-if="record.show_sam_url.raw_value">
+                                                <a class="execute_automatic_payroll_button" target="_blank" t-attf-href="{{record.sam_url.raw_value}}">Pasirašyti SAM</a>
+                                            </t>
+                                        </div>
+                                    </t>
+                                    <t t-if="record.allow_perform_gpm313_action.raw_value != false">
+                                        <div style="text-align:center; vertical-align: bottom;">
+                                            <button class="execute_automatic_payroll_button" type="object"
+                                                    confirm="Bus sugeneruota ir pateikta GPM313 deklaracija ir sukurta nuorodą - norite testi?"
+                                                    name="action_generate_gpm313_url">Siųsti GPM313</button>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                        <t t-name="PayrolDashboardTop">
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <button type="object" name="open_ziniarastis" class="oe_highlight">
+                                            <span><field name="name"/></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_manage_button_section">
+                                    <a class="o_kanban_manage_toggle_button" href="#">More <i class="fa fa-caret-down"/></a>
+                                </div>
+                            </div>
+                        </t>
+                        <t t-name="OtherInfo">
+                            <div class="row">
+                                <div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_view">
+                                    <div class="o_kanban_card_manage_title">
+                                        <span><a type="object" name="open_advance_payments">Rodyti Avansus</a></span>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_view">
+                                    <div class="o_kanban_card_manage_title">
+                                        <span><a type="object" name="open_other_payments">Rodyti kitus išmokėjimus</a></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <record id="hr_payroll_dashboard_form_view" model="ir.ui.view">
+            <field name="name">hr.payroll.dashboard.form</field>
+            <field name="model">hr.payroll.dashboard</field>
+            <field name="arch" type="xml">
+                <form create="false">
+                    <field name="id" invisible="1"/>
+                    <field name="name"/>
+                </form>
+            </field>
+        </record>
+
+        <record id="open_payroll_dashboard_kanban" model="ir.actions.act_window">
+            <field name="name">Payroll Dashboard</field>
+            <field name="res_model">hr.payroll.dashboard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,form</field>
+        </record>
+
+        <menuitem id="menu_payroll_dashboard"
+                  name="Dashboard"
+                  action="open_payroll_dashboard_kanban"
+                  parent="hr_payroll.menu_hr_payroll_root"
+                  sequence="1"
+                  groups="account.group_account_user"/>
+
+        <record id="cron_payrol_dashboard_creation" model="ir.cron">
+            <field name="name">Payroll dashboard generate</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">hr.payroll.dashboard</field>
+            <field name="function">generate_dashboards</field>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_generate_ziniarasciai" model="ir.cron">
+            <field name="name">Žiniaračių generavimas</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">months</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">ziniarastis.period</field>
+            <field name="function">cron_generate_ziniarasciai</field>
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_assign_ziniarastis_to_appointments" model="ir.cron">
+            <field name="name">Ieškojimas žiniaraščių appointmentams</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">minutes</field>
+            <field name="interval_number">15</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">hr.contract.appointment</field>
+            <field name="function">cron_assign_ziniarastis_to_appointments</field>
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_auto_create_statements" model="ir.cron">
+            <field name="name">Automatinis banko pavedimų kūrimas</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">days</field>
+            <field name="interval_number">1</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">mokejimu.eksportas</field>
+            <field name="function">cron_auto_create_statements</field>
+            <field name="args">()</field>
+        </record>
+
+        <!--<record id="cron_check_ending_trial_contracts" model="ir.cron">-->
+            <!--<field name="name">Besibaigiančių bandomojų periodų tikrinimas</field>-->
+            <!--<field name="user_id" ref="base.user_root"/>-->
+            <!--<field name="interval_type">days</field>-->
+            <!--<field name="numbercall" eval="-1"/>-->
+            <!--<field name="model">hr.contract</field>-->
+            <!--<field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=0)).strftime('%Y-%m-%d %H:%M:%S')" />-->
+            <!--<field name="function">cron_check_ending_trial_contracts</field>-->
+            <!--<field name="args">()</field>-->
+        <!--</record>-->
+
+        <template id="assets_backend" name="account assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/l10n_lt_payroll/static/src/less/dashboard.less"/>
+                <script type="text/javascript" src="/l10n_lt_payroll/static/src/js/graphs.js"/>
+                <script type="text/javascript" src="/l10n_lt_payroll/static/src/js/popup.js"/>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

@@ -1,0 +1,152 @@
+<odoo>
+    <data>
+        <!--Contains stock move front views/trees/actions-->
+        <record id="view_move_search" model="ir.ui.view">
+            <field name="name">stock.move.search</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='done']" position="after">
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="[('date', '&gt;=',
+                            (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                     ('date', '&lt;',
+                                     (context_today() + relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="[('date', '&gt;=',
+                            (context_today() + relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                     ('date', '&lt;',
+                                     (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai"
+                            domain="[('date', '&gt;=',
+                            (context_today() + relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                     ('date', '&lt;',
+                                     (context_today() + relativedelta(years=1, month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="[('date', '&gt;=',
+                            (context_today() + relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                     ('date', '&lt;',
+                                     (context_today() + relativedelta( month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter name="correct" string='Neatšaukti judėjimai'
+                            domain="[
+                            ('error', '=', False),
+                            '|',
+                            ('returned_move_ids', '=', False),
+                            ('error_move', '=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="tree_robo_stock_move" model="ir.ui.view">
+            <field name="name">tree.robo.stock.move</field>
+            <field name="model">stock.move</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree decoration-muted="state == 'cancel'"
+                      decoration-danger="(state not in ('cancel','done')) and date > current_date"
+                      string="Moves" create="0" edit="0" delete="0" default_order='date desc'>
+                    <field name="name"/>
+                    <field name="picking_id"/>
+                    <field name="origin"/>
+                    <field name="picking_type_id" invisible="1"/>
+                    <field name="product_id"/>
+                    <field name="product_uom_qty"/>
+                    <field name="product_qty" invisible="1"/>
+                    <field name="product_qty_real" string="Quantity change" sum="product_qty_real"/>
+                    <field name="product_uom" groups="product.group_uom"/>
+                    <field name="location_id" groups="stock.group_stock_multi_locations"/>
+                    <field name="location_dest_id" groups="stock.group_stock_multi_locations"/>
+                    <field name="date"/>
+                    <field name="date_expected"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="pivot_robo_stock_move" model="ir.ui.view">
+            <field name="name">pivot.robo.stock.move</field>
+            <field name="model">stock.move</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Atsargų judėjimas">
+                    <field name="product_id" type="row"/>
+                    <field name="product_uom_qty" type="measure"/>
+                    <field name="product_qty" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="robo_open_stock_move_analysis" model="ir.actions.act_window">
+            <field name="name">Atsargų judėjimas</field>
+            <field name="res_model">stock.move</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,pivot,form</field>
+            <field name="view_id" ref="tree_robo_stock_move"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_robo_stock_move')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('pivot_robo_stock_move')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_move_form')})]"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="header" ref="robo_stock.stock_default_xs"/>
+            <field name="context">{
+                'search_default_done': 1,
+                'search_default_previous_month': 1,
+                'search_default_this_month': 1,
+                'search_default_correct': 1
+                }</field>
+            <field name="search_view_id" ref="stock.view_move_search"/>
+        </record>
+
+        <menuitem id="menu_stock_move_analysis_search_report"
+                  name="Atsargų judėjimas"
+                  groups="robo_stock.robo_stock_reports"
+                  parent="robo.menu_ataskaitos_search"
+                  action="robo_open_stock_move_analysis"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="atsargų,judėjimas"
+        />
+
+        <record id="pivot_robo_stock_move_date" model="ir.ui.view">
+            <field name="name">pivot.robo.stock.move.date</field>
+            <field name="model">stock.move</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Atsargų judėjimas">
+                    <field name="product_id" type="row"/>
+                    <field name="location_dest_id" groups="stock.group_stock_multi_locations" type="row"/>
+                    <field name="date" type="col"/>
+                    <field name="product_qty" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="action_robo_done_stock_move" model="ir.actions.act_window">
+            <field name="name">Atsargų judėjimas</field>
+            <field name="res_model">stock.move</field>
+            <field name="view_mode">pivot,tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('pivot_robo_stock_move_date')}),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('tree_robo_stock_move')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_move_form')})]"/>
+            <field name="robo_menu" ref="menu_robo_stock"/>
+            <field name="context">{
+                'search_default_previous_month': 1,
+                'search_default_this_month': 1,
+                'search_default_done': 1,
+                'search_default_correct': 1
+                 }
+             </field>
+        </record>
+        <record id="action_robo_reserved_stock_move" model="ir.actions.act_window">
+            <field name="name">Rezervuoti judėjimai</field>
+            <field name="res_model">stock.move</field>
+            <field name="domain"/>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('tree_robo_stock_move')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_move_form')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('pivot_robo_stock_move_date')})]"/>
+            <field name="robo_menu" ref="menu_robo_stock"/>
+        </record>
+    </data>
+</odoo>

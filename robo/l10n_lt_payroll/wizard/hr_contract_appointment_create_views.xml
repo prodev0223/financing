@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_contract_appointment_create_view_form" model="ir.ui.view">
+            <field name="name">hr.contract.appointment.create.view.form</field>
+            <field name="model">hr.contract.appointment.create</field>
+            <field name="arch" type="xml">
+                <form string="Appointment">
+                    <group groups="hr.group_hr_manager">
+                        <group string="Pagrindinė informacija" colspan="2" col="2">
+                            <field name="employee_id"/>
+                            <field name="contract_id"/>
+                            <field name="name"/>
+                            <field name="department_id"/>
+                            <field name="job_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                        <group string="Atlyginimo informacija" colspan="2" col="2">
+                            <field name="struct_id"/>
+                            <field name="struct_name" attrs="{'invisible': True}"/>
+                            <field name="use_npd"/>
+                            <field name="contract_priority" attrs="{
+                                    'invisible': [('use_npd', '=', False)],
+                                    'required': [('use_npd', '=', True)]
+                                }"
+                            />
+                            <field name="sodra_papildomai"/>
+                            <field name="sodra_papildomai_type"
+                                   attrs="{'invisible': ['|', ('sodra_papildomai', '=', False), ('date_start', '&lt;', '2019-01-01')], 'required': [('date_start', '!=', False),('sodra_papildomai','=', True), ('date_start', '&gt;', '2018-12-31')]}"
+                                   context="{'date': date_start}" options="{'no_open': False, 'no_create': True}"/>
+                            <field name="invalidumas"/>
+                            <field name="darbingumas" attrs="{'invisible': [('invalidumas', '=', False)]}"/>
+                            <field name="avansu_politika"/>
+                            <field name="wage"/>
+                            <field name="avansu_politika_suma"
+                                   attrs="{'invisible':[('avansu_politika','!=', 'fixed_sum')]}"/>
+                            <field name="avansu_politika_proc"
+                                   attrs="{'invisible':[('avansu_politika','=','fixed_sum')]}"/>
+                            <field name="schedule_template_id"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="create_appointment" type="object" string="Create new appointment"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

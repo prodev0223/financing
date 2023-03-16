@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="sepa.revolut_api_view_form" model="ir.ui.view">
+            <field name="name">revolut.api.view.form</field>
+            <field name="model">revolut.api</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Revolut API nustatymay">
+                    <sheet>
+                        <group string="Nustatymai">
+                            <field name="api_url"/>
+                            <field name="api_username"/>
+                            <field name="api_password"/>
+                            <field name="min_date_from"/>
+                        </group>
+                        <group>
+                            <button name="get_accounts" string="Gauti vidines Revolut sąskaitas" type="object" class="oe_highlight"/>
+                            <newline/>
+                            <field name="revolut_account_ids" nolabel="1" readonly="1" options="{'no_open': True, 'no_create':True}">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="currency_id"/>
+                                    <field name="uuid"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="robo.revolut_api_view_form" model="ir.ui.view">
+            <field name="arch" type="xml">
+                <form string="Revolut API nustatymay">
+                    <header>
+                        <button name="get_accounts" string="Gauti vidines Revolut sąskaitas" type="object"
+                                class="oe_highlight"
+                                attrs="{'invisible': ['|', '|', ('api_url', '=', False), ('api_username', '=', False), ('api_password', '=', False)]}"/>
+                        <field name="show_create_jwt" invisible="1"/>
+                    </header>
+                    <sheet>
+                        <group string="Nustatymai">
+                            <field name="api_url"/>
+                            <field name="api_username"/>
+                            <field name="api_password"/>
+                            <field name="min_date_from"/>
+                        </group>
+                        <group string="Vidinės Revolut sąskaitos" name="accounts"
+                               attrs="{'invisible': ['|', '|', ('api_url', '=', False), ('api_username', '=', False), ('api_password', '=', False)]}">
+                            <field name="accounts_count" invisible="1"/>
+                            <div attrs="{'invisible': [('accounts_count', '>', 0)]}">
+                                <button name="get_accounts" string="Spauskite čia," type="object"/>
+                                kad gautumėte sąskaitas iš Revolut
+                            </div>
+                            <group>
+                                <field name="revolut_account_ids" nolabel="1" readonly="1" options="{'no_open': True, 'no_create':True}">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="currency_id"/>
+                                        <field name="uuid"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="sepa.revolut_api_view_tree" model="ir.ui.view">
+            <field name="name">revolut.api.view.tree</field>
+            <field name="model">revolut.api</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <tree string="Revolut API nustatymai">
+                    <field name="api_url"/>
+                    <field name="api_username"/>
+                    <field name="min_date_from"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>

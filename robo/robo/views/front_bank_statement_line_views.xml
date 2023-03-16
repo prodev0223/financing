@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="front_bank_statement_line_form_view" model="ir.ui.view">
+            <field name="name">front.bank.statement.line.form</field>
+            <field name="model">front.bank.statement.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="date" string="Data"/>
+                            <field name="name" string="Mokėjimo paskirtis"/>
+                            <field name="partner_id" options="{'no_create': True, 'no_open': True}" string="Partneris"/>
+                            <field name="ref" string="Pavadinimas"/>
+                            <field name="amount" sum="amount" string="Suma"/>
+                            <field name="amount_currency" string="Suma valiuta"/>
+                            <field name="currency_id" string="Valiuta" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="bank_account_id" string="Bankas"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="has_export_job_ids" invisible="1"/>
+                        </group>
+                        <group string="Eksportavimai į banką" name="bank_exports"
+                               attrs="{'invisible': [('has_export_job_ids','=',False)]}">
+                            <field name="bank_export_job_ids" nolabel="1" options="{'always_reload': True}"
+                                   mode="tree,kanban" widget="one2many_list"
+                                   groups="robo_basic.group_robo_premium_manager,robo.group_front_bank_statements_own">
+                                <tree edit="0" create="0" delete="0" class="robo_tree_in_form"
+                                      decoration-success="export_state in ['processed', 'processed_partial']"
+                                      decoration-info="export_state in ['accepted', 'accepted_partial']"
+                                      decoration-danger="export_state in ['rejected', 'rejected_partial', 'rejected_sign']"
+                                      decoration-warning="export_state == 'waiting'">
+                                    <field name="tr_name"/>
+                                    <field name="date_exported"/>
+                                    <field name="tr_amount"/>
+                                    <field name="tr_partner_id"/>
+                                    <field name="tr_currency_id"/>
+                                    <field name="tr_bank_account_id"/>
+                                    <field name="export_state"/>
+                                    <field name="available_for_signing"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="account_bank_statement_line_form_view" model="ir.ui.view">
+            <field name="name">account.bank.statement.line.form</field>
+            <field name="model">account.bank.statement.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="date"/>
+                        <field name="name" string="Mokėjimo paskirtis"/>
+                        <field name="partner_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="ref" string="Pavadinimas"/>
+                        <field name="amount" sum="amount"/>
+                        <field name="amount_currency"/>
+                        <field name="currency_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="bank_account_id" options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

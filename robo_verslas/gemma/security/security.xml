@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_gemma_manager" model="res.groups">
+            <field name="name">Gemma Manager</field>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Polis vadovas: pardavimai, mokėjimai, išorinės sąskaitos</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+
+        <record id="robo_basic.group_robo_premium_accountant" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('group_gemma_manager'))]"/>
+        </record>
+    </data>
+</odoo>

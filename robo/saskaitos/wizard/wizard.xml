@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_invoice_registry_wizard" model="ir.ui.view">
+            <field name="name">invoice.registry.wizard</field>
+            <field name="model">invoice.registry.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Invoice Registry">
+                    <group string="Filters">
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="print_in_company_currency"/>
+                            <field name="include_contact_info"/>
+                        </group>
+                        <group>
+                            <field name="type"/>
+                            <field name="refund"/>
+                            <field name="draft"/>
+                            <field name="include_canceled"/>
+                            <field name="report_group_by"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="print_report" string="Print" type="object" class="oe_highlight"/>
+                        <button name="print_report" string="Excel" type="object" context="{'xls_report': True}" class="oe_highlight"/>
+                        <button string='Cancel' class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="invoice_registry_action" model="ir.actions.act_window">
+            <field name="name">Invoice Registry</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">invoice.registry.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        <menuitem
+                name="Invoice Registry"
+                id="menu_invoice_registry"
+                sequence="-10"
+                parent="account.menu_finance_legal_statement"
+                action="invoice_registry_action"
+        />
+    </data>
+</odoo>

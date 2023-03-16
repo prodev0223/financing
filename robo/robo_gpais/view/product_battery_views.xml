@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_battery_gpais_ext" model="ir.ui.view">
+            <field name="name">product.battery.gpais</field>
+            <field name="model">product.battery</field>
+            <field name="inherit_id" ref="robo_electronics.product_battery_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="code" required="1"/>
+                    <field name="rusis"/>
+                    <field name="imontuota"/>
+                    <field name="chemine_sudetis" widget="selection"/>
+                    <field name="klasifikacija" widget="selection"/>
+                    <field name="date_to_market_from"/>
+                    <field name="date_to_market_until"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

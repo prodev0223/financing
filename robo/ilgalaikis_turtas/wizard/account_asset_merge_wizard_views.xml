@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_asset_merge_wizard_form" model="ir.ui.view">
+            <field name="name">account.asset.merge.wizard.form</field>
+            <field name="model">account.asset.merge.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Merge assets">
+                    <group>
+                        <group colspan="2" string="Merge assets">
+                            <field name="name" required="1"/>
+                            <field name="category_id" required="1"/>
+                            <field name="date" required="1"/>
+                            <field name="date_first_depreciation" required="1"/>
+                        </group>
+                        <footer>
+                            <button name="merge_assets" string="Merge assets" type="object" class="oe_highlight"/>
+                            <button string="Cancel" class="btn-default" special="cancel"/>
+                        </footer>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_open_account_asset_merge_wizard" model="ir.actions.act_window">
+            <field name="name">Account asset merge</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.asset.merge.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="account_asset_merge_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

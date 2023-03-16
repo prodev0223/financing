@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema elementFormDefault="qualified" version="1.2"
+            targetNamespace="urn:x-gpais:vvs:produktai"
+            xmlns:gpais="urn:x-gpais:bendra"
+            xmlns:kls="urn:x-gpais:kls"
+            xmlns:prd="urn:x-gpais:vvs:produktai"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:import schemaLocation="gpais-klasifikatoriai.xsd" namespace="urn:x-gpais:kls"/>
+    <xsd:import schemaLocation="gpais.xsd" namespace="urn:x-gpais:bendra"/>
+
+    <xsd:complexType name="ProduktuSarasas">
+        <xsd:sequence>
+            <xsd:element name="subjektas" type="gpais:Subjektas"/>
+            <xsd:element name="produktai" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:choice maxOccurs="unbounded">
+                            <xsd:element name="alyvosGaminys" type="prd:Alyva" minOccurs="0"/>
+                            <xsd:element name="apmokestinamasGaminys" type="prd:ApmokestinamasGaminys" minOccurs="0"/>
+                            <xsd:element name="baterija" type="prd:Baterija" minOccurs="0"/>
+                            <xsd:element name="elektronineIranga" type="prd:EEIGaminys" minOccurs="0"/>
+                            <xsd:element name="prekinisVienetas" type="prd:PrekinisVienetas" minOccurs="0"/>
+                            <xsd:element name="transportoPriemone" type="prd:TransportoPriemone" minOccurs="0"/>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Alyva">
+        <xsd:complexContent>
+            <xsd:extension base="prd:Gaminys">
+                <xsd:sequence>
+                    <xsd:element name="klasifikacija" type="kls:CL113"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Produktas" abstract="true">
+        <xsd:sequence>
+            <xsd:element name="registracijosId" type="gpais:id"/>
+            <xsd:element name="kodas" type="gpais:produktoKodas"/>
+            <xsd:element name="pavadinimas" type="gpais:pavadinimas"/>
+            <xsd:element name="svoris" type="gpais:kiekisTonomis" minOccurs="0"/>
+            <xsd:element name="pradetaTiektiNuo" type="xsd:string"/>
+            <xsd:element name="tiektaIki" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ApmokestinamasGaminys">
+        <xsd:complexContent>
+            <xsd:extension base="prd:Gaminys">
+                <xsd:sequence>
+                    <xsd:element name="klasifikacija" type="kls:CL110"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Baterija">
+        <xsd:complexContent>
+            <xsd:extension base="prd:Gaminys">
+                <xsd:sequence>
+                    <xsd:element name="baterijosRusis" type="prd:BaterijosRusis"/>
+                    <xsd:element name="chemineSudetis" type="kls:CL127"/>
+                    <xsd:element name="imontuota" type="xsd:boolean"/>
+                    <xsd:element name="klasifikacija" type="kls:CL126"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="EEIGaminys">
+        <xsd:complexContent>
+            <xsd:extension base="prd:Gaminys">
+                <xsd:sequence>
+                    <xsd:element name="buitineIranga" type="xsd:boolean"/>
+                    <xsd:element name="klasifikacija" type="kls:CL109"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="PrekinisVienetas">
+        <xsd:complexContent>
+            <xsd:extension base="prd:Produktas">
+                <xsd:sequence>
+                    <xsd:element name="pakuotes" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:choice maxOccurs="unbounded">
+                                    <xsd:element name="daugkartineUzstatinePakuote" type="prd:DaugkartineUzstatinePakuote" minOccurs="0"/>
+                                    <xsd:element name="vienkartineUzstatinePakuote" type="prd:VienkartineUzstatinePakuote" minOccurs="0"/>
+                                    <xsd:element name="pvPakuote" type="prd:PVPakuote" minOccurs="0"/>
+                                </xsd:choice>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="TransportoPriemone">
+        <xsd:complexContent>
+            <xsd:extension base="prd:Gaminys">
+                <xsd:sequence>
+                    <xsd:element name="klasifikacija" type="kls:CL114"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Gaminys" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="prd:Produktas">
+                <xsd:sequence>
+                    <xsd:element name="gaminioPakuotes" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="gaminioPakuote" type="prd:GAMPakuote" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Pakuote" abstract="true">
+        <xsd:sequence>
+            <xsd:element name="pavadinimas" type="gpais:pavadinimas"/>
+            <xsd:element name="kategorija" type="kls:CL138"/>
+            <xsd:element name="rusis" type="kls:CL130"/>
+            <xsd:element name="kiekisPakuoteje" type="gpais:kiekisSveikaisVienetais"/>
+            <xsd:element name="perdirbama" type="xsd:boolean"/>
+            <xsd:element name="vienkartine" type="xsd:boolean"/>
+            <xsd:element name="svoris" type="gpais:kiekisTonomis"/>
+            <xsd:element name="pradetaTiektiNuo" type="xsd:string"/>
+            <xsd:element name="tiektaIki" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="DaugkartineUzstatinePakuote">
+        <xsd:complexContent>
+            <xsd:extension base="prd:UzstatinePakuote">
+                <xsd:sequence>
+                    <xsd:element name="pakuotesKodas" type="gpais:kodas"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="UzstatinePakuote" abstract="true">
+        <xsd:sequence>
+        	<xsd:element name="pakuociuSkaicius" type="gpais:kiekisSveikaisVienetais"/>
+            <xsd:element name="pradetaTiektiNuo" type="xsd:string"/>
+            <xsd:element name="tiektaIki" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="VienkartineUzstatinePakuote">
+        <xsd:complexContent>
+            <xsd:extension base="prd:UzstatinePakuote">
+                <xsd:sequence>
+                    <xsd:element name="organizacijosKodas" type="gpais:kodas"/>
+                    <xsd:element name="pakuotesKodas" type="gpais:kodas"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="PVPakuote">
+        <xsd:complexContent>
+            <xsd:extension base="prd:Pakuote"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="GAMPakuote">
+        <xsd:complexContent>
+            <xsd:extension base="prd:Pakuote">
+                <xsd:sequence>
+                    <xsd:element name="registracijosId" type="gpais:id"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="BaterijosRusis">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="BATERIJA"/>
+            <xsd:enumeration value="AKUMULIATORIUS"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="produktuSarasas" type="prd:ProduktuSarasas"/>
+	<xsd:element name="subjektas" type="gpais:Subjektas"/>
+	<xsd:element name="alyvosGaminys" type="prd:Alyva"/>
+    <xsd:element name="apmokestinamasGaminys" type="prd:ApmokestinamasGaminys"/>
+    <xsd:element name="baterija" type="prd:Baterija"/>
+    <xsd:element name="elektronineIranga" type="prd:EEIGaminys"/>
+    <xsd:element name="prekinisVienetas" type="prd:PrekinisVienetas"/>
+    <xsd:element name="transportoPriemone" type="prd:TransportoPriemone"/>
+</xsd:schema>

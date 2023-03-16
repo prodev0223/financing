@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="accounting_report_extend_view" model="ir.ui.view">
+            <field name="name">Accounting Report Extend</field>
+            <field name="model">accounting.report</field>
+            <field name="inherit_id" ref="account.account_common_report_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet[1]" position="inside">
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('ignore_balance_leveling_error', '=', False)]}">
+                        Neatitikimai balansų sumose dažniausiai įvyksta dėl rankiniu būdu
+                        pridedamų buhalterinių sąskaitų. Pasitikrinkite balanso sumas ir pagal
+                        tai galėsite nuspręsti kurios buhalterinės sąskaitos trūksta.
+                        Ją pridėti į tam tikrą balanso eilutę galite nuėje į 'Apskaita' ->
+                        'Nustatymai' -> 'Finansinė ataskaita'. Radę eilutę kuri atitinka
+                        balanso eilutę, papildykite įtraukiamų sąskaitų sąrašą.
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='target_move']" position="after">
+                    <field name="activity_form" invisible="1"/>
+                    <field name="report_type" invisible="1"/>
+                    <field name="ignore_balance_leveling_error"/>
+                    <field name="force_lang"/>
+                </xpath>
+                <xpath expr="//field[@name='account_report_id']" position="replace">
+                    <field name="account_report_id"
+                           domain="[('parent_id','=',False),
+                                    ('activity_form', '=', activity_form),
+                                    ('report_type', '=', report_type)]"
+                           options="{'no_open': True, 'no_create': True}"/>
+                </xpath>
+                <xpath expr="//field[@name='date_from']" position="replace">
+                    <field name="date_from" attrs="{'invisible': [('report_type', '=', 'BL')]}"/>
+                </xpath>
+            </field>
+        </record>
+      <record id="accounting_report_cashflow_view" model="ir.ui.view">
+          <field name="name">Cash Flow Statement</field>
+          <field name="model">account.cashflow.report</field>
+          <field name="inherit_id" ref="account.account_common_report_view"/>
+          <field name="arch" type="xml">
+              <field name="journal_ids" position="replace"/>
+              <xpath expr="//field[@name='target_move']" position="after">
+                <!--<field name="display_account" widget="radio"/>-->
+                  <field name="hierarchy_level"/>
+              </xpath>
+              <xpath expr="//button[@name='check_report']" position="before">
+                  <button name="xls_export" string="Export" type="object" class="oe_highlight" context="{'xls_report': True}"/>
+              </xpath>
+          </field>
+      </record>
+      <record id="action_account_report_cashflow" model="ir.actions.act_window">
+            <field name="name">Cashflow Statement</field>
+            <field name="res_model">account.cashflow.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="accounting_report_cashflow_view"/>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        <menuitem id="menu_account_report_cashflow" name="Cash Flow Statement" action="action_account_report_cashflow"
+                  parent="account.menu_finance_legal_statement"/>
+    </data>
+</odoo>

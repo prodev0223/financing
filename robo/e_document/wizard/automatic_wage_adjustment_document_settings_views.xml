@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="automatic_wage_adjustment_document_settings_view_form" model="ir.ui.view">
+            <field name="name">automatic.wage.adjustment.document.settings.view.form</field>
+            <field name="model">automatic.wage.adjustment.document.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="Settings" colspan="4" col="4">
+                            <field name="minimum_wage_adjustment_document_creation_deadline_days"/>
+                            <field name="keep_salary_differences_when_changing_minimum_wage"/>
+                            <field name="mma_adjustment_when_creating_salary_change_documents"/>
+                            <field name="mmh_adjustment_when_creating_salary_change_documents"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="save" string="Save" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" name="%(robo.action_robo_company_settings)d"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="automatic_wage_adjustment_document_settings_action_view_form" model="ir.actions.act_window">
+            <field name="name">Automatic minimum wage adjustment document creation settings</field>
+            <field name="res_model">automatic.wage.adjustment.document.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="automatic_wage_adjustment_document_settings_view_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="delegate_company_settings" model="ir.ui.view">
+            <field name="name">e.document.delegate.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside">
+                    <button name="%(e_document.automatic_wage_adjustment_document_settings_action_view_form)d"
+                            string="Automatic wage adjustment settings" type="action" class="oe_link"
+                            groups="robo_basic.group_robo_premium_accountant"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

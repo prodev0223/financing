@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_contract_view_form" model="ir.ui.view">
+            <field name="name">hr.contract.form</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="replace">
+                    <form string="Current Contract">
+                        <header>
+                            <button name="create_new_appointment" string="Sukurti naują priedą" type="object"/>
+                            <button name="open_contract_end_wizard" string="Nutraukti sutartį" type="object"
+                                    attrs="{'invisible': [('date_end', '!=', False)]}"/>
+                            <field name="state" widget="statusbar" clickable="1"/>
+                        </header>
+                        <sheet>
+                            <div class="oe_title">
+                                <label for="name" class="oe_edit_only"/>
+                                <h1>
+                                    <field name="name" placeholder="Contract Reference"/>
+                                </h1>
+                            </div>
+                            <div class="oe_button_box" name="button_box" groups="hr.group_hr_user">
+                                <button name="%(act_hr_contract_2_hr_contract_appointment)d"
+                                        class="oe_stat_button, oe_right"
+                                        icon="fa-book"
+                                        type="action"
+                                        groups="hr.group_hr_manager">
+                                    <field name="appointments_count" widget="statinfo" string="Priedai"/>
+                                </button>
+                            </div>
+                            <group>
+                                <group string="Pagrindinė informacija" colspan="4" col="4">
+                                    <field name="employee_id"/>
+                                    <field name="job_id"/>
+                                    <field name="department_id"/>
+                                    <field name="rusis"/>
+                                    <field name="educational_institution_company_code"
+                                           attrs="{'invisible': [('rusis', '!=', 'educational_internship')]}"/>
+                                </group>
+                            </group>
+                            <notebook>
+                                <page string="Information" name="information">
+                                    <group>
+                                        <group name="salary_and_advantages" string="Darbo užmokestis"
+                                               attrs="{'invisible': [('rusis', '=', 'voluntary_internship')]}">
+                                            <field name="wage"/>
+                                        </group>
+                                        <group name="duration_group" string="Duration">
+                                            <label for="trial_date_start" string="Trial Period Duration"/>
+                                            <div>
+                                                <field name="trial_date_start" class="oe_inline"/>
+                                                -
+                                                <field name="trial_date_end" class="oe_inline"/>
+                                            </div>
+                                            <label for="date_start" string="Duration"/>
+                                            <div>
+                                                <field name="date_start" class="oe_inline"/>
+                                                -
+                                                <field name="date_end" class="oe_inline"/>
+                                            </div>
+                                            <field name="working_hours"/>
+                                        </group>
+                                    </group>
+                                    <separator string="Notes"/>
+                                    <field name="notes"/>
+                                </page>
+                                <page string="Priedai">
+                                    <field name="appointment_ids">
+                                        <tree create="false">
+                                            <field name="tabelio_numeris"/>
+                                            <field name="job_id"/>
+                                            <field name="date_start"/>
+                                            <field name="date_end"/>
+                                            <field name="wage"/>
+                                            <field name="neto_monthly"/>
+                                            <field name="struct_id"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page string="Nutraukimo informacija">
+                                    <button string="Sukurti SD2 formą" name="create_sd2" type="object"/>
+                                    <group>
+                                        <group>
+                                            <field name="priezasties_kodas"/>
+                                            <field name="priezastis"/>
+                                            <field name="priezasties_patikslinimo_kodas"/>
+                                            <field name="priezasties_patikslinimas"/>
+                                        </group>
+                                        <group>
+                                            <field name="teises_akto_straipsnis"/>
+                                            <field name="teises_akto_straipsnio_dalis"/>
+                                            <field name="teises_akto_straipsnio_dalies_punktas"/>
+                                            <field name="num_men_iseitine"/>
+                                        </group>
+                                    </group>
+                                </page>
+                                <page string="Kita">
+                                    <group name="own_taxes" groups="hr.group_hr_user"
+                                           attrs="{'invisible': [('rusis', '=', 'voluntary_internship')]}">
+                                        <group>
+                                            <field name="du_debit_account_id"/>
+                                            <field name="sodra_credit_account_id"/>
+                                            <field name="gpm_credit_account_id"/>
+                                        </group>
+
+                                        <group string="Mokesčių nustatymai" colspan="4" col="4">
+                                            <group colspan="4" col="4">
+                                                <field name="override_taxes" groups="hr.group_hr_user" colspan="4"
+                                                       col="4"/>
+                                            </group>
+                                            <group name="taxes" attrs="{'invisible':[('override_taxes','=',False)]}"
+                                                   colspan="4" col="4">
+                                                <div colspan="4">
+                                                    <field name="use_gpm" class="oe_inline"/>
+                                                    <label for="gpm_proc" class="oe_inline"/>
+                                                    <field name="gpm_proc" class="oe_inline"/>%
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_ligos_gpm" class="oe_inline"/>
+                                                    <label for="gpm_ligos_proc" class="oe_inline"/>
+                                                    <field name="gpm_ligos_proc" class="oe_inline"/>%
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_darbuotojo_pensijos" class="oe_inline"/>
+                                                    <label for="darbuotojo_pensijos_proc" class="oe_inline"/>
+                                                    <field name="darbuotojo_pensijos_proc" class="oe_inline"/>%
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_darbuotojo_sveikatos" class="oe_inline"/>
+                                                    <label for="darbuotojo_sveikatos_proc" class="oe_inline"/>
+                                                    <field name="darbuotojo_sveikatos_proc" class="oe_inline"/>%
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_darbdavio_sodra" class="oe_inline"/>
+                                                    <label for="darbdavio_sodra_proc" class="oe_inline"/>
+                                                    <field name="darbdavio_sodra_proc" class="oe_inline"/>%
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_npd_max" class="oe_inline"/>
+                                                    <label for="npd_max" class="oe_inline"/>
+                                                    <field name="npd_max" class="oe_inline"/>
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_npd_0_25_max" class="oe_inline"/>
+                                                    <label for="npd_0_25_max" class="oe_inline"/>
+                                                    <field name="npd_0_25_max" class="oe_inline"/>
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_npd_30_55_max" class="oe_inline"/>
+                                                    <label for="npd_30_55_max" class="oe_inline"/>
+                                                    <field name="npd_30_55_max" class="oe_inline"/>
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_mma" class="oe_inline"/>
+                                                    <label for="mma" class="oe_inline"/>
+                                                    <field name="mma" class="oe_inline"/>
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_mma_first_day_of_year" class="oe_inline"/>
+                                                    <label for="mma_first_day_of_year" class="oe_inline"/>
+                                                    <field name="mma_first_day_of_year" class="oe_inline"/>
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_min_hourly_rate" class="oe_inline"/>
+                                                    <label for="min_hourly_rate" class="oe_inline"/>
+                                                    <field name="min_hourly_rate" class="oe_inline"/>
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_npd_koeficientas" class="oe_inline"/>
+                                                    <label for="npd_koeficientas" class="oe_inline"/>
+                                                    <field name="npd_koeficientas" class="oe_inline"/>
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_npd" class="oe_inline"/>
+                                                    <label for="npd" class="oe_inline"/>
+                                                    <field name="npd" class="oe_inline"/>
+                                                </div>
+                                                <div colspan="4">
+                                                    <field name="use_pnpd" class="oe_inline"/>
+                                                    <label for="pnpd" class="oe_inline"/>
+                                                    <field name="pnpd" class="oe_inline"/>
+                                                </div>
+                                            </group>
+                                        </group>
+                                    </group>
+                                </page>
+                            </notebook>
+                        </sheet>
+                        <div class="oe_chatter">
+                            <field name="message_ids" widget="robo_mail_thread"/>
+                        </div>
+                    </form>
+                </xpath>
+                <xpath expr="//group[@name='duration_group']" position="inside">
+                    <field name="order_date"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

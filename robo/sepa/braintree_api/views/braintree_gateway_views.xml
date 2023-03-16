@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!--TREE-->
+        <record id="braintree_gateway_view_tree" model="ir.ui.view">
+            <field name="name">braintree.gateway.view.tree</field>
+            <field name="model">braintree.gateway</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1" import="0"
+                      decoration-danger="api_state == 'failed'"
+                      decoration-info="api_state == 'not_initiated'"
+                      decoration-success="api_state == 'working'">
+                    <field name="name"/>
+                    <field name="merchant_id"/>
+                    <field name="account_prefix"/>
+                    <field name="gateway_init_date"/>
+                    <field name="api_state"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORM-->
+        <record id="braintree_gateway_view_form" model="ir.ui.view">
+            <field name="name">braintree.gateway.view.form</field>
+            <field name="model">braintree.gateway</field>
+            <field name="arch" type="xml">
+                <form string="Braintree gateway">
+                    <header>
+                        <field name="api_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'not_initiated')]}">
+                            <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                Please initiate the API to finish gateway configuration!
+                            </div>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'failed')]}">
+                            <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;">
+                                Failed to initiate the gateway, please check your API keys!
+                            </div>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'working')]}">
+                            <div class="alert alert-success" role="alert" style="margin-bottom: 2px;">
+                                Gateway is configured correctly
+                            </div>
+                        </group>
+                        <div class="oe_button_box">
+                            <button name="action_open_transactions" class="oe_stat_button" icon="fa-bars" type="object"
+                                    string="View transactions">
+                            </button>
+                        </div>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        <group>
+                            <field name="account_prefix" required="1"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="environment" groups="base.group_system"/>
+                            <field name="merchant_id"/>
+                            <field name="public_key" password="1"/>
+                            <field name="private_key" password="1"/>
+                            <field name="gateway_init_date"/>
+                            <field name="forced_partner_id"/>
+                            <field name="initially_authenticated" invisible="1"/>
+                        </group>
+                        <group string="Merchant accounts">
+                            <field name="merchant_account_ids" nolabel="1"
+                                   mode="tree,kanban" widget="one2many_list"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree class="robo_tree_in_form" create="0" delete="1" edit="0" editable="bottom"
+                                      decoration-warning="status == 'suspended'"
+                                      decoration-info="status == 'pending'"
+                                      decoration-success="status == 'active'">
+                                    <field name="name"/>
+                                    <field name="journal_id"/>
+                                    <field name="currency_id"/>
+                                    <field name="status"/>
+                                    <field name="last_fetch_date"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <footer style="text-align: center;">
+                            <button name="api_fetch_merchant_accounts" class="oe_highlight"
+                                    string="Fetch merchant accounts"  type="object"
+                                    attrs="{'invisible': [('api_state', '!=', 'working')]}"/>
+                            <button name="initiate_api" class="oe_highlight" type="object"
+                                    string="Initiate API"
+                                    attrs="{'invisible': [('initially_authenticated', '=', True),
+                                                          ('api_state', '=', 'working')]}"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_braintree_gateway" model="ir.actions.act_window">
+            <field name="name">Braintree API gateways</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">braintree.gateway</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="braintree_gateway_view_tree"/>
+        </record>
+    </data>
+</odoo>

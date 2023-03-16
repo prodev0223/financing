@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="sodra_sd2">
+            <field name="name">sd2.sodra.form</field>
+            <field name="model">e.sodra.sd2</field>
+            <field name="arch" type="xml">
+                <form string="sd2">
+                    <group>
+                        <field name="company_id"/>
+                        <field name="data_nuo" />
+                        <field name="data_iki" />
+                        <field name="dokumento_data"/>
+                    </group>
+                    <footer>
+                        <button name="sd2" string="Generuoti" type="object" />
+                        <button name="sd2" string="Siųsti į SODRA" context="{'sodra': True}" type="object" />
+                        <button string="Uždaryti" class="oe_link" special="cancel" />
+                    </footer>
+              </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sodra_sd2_download">
+            <field name="name">sd2.sodra.download.form</field>
+            <field name="model">sd2.download</field>
+            <field name="arch" type="xml">
+             <form string="sd2 parsisiuntimas">
+                 <group>
+                     <field name="download_line_ids" delete="0" create="0" nolabel="1" options="{'reload_on_button': True}">
+                         <tree>
+                             <field name="file" nolabel="1" filename="file_name"/>
+                             <field name="file_name" invisible="1"/>
+                             <field name="url" invisible="not context.get('sodra', False)" widget="roboAnchor"/>
+                         </tree>
+                     </field>
+                 </group>
+                 <footer>
+                     <button string="Uždaryti" class="oe_link" special="cancel" />
+                 </footer>
+              </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sodra_darbo_parametrai_sd2_tree">
+            <field name="name">darbo.parametrai.sd2.tree</field>
+            <field name="model">sodra.parametrai.sd2</field>
+            <field name="arch" type="xml">
+             <form>
+                 <group>
+                     <field name="employee_id"/>
+                     <field name="contract_id"/>
+                     <field name="priezastis"/>
+                     <field name="patikslinimo_kodas_02" attrs="{'invisible':['!', ('priezastis', '=', '02')]}"/>
+                     <field name="patikslinimo_kodas_05" attrs="{'invisible':['!', ('priezastis', '=', '05')]}"/>
+                     <field name="patikslinimo_kodas_06" attrs="{'invisible':['!', ('priezastis', '=', '06')]}"/>
+                     <field name="patikslinimo_kodas_16" attrs="{'invisible':['!', ('priezastis', '=', '16')]}"/>
+                     <field name="patikslinimo_paaiskinimas" attrs="{'invisible':['|', '|', '|', ('priezastis', '=', '02'), ('priezastis', '=', '05'), ('priezastis', '=', '06'), ('priezastis', '=', '16')]}"/>
+                     <field name="straipsnis"/>
+                     <field name="straipsnio_dalis"/>
+                     <field name="dalies_punktas"/>
+                     <field name="men_sk"/>
+                     <field name="pajamos_neatsk_mokes" invisible="1"/>
+                     <field name="imoku_suma" invisible="1"/>
+                 </group>
+
+              </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sodra_sd2_kitas_meniu">
+            <field name="name">sd2.sodra.kitasmeniu.form</field>
+            <field name="model">sodra.darbuotojai.sd2</field>
+            <field name="arch" type="xml">
+                <form string="Parametrai">
+                    <group>
+                        <field name="parametrai" nolabel="1">
+                             <tree>
+                                <field name="employee_id"/>
+                                <field name="contract_id"/>
+                                <field name="priezastis"/>
+                             </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button string="Generuoti" name="generuokviska" type="object"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_sodra_sd2_wizard">
+            <field name="name">SODRA sd2</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.sodra.sd2</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sodra_sd2"/>
+            <field name="target">new</field>
+        </record>
+
+    <menuitem
+              name="SD-2"
+              id="meniu_e_ataskaitos_SODRA_sd2"
+              sequence="1"
+              action="action_sodra_sd2_wizard"
+              parent="sodra.meniu_e_ataskaitos_SODRA_root"
+              />
+        
+    </data>
+</odoo>
+

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rivile_import_data_wizard" model="ir.ui.view">
+            <field name="name">rivile.import.wizard</field>
+            <field name="model">rivile.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Duomenų importas">
+                        <group name="xls_ex" string="XLS pavyzdys">
+                                <a href="rivile/static/src/import_examples/importas.xlsx">Atsisiųsti pavyzdį</a>
+                        </group>
+                    <group col="2">
+                        <field name="xls_data" filename="xls_name"/>
+                        <field name="account_analytic_id"/>
+                        <field name="product_id"/>
+                        <field name="tax_id"/>
+                    </group>
+                <footer>
+                    <button string="Importuoti Duomenis" name="data_import" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="open_import_wizard_rivile" model="ir.actions.act_window">
+            <field name="name">Duomenų Importavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">rivile.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        <record id="open_import_wizard_rivile_purchase" model="ir.actions.act_window">
+            <field name="name">Duomenų Importavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">rivile.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'purchase': True}</field>
+        </record>
+
+        <menuitem
+                name="Sąskaitų importas"
+                id="rivile"
+                sequence="48"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Importuoti pardavimus"
+                id="rivile_import"
+                sequence="48"
+                action="open_import_wizard_rivile"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="rivile"
+        />
+        <menuitem
+                name="Importuoti pirkimus"
+                id="rivile_import_purchase"
+                sequence="4"
+                action="open_import_wizard_rivile_purchase"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="rivile"
+        />
+
+    </data>
+</odoo>

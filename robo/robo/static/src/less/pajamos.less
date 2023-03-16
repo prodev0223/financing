@@ -1,0 +1,230 @@
+.o_form_view.robo_pajamos_form{
+  .o_horizontal_separator{
+    font-weight: normal;
+    color: @robo-blue;
+
+    & hr {
+        display: none
+    }
+  }
+  .left_group, .right_group{
+    width: 48%;
+    text-align: left;
+    .o_horizontal_separator{
+       padding-bottom: 17px;
+       margin-bottom: 20px;
+       border-bottom: 1px solid #eeeeee;
+    }
+  }
+  &.o_form_editable{
+    .o_address_format {
+      .o_form_input.o_address_city {
+        width: 60%;
+      }
+      .o_form_input.o_address_zip{
+        width: 35%;
+      }
+    }
+  }
+  .invoice_lines{
+    .robo_invoice_edit {
+
+      .o_form_view.o_list_editable_form.o_form_nosheet.o_form_editable {
+        padding: 0 !important;
+      }
+
+      thead {
+        background-color: white;
+        tr{
+          border-bottom: 1px solid @robo-light-blue;
+        }
+        th {
+          &:hover, &:active, &:focus {
+            background-color: white;
+            color: @robo-blue;
+          }
+          color: @robo-blue;
+          font-weight: normal;
+          &[data-id="invoice_line_tax_ids"]{
+            @media (min-width: @screen-sm-min) {
+              width: 15%;
+            }
+          }
+        }
+      }
+      .table-striped > tbody{
+        .o_form_field_x2many_list_row_add a{
+          color: #8497a5;
+          &:hover{
+            color: @robo-blue;
+          }
+        }
+         > tr{
+          background-color: white;
+           border-bottom: 1px solid #eeeeee;
+        }
+
+      }
+    }
+  }
+  .oe_subtotal_robo{
+    .oe_subtotal_footer_separator{
+      border-top: 1px solid @robo-light-blue !important;
+    }
+    &.o_group .o_td_label .o_form_label{
+      font-weight: 500;
+      color: @robo-dark-blue;
+      font-size: 16px;
+      &.oe_subtotal_footer_separator{
+        font-weight: bold;
+      }
+    }
+    &.o_group {
+      &.o_inner_group {
+        > tbody {
+          > tr {
+            > td.o_td_label {
+              padding-right: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  .o_group .o_td_label .o_form_label{
+    font-weight: 500;
+    color: #4f697a;
+  }
+
+}
+
+.o_form_view{
+  .attach_files{
+        position: relative;
+//         border: 2px solid #dce4ec;
+        border-radius: 10px;
+        background: #f8f9fa;
+        padding: 5px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    .dropzone{
+      background: @robo-background-color;
+      .dz-default.dz-message{
+        padding: 10px;
+        .icon-copy{
+          color: @robo-blue-primary;
+          font-size: 1.5em;
+          padding-right: 10px;
+        }
+      }
+      padding: 0;
+      border: none;
+      min-height: 40px;
+      .dz-preview{
+        //height: 40px;
+        min-height: 40px;
+        margin: 4px;
+        padding: 4px;
+        border-radius: 5px;
+        border: 1px solid #ececec;
+        cursor: pointer;
+        .dz-image{
+          z-index:20;
+          float: left;
+          height: 30px;
+          width: 30px;
+          border-radius: 0;
+          img{
+            height:30px;
+            width:30px;
+          }
+        }
+        .dz-details{
+          z-index:20;
+          position: relative;
+          opacity: 1;
+          padding: 0 0 0 30px;
+          cursor: pointer;
+          //padding-left: 30px;
+          .dz-size{
+            margin-bottom: 0;
+            font-size: 0.8em;
+          }
+          .dz-filename{
+
+          }
+          & span {
+            cursor: pointer;
+            position: relative;
+          }
+        }
+        .dz-robo-remove{
+          font-size: 14px;
+          text-align: center;
+          display: block;
+          cursor: pointer;
+          border: none;
+        }
+        .dz-error-message{
+          top: 50px;
+        }
+      }
+
+      .dz-message{
+        margin: 0px;
+        min-height: 20px;
+      }
+    }
+  }
+  .attach_file_info{
+    .icon-file-add{
+      font-size: 2em;
+      padding-right: 5px;
+    }
+    font-size: 1.5em;
+    color: @robo-blue-primary;
+  }
+}
+
+.robo-mail-compose-body {
+    .panel-body {
+        height: 600px !important;
+    }
+
+    .panel-heading {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+
+    .note-statusbar {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
+    & .note-editor .note-editing-area .note-editable {
+        padding: 0;
+    }
+}
+
+div.modal-dialog.robo-wizard-wide {
+    min-width: 60%;
+}
+
+div.modal-dialog.robo-wizard-xwide {
+    min-width: 80%;
+}
+
+.robo_mobile_flex_column {
+    @media (max-width: 1000px) {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        & table.o_group {
+            width: 100% !important;
+
+            & div.oe_form_field {
+                margin: 0 auto;
+            }
+        }
+    }
+}

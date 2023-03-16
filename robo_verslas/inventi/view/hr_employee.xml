@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="open_employees_action_new_form" model="ir.ui.view">
+            <field name="name">hr.employee.form.inventi</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='department_id']" position="before">
+                    <field name="readonly_department_id" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

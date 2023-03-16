@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="cron_fetch_account_balances_e_banking" model="ir.cron">
+            <field name="name">Enable Banking: Fetch account balances</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">enable.banking.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(minute=10, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_account_balances</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_check_session_ttl_e_banking" model="ir.cron">
+            <field name="name">Enable Banking: Check session TTL</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">enable.banking.connector</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=9, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_check_session_ttl</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

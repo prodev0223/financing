@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="report_eksploatacijos_aktas"
+                model="eksploatacijos.aktas"
+                string="Eksploatacijos aktas"
+                report_type="qweb-pdf"
+                name="eksploatacijos_aktas.report_eksploatacijos_aktas_sl"
+                file="eksploatacijos_aktas.report_eksploatacijos_aktas_sl"
+        />
+        <template id="report_eksploatacijos_aktas_sl">
+            <style>div.page{ page-break-after: always; }</style>
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-if="o.tipas=='in'">
+                        <t t-call="eksploatacijos_aktas.report_eksploatacijos_aktas_sl_document_in"
+                           t-lang="o.company_id.partner_id.lang"/>
+                    </t>
+                    <t t-if="o.tipas=='out'">
+                        <t t-call="eksploatacijos_aktas.report_eksploatacijos_aktas_sl_document_out"
+                           t-lang="o.company_id.partner_id.lang"/>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="report_eksploatacijos_aktas_sl_document_in">
+            <t t-call="report.html_container">
+                <div class="page">
+                    <style type="text/css">
+                        body{
+                        font-size: 13px;
+                        }
+                        table{
+                        font-size: 13px;
+                        }
+                    </style>
+                    <center>
+                        <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo"
+                             style="max-height: 100px;"/>
+                        <p/>
+                        <span t-field="o.company_id.partner_id"/>
+                    </center>
+                    <br/>
+
+                    <div class="row">
+                        <div class="col-xs-3"></div>
+                        <div class="col-xs-6" style="text-align:center;">
+                            <p style="font-weight:bold">ILGALAIKIO TURTO ĮVEDIMO Į EKSPLOATACIJĄ AKTAS</p>
+                            <p style="font-weight:bold">
+                                <span t-field="o.name"/>
+                            </p>
+                        </div>
+                        <div class="col-xs-3">
+                            <table>
+                                <tr>
+                                    <td style="font-weight:bold">TVIRTINU:</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <center>
+                                            <span t-field="o.company_id.vadovas.job_id.name"/>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="height:5px"></tr>
+                                <tr>
+                                    <td>
+                                        <center>
+                                            <span t-field="o.company_id.vadovas.name"/>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="height:5px"></tr>
+                                <tr>
+                                    <td>________________
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <center style="font-size: 60%;">(parašas)</center>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <center>
+                                            <!--<span t-esc="datetime.datetime.now().strftime('%Y-%m-%d')"/>-->
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <br/>
+                    Komisijos nariai, paskirti
+                    <span t-field="o.komisija.date"/>
+                    dieną įsakymu Nr.
+                    <span t-field="o.komisija.name"/>
+                    <p/>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-10">
+                                <t t-foreach="o.vizavimas" t-as="v">
+                                    <div class="row">
+                                        <div class="col-xs-1"></div>
+                                        <div class="col-xs-3">
+                                            <span t-field="v.employee_id.job_id.name"/>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <span t-field="v.employee_id.name"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p/>
+                    <br/>
+                    patvirtino, kad ilgalaikis turtas:
+                    <ul>
+                        <p/>
+                        <t t-foreach="o.introduced_asset_ids" t-as="t">
+                            <li>
+                                <span style="font-weight:bold" t-field="t.name"/>
+                                <t t-if="t.invoice_id">
+                                    <t t-if="t.invoice_id.date_invoice">, įsigytas
+                                        <span style="font-weight:bold" t-field="t.invoice_id.date_invoice"/>
+                                    </t>
+                                    (dokumento Nr.<span style="font-weight:bold"
+                                                        t-esc="(t.invoice_id.reference or t.invoice_id.number) or ''"/>)
+                                    <t t-if="t.invoice_id.date_invoice">,</t>
+                                </t>
+                                yra perduotas naudoti ūkinėje veikloje nuo
+                                <span style="font-weight:bold" t-field="t.date"/>.
+                                Turtą numatoma naudoti iki
+                                <t t-if="t.depreciation_line_ids">
+                                    <span style="font-weight:bold"
+                                          t-field="t.depreciation_line_ids[-1].depreciation_date"/>.
+                                </t>
+                                <t t-if="not t.depreciation_line_ids">
+                                    <span style="font-weight:bold" t-field="t.date"/>.
+                                </t>
+                                <t t-if="t.method == 'degressive'">Nusidėvėjimo normatyvas
+                                    <span style="font-weight:bold" t-esc="t.method_progress_factor * 100"/>
+                                    proc. per
+                                    <t t-if="t.method_period == 1">
+                                        <span style="font-weight:bold">1 mėn.</span>
+                                    </t>
+                                    <t t-if="t.method_period != 1">
+                                        <span style="font-weight:bold" t-field="t.method_period"/>
+                                        mėn. periodą.
+                                    </t>
+                                </t>
+                                <t t-if="t.method == 'linear'">Nusidėvėjimo suma
+                                    <t t-if="t.depreciation_line_ids">
+                                        <span style="font-weight:bold" t-field="t.depreciation_line_ids[0].amount"/>
+                                        <span t-field="t.currency_id"/>
+                                    </t>
+                                    <t t-if="not t.depreciation_line_ids">
+                                        <span style="font-weight:bold" > 0</span><span t-field="t.currency_id"/>
+                                    </t>
+                                    per
+                                    <span style="font-weight:bold" t-field="t.method_period"/>
+                                    mėn.
+                                </t>
+
+                                Numatoma šio turto likvidacinė vertė
+                                <span style="font-weight:bold" t-field="t.salvage_value"/>
+                                <span t-field="t.currency_id"/>
+                                (
+                                <span style="font-weight:bold"
+                                      t-esc="str(round(t.salvage_value / t.value * 100,2)).replace('.',',')"/>
+                                proc. nuo
+                                <span style="font-weight:bold" t-field="t.value"/>
+                                <span t-field="t.currency_id"/>
+                                įsigijimo vertės).
+                                Ilgalaikis turtas
+                                <span style="font-weight:bold" t-field="t.name"/>
+                                priskiriamas
+                                <span style="font-weight:bold" t-field="t.category_id"/>
+                                turto grupei
+                                <t t-if="t.code">
+                                    numeriu <span style="font-weight:bold" t-field="t.code"/>
+                                </t>.
+                                <p/>
+                            </li>
+                        </t>
+                        <br/>
+                    </ul>
+                    Komisija:
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-9">
+                                <t t-foreach="o.vizavimas" t-as="v">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <span t-field="v.employee_id.job_id.name"/>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <span t-field="v.employee_id.name"/>
+                                        </div>
+                                        <div class="cols-xs-1">
+                                            <table style="text-align:center">
+                                                <tr>
+                                                    <tr>
+                                                        <td></td>
+                                                    </tr>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>________________</td>
+                                                </tr>
+                                                <tr style="text-align:center; font-size: 60%;">
+                                                    <td>(parašas)</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <t t-if="o.tipas=='in'">
+                        Priėmiau materialinėn atsakomybėn:
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-xs-9">
+                                    <div class="row">
+                                        <t t-set="employee_id" value="false"/>
+                                        <t t-if="o.introduced_asset_ids">
+                                            <t t-if="o.introduced_asset_ids[0].responsible_employee_id">
+                                                <t t-set="employee_id"
+                                                   t-value="o.introduced_asset_ids[0].responsible_employee_id"/>
+                                            </t>
+                                        </t>
+                                        <t t-if="not employee_id">
+                                            <t t-set="employee_id"
+                                               t-value="o.env.user.employee_ids and o.env.user.employee_ids[0]"/>
+                                        </t>
+                                        <t t-if="not employee_id">
+                                            <t t-set="employee_id" t-value="o.company_id.vadovas"/>
+                                        </t>
+                                        <div class="col-xs-3">
+                                            <span t-field="employee_id.job_id.name"/>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <span t-field="employee_id.name"/>
+                                        </div>
+                                        <div class="cols-xs-1">
+                                            <table style="text-align:center">
+                                                <tr>
+                                                    <td>________________</td>
+                                                </tr>
+                                                <tr style="text-align:center; font-size: 60%;">
+                                                    <td>(parašas)</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </template>
+
+        <template id="report_eksploatacijos_aktas_sl_document_out">
+            <t t-call="report.html_container">
+                <div class="page">
+                    <style type="text/css">
+                        body{
+                        font-size: 13px;
+                        }
+                        table{
+                        font-size: 13px;
+                        }
+
+                    </style>
+
+                    <center>
+                        <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo"
+                             style="max-height: 100px;"/>
+                        <p/>
+                        <span t-field="o.company_id.partner_id"/>
+                    </center>
+                    <br/>
+                    <div class="row">
+                        <div class="col-xs-3"></div>
+                        <div class="col-xs-6" style="text-align:center;">
+                            <p style="font-weight:bold">ILGALAIKIO TURTO IŠVEDIMO IŠ EKSPLOATACIJOS AKTAS</p>
+                            <p style="font-weight:bold">
+                                <span t-field="o.name"/>
+                            </p>
+                        </div>
+                        <div class="col-xs-3">
+                            <table>
+                                <tr>
+                                    <td style="font-weight:bold">TVIRTINU:</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <center>
+                                            <span t-field="o.company_id.vadovas.job_id.name"/>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="height:5px"></tr>
+                                <tr>
+                                    <td>
+                                        <center>
+                                            <span t-field="o.company_id.vadovas.name"/>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="height:5px"></tr>
+                                <tr>
+                                    <td>________________
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <center style="font-size: 60%;">(parašas)</center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <br/>
+
+                    <t t-set="original_value_total" t-value="0.0"/>
+                    <t t-set="likvidacine_verte_total" t-value="0.0"/>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Inventoriaus Nr.</th>
+                                <th>Įsigijimo data</th>
+                                <th>Pavadinimas</th>
+                                <th>Įsigijimo vertė</th>
+                                <th>Naudotas iki</th>
+                                <th>Likvidavimo vertė</th>
+                                <th>Komentaras</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.withdrawn_asset_ids" t-as="t">
+                                <tr>
+                                    <td>
+                                        <span t-esc="t.code"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="t.pirkimo_data"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="t.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="t.original_value"/>
+                                    </td>
+                                    <!--<th><span t-if="t.depreciation_line_ids[-1:]" t-field="t.depreciation_line_ids[-1:].depreciation_date"/></th>-->
+                                    <td>
+                                        <span t-field="t.likvidavimo_data"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="t.likvidacine_verte"/>
+                                    </td>
+                                    <td>
+                                        <!--Empty comment box-->
+                                    </td>
+                                </tr>
+                                <t t-set="original_value_total" t-value="original_value_total+t.original_value"/>
+                                <t t-set="likvidacine_verte_total"
+                                   t-value="likvidacine_verte_total+t.likvidacine_verte"/>
+                            </t>
+                        </tbody>
+                        <tr style="font-weight: bold">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <t t-esc="original_value_total"/>
+                            </td>
+                            <td></td>
+                            <td>
+                                <t t-esc="likvidacine_verte_total"/>
+                            </td>
+                            <td>
+                                <!--Empty comment box-->
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+
+                    Komisijos nariai, paskirti
+                    <span t-field="o.komisija.date"/>
+                    dieną įsakymu Nr.
+                    <span t-field="o.komisija.name"/>
+                    <p/>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-9">
+                                <t t-foreach="o.vizavimas" t-as="v">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <span t-field="v.employee_id.job_id.name"/>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <span t-field="v.employee_id.name"/>
+                                        </div>
+                                        <div class="cols-xs-1">
+                                            <table style="text-align:center">
+                                                <tr>
+                                                    <tr>
+                                                        <td></td>
+                                                    </tr>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>________________</td>
+                                                </tr>
+                                                <tr style="text-align:center; font-size: 60%;">
+                                                    <td>(parašas)</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

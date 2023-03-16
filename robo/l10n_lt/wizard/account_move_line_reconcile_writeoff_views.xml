@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_move_line_partial_writeoff" model="ir.ui.view">
+            <field name="name">account.move.line.partial.writeoff</field>
+            <field name="model">account.move.line.reconcile.writeoff</field>
+            <field name="inherit_id" ref="account.account_move_line_reconcile_writeoff"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="after">
+                    <group attrs="{'invisible': [('one_line', '=', False)]}" col="4">
+                        <group>
+                            <field name="partial_writeoff" attrs="{'invisible': [('one_line', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="one_line_writeoff_amount"
+                                   attrs="{'invisible': ['|',('one_line', '=', False), ('partial_writeoff', '=', False)]}"
+                                   widget="monetary" options="{'currency_field': 'one_line_writeoff_currency_id'}"/>
+                        </group>
+                        <field name="one_line_writeoff_currency_id" invisible="1"/>
+                        <field name="one_line" invisible="1"/>
+                    </group>
+                </xpath>
+                <xpath expr="//footer//button[@name='trans_rec_reconcile']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': ['&amp;',('one_line', '=', True), ('partial_writeoff', '=', True)]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//footer//button[@name='trans_rec_reconcile']" position="after">
+                    <button string="Partial writeoff" name="do_partial_writeoff" class="oe_highlight"
+                            type="object"
+                            attrs="{'invisible': ['|',('one_line', '=', False), ('partial_writeoff', '=', False)]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='writeoff_acc_id']" position="before">
+                    <field name="partner_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

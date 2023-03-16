@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="hr_employee_analytic_accounts" model="ir.ui.view">
+            <field name="name">hr.employee.analytic.accounts</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='active_group']" position="before">
+                    <group string="Darbo užmokesčio analitika">
+                        <field name="analytic_type"/>
+                        <field name="analytic_ratio_line_ids"
+                               attrs="{'invisible':[('analytic_type', '!=', 'fixed_ratio')]}" nolabel="1" colspan="2">
+                            <tree editable="bottom">
+                                <field name="account_analytic_id"/>
+                                <field name="period_start"/>
+                                <field name="period_end"/>
+                                <field name="qty" sum=""/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_payslip_analytic_accounts" model="ir.ui.view">
+            <field name="name">hr.payslip.analytic.accounts</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll_account.view_hr_payslip_inherit_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="before">
+                    <field name="analytic_type"/>
+                    <field name="analytic_ratio_line_ids"
+                           attrs="{'invisible':[('analytic_type', '!=', 'fixed_ratio')]}" nolabel="1" colspan="2">
+                        <tree editable="bottom">
+                            <field name="account_analytic_id"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="qty" sum=""/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_payslip_analytic_entries" model="ir.ui.view">
+            <field name="name">hr.payslip.analytic.entries</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(hr_payroll.act_payslip_lines)d']" position="before">
+                    <button name="show_analytic_entries"
+                            class="oe_stat_button"
+                            icon="fa-bar"
+                            type="object"
+                            string="Analytic Entries"
+                            states="done">
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='action_payslip_done']" position="after">
+                    <button name="create_analytic_entries" string="Perskaičiuoti analitiką"
+                            type="object" groups="robo_basic.group_robo_premium_accountant"/>
+                    <button name="reset_and_create_analytic_entries"
+                            string="Nustatyti numatytą analitiką ir perskaičiuoti"
+                            type="object" groups="robo_basic.group_robo_premium_accountant"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_employee_front_analytic_accounts" model="ir.ui.view">
+            <field name="name">hr.employee.front.analytic.accounts</field>
+            <field name="model">hr.employee</field>
+            <field name="groups_id" eval="[(4, ref('robo_analytic.group_robo_analytic'))]"/>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook[1]" position="inside">
+                    <page string="Darbo užmokesčio analitika"
+                          groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager">
+                        <group string="Darbo užmokesčio analitika">
+                            <group colspan="4">
+                                <group col="2">
+                                    <field name="analytic_type"/>
+                                </group>
+                                <group col="2">
+                                    <button name="open_analytic_recompute_wizard"
+                                            string="Recomputation of Analytics" type="object"
+                                            class="oe_highlight" style="margin-top: 5px;"
+                                            groups="robo_basic.group_robo_premium_accountant"/>
+                                </group>
+                            </group>
+                            <field name="analytic_ratio_line_ids"
+                                   attrs="{'invisible':[('analytic_type', '!=', 'fixed_ratio')]}" nolabel="1"
+                                   colspan="2">
+                                <tree editable="bottom" class="robo_tree_in_form">
+                                    <field name="account_analytic_id"/>
+                                    <field name="period_start"/>
+                                    <field name="period_end"/>
+                                    <field name="qty" sum=""/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="form_hr_employee_analytic_ratio">
+            <field name="name">Form Employee Analytic Ratio</field>
+            <field name="model">hr.employee.analytic.ratio</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="account_analytic_id"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="qty"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="line_analytic_wizard_line_form_save_rule" model="ir.ui.view">
+            <field name="name">invoice.analytic.wizard.line.form.save.rule</field>
+            <field name="model">invoice.analytic.wizard.line</field>
+            <field name="inherit_id" ref="robo.line_analytic_wizard_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='amount'][1]" position="after">
+                    <field name="save_analytic_rule"/>
+                    <field name="analytic_rule_save_type" attrs="{'invisible': [('save_analytic_rule', '=', 'false')], 'required': [('save_analytic_rule', '=', 'true')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

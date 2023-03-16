@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_report_debt_wizard" model="ir.ui.view">
+            <field name="name">robo.debt.report.wizard</field>
+            <field name="model">account.aged.trial.balance</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Partnerių skolų balansas">
+                    <sheet>
+                        <group string="Filtrai">
+                            <group style="text-align: center; margin-bottom:5%;">
+                                <field name="report_type"/>
+                                <field name="force_lang"/>
+                            </group>
+                            <group col="2">
+                                <field name="date_from" string="Skolos datai"
+                                       attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                                <field name="period_length"
+                                       attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                                <field name="type" attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                                <field name="detail_level" attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                                <newline/>
+                                <field name="result_selection" widget="radio"/>
+                                <field name="target_move" widget="radio" readonly="1"
+                                       attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                                <field name="date_from_debt"
+                                       attrs="{'invisible': ['|', ('type', '!=', 'all'), ('report_type', '!=', 'debt_act')], 'required': [('type', '=', 'all'), ('report_type', '=', 'debt_act')]}"/>
+                                <field name="date_to"
+                                       attrs="{'invisible': ['|', ('type', '!=', 'all'), ('report_type', '!=', 'debt_act')], 'required': [('type', '=', 'all'), ('report_type', '=', 'debt_act')]}"/>
+                                <field name="invoices_only"
+                                       attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                                <field name="account_ids"
+                                       groups="robo.group_select_account_in_account_aged_trial_balance"
+                                       widget="many2many_tags" options="{'no_open': True, 'no_create': True}"
+                                       attrs="{'invisible': [('invoices_only', '=', True), ('report_type', '=', 'aged_balance')]}"/>
+                                <field name="short_report"
+                                       attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                                <field name="display_partner" string="Filtruoti partnerius" widget="radio"/>
+                                <field name="filtered_partner_ids"
+                                       attrs="{'invisible': [('display_partner','!=','filter')], 'required': [('display_partner','=','filter')]}"
+                                       widget="many2many_tags" options="{'no_create': True}"/>
+                                <field name="include_proforma"
+                                       attrs="{'invisible': ['|', ('invoices_only', '=', False), ('report_type', '!=', 'aged_balance')]}"/>
+                                <field name="date"
+                                       attrs="{'invisible': ['|', ('type', '!=', 'unreconciled'), ('report_type', '!=', 'debt_act')], 'required': [('type', '=', 'unreconciled'), ('report_type', '=', 'debt_act')]}"/>
+                                <field name="show_original_amounts"
+                                       attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                                <field name="show_accounts" attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                                <field name="dont_show_zero_values"
+                                       attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                                <field name="dont_show_zero_debts"
+                                       attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                                <field name="activated_threaded_reports" invisible="1"/>
+                            </group>
+                        </group>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="button_generate_report" string="Peržiūrėti" type="object" default_focus="1"
+                                    class="oe_highlight"
+                                    context="{'front':True, 'force_html': True, 'method_name': 'check_report'}"
+                                    style="margin-right: 10px;"
+                                    attrs="{'invisible': ['|', ('report_type', '!=', 'aged_balance'),
+                                                          ('activated_threaded_reports', '=', True)]}"/>
+                            <button name="button_generate_report" string="PDF" type="object" default_focus="1"
+                                    class="oe_highlight"
+                                    context="{'front':True, 'force_pdf': True, 'method_name': 'check_report'}"
+                                    style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                            <button name="button_generate_report"
+                                    context="{'xls_report':1, 'method_name': 'check_report'}"
+                                    type="object" class="oe_highlight"
+                                    string="Excel" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                            <button name="%(robo.open_extended_due_report)s" string="Analitika" class="oe_highlight"
+                                    type="action" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+<!--                            <button name="send_report" string="Siųsti" type="object" class="oe_highlight"-->
+<!--                                    groups="robo_basic.group_robo_premium_accountant" style="margin-right: 10px;"-->
+<!--                                    attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>-->
+                            <button name="button_generate_report" string="Peržiūrėti" type="object" default_focus="1"
+                                    class="oe_highlight"
+                                    context="{'front':True, 'force_html': True, 'method_name': 'create_debt_act_wizard'}"
+                                    style="margin-right: 10px;"
+                                    attrs="{'invisible': ['|', ('report_type', '!=', 'debt_act'),
+                                                         ('activated_threaded_reports', '=', True)]}"/>
+                            <button name="button_generate_report" string="PDF" type="object" default_focus="1"
+                                    class="oe_highlight"
+                                    context="{'front':True, 'force_pdf': True, 'method_name': 'create_debt_act_wizard'}"
+                                    style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                            <button name="create_debt_act_wizard"
+                                    context="{'xls_export': 1 }"
+                                    type="object" class="oe_highlight"
+                                    string="Excel" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_debt">
+            <field name="name">Įsiskolinimų ataskaita</field>
+            <field name="res_model">account.aged.trial.balance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="view_id" ref="robo_report_debt_wizard"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="context" eval="{'default_target_move': 'posted'}"/>
+        </record>
+        <record model="ir.actions.act_window" id="open_debt_backend">
+            <field name="name">Įsiskolinimų ataskaita</field>
+            <field name="res_model">account.aged.trial.balance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="robo_report_debt_wizard"/>
+            <field name="context" eval="{'default_target_move': 'posted'}"/>
+        </record>
+
+        <menuitem id="menu_debt_search_report"
+                  name="Įsiskolinimų ataskaita"
+                  groups="robo_basic.group_robo_premium_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_debt"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="įsiskolinimų,ataskaita"
+        />
+
+        <record id="robo_report_debt_wizard_reduced" model="ir.ui.view">
+            <field name="name">robo.debt.report.wizard.reduced</field>
+            <field name="model">account.aged.trial.balance</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Partnerių skolų balansas">
+                    <sheet>
+                        <group col="4">
+                            <field name="date_from" string="Skaičiavimų pradžia"/>
+                            <field name="period_length"/>
+                            <newline/>
+                            <field name="target_move" widget="radio" readonly="1"/>
+                            <field name="invoices_only"/>
+                            <field name="include_proforma" attrs="{'invisible': [('invoices_only', '=', False)]}"/>
+                            <field name="display_partner" string="Filtruoti partnerius" widget="radio"/>
+                            <field name="filtered_partner_ids"
+                                   attrs="{'invisible': [('display_partner','!=','filter')], 'required': [('display_partner','=','filter')]}"
+                                   widget="many2many_tags" options="{'no_create': True}"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="check_report" string="Generuoti ataskaitą" type="object" default_focus="1"
+                                    class="oe_highlight" context="{'front':True}" style="margin-right: 10px;"/>
+                            <button name="xls_export" context="{'xls_report':1}" type="object" class="oe_highlight"
+                                    string="Excel" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_debt_reduced">
+            <field name="name">Skolų ataskaita</field>
+            <field name="res_model">account.aged.trial.balance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="view_id" ref="robo_report_debt_wizard_reduced"/>
+            <field name="context" eval="{'default_target_move': 'posted'}"/>
+        </record>
+
+        <menuitem id="menu_debt_report" name="Skolų ataskaita" parent="menu_kita" sequence="80"
+                  force_web_icon="icon-register,none,none" action="open_debt_reduced"
+                  robo_front="True" groups="robo_basic.group_robo_debt_report"
+                  searchable="True"
+                  tags="skolų,ataskaita"
+        />
+
+        <record id="robo_report_debt_wizard_send_form" model="ir.ui.view">
+            <field name="name">robo.debt.report.wizard.send</field>
+            <field name="model">account.aged.trial.balance</field>
+            <field name="arch" type="xml">
+                <form string="Skolų suderinimo siuntimas">
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="report_type" invisible="1"/>
+                            <field name="date_from" string="Skolos datai"
+                                   attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                            <field name="period_length" invisible="1"/>
+                            <field name="type" attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                            <field name="detail_level" attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                            <newline/>
+                            <field name="result_selection" widget="radio"/>
+                            <field name="target_move" widget="radio" readonly="1"
+                                   attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                            <field name="date_from_debt"
+                                   attrs="{'invisible': ['|', ('type', '!=', 'all'), ('report_type', '!=', 'debt_act')], 'required': [('type', '=', 'all'), ('report_type', '=', 'debt_act')]}"/>
+                            <field name="date_to"
+                                   attrs="{'invisible': ['|', ('type', '!=', 'all'), ('report_type', '!=', 'debt_act')], 'required': [('type', '=', 'all'), ('report_type', '=', 'debt_act')]}"/>
+                            <field name="invoices_only" invisible="1"/>
+                            <field name="account_ids" groups="robo.group_select_account_in_account_aged_trial_balance"
+                                   widget="many2many_tags" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'invisible': ['|', ('invoices_only', '=', True), ('report_type', '!=', 'aged_balance')]}"/>
+                            <field name="short_report" invisible="1"/>
+                            <field name="display_partner" string="Filtruoti partnerius" widget="radio"/>
+                            <field name="filtered_partner_ids"
+                                   attrs="{'invisible': [('display_partner','!=','filter')], 'required': [('display_partner','=','filter')]}"
+                                   widget="many2many_tags" options="{'no_create': True}"/>
+                            <field name="include_proforma"
+                                   attrs="{'invisible': ['|', ('invoices_only', '=', False), ('report_type', '!=', 'aged_balance')]}"/>
+                            <field name="date"
+                                   attrs="{'invisible': ['|', ('type', '!=', 'unreconciled'), ('report_type', '!=', 'debt_act')], 'required': [('type', '=', 'unreconciled'), ('report_type', '=', 'debt_act')]}"/>
+                            <field name="show_original_amounts"
+                                   attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                            <field name="show_accounts" attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                            <field name="dont_show_zero_values"
+                                   attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                            <field name="dont_show_zero_debts"
+                                   attrs="{'invisible': [('report_type', '!=', 'debt_act')]}"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="send_report" string="Paruošti siuntimui" type="object" class="oe_highlight"
+                                    groups="robo_basic.group_robo_premium_accountant" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                            <button name="check_report" string="Peržiūrėti" type="object" default_focus="1"
+                                    context="{'front':True, 'force_html': True}" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                            <button name="check_report" string="PDF" type="object" default_focus="1"
+                                    context="{'front':True, 'force_pdf': True}" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                            <button name="xls_export" context="{'xls_report':1}" type="object"
+                                    string="Excel" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                            <button name="%(robo.open_extended_due_report)s" string="Analitika"
+                                    type="action" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('report_type', '!=', 'aged_balance')]}"/>
+                            <button name="cancel" type="special" string="Atšaukti"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="robo_report_debt_act_send_wizard_form" model="ir.ui.view">
+            <field name="name">robo.debt.act.send.wizard.form</field>
+            <field name="model">account.aged.trial.balance</field>
+            <field name="arch" type="xml">
+                <form string="Skolų suderinimo siuntimas">
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="force_lang"/>
+                            <field name="report_type" invisible="1"/>
+<!--                            <field name="type"/>-->
+                            <field name="detail_level"/>
+                            <newline/>
+                            <field name="result_selection" widget="radio"/>
+                            <field name="date_from_debt" required="1"/>
+                            <field name="date_to" required="1"/>
+                            <field name="account_ids" groups="robo.group_select_account_in_account_aged_trial_balance"
+                                   widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="short_report" invisible="1"/>
+                            <field name="display_partner" string="Filtruoti partnerius" widget="radio"/>
+                            <field name="involved_partners"/>
+                            <field name="filtered_partner_ids"
+                                   attrs="{'invisible': [('display_partner','!=','filter')], 'required': [('display_partner','=','filter')]}"
+                                   widget="many2many_tags" options="{'no_create': True}"/>
+                            <field name="show_original_amounts"/>
+                            <field name="show_accounts"/>
+                            <field name="dont_show_zero_values"
+                                   attrs="{'invisible': [('display_partner','=','filter')]}"/>
+                            <field name="skip_partners_without_email" invisible="0"/>
+                            <field name="skip_recently_sent" invisible="0"/>
+                            <field name="dont_show_zero_debts" invisible="1"/>
+                        </group>
+                        <footer style="text-align: center;">
+                            <field name="show_unreconciled_warning" invisible="1"/>
+                            <div class="alert alert-danger" role="alert" style="margin-bottom:15px;" colspan="4"
+                                 attrs="{'invisible': [('show_unreconciled_warning', '=', False)]}">
+                                <field name="unreconciled_warning"/>
+                            </div>
+                            <div class="alert alert-info" role="alert" style="margin-bottom:15px;" colspan="4"
+                                 attrs="{'invisible': [('involved_partners', '&lt;', 100)]}">
+                                El. Laiškai bus siunčiami tik pirmiesiems 100 partnerių. Galite pakartoti operaciją
+                                pasirinkdami likusius partnerius.
+                            </div>
+                            <button name="send_report" string="Paruošti siuntimui" type="object" class="oe_highlight"
+                                    groups="robo_basic.group_robo_premium_accountant" style="margin-right: 10px;"/>
+                            <button name="send_report" string="Paruošti siuntimui (Forsuotas)" type="object"
+                                    class="oe_highlight"
+                                    attrs="{'invisible': [('involved_partners', '&lt;', 100)]}"
+                                    context="{'admin_skip_dest_limit': True}"
+                                    groups="base.group_system" style="margin-right: 10px;"/>
+                            <button name="cancel" type="special" string="Atšaukti"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_debt_send_action">
+            <field name="name">Skolų ataskaita</field>
+            <field name="res_model">account.aged.trial.balance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="view_id" ref="robo_report_debt_wizard_send_form"/>
+            <field name="context" eval="{'default_target_move': 'posted', 'report_type': 'aged_balance'}"/>
+        </record>
+        <record id="open_debt_send_action_back" model="ir.actions.act_window">
+            <field name="name">Skolų suderinimo aktų siuntimas</field>
+            <field name="res_model">account.aged.trial.balance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="view_id" ref="robo_report_debt_act_send_wizard_form"/>
+            <field name="context"
+                   eval="{'default_target_move': 'posted', 'report_type': 'debt_act', 'get_last_year_dates': True}"/>
+        </record>
+        <menuitem id="menu_debt_report_backend"
+                  name="Skolų suderinimo aktų siuntimas"
+                  parent="account.menu_finance_legal_statement"
+                  sequence="80"
+                  action="open_debt_send_action_back"
+        />
+    </data>
+</odoo>

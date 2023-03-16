@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_employee_holiday_usage_view_form" model="ir.ui.view">
+            <field name="hr.employee.holiday.usage.view.form"/>
+            <field name="model">hr.employee.holiday.usage</field>
+            <field name="arch" type="xml">
+                <form edit="1" create="1">
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <group colspan="4">
+                                <field name="holiday_id" options="{'no_create': True}"
+                                       context="{'form_view_ref': 'hr_holidays.edit_holiday_new'}"/>
+                                <field name="employee_id" options="{'no_create': True}"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="used_days"/>
+                                <field name="accumulation_assigned_days"/>
+                                <label for="line_ids"/>
+                                <field name="line_ids" colspan="4" nolabel="1"
+                                       context="{'form_view_ref': 'l10n_lt_payroll.hr_employee_holiday_usage_line_view_form'}">
+                                    <tree create="0" delete="0" edit="0">
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                        <field name="post"/>
+                                        <field name="used_days" sum="used_days"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_employee_holiday_usage_view_tree" model="ir.ui.view">
+            <field name="name">hr.employee.holiday.usage.view.tree</field>
+            <field name="model">hr.employee.holiday.usage</field>
+            <field name="arch" type="xml">
+                <tree string="Holiday usage" create="0" edit="0" delete="0">
+                    <field name="employee_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="used_days" sum="used_days"/>
+                    <field name="accumulation_assigned_days" sum="accumulation_assigned_days"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_employee_holiday_usage_search" model="ir.ui.view">
+            <field name="name">hr.employee.holiday.usage.search</field>
+            <field name="model">hr.employee.holiday.usage</field>
+            <field name="arch" type="xml">
+                <search string="Holiday usages">
+                    <field name="employee_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <group expand="1" string="Group By">
+                        <filter name="employee_id" string="Employee" context="{'group_by':'employee_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_open_hr_employee_holiday_usage" model="ir.actions.act_window">
+            <field name="name">Holiday usage</field>
+            <field name="res_model">hr.employee.holiday.usage</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="hr_employee_holiday_usage_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_employee_holiday_usage_view_tree')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('hr_employee_holiday_usage_view_form')})]"/>
+        </record>
+
+        <menuitem id="menu_hr_employee_holiday_usage"
+                  name="Holiday usage"
+                  action="action_open_hr_employee_holiday_usage"
+                  parent="hr_holidays.menu_hr_holidays_configuration"
+                  groups="robo_basic.group_robo_premium_accountant"/>
+    </data>
+</odoo>

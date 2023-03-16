@@ -1,0 +1,32 @@
+<odoo>
+    <data>
+        <record id="tree_r_keeper_product_tax_mapper" model="ir.ui.view">
+            <field name="name">tree.r.keeper.product.tax.mapper</field>
+            <field name="model">r.keeper.product.tax.mapper</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1" editable="bottom">
+                    <field name="product_id" required="1"/>
+                    <field name="tax_id" required="1"/>
+                </tree>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_r_keeper_product_tax_mapper" model="ir.actions.act_window">
+            <field name="name">Produktų mokesčių paskirstymas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.product.tax.mapper</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_r_keeper_product_tax_mapper"/>
+        </record>
+        <!--MENU ITEMS-->
+        <menuitem
+                id="menu_r_keeper_product_tax_mapper"
+                name="Produktų mokesčių paskirstymas"
+                sequence="10"
+                action="action_open_r_keeper_product_tax_mapper"
+                parent="r_keeper_accounting_root"
+        />
+    </data>
+</odoo>

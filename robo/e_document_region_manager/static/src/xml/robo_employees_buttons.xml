@@ -1,0 +1,22 @@
+<template>
+    <t t-extend="RoboListEmployeesAbove_User">
+        <t t-jquery=".robo_employees_buttons:last" t-operation="append">
+            <div t-if="widget.is_region_manager" class="robo_employees_buttons container mb32 mt32">
+                <div class="report_section robo_manager">
+                    <div class="employee-box r-cursor" data-xml-id="robo.open_employees_action_new">
+                        <div class="robo_button_new">
+                            <div class="icon"><span class="icon-user-plus"></span></div>
+                            <h3><a class="btn-header">New employee</a></h3>
+                        </div>
+                    </div>
+                    <div class="employee-box r-cursor" data-xml-id="e_document.isakymas_del_atleidimo_is_darbo_action">
+                        <div class="robo_button_fire">
+                            <div class="icon"><span class="icon-user-minus"></span></div>
+                            <h3><a class="btn-header">Discharge</a></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </t>
+</template>

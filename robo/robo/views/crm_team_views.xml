@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="crm_team_tree_view">
+            <field name="name">crm.team.tree</field>
+            <field name="priority" eval="99"/>
+            <field name="model">crm.team</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0">
+                    <field name="name" string="Pavadinimas"/>
+                    <field name="user_id" string="Komandos vadovas"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="crm_team_kanban_view">
+            <field name="name">crm.team.kanban</field>
+            <field name="priority" eval="99"/>
+            <field name="model">crm.team</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false">
+                    <field name="name" string="Pavadinimas"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.name.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="crm_team_form_view">
+            <field name="name">crm.team.form</field>
+            <field name="priority" eval="99"/>
+            <field name="model">crm.team</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Pardavimų komanda"/>
+                            <h1>
+                                <field name="name" placeholder="Pavadinimas..."/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="crm_sharing_privacy_visibility" required="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_crm_team">
+            <field name="name">Pardavimų komandos</field>
+            <field name="res_model">crm.team</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="context">{'robo_header':{}}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('crm_team_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('crm_team_form_view')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('crm_team_kanban_view')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

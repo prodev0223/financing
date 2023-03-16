@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="asset_lease_agreement_form" model="ir.ui.view">
+            <field name="name">Susitarimas dėl turto nuomos</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_agreement_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_download']" position="after">
+                    <button name="create_agreement_end_document" type="object"
+                            string="Cancel agreement"
+                            attrs="{'invisible': ['|', ('state','!=','e_signed'), '|', ('cancel_id', '!=', False),
+                            ('rejected', '=', True)]}"
+                            context="{'original_document_id': active_id}"
+                            groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"/>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="doc_partner_id" string="Partner" required="True"
+                               options="{'no_create': True, 'no_open': True}"
+                               attrs="{'required': True, 'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="lease_type" attrs="{'required': True, 'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="text_4" string="Lease identifier" required="True"/>
+                        <field name="date_from" string="Lease agreement date" required="True"/>
+                        <field name="date_to" string="Lease end date"/>
+                        <field name="date_1" string="First payment date" required="True"/>
+                        <field name="du_input_type" string="Amount type" required="True"/>
+                        <field name="float_1" string="Lease amount" required="True"/>
+                    </group>
+                    <field name="lease_calculation_table" string=" "/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="asset_lease_agreement_action" model="ir.actions.act_window">
+            <field name="name">Susitarimas dėl turto nuomos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'agreement', u'rec_template_id':
+                u'asset_lease_agreement_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.asset_lease_agreement_form"/>
+        </record>
+
+
+        <record id="asset_lease_agreement_menu" model="ir.ui.menu">
+            <field name="name">Susitarimas dėl turto nuomos</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="e_document.agreement"/>
+            <field name="action" ref="e_document.asset_lease_agreement_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">susitarimas,kompensacija,asmeninis turtas,naudojimas,nuoma,nekilnojamas turtas,auto nuoma,auto,automobilis,automobilio,transporto nuoma</field>
+            <field name="groups_id" eval="[(6, 0, [
+                ref('robo_basic.group_robo_free_manager'),
+                ref('robo_basic.group_robo_premium_manager'),
+                ref('robo_basic.group_robo_edocument_manager')
+            ])]"/>
+        </record>
+
+
+        <record id="asset_lease_agreement_template" model="e.document.template">
+            <field name="name">
+                Susitarimas dėl turto nuomos
+            </field>
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    <p>
+                        {{ company_id }}, atstovaujama {{ ko(manager_job_id, 'aa') }} {{ ko(manager_id) }},
+                        nuo {{ date_from }}{% if date_to %} iki {{ date_to }}{% endif %} susitaria dėl
+                        {{ ko(lease_type, 'aa') }} „{{ text_4 }}“ iš {{ ko(doc_partner_id, 'Aa') }} už
+                        {{ lease_gross_amount }} EUR (įskaičiuojant gyventojų pajamų mokestį).
+                    </p>
+                    <p>
+                        {{ extra_text_html }}
+                    </p>
+                </div>
+            </field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.asset_lease_agreement_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>Susitarimas{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>
+                                Susitarimas dėl turto nuomos
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.asset_lease_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="True"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+        </record>
+
+        <template id="LeaseCalculationTable">
+            <table class="atlyginimu_skaiciuokle">
+                <tr class='big_blue'>
+                    <td>Lease amount (GROSS)</td>
+                    <td><t t-esc="gross_amount"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr>
+                    <td>Income tax</td>
+                    <td><t t-esc="income_tax_amount"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr class='big_green'>
+                    <td>NET amount</td>
+                    <td><t t-esc="net_amount"/><t t-esc="currency_symbol"/></td>
+                </tr>
+            </table>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--Config parameters-->
+         <record id="scoro_company_account_id" model="ir.config_parameter">
+             <field name="key">scoro_company_account_id</field>
+             <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+         <record id="scoro_threshold_accounting" model="ir.config_parameter">
+             <field name="key">scoro_threshold_accounting</field>
+             <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+         <record id="scoro_api_key" model="ir.config_parameter">
+             <field name="key">scoro_api_key</field>
+             <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+         <record id="scoro_company_name" model="ir.config_parameter">
+             <field name="key">scoro_company_name</field>
+              <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+         <record id="scoro_url" model="ir.config_parameter">
+             <field name="key">scoro_url</field>
+              <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+         <record id="scoro_invoice_number_prefix" model="ir.config_parameter">
+             <field name="key">scoro_invoice_number_prefix</field>
+              <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+         <record id="scoro_invoice_number_length" model="ir.config_parameter">
+             <field name="key">scoro_invoice_number_length</field>
+              <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+        <!--Account Account-->
+         <record id="scoro_card_account" model="account.account">
+             <field name="name">Scoro Mokėjimai kortele</field>
+             <field name="code">2411</field>
+             <field name="reconcile">True</field>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+         <record id="scoro_bank_transfer_account" model="account.account">
+             <field name="name">Scoro Pavedimai</field>
+             <field name="code">2412</field>
+             <field name="reconcile">True</field>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+        <!--Account Journal-->
+         <record id="scoro_cash_journal" model="account.journal">
+             <field name="name">Scoro Grynieji</field>
+             <field name="code">CSHSC</field>
+             <field name="type">cash</field>
+         </record>
+         <record id="scoro_card_journal" model="account.journal">
+             <field name="name">Scoro Kortelės</field>
+             <field name="code">CRDSC</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="scoro_card_account"/>
+             <field name="default_credit_account_id" ref="scoro_card_account"/>
+         </record>
+         <record id="scoro_bank_transfer_journal" model="account.journal">
+             <field name="name">Scoro Pavedimai</field>
+             <field name="code">BNKSC</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="scoro_bank_transfer_account"/>
+             <field name="default_credit_account_id" ref="scoro_bank_transfer_account"/>
+         </record>
+        <!--Scoro Payment Type-->
+         <record id="scoro_cash_payment_type" model="scoro.payment.type">
+             <field name="name">Grynieji</field>
+             <field name="internal_code">cash</field>
+             <field name="journal_id" ref="scoro_cash_journal"/>
+         </record>
+         <record id="scoro_card_payment_type" model="scoro.payment.type">
+             <field name="name">Mokėjimo Kortelės</field>
+             <field name="internal_code">cardpayment</field>
+             <field name="journal_id" ref="scoro_card_journal"/>
+         </record>
+         <record id="scoro_bank_transfer_payment_type" model="scoro.payment.type">
+             <field name="name">Pavedimai</field>
+             <field name="internal_code">banktransfer</field>
+             <field name="journal_id" ref="scoro_bank_transfer_journal"/>
+         </record>
+    </data>
+</odoo>

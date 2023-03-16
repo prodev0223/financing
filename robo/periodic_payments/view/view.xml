@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="sutarciu_rusis_view" model="ir.ui.view">
+            <field name="name">sutarciu.rusis.form</field>
+            <field name="model">sutarciu.rusis</field>
+            <field name="arch" type="xml">
+                <form string="Pajamų rūšis">
+                    <sheet>
+                        <group colspan="4">
+                            <field name="name"/>
+                            <field name="code" string="Kodas"/>
+                            <field name="description"/>
+                            <field name="account_id"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="sutarciu_rusis_tree" model="ir.ui.view">
+            <field name="name">sutarciu.rusis.eksportas.tree</field>
+            <field name="model">sutarciu.rusis</field>
+            <field name="arch" type="xml">
+                <tree string="Pajamų rūšis">
+                    <field name="name"/>
+                    <field name="code" string="Kodas"/>
+                    <field name="description"/>
+                    <field name="account_id"/>
+                </tree>
+            </field>
+        </record>
+
+      <record model="ir.actions.act_window" id="action_sutarciu_rusis">
+          <field name="name">Pajamų rūšis</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">sutarciu.rusis</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="view_id" ref="sutarciu_rusis_tree"/>
+          <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+              Spausk čia, kad sukurtum sutarčių rūšis.
+            </p>
+          </field>
+     </record>
+
+    <menuitem
+              name="Pajamų rūšys"
+              id="meniu_sutarciu_rusys"
+              parent="hr_payroll.menu_hr_payroll_configuration"
+              sequence="5"
+              action="action_sutarciu_rusis"
+              groups="account.group_account_user"
+              />
+
+        <record forcecreate="1" id="asutarciu_seq_id" model="ir.sequence">
+            <field name="name">ASUT</field>
+            <field name="code">ASUT</field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">ASUT</field>
+        </record>
+
+        <record id="periodic_payment_view" model="ir.ui.view">
+            <field name="name">periodic.payment.form</field>
+            <field name="model">periodic.payment</field>
+            <field name="arch" type="xml">
+                <form string="Periodinių mokėjimų sutartis">
+                    <header>
+                       <button name="atsaukti" type="object" states="verify,exported,done" string="Atstatyti į juodraštį" groups="account.group_account_user" confirm="Ar tikrai norite atšaukti?"/>
+                       <button name="patvirtinti" string="Patvirtinti" type="object" states="draft" class="oe_highlight" groups="account.group_account_user"/>
+                       <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"blue"}'/>
+                    </header>
+                    <sheet string="Periodinio mokėjimo sutartis">
+                        <field name="subscription" invisible="1"/>
+                        <group>
+                            <field name="data"/>
+                            <field name="mokejimo_terminas"/>
+                            <field name="contract_id"/>
+                            <field name="employee_id"/>
+                            <field name="partner_id"/>
+                            <field name="type"/>
+                            <field name="rusis"/>
+                            <!--<field name="tiesioginis_debetas"/>-->
+                            <field name="suma" widget="monetary" options="{'currency_field':'currency_id'}"/>
+                            <!--<group>-->
+                            <field name="advanced_settings"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="journal_id" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                            <field name="saskaita_kreditas" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                            <field name="saskaita_gpm" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                            <field name="saskaita_debetas" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                            <!--</group>-->
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="periodic_payment_tree" model="ir.ui.view">
+            <field name="name">periodic.payment.tree</field>
+            <field name="model">periodic.payment</field>
+            <field name="arch" type="xml">
+                <tree string="Periodinų mokėjimų sutartys" colors="blue:state=='draft'">
+                    <field name="name"/>
+                    <field name="mokejimo_terminas"/>
+                    <field name="partner_id"/>
+                    <field name="suma"/>
+                    <!--<field name="tiesioginis_debetas"/>-->
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+      <record model="ir.actions.act_window" id="action_periodic_payment">
+          <field name="name">Periodinių mokėjimų sutartys</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">periodic.payment</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="view_id" ref="periodic_payment_tree"/>
+          <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+              Spausk čia, kad sukurtum periodinio mokėjimo sutartis.
+            </p>
+          </field>
+     </record>
+
+    <menuitem
+              name="Periodiniai mokėjimai"
+              id="meniu_periodic_payment"
+              parent="hr_payroll.menu_hr_payroll_configuration"
+              sequence="15"
+              action="action_periodic_payment"
+              />
+        
+       </data> 
+</odoo>
+

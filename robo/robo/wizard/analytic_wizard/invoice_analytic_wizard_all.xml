@@ -1,0 +1,129 @@
+<odoo>
+    <data>
+        <!--Actions-->
+        <record model="ir.actions.server" id="multi_analytic_change_invoice_action_rec">
+            <field name="name">Keisti sąskaitų analitiką</field>
+            <field name="model_id" ref="robo.model_account_invoice"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).action_open_multi_analytic_wizard()
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="group_ids" eval="[(4,ref('analytic.group_analytic_accounting'))]"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.pajamos_tree'), ref('robo.robo_expenses_tree')])]"/>
+        </record>
+        <function name="multi_analytic_change_invoice_action" model="account.invoice"/>
+        <record model="ir.actions.server" id="server_action_aml_analytics_act">
+            <field name="name">Pakeisti analitinę sąskaitą</field>
+            <field name="model_id" ref="robo.model_account_move_line"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).server_action_aml_analytics_wizard()
+            </field>
+        </record>
+        <function name="server_action_aml_analytics" model="account.move.line"/>
+        <!--Forms-->
+        <record id="line_analytic_wizard_all_form" model="ir.ui.view">
+            <field name="name">invoice.analytic.wizard.all.form</field>
+            <field name="model">invoice.analytic.wizard.all</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <field name="locked_analytic_period" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('locked_analytic_period', '=', False)]}">
+                        <field name="locked_analytic_period_message"/>
+                    </div>
+                    <field name="show_action_button" invisible="1"/>
+                     <group string="Veiksmas" attrs="{'invisible': [('show_action_button', '=', False)]}">
+                        <field name="default_action" attrs="{'invisible': [('show_action_button', '=', False)],
+                                                             'required': [('show_action_button', '=', True)]}"/>
+                    </group>
+                    <group string="Keisti analitinę sąskaitą"
+                           attrs="{'invisible': [('default_action', '!=', 'change_accounts')]}">
+                        <div><p>
+                        Šis vedlys pakeis analitines sąskaitas visoms sąskaitos faktūros eilutėms.<br/>
+                        Jeigu pageidaujate analitines sąskaitas keisti kiekvienai eilutei atskirai, <br/>
+                        naudokite mygtuką esantį sąskaitos faktūros eilutėje<br/>
+                        </p>
+                    </div>
+                    </group>
+                    <group attrs="{'invisible': [('default_action', '!=', 'change_accounts')]}">
+                        <field name="analytic_id" options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <group string="Analitinių eilučių išskaidymas"
+                           attrs="{'invisible': [('default_action', '!=', 'split_analytic_lines')]}">
+                    <div><p>
+                        Šis vedlys išskaidys analitines sąskaitas visoms sąskaitos faktūros eilutėms.<br/>
+                        Jeigu pageidaujate analitines sąskaitas skaidyti kiekvienai eilutei atskirai, <br/>
+                        naudokite mygtuką esantį sąskaitos faktūros eilutėje<br/>
+                        </p>
+                    </div>
+                    </group>
+                    <group attrs="{'invisible': [('default_action', '!=', 'split_analytic_lines')]}">
+                        <field name="deferred_period" attrs="{'required': [('default_action', '=', 'split_analytic_lines')]}"/>
+                    </group>
+                    <group string="Analitinių eilučių datos pakeitimas"
+                           attrs="{'invisible': [('default_action', '!=', 'force_dates')]}">
+                    <div>
+                    <p>
+                        Šis vedlys pakeis analitinių sąskaitų datas visoms sąskaitos faktūros eilutėms.<br/>
+                        Jeigu pageidaujate sąskaitų datas keisti kiekvienai eilutei atskirai, <br/>
+                        naudokite mygtuką esantį sąskaitos faktūros eilutėje<br/>
+                    </p>
+                    </div>
+                    </group>
+                    <group attrs="{'invisible': [('default_action', '!=', 'force_dates')]}">
+                        <field name="date_to_force" attrs="{'required': [('default_action', '=', 'force_dates')]}"/>
+                    </group>
+                    </sheet>
+                    <footer style="text-align: center; margin-top:5%;">
+                        <button name="change_analytics" type="object" string="Keisti analitiką"
+                                class="oe_highlight" context="{'check_move_validity': False}"
+                                attrs="{'invisible': [('default_action', '!=', 'change_accounts')]}"/>
+                        <button name="force_dates" type="object" string="Keisti datas" class="oe_highlight"
+                                attrs="{'invisible': [('default_action', '!=', 'force_dates')]}"/>
+                        <button name="split_analytic_lines" type="object" string="Išskaidyti eilutes" class="oe_highlight"
+                                attrs="{'invisible': [('default_action', '!=', 'split_analytic_lines')]}"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="line_analytic_wizard_all_multi_form" model="ir.ui.view">
+            <field name="name">invoice.analytic.wizard.all.multi.form</field>
+            <field name="model">invoice.analytic.wizard.all</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <field name="locked_analytic_period" invisible="1"/>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                             attrs="{'invisible': [('locked_analytic_period', '=', False)]}">
+                            <field name="locked_analytic_period_message"/>
+                        </div>
+                    <group string="Keisti analitinę sąskaitą">
+                        <div>
+                    <p>
+                        Šis vedlys pakeis analitines sąskaitas visoms pasirinktų sąskaitų faktūrų eilutėms.<br/>
+                        Jeigu pageidaujate analitines sąskaitas keisti kiekvienai sąskaitai arba eilutei atskirai, <br/>
+                        naudokite mygtukus esančius sąskaitos faktūros formoje<br/>
+                    </p>
+                    </div>
+                    </group>
+                    <group>
+                        <field name="analytic_id" options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                    </sheet>
+                    <footer style="text-align: center; margin-top:5%;">
+                        <button name="change_analytics" type="object" string="Keisti analitiką"
+                                class="oe_highlight" context="{'check_move_validity': False}"
+                                confirm="Vedlys pakeis analitines sąskaitas visoms
+                                pasirinktoms sąskaitoms faktūroms, ar norite tęsti?"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

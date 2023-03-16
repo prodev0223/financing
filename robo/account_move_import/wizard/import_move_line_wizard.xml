@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<openerp>
+  <data>
+
+    <record id="aml_import_view_form" model="ir.ui.view">
+      <field name="name">aml.import.form</field>
+      <field name="model">aml.import</field>
+      <field name="priority">1</field>
+      <field name="arch" type="xml">
+        <form string="Import File">
+          <group>
+            <div class="robo_form_file_container">
+              <div class="import-element-container">
+                <a href="account_move_import/static/src/import_examples/account_move_lines.csv"
+                   class="import-download-container">
+                  <img src='robo/static/src/img/csv-logo2.svg' alt='Svg icon' help="Parsisiųsti"/>
+                  <span>Dokumento šablonas (.csv)</span>
+                </a>
+              </div>
+            </div>
+            <div class="robo_form_file_container">
+              <div class="import-element-container">
+                <a href="account_move_import/static/src/import_examples/account_move_lines.xlsx"
+                   class="import-download-container">
+                  <img src='robo/static/src/img/xls-logo2.svg' alt='Svg icon' help="Parsisiųsti"/>
+                  <span>Dokumento šablonas (.xlsx)</span>
+                </a>
+              </div>
+            </div>
+          </group>
+          <group col="4">
+            <separator string="Select your file:" colspan="4"/>
+            <field name="aml_data" filename="aml_fname"/>
+            <field name="aml_fname" readonly="1"/>
+            <newline/>
+            <field name="csv_separator"/>
+            <field name="decimal_separator"/>
+            <field name="codepage"/>
+          </group>
+          <footer>
+            <button name="aml_import" string="_Import" type="object" class="oe_highlight"/>
+            or
+            <button string="Cancel" class="oe_link" special="cancel"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="aml_import_view_form_result" model="ir.ui.view">
+      <field name="name">aml.import.form.result</field>
+      <field name="model">aml.import</field>
+      <field name="priority">2</field>
+      <field name="arch" type="xml">
+        <form string="Import File">
+          <separator colspan="4" string="Results :"/>
+          <field name="note" colspan="4" nolabel="1" width="850" height="400"/>
+          <footer>
+            <button string="Close" class="oe_link" special="cancel"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+  </data>
+</openerp>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_invoice_type_change_wizard_form" model="ir.ui.view">
+            <field name="name">account.invoice.type.change.wizard.form</field>
+            <field name="model">account.invoice.type.change.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet string="Keisti sąskaitos tipą">
+                        <group>
+                            <field name="type" required="1"/>
+                            <field name="sale_journal_id"
+                                   attrs="{'invisible': [('type', 'not in', ['out_invoice', 'out_refund'])],
+                                   'required': [('type', 'in', ['out_invoice', 'out_refund'])]}"/>
+                            <field name="purchase_journal_id"
+                                   attrs="{'invisible':[('type', 'not in', ['in_invoice', 'in_refund'])],
+                                   'required': [('type', 'in', ['in_invoice', 'in_refund'])]}"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="change_type" type="object" string="Keisti tipą" class="oe_highlight"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="account_invoice_type_change_wizard" model="ir.actions.act_window" >
+            <field name="name">Keisti sąskaitos tipą</field>
+            <field name="res_model">account.invoice.type.change.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="account_invoice_type_change_wizard_form"/>
+        </record>
+    </data>
+</odoo>

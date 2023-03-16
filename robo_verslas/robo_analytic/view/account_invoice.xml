@@ -1,0 +1,104 @@
+<odoo>
+    <data>
+        <record id="robo_expenses_tree" model="ir.ui.view">
+            <field name="name">Expenses tree | RoboAnalytic</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.robo_expenses_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='submitted']" position="after">
+                    <field name="main_analytic_id" class="oe_main_analytic_id"
+                           groups="robo_analytic.group_main_analytic_account_invoice_tree"/>
+                    <field name="invoice_analytic_codes" class="oe_invoice_analytic_codes"
+                           groups="robo_analytic.group_robo_invoice_tree_analytic_codes"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="pajamos_tree" model="ir.ui.view">
+            <field name="name">Pajamos tree | RoboAnalytic</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.pajamos_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='submitted']" position="after">
+                    <field name="main_analytic_id" class="oe_main_analytic_id"
+                           groups="robo_analytic.group_main_analytic_account_invoice_tree"/>
+                    <field name="invoice_analytic_codes" class="oe_invoice_analytic_codes"
+                           groups="robo_analytic.group_robo_invoice_tree_analytic_codes"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="robo_expenses_action_search_view" model="ir.ui.view">
+            <field name="name">robo.expenses.action.search.view</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="invoice_line_ids" string="Analytic tags" groups="robo_analytic.group_analytic_tags"
+                           filter_domain="[('invoice_line_ids.analytic_tag_ids.name', 'ilike', self)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="robo_pajamos_action_search_view" model="ir.ui.view">
+            <field name="name">robo.pajamos.action.search.view</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_pajamos_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="invoice_line_ids" string="Analytic tags" groups="robo_analytic.group_analytic_tags"
+                           filter_domain="[('invoice_line_ids.analytic_tag_ids.name', 'ilike', self)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="pajamos_form" model="ir.ui.view">
+            <field name="name">robo.pajamos.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_line_change_analytics']" position="after">
+                    <field name="analytic_tag_ids" string="Analytic tags"
+                           groups="robo_analytic.group_analytic_tags"
+                           widget="many2many_tags" options="{'no_quick_create': True, 'no_open': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="robo_expenses_form" model="ir.ui.view">
+            <field name="name">robo.expenses.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_line_change_analytics']" position="after">
+                    <field name="analytic_tag_ids" string="Analytic tags"
+                           groups="robo_analytic.group_analytic_tags"
+                           widget="many2many_tags" options="{'no_quick_create': True, 'no_open': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='analytic_tag_ids']" position="attributes">
+                    <attribute name="groups">robo_analytic.group_analytic_tags</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='analytic_tag_ids']" position="attributes">
+                    <attribute name="groups">robo_analytic.group_analytic_tags</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

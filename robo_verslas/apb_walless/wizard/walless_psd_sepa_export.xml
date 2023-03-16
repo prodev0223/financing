@@ -1,0 +1,51 @@
+<odoo>
+    <data>
+        <!--FORM-->
+        <record id="form_walless_psd_sepa_export" model="ir.ui.view">
+            <field name="name">form.walless.psd.sepa.export</field>
+            <field name="model">walless.psd.sepa.export</field>
+            <field name="arch" type="xml">
+                <form string="Walless PSD SEPA" version="7.0">
+                    <sheet>
+                        <group>
+                            <field string="Bankas" name="journal_id" colspan="2"
+                                   domain="[('type', '=', 'bank'),
+                                            ('bank_acc_number', '!=', False),
+                                            ('bank_id', '!=', False)]"
+                                   widget="selection" required="1"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="export_line_ids" widget="one2many_list" nolabel="1">
+                                <tree delete="1" create="1" edit="1"
+                                      options="{'reload_on_button': True}" editable="bottom"
+                                      class="robo_tree_in_form">
+                                    <field name="ultimate_debtor_id"/>
+                                    <field name="partner_id"/>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id"/>
+                                    <field name="allowed_bank_account_ids" invisible="1"/>
+                                    <field name="bank_account_id" domain="[('id', 'in', allowed_bank_account_ids[0][2])]"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="button_generate_xml" type="object" string="Generuoti" class="oe_highlight"/>
+                        <button special="cancel" type="object" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--ACTION-->
+        <record id="create_walless_sepa_export_action" model="ir.actions.server">
+            <field name="name">SEPA Eksportas</field>
+            <field name="model_id" ref="apb_walless.model_walless_psd_sepa_export"/>
+            <field name="code">
+                action = env.get('walless.psd.sepa.export').action_create_wizard()
+            </field>
+        </record>
+    </data>
+</odoo>

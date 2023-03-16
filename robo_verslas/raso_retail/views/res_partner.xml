@@ -1,0 +1,131 @@
+<odoo>
+    <data>
+        <!--Frontend Tree-->
+        <record id="clients_tree_raso_front" model="ir.ui.view">
+            <field name="name">res.partner.raso</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="robo.clients_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="need_to_update"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">need_to_update</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!--Backend Tree-->
+        <record id="clients_tree_raso_back" model="ir.ui.view">
+            <field name="name">res.partner.raso</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="need_to_update"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">need_to_update</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!-- Frontend Form-->
+        <record id="raso_res_partner" model="ir.ui.view">
+            <field name="name">raso.res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="robo.new_clients_customer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="after">
+                    <field name="last_update_state" invisible="1"/>
+                    <field name="need_to_update" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('last_update_state', '!=', 'waiting')]}">
+                        <div><h4>Laukiama atsakymo paskutiniam importuotam įrašui</h4></div>
+                    </div>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('need_to_update', '=', False)]}">
+                        <div><h4>Įrašo versija naujesnė nei RASO serveryje</h4></div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('last_update_state', '!=', 'rejected')]}">
+                        <div><h4>Paskutinis importas į RASO serverį buvo atmestas</h4></div>
+                    </div>
+                </xpath>
+                <xpath expr="//notebook" position="after">
+                    <group string="Raso Importas" groups="raso_retail.group_raso_user">
+                       <field name="revision_number_display"/>
+                        <field name="raso_revision"/>
+                    </group>
+                </xpath>
+                 <xpath expr="//button[@name='multiple_debt_reconciliation']" position="after">
+                    <button name="import_partners" type="object" string="Importuoti į RASO" class="oe_highlight" />
+                </xpath>
+                <xpath expr="//sheet" position="after">
+                    <div class="oe_chatter" groups="robo_basic.group_robo_premium_manager">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <!--Backend Form-->
+        <record id="raso_res_partner_back" model="ir.ui.view">
+            <field name="name">raso.res.partner.back</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="before">
+                    <header>
+                        <button name="import_partners" type="object" string="Importuoti į RASO" class="oe_highlight"/>
+                </header>
+                    <field name="last_update_state" invisible="1"/>
+                    <field name="need_to_update" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('last_update_state', '!=', 'waiting')]}">
+                        <div><h4>Laukiama atsakymo paskutiniam importuotam įrašui</h4></div>
+                    </div>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('need_to_update', '=', False)]}">
+                        <div><h4>Įrašo versija naujesnė nei RASO serveryje</h4></div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('last_update_state', '!=', 'rejected')]}">
+                        <div><h4>Paskutinis importas į RASO serverį buvo atmestas</h4></div>
+                    </div>
+                </xpath>
+                <xpath expr="//group[2]" position="after">
+                    <group string="Raso Importas">
+                       <field name="revision_number_display"/>
+                        <field name="raso_revision"/>
+                    </group>
+                </xpath>
+                <xpath expr="//sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <!--Functions-->
+        <record model="ir.actions.server" id="import_raso_partners_rec">
+            <field name="name">Importuoti į Raso</field>
+            <field name="model_id" ref="raso_retail.model_res_partner"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).import_partners()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="import_raso_partners_action" model="res.partner"/>
+        <!--Searches-->
+        <record id="raso_res_partner_filter" model="ir.ui.view">
+            <field name="name">raso.res.partner.search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='inactive']" position="after">
+                    <separator/>
+                    <filter name="need_to_update" domain="[('need_to_update','=', True)]" string='Reikia atnaujinti'/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

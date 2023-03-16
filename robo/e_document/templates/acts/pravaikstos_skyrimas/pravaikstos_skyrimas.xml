@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="pravaikstos_skyrimo_aktas_form" model="ir.ui.view">
+            <field name="inherit_id" ref="e_document.acts_base_view"/>
+            <field name="model">e.document</field>
+            <field name="name">Pravaikštos skyrimas</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="single_absence_day_selected" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='extra_text']" position="before">
+                    <field name="job_id2" options="{'no_create': True, 'no_open': True}"
+                           string="Darbuotojo(-s) pareigos"
+                           required="0" invisible="1"/>
+                    <field name="employee_id2"
+                           options="{'no_create': True, 'no_open': True}" string="Darbuotojo(-s) Vardas Pavardė"
+                           required="True" invisible="0"/>
+                    <field name="date_from" options="{'no_create': True, 'no_open': True}" string="Nuo kada"
+                           required="True" invisible="0"/>
+                    <field name="date_to" options="{'no_create': True, 'no_open': True}" string="Iki kada"
+                           required="True" invisible="0"/>
+                    <field name="bool_1" string="Specify hours"
+                           attrs="{'invisible': [('single_absence_day_selected', '!=', True)]}"/>
+                    <field name="time_1" string="Time from" widget="float_time"
+                           attrs="{
+                                'invisible': ['|', ('single_absence_day_selected', '!=', True), ('bool_1', '!=', True)],
+                                'required': [('single_absence_day_selected', '=', True), ('bool_1', '=', True)]
+                           }"/>
+                    <field name="time_2" string="Time to" widget="float_time" attrs="{
+                                'invisible': ['|', ('single_absence_day_selected', '!=', True), ('bool_1', '!=', True)],
+                                'required': [('single_absence_day_selected', '=', True), ('bool_1', '=', True)]
+                           }"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="pravaikstos_skyrimo_aktas_action" model="ir.actions.act_window">
+            <field name="name">Pravaikštos skyrimo aktas</field>
+            <field name="res_model">e.document</field>
+            <field name="view_id" ref="e_document.pravaikstos_skyrimo_aktas_form"/>
+            <field name="context">{
+                u'default_document_type': u'act',
+                u'rec_template_id': u'pravaikstos_skyrimo_aktas_template',
+                u'e_document_view_type': u'rigid'
+            }</field>
+        </record>
+
+
+        <record id="pravaikstos_skyrimo_aktas_menu" model="ir.ui.menu">
+            <field name="name">Pravaikštos skyrimo aktas</field>
+            <field name="action" ref="e_document.pravaikstos_skyrimo_aktas_action"/>
+            <field name="parent_id" ref="e_document.act"/>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="tags">pravaiksta, pravaikšta, pravaikstos, pravaikštos</field>
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),
+            ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+        <record id="pravaikstos_skyrimo_aktas_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    {% if single_absence_day_selected %}
+                        {% if bool_1 %}
+                            {{ job_id2 }} {{ employee_id2 }} į darbą turėjo atvykti {{ date_from }} nuo
+                            {{ format_float_to_hours(time_1) }} iki {{ format_float_to_hours(time_2) }}, bet be
+                            pateisinamos priežasties darbe nepasirodė.
+                        {% else %}
+                            {{ job_id2 }} {{ employee_id2 }} į darbą turėjo atvykti {{ date_from }}, bet be
+                            pateisinamos priežasties darbe nepasirodė.
+                        {% endif %}
+                    {% else %}
+                        {{ job_id2 }} {{ employee_id2 }} į darbą turėjo atvykti nuo {{ date_from }} iki {{ date_to }},
+                        bet be pateisinamos priežasties darbe nepasirodė.
+                    {% endif %}
+                    <br/>
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Pravaikštos skyrimo aktas</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{ manager_job_id }} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.pravaikstos_skyrimo_aktas_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1 }}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{ company_id }}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>AKTAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>AKTAS
+                                DĖL {{ ko(employee_id2.upper(), 'AA') }} NEATVYKIMO Į DARBĄ
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.pravaikstos_skyrimo_aktas_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+        </record>
+    </data>
+</odoo>

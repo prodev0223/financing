@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="form_api_cron_dates_set_wizard" model="ir.ui.view">
+            <field name="name">form.api.cron.dates.set.wizard</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="API darbų vykdymo datos">
+                            <field name="api_execution_interval_number"/>
+                            <field name="api_execution_interval_type"/>
+                            <field name="api_next_execution_call"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="write_api_cron_dates" string="Išsaugoti" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_api_cron_dates_set_wizard" model="ir.actions.act_window">
+            <field name="name">API darbų vykdymo datos</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="form_api_cron_dates_set_wizard"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+        <record id="company_api_secret" model="ir.ui.view">
+            <field name="name">company.api.secret</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='automatic_payment_reminders_settings']" position="before">
+                    <field name="show_robo_api_settings" invisible="1"/>
+                    <group name="robo_api_settings" string="ROBO API"
+                           attrs="{'invisible': [('show_robo_api_settings', '=', False)]}"
+                           class="robo_group_collapsable robo_group_collapsed">
+                            <group colspan="4">
+                                <field name="api_secret"/>
+                                <field name="api_allow_new_products"/>
+                                <field name="api_default_product_type" attrs="{'invisible': [('api_allow_new_products', '=', False)]}"/>
+                                <field name="api_allow_empty_partner_code"/>
+                                <field name="api_prestashop_integration"/>
+                                <field name="show_prestashop_plugin" invisible="1"/>
+                                <field name="current_prestashop_plugin_version"
+                                       attrs="{'invisible': [('show_prestashop_plugin', '=', False)]}"/>
+                                <field name="api_woocommerce_integration"/>
+                                <field name="api_woocommerce_enabled" invisible="1"/>
+                                <field name="api_allow_rounding_error"/>
+                                <field name="api_create_payer_partners"/>
+                                <field name="api_max_rounding_error_allowed"
+                                       attrs="{'invisible': [('api_allow_rounding_error', '=', False)],
+                                       'required': [('api_allow_rounding_error', '=', True)]}"/>
+                                <field name="api_force_tax_condition"
+                                       attrs="{'invisible': [('api_woocommerce_enabled', '=', False)]}"/>
+                                <field name="api_force_tax_selection"
+                                       attrs="{'invisible': ['|',
+                                           ('api_force_tax_condition', 'not in', ['force_if_none', 'force_on_gaps']),
+                                           ('api_woocommerce_enabled', '=', False)],
+                                           'required': [('api_woocommerce_enabled', '=', True),
+                                           ('api_force_tax_condition', 'in', ['force_if_none', 'force_on_gaps'])]}"/>
+                                <field name="api_force_tax_type"
+                                       attrs="{'invisible': ['|', '|',
+                                           ('api_force_tax_condition', 'not in', ['force_if_none', 'force_on_gaps']),
+                                           ('api_woocommerce_enabled', '=', False),
+                                           ('api_force_tax_selection', '!=', 'global')],
+                                           'required': [('api_woocommerce_enabled', '=', True),
+                                           ('api_force_tax_condition', 'in', ['force_if_none', 'force_on_gaps']),
+                                           ('api_force_tax_selection', '=', 'global')]}"
+                                       context="{'trigger_tax_reset': True}"/>
+                                <field name="api_force_tax_id"
+                                       attrs="{'invisible': ['|', '|',
+                                           ('api_force_tax_condition', 'not in', ['force_if_none', 'force_on_gaps']),
+                                           ('api_woocommerce_enabled', '=', False),
+                                           ('api_force_tax_selection', '!=', 'global')],
+                                           'required': [('api_woocommerce_enabled', '=', True),
+                                           ('api_force_tax_condition', 'in', ['force_if_none', 'force_on_gaps']),
+                                           ('api_force_tax_selection', '=', 'global')]}"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group colspan="4" attrs="{'invisible': ['|', '|',
+                                       ('api_force_tax_condition', 'not in',
+                                       ['force_if_none', 'force_on_gaps']),
+                                       ('api_woocommerce_enabled', '=', False),
+                                       ('api_force_tax_selection', '!=', 'selective')]}">
+                                <field name="api_force_tax_position" nolabel="1"
+                                       options="{'no_create': True, 'no_open': True}">
+                                    <tree editable="bottom" class="robo_tree_in_form">
+                                        <field name="name"/>
+                                        <field name="country_id"/>
+                                        <field name="country_group_id"/>
+                                        <field name="not_country_id"/>
+                                        <field name="not_country_group_id"/>
+                                        <field name="force_tax_id"/>
+                                        <field name="force_tax_type"/>
+                                        <field name="product_type"/>
+                                        <field name="partner_type"/>
+                                        <field name="partner_vat_payer_type"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                    </tree>
+                                </field>
+                            </group>
+                            <group colspan="4">
+                                <field name="show_woocommerce_plugin" invisible="1"/>
+                                <field name="current_woocommerce_plugin_version"
+                                       attrs="{'invisible': [('show_woocommerce_plugin', '=', False)]}"/>
+                                <field name="enable_threaded_api"/>
+                            </group>
+                        <group colspan="4" col="2" attrs="{'invisible': [('enable_threaded_api', '=', False)]}">
+                            <group string="Foninio API darbai" colspan="1" col="1">
+                                <button name="%(action_open_api_cron_dates_set_wizard)d"
+                                        string="API darbų vykdymo datos" type="action" class="oe_link"/>
+                                <button name="%(action_open_robo_api_job)d"
+                                        string="API darbai" type="action" class="oe_link"/>
+                            </group>
+                            <group string="Foninio API nustatymai" colspan="1" col="2">
+                                <field name="threaded_api_callback_url"/>
+                                <field name="api_request_parsing_retries"/>
+                            </group>
+                        </group>
+                        <group colspan="4">
+                            <div class="robo_form_file_container">
+                                <div class="import-element-container">
+                                    <a href="robo_api/static/src/docs/ROBO_API_EN.pdf"
+                                       class="import-download-container" target="_blank">
+                                        <img src='robo/static/src/img/pdf-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>API dokumentacija (EN)</span>
+                                    </a>
+                                </div>
+                                <div class="import-element-container">
+                                    <a href="robo_api/static/src/docs/ROBO_API.pdf"
+                                       class="import-download-container" target="_blank">
+                                        <img src='robo/static/src/img/pdf-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>API dokumentacija (LT)</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </group>
+                        <group colspan="4" groups="base.group_system">
+                            <div class="robo_form_file_container">
+                                <div class="import-element-container">
+                                    <a href="robo_api/static/src/docs/ROBO_API_GL_EN.pdf"
+                                       class="import-download-container" target="_blank">
+                                        <img src='robo/static/src/img/pdf-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>API apskaitos įrašų dokumentacija (EN)</span>
+                                    </a>
+                                </div>
+                                <div class="import-element-container">
+                                    <a href="robo_api/static/src/docs/ROBO_API_GL.pdf"
+                                       class="import-download-container" target="_blank">
+                                        <img src='robo/static/src/img/pdf-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>API apskaitos įrašų dokumentacija (LT)</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </group>
+                        <group colspan="8" attrs="{'invisible': [('show_prestashop_plugin', '=', False)]}">
+                            <div class="robo_form_file_container">
+                                <div class="import-element-container">
+                                    <a href="robo_api/static/src/plugins/ROBO_PrestaShop_module.zip"
+                                       class="import-download-container" target="_blank">
+                                        <img src='robo/static/src/img/zip-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>PrestaShop modulis</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </group>
+                        <group colspan="8" attrs="{'invisible': [('show_woocommerce_plugin', '=', False)]}">
+                            <div class="robo_form_file_container">
+                                <div class="import-element-container">
+                                    <a href="robo_api/static/src/plugins/ROBO_WooCommerce_plugin.zip"
+                                       class="import-download-container" target="_blank">
+                                        <img src='robo/static/src/img/zip-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>WooCommerce įskiepis</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

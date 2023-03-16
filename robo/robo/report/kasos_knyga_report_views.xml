@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_kasos_knyga_wizard_view" model="ir.ui.view">
+            <field name="name">kasos.knyga.report.wizard.view</field>
+            <field name="model">kasos.knyga.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Kasos knyga">
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="journal_id" options="{'no_open': True, 'no_create': True}"
+                                   domain="[('type', '=', 'cash'),  ('skip_cash_reports', '=', False)]"
+                                   groups="robo_basic.group_robo_kasos_aparatas"/>
+                            <field name="code" invisible="1"/>
+                            <field name="payment_type_filter" attrs="{'invisible': [('code','!=', 'KVIT')]}"/>
+                            <field name="include_canceled" attrs="{'invisible': [('code','=', 'KVIT')]}"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:20%;">
+                            <button name="check_report" string="Peržiūrėti" type="object" default_focus="1"
+                                    class="oe_highlight" context="{'front':True, 'force_html': True}"
+                                    style="margin-right: 10px;"/>
+                            <button name="check_report" string="PDF" type="object" default_focus="1"
+                                    class="oe_highlight" context="{'front':True, 'force_pdf': True}"
+                                    style="margin-right: 10px;"/>
+                            <button name="xls_export" context="{'xls_report':1}" type="object"
+                                    string="Excel" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(sl_general_report.open_reports_action)d" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_cashbox_report">
+            <field name="name">Kasos knyga</field>
+            <field name="res_model">kasos.knyga.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="view_id" ref="robo_kasos_knyga_wizard_view"/>
+        </record>
+
+        <menuitem id="menu_cashbox_search_report"
+                  name="Kasos knyga"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_cashbox_report"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="kasos,knyga"
+        />
+    </data>
+</odoo>

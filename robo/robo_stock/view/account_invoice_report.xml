@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <!--Override invoice report pivot row field and remove grouping by partner_id.-->
+        <!-- Report fails to open due to massive amounts of invoices-->
+        <record id="account_invoice_report_view_pivot_main" model="ir.ui.view">
+            <field name="name">robo.invoice.report</field>
+            <field name="model">account.invoice.report</field>
+            <field name="inherit_id" ref="robo.account_invoice_report_view_pivot_main"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="replace">
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

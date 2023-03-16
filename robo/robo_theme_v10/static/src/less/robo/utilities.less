@@ -1,0 +1,265 @@
+//utilities**********************************
+.hover_menu(@lighten_percent:5%) {
+  background-color: #3498DB;//lighten(@robo-navbar-color, @lighten_percent);
+}
+
+.robo-menu-item-hover(){
+  color: @robo-menu-item-active-color;
+  background-color: @robo-menu-item-active-background;
+}
+
+.circle() {
+  border-radius: 50%;
+}
+
+
+.whiteTriangle() {
+  content: '';
+  border-style: solid;
+  border-width: 6px 7px 6px 0;
+  border-color: transparent #fff transparent transparent;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  .o-transform(translateY(-50%));
+}
+
+.o-border-radius(@x: 0){
+  -webkit-border-radius: @x;
+  -moz-border-radius: @x;
+  border-radius: @x;
+}
+
+.robo-border(@color:@robo-border-color, @radius:@robo-button-small-radius, @size:2px){
+  border: @size solid @color;
+  .o-border-radius(@radius);
+}
+.button-border(){
+  .robo-border(@robo-control-panel-button-border-color, @robo-button-small-radius);
+}
+
+.robo-control-panel-button-style(){
+  color: black;
+  background-color: transparent;
+  .button-border;
+  &:hover, &:focus{
+    background-color: @robo-control-panel-button-hover-color !important;
+    border-color: @robo-control-panel-button-border-color;
+    color: black;
+  }
+}
+.my-btn(@color:@robo-button-color, @hover-color: lighten(@color,10%)) {
+  word-wrap: break-word;
+  border-radius: @robo-button-small-radius;
+  background-color: @color;
+  text-align: center;
+  border-color: @color;
+
+  &:hover {
+    background-color: @hover-color;
+    border-color: @hover-color;
+  }
+
+  &:focus {
+    background-color: @hover-color;
+    border-color: @hover-color;
+    outline: none;
+  }
+
+  &:active {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-transition: none;
+    transition: none;
+    background-image: none;
+    background-color: @hover-color;
+    border-color: @hover-color;
+  }
+}
+
+.my_popover_section(){
+  padding: 8px 14px;
+  color: black;
+  opacity: .3;
+  border-bottom: 1px solid;
+  overflow: visible;
+  height: 15px;
+  margin: 0 10px 10px 6px;
+  .title-text {
+    display: inline-block;
+    background-color: #fff;
+    font-size: 80%;
+  }
+}
+
+//robo_enterprice copy-paste
+.enterprice_list_view() {
+    .o_list_view:not(.o-robo-list-view) {
+        border-collapse: initial;
+    }
+    .o_list_view:not(.o-robo-list-view) > thead > tr > th.o_column_sortable:not(:empty) {
+        padding-right: 13px;
+    }
+    .o_list_view:not(.o-robo-list-view) > thead > tr > th.o_column_sortable:not(:empty):last-child {
+        padding-right: 29px !important;
+    }
+    .o_list_view:not(.o-robo-list-view) > thead > tr > :empty,
+    .o_list_view:not(.o-robo-list-view) > tbody > tr > :empty,
+    .o_list_view:not(.o-robo-list-view) > tfoot > tr > :empty {
+        padding: 0;
+    }
+    .o_list_view:not(.o-robo-list-view) > thead > tr > :empty::after,
+    .o_list_view:not(.o-robo-list-view) > tbody > tr > :empty::after,
+    .o_list_view:not(.o-robo-list-view) > tfoot > tr > :empty::after {
+        display: none;
+    }
+    .o_list_view:not(.o-robo-list-view) > thead > tr > *,
+    .o_list_view:not(.o-robo-list-view) > tfoot > tr > * {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+    .o_list_view:not(.o-robo-list-view) > thead {
+        background-color: @robo-background-color;
+        border: none;
+    }
+    .o_list_view:not(.o-robo-list-view) > thead > tr:first-child > th {
+        border: none;
+    }
+    .o_list_view:not(.o-robo-list-view) tbody:first-of-type > tr:first-child:not(.o_group_header) {
+        box-shadow: inset 0px 5px 10px -4px rgba(0, 0, 0, 0.1);
+    }
+    .o_list_view:not(.o-robo-list-view) tfoot > tr > td {
+        border-top: 1px solid #d9d7d7;
+    }
+    .o_list_view:not(.o-robo-list-view) .o_progressbar_cell .o_progressbar {
+        display: table-row;
+    }
+    .o_list_view:not(.o-robo-list-view) .o_progressbar_cell .o_progressbar > div {
+        width: 100%;
+        display: table-cell;
+    }
+    .o_list_view:not(.o-robo-list-view) .o_progressbar_cell .o_progressbar .o_progressbar_value {
+        width: 45px;
+        min-width: 45px;
+    }
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody > tr.o_group_header {
+        background-color: darken(@robo-background-color, 5%);
+        box-shadow: inset 0 2px 0 #ffffff;
+    }
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody > tr.o_group_header.o_group_has_content {
+        color: #777777;
+    }
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody > tr.o_group_header.o_group_has_content:hover,
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody > tr.o_group_header.o_group_has_content:focus,
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody > tr.o_group_header.o_group_has_content.focus {
+        color: #875A7B;
+    }
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody > tr.o_group_header.o_group_has_content.o_group_open {
+        font-weight: bold;
+        color: #2f3136;
+    }
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody > tr.o_group_header.o_group_has_content.o_group_open:hover,
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody > tr.o_group_header.o_group_has_content.o_group_open:focus,
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody > tr.o_group_header.o_group_has_content.o_group_open.focus {
+        color: #875A7B;
+    }
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped > tbody + tbody > tr:first-child:not(.o_group_header) {
+        box-shadow: inset 0px 5px 10px -4px rgba(0, 0, 0, 0.1);
+    }
+    .o_list_view:not(.o-robo-list-view).o_list_view_grouped.table-striped > tbody + tbody > tr:not(.o_group_header):nth-of-type(odd) {
+        background-color: lighten(@robo-background-color, 1%);
+    }
+    .o_list_view:not(.o-robo-list-view) .o_data_row.o_selected_row > .o_data_cell:not(.o_readonly_modifier) {
+        border-right: 1px solid #E5E5E5;
+    }
+    .o_list_view:not(.o-robo-list-view) .o_data_row.o_selected_row > .o_data_cell:not(.o_readonly_modifier) .o_input {
+        padding-right: 4px;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > thead > tr > :not(:empty) {
+        padding: 14px 4px;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tbody > tr:not(.o_list_view_grouped) > td {
+        padding: 7px 4px;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tbody > tr.o_group_header > th,
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tbody > tr.o_group_header > td {
+        padding-top: 6px;
+        padding-bottom: 2px;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tfoot > tr > :not(:empty) {
+        padding: 12px 4px;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > thead > tr > th.o_column_sortable:not(:empty) {
+        padding-right: 15px;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > thead > tr > th.o_column_sortable:not(:empty):last-child {
+        padding-right: 31px !important;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > thead > tr > *:first-child,
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tbody > tr > *:first-child,
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tfoot > tr > *:first-child {
+        padding-left: 16px !important;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > thead > tr > *:last-child,
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tbody > tr > *:last-child,
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tfoot > tr > *:last-child {
+        padding-right: 16px !important;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > thead > tr > *.o_list_record_selector,
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tbody > tr > *.o_list_record_selector,
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table > tfoot > tr > *.o_list_record_selector {
+        padding-right: 5px !important;
+    }
+    .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table .o_data_row.o_selected_row > .o_data_cell:not(.o_readonly_modifier) .o_input {
+        padding: 7px 6px 7px 7px;
+    }
+    @media (min-width: 1200px) {
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > thead > tr > :not(:empty) {
+            padding: 10px 4px;
+        }
+
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tbody > tr:not(.o_list_view_grouped) > td {
+            padding: 8px 4px;
+        }
+
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tbody > tr.o_group_header > th,
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tbody > tr.o_group_header > td {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tfoot > tr > :not(:empty) {
+            padding: 15px 4px;
+        }
+
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > thead > tr > th.o_column_sortable:not(:empty) {
+            padding-right: 18px;
+        }
+
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > thead > tr > th.o_column_sortable:not(:empty):last-child {
+            padding-right: 34px !important;
+        }
+
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > thead > tr > *:first-child,
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tbody > tr > *:first-child,
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tfoot > tr > *:first-child {
+            padding-left: 16px !important;
+        }
+
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > thead > tr > *:last-child,
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tbody > tr > *:last-child,
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tfoot > tr > *:last-child {
+            padding-right: 16px !important;
+        }
+
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > thead > tr > *.o_list_record_selector,
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tbody > tr > *.o_list_record_selector,
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) > tfoot > tr > *.o_list_record_selector {
+            padding-right: 5px !important;
+        }
+
+        .o_view_manager_content > div > .table-responsive > .o_list_view:not(.o-robo-list-view).table:not(.o_list_view_grouped) .o_data_row.o_selected_row > .o_data_cell:not(.o_readonly_modifier) .o_input {
+            padding: 8px 7px 8px 8px;
+        }
+    }
+}

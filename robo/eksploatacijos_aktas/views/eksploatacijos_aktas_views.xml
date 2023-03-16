@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="eksploatacijos_aktas_view_search" model="ir.ui.view">
+            <field name="name">eksploatacijos.aktas.view.search</field>
+            <field name="model">eksploatacijos.aktas</field>
+            <field name="arch" type ="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="state"/>
+                    <filter name="tipas_in" string="Priėmimas"
+                            domain="[('tipas', '=', 'in')]"/>
+                    <filter name="tipas_out" string="Išėmimas"
+                            domain="[('tipas', '=', 'out')]"/>
+                    <group>
+                        <filter name="group_by_state" string="Alignment state"
+                                context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="eksploatacijos_aktas_view" model="ir.ui.view">
+            <field name="name">eksploatacijos.aktas.form</field>
+            <field name="model">eksploatacijos.aktas</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Operation act" version="7.0" create="false">
+                    <header>
+                        <field name="delegate" invisible="1"/>
+                        <button name="cancel" type="object" states="invitation,aligned" string="Cancel"
+                                groups="account.group_account_user" confirm="Are you sure to cancel?"/>
+                        <button name="reset_to_draft" type="object" states="cancel" string="Atstatyti į juodraštį"
+                                groups="account.group_account_user"/>
+                        <button name="invite" string="Invite" type="object" states="draft"
+                                class="oe_highlight" groups="account.group_account_user"/>
+                        <button name="confirm" type="object" string="Patvirtinti" groups="robo_basic.group_robo_premium_accountant" states="draft,invitation" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,aligned"
+                               statusbar_colors='{"draft":"blue"}'/>
+                        <field name="sign_id" invisible="1"/>
+                        <field name="signed_by_all" invisible="1"/>
+                        <field name="signed_by_minimum" invisible="1"/>
+                    </header>
+                    <sheet string="Operation act">
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': ['|', '|', ('state','!=','invitation'), ('sign_id','=', False), ('signed_by_all','=', False)]}">
+                            Visi komisijos nariai pasirašė dokumentą: jis gali būti patvirtintas
+                        </div>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': ['|', '|', '|', ('state','!=','invitation'), ('sign_id','=', False), ('signed_by_all','=', True), ('signed_by_minimum','=', False)]}">
+                            Aktas gali būti patvirtintas
+                        </div>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': ['|', '|', ('state','!=','invitation'), ('sign_id','=', False), ('signed_by_minimum','=', True)]}">
+                            Dar ne visi komisijos nariai pasirašė dokumentą.
+                        </div>
+                        <center><h2>Operation act</h2> </center>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="komisija"/>
+                            </group>
+                            <group>
+                                <field name="tipas"/>
+                                <field name="turtas_viz_date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Asset">
+                                <group>
+                                    <field name="introduced_asset_ids" nolabel="1" attrs="{'invisible':[('tipas', '!=', 'in')]}">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                            <field name="category_id"/>
+                                            <field name="date"/>
+                                            <field name="value" widget="monetary"/>
+                                            <field name="value_residual" widget="monetary"/>
+                                            <field name="currency_id" groups="base.group_multi_currency"/>
+                                            <field name="state"/>
+                                            <field name="likvidavimo_data"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                                <group>
+                                    <field name="withdrawn_asset_ids" nolabel="1" attrs="{'invisible':[('tipas', '!=', 'out')]}">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                            <field name="category_id"/>
+                                            <field name="date"/>
+                                            <field name="original_value" widget="monetary"/>
+                                            <!--FIXME: since the printing prints likvidacine_verte and not value_residual -->
+                                            <field name="likvidacine_verte" widget="monetary"/>
+                                            <field name="currency_id" groups="base.group_multi_currency"/>
+                                            <field name="state"/>
+                                            <field name="likvidavimo_data"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Alignment">
+                                <group>
+                                    <field name="vizavimas" nolabel="1">
+                                        <tree>
+                                            <field name="employee_id"/>
+                                            <field name="aligned"/>
+                                            <field name="comment"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="eksploatacijos_aktas_view_tree" model="ir.ui.view">
+            <field name="name">eksploatacijos.aktas.view.tree</field>
+            <field name="model">eksploatacijos.aktas</field>
+            <field name="arch" type="xml">
+                <tree string="Operation acts" create="false" edit="false">
+                    <field name="name"/>
+                    <field name="komisija"/>
+                    <field name="state"/>
+                    <field name="tipas"/>
+                    <field name="yra_komentaru"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_eksploatacijos_aktas" model="ir.actions.act_window">
+            <field name="name">Operation acts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">eksploatacijos.aktas</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="eksploatacijos_aktas_view_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create new operation acts.
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+                name="Operation acts"
+                id="meniu_eksploatacijos_aktai"
+                parent="account.menu_finance_entries"
+                sequence="102"
+                action="action_eksploatacijos_aktas"
+        />
+
+        <record id="mt_state" model="mail.message.subtype">
+            <field name="name">Status change</field>
+            <field name="res_model">eksploatacijos.aktas</field>
+            <field name="default" eval="True"/>
+            <field name="description">Status change</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="pajamos_form" model="ir.ui.view">
+            <field name="name">pajamos.form</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_change_number']" position="attributes">
+                    <attribute name="groups">robo_basic.group_robo_premium_accountant,robo_basic.group_robo_select_invoice_journal</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.actions.server" id="action_mass_invoice_mailing">
+            <field name="name">eTaksi masinis sąskaitų siuntimas</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).open_action_mass_invoice_mailing()
+            </field>
+            <field name="group_ids" eval="[(4,ref('robo_basic.group_robo_premium_accountant'))]"/>
+        </record>
+        <function name="create_action_mass_invoice_mailing" model="account.invoice"/>
+    </data>
+</odoo>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="form_nsoft_configuration_wizard" model="ir.ui.view">
+            <field name="name">form.nsoft.configuration.wizard</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="nSoft Apskaitos nustatymai">
+                            <field name="nsoft_accounting_threshold_date" string="nSoft apskaitos pradžios data"/>
+                            <field name="nsoft_accounting_type" string="nSoft apskaitos tipas"/>
+                            <field name="enable_nsoft_cash_operations"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_nsoft_settings" string="Išsaugoti" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_nsoft_configuration_wizard" model="ir.actions.act_window">
+            <field name="name">nSoft nustatymai</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="form_nsoft_configuration_wizard"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+        <record id="robo_company_settings_nsoft" model="ir.ui.view">
+            <field name="name">robo_company_settings_nsoft</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='api_integrations']" position="attributes">
+                    <!--Make integrations group always visible when Amazon is installed-->
+                    <attribute name="attrs"/>
+                </xpath>
+                <xpath expr="//button[@name='btn_open_revolut_settings']" position="after">
+                    <button name="%(action_open_nsoft_configuration_wizard)d" string="nSoft nustatymai"
+                            class="oe_link" type="action" groups="robo_basic.group_robo_premium_manager"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_nsoft_settings_search"
+                  name="nSoft nustatymai"
+                  parent="robo.menu_company_settings_search"
+                  action="action_open_nsoft_configuration_wizard"
+                  groups="robo_basic.group_robo_premium_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="nsoft,nustatymai"
+        />
+
+    </data>
+</odoo>

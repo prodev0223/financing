@@ -1,0 +1,45 @@
+<odoo>
+    <data>
+        <record id="gemma_export_du_aspi_wizard" model="ir.ui.view">
+            <field name="name">gemma.export.du.aspi.wizard</field>
+            <field name="model">du.aspi.export.wizard</field>
+            <field name="arch" type="xml">
+                <form string="DU ASPI Ataskaita">
+                    <group colspan="4">
+                        <group colspan="2" col="2">
+                            <field name="illness_fund_province"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="doc_number"/>
+                        </group>
+                        <group colspan="4" col="4">
+                            <field name="period_year"/>
+                            <field name="period_month"/>
+                        </group>
+                        <group colspan="4" col="4">
+                            <field name="other_pareigos" invisible="1"/>
+                            <field name="administracijos_pareigos" widget="many2many_tags" options="{'no_open': True, 'no_create': True}" domain="[('id', 'not in', other_pareigos and other_pareigos[0][2])]"/>
+                            <field name="gydytoju_pareigos" widget="many2many_tags" options="{'no_open': True, 'no_create': True}" domain="[('id', 'not in', other_pareigos and other_pareigos[0][2])]"/>
+                            <field name="slaugytoju_pareigos" widget="many2many_tags" options="{'no_open': True, 'no_create': True}" domain="[('id', 'not in', other_pareigos and other_pareigos[0][2])]"/>
+                            <field name="kitas_personalas_sveikata_pareigos" widget="many2many_tags" options="{'no_open': True, 'no_create': True}" domain="[('id', 'not in', other_pareigos and other_pareigos[0][2])]"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Atsisiųsti ataskaitą" name="generate_and_export" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_stat_gemma_du_aspi_wizard" model="ir.actions.act_window">
+            <field name="name">DU ASPI Ataskaita</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">du.aspi.export.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="gemma_export_du_aspi_wizard"/>
+        </record>
+    </data>
+</odoo>

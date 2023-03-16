@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <record id="view_production_lot_form_front_expiry" model="ir.ui.view">
+        <field name="name">stock.production.lot.expiry.inherit.form</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="robo_stock.view_production_lot_form_front"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='main_group']" position="after">
+                <group string="Datos">
+                    <group>
+<!--                        <field name="use_date" string="Produkto naudojimo data" help=""/>-->
+                        <field name="removal_date" string="Produkto galiojimo data" help=""/>
+                    </group>
+<!--                    <group>-->
+<!--                        <field name="life_date" string="Produkto galiojimodata)" help=""/>-->
+<!--                        <field name="alert_date" string="Įspėjimo data" help=""/>-->
+<!--                    </group>-->
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="robo_pack_operation_form_expiry_date" model="ir.ui.view">
+        <field name="name">robo_pack_operation_form_expiry_date</field>
+        <field name="model">stock.pack.operation</field>
+        <field name="inherit_id" ref="robo_stock.view_pack_operation_details_form_scan_ext"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='barcode']" position="after">
+                <field name="use_removal_date" string="Naudoti produkto galiojimo datą"/>
+                <field name="removal_date" string="Produkto galiojimo data" attrs="{'invisible': [('use_removal_date','=', False)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='pack_lot_ids']//tree[1]//field[@name='lot_name']" position="after">
+                <field name="removal_date" string="Produkto galiojimo data"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="robo_stock_production_lot_tree_extend" model="ir.ui.view">
+        <field name="name">stock.production.lot.tree.extend</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="robo_stock.view_production_lot_tree_front"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='create_date']" position="after">
+                <field name="removal_date" string="Galiojimo terminas"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

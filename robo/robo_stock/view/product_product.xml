@@ -1,0 +1,63 @@
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_product_product_front" model="ir.ui.view">
+            <field name="name">tree.product.product.front</field>
+            <field name="model">product.product</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Produkto Variantai" import="0" create="0">
+                    <field name="sequence" widget="handle"/>
+                    <field name="display_name" string="Pavadinimas"/>
+                    <field name="default_code" string="Vidinis numeris"/>
+                    <field name="product_tmpl_id" string="Produkto šablonas"/>
+                    <field name="qty_available" string="Kiekis sandėlyje"/>
+                    <field name="list_price" string="Pardavimo kaina"/>
+                    <field name="avg_cost" string="Vid. savikaina"/>
+                    <field name="latest_price"/>
+                    <field name="categ_id" string="Vidinė kategorija"
+                           options="{'no_open': True, 'no_create': True}"/>
+                    <field name="uom_id" string="Matavimo vienetai"
+                           options="{'no_open': True, 'no_create': True}"
+                           groups="product.group_uom"/>
+                    <field name="active" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <!--Forms-->
+        <record id="form_product_product_front" model="ir.ui.view">
+            <field name="name">form.product.product.front</field>
+            <field name="model">product.product</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <label class="oe_edit_only"
+                                   for="product_tmpl_id" string="Produkto šablonas"/>
+                            <h1>
+                                <field name="product_tmpl_id" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="display_name"/>
+                            <field name="attribute_value_ids" readonly="1"
+                                   attrs="{'invisible': [('attribute_value_ids', '=', False)]}"/>
+                            <field name="default_code" string="Vidinis numeris"/>
+                            <field name="barcode" string="Barkodas"/>
+                            <field name="qty_available" string="Kiekis sandėlyje"/>
+                            <field name="list_price" string="Pardavimo kaina"/>
+                            <field name="avg_cost" string="Vid. savikaina"/>
+                            <field name="latest_price"/>
+                            <field name="categ_id" string="Vidinė kategorija"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                            <field name="uom_id" string="Matavimo vienetai"
+                                   options="{'no_open': True, 'no_create': True}"
+                                   groups="product.group_uom"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

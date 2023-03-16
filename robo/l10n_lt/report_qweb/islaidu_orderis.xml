@@ -1,0 +1,939 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="robo_paperformat_a4" model="report.paperformat">
+            <field name="name">European A4 ROBO</field>
+            <field name="format">A4</field>
+            <field name="margin_top" eval="20"/>
+            <field name="margin_bottom" eval="23"/>
+            <field name="margin_left" eval="7"/>
+            <field name="margin_right" eval="7"/>
+            <field name="orientation">Portrait</field>
+            <field name="header_spacing" eval="20"/>
+            <field name="dpi" eval="90"/>
+        </record>
+        <report
+                id="report_islaidu_orderis"
+                model="account.payment"
+                string="Pajamų/išlaidų orderis"
+                report_type="qweb-html"
+                name="l10n_lt.report_islaidu_orderis_template"
+                file="l10n_lt.report_islaidu_orderis_template"
+                paperformat="robo_paperformat_a4"
+        />
+        <template id="report_islaidu_orderis_template">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-lang="doc.company_id.partner_id.lang"
+                       t-call="l10n_lt.report_islaidu_orderis_template_document"/>
+                </t>
+            </t>
+        </template>
+        <template id="report_islaidu_orderis_template_document">
+            <style type="text/css">
+                body.container {
+                margin-left: 7px !important;
+                }
+                h3 {
+                text-align: center;
+                }
+                .centras{
+                text-align: center;
+                margin-left:auto;
+                margin-right:auto;
+                }
+                .virsus{
+                border-top: 1px solid black;
+                }
+                .desine{
+                float: right;
+                width: 400px;
+                text-align: justify
+                }
+                .lentele{
+                border: 1px solid black;
+                }
+                .tr, th, td{
+                padding-left: 5px;
+                border: 1px solid black;
+                }
+                .rotate{
+                transform: rotate(-90deg);
+                transform-origin: 0% 0% 0;
+                }
+                .line-header {
+                margin-top: 15px;
+                position:relative;
+                }
+                .line-header:before {
+                position: absolute;
+                display:block;
+                top:0;
+                left:0;
+                bottom:0;
+                content: attr(title);
+                background-color:#FFF;
+                color:#FFF;
+                z-index:-1;
+                padding-right:.5em;
+                }
+                .line-header::after {
+                position:absolute;
+                content:'';
+                display: block;
+                left:0;
+                right:0;
+                top:50%;
+                background-color:#555;
+                height:1px;
+                z-index:-2;
+                }
+            </style>
+            <t t-call="report.html_container">
+                <div class="page">
+                    <t t-set="o" t-value="doc"/>
+
+                    <t t-if="o.payment_type == 'outbound'">
+                        <div class="centras">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none" width="100%">
+                                <tr style="border-style:none">
+                                    <td align="left" style="border-style:none">
+                                        <span t-field="o.company_id"/>
+                                        <br/>
+                                        <span t-field="o.company_id.company_registry"/>
+                                    </td>
+                                    <!--<td width="30%" align="right" class="virsus" style="border-style:none">-->
+                                        <!--<p>PATVIRTINTA Lietuvos Respublikos Vyriausybės 2004 m. sausio 27 d. nutarimu-->
+                                            <!--Nr. 78-->
+                                        <!--</p>-->
+                                    <!--</td>-->
+                                </tr>
+
+                            </table>
+                            <div class="text-center">
+                                <span style="border-style:none" align="center">
+                                    <strong>
+                                        <span>KASOS IŠLAIDŲ ORDERIS</span>
+                                    </strong>
+                                </span>
+                                <t t-if="o.state == 'canceled'">
+                                    <br/>
+                                    <span>(ANULIUOTA)</span>
+                                </t>
+                                <br/>
+                                <span>
+                                    Nr.
+                                    <span t-field="o.name"/>
+                                </span>
+                                <br/>
+                                <span style="border-style:none">
+                                    <span t-esc="o.payment_date"/>
+                                </span>
+                            </div>
+                        </div>
+                        <p/>
+
+                        <table class="table table-bordered mb32" style="table-layout:auto; border-color:black">
+                            <thead>
+                                <tr>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Analitinės
+                                        <br/>
+                                        apskaitos<br/>šifras
+                                    </td>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Suma
+                                        <span t-esc="o.currency_id.name"/>
+                                    </td>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Tikslinės
+                                        paskirties šifras
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td style="border-color:black"/>
+                                <td style="border-color:black; border-top:0">
+                                    <span t-field="o.amount"/>
+                                </td>
+                                <td style="border-color:black; border-top:0"/>
+                            </tbody>
+                        </table>
+                        Išduoti
+                        <span t-field="o.partner_id"/>
+                        <p/>
+                        Pagrindas:
+                        <br/>
+                        <span style="position: relative; top:10px;" t-field="o.communication"/>
+                        <!--<hr style="float: right; width: 93%; border-color: black"/>-->
+                        <hr style="width: 100%; border-color: black"/>
+                        <p/>
+                        <span t-esc="o._convert_sum_to_words(o.amount,'lt', 'EUR')"/>
+                        <p/>
+                        Priedėlis:
+                        <hr style="float: right; width: 90%; border-color: black"/>
+                        <hr style="width: 100%; border-color: black"/>
+                        <p/>
+                        <t t-if="o.signed_employee_id">
+                            <table width="75%;">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none">
+                                        <strong>
+                                            <span t-field="o.signed_employee_id.job_id"/>
+                                            <span style="text-decoration: underline;" t-field="o.signed_employee_id"/>
+                                        </strong>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center" width="50%">
+                                        <span>(parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <p/>
+                        Gavau:
+                        <span t-esc="o._convert_sum_to_words(o.amount,'lt', o.currency_id.name)"/>
+                        <p/>
+                        <span t-esc="o.payment_date"/> &amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;
+                        <strong style="float: right">Gavėjo parašas
+                            <u>
+                                <span>&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;</span>
+                            </u>
+                        </strong>
+                        <p/>
+                        Pagal
+                        <p/>
+                        <!--<div class="text-left">-->
+
+
+
+                            <!--<strong>Išdavė kasininkas-->
+                                <!--<span style="text-decoration: underline;" t-field="o.cashier_id"/>-->
+                            <!--</strong>-->
+                        <!--</div>-->
+                        <table width="40%;">
+                            <tr style="border-style:none">
+                                <td rowspan="2" style="border-style:none">
+                                    <span>Išdavė kasininkas</span>
+                                    <span style="text-decoration: underline;" t-field="o.cashier_id"/>
+                                </td>
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>&amp;nbsp;</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center" width="20%">
+                                    <span>(parašas)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+
+
+                    <t t-if="o.payment_type == 'inbound'">
+                         <div class="centras">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none" width="100%">
+                                <tr style="border-style:none" class="text-left">
+                                    <td style="border-style:none">
+                                        <span t-field="o.company_id"/>
+                                        <br/>
+                                        <span t-field="o.company_id.company_registry"/>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="centras">
+                            <table class="centras" style="margin:0 auto; border-style:none" width="50%">
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <strong>
+                                            <span>KASOS PAJAMŲ ORDERIS</span>
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <strong>
+                                        <td style="border-style:none">Nr.
+                                            <span t-field="o.name"/>
+                                        </td>
+                                    </strong>
+                                </tr>
+                                <t t-if="o.state == 'canceled'">
+                                    <tr class="text-center">
+                                        <span>(ANULIUOTA)</span>
+                                    </tr>
+                                </t>
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <span t-esc="o.payment_date"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p/>
+
+                        <table class="table table-bordered mb32" style="table-layout:auto;border-color:black">
+                            <thead>
+                                <tr style="border-color:black">
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Analitinės
+                                        <br/>
+                                        apskaitos<br/>šifras
+                                    </td>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Suma
+                                        <span t-esc="o.currency_id.name"/>
+                                    </td>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Tikslinės
+                                        paskirties šifras
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td style="border-color:black"/>
+                                <td style="border-color:black">
+                                    <span t-field="o.amount"/>
+                                </td>
+                                <td style="border-color:black"/>
+                            </tbody>
+                        </table>
+                        <t t-if="o.partner_id.is_company">
+                            <table width="75%">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none" width="50%">
+                                        <span>Priimta iš</span>
+                                        <span t-field="o.partner_id"/>
+                                        <t t-if="o.partner_id.kodas">,
+                                            <span t-field="o.partner_id.kodas"/>
+                                        </t>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center" width="50%">
+                                        <span>Pinigus mokančio asmens pareigos, vardas, pavardė, parašas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <t t-if="not o.partner_id.is_company">
+                            <table style="width:35%;">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none">
+                                        <span>Priimta iš</span>
+                                        <span t-field="o.partner_id"/>
+                                        <t t-if="o.partner_id.kodas">,
+                                            <span t-field="o.partner_id.kodas"/>
+                                        </t>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center">
+                                        <span>parašas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <p/>
+                        Ūkinės operacijos ar ūkinio įvykio turinys:
+                        <br/>
+                        <span style="position: relative; top:10px;" t-field="o.communication"/>
+                        <!--<hr style="float: right; width: 75%; border-color: black"/>-->
+                        <hr style="width: 100%; border-color: black"/>
+                        <p/>
+                        <span t-esc="o._convert_sum_to_words(o.amount,'lt', o.currency_id.name)"/>
+                        <p/>
+                        Priedėlis:
+                        <hr style="float: right; width: 90%; border-color: black"/>
+                        <hr style="width: 100%; border-color: black"/>
+                        <p/>
+                        <t t-if="o.signed_employee_id">
+                            <table width="50%">
+                                <tr>
+                                    <td rowspan="2" style="border-style:none">
+                                        <strong>
+                                            <span t-field="o.signed_employee_id.job_id"/>
+                                            <span style="text-decoration: underline;" t-field="o.signed_employee_id"/>
+                                        </strong>
+                                     </td>
+                                     <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center" width="20%">
+                                        <span>parašas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <p/>
+                        <div class="text-left">
+                            <table width="50%">
+                            <tr>
+                                <td rowspan="2" style="border-style:none">
+                                    <strong>Gavo kasininkas
+                                <span style="text-decoration: underline;" t-field="o.cashier_id"/>
+                            </strong>
+                                 </td>
+                                 <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>&amp;nbsp;</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center" width="20%">
+                                    <span>parašas</span>
+                                </td>
+                            </tr>
+                        </table>
+                        </div>
+
+                        <p/>
+                        <p>
+                            <i>
+                                <sub>kirpimo linija</sub>
+                            </i>
+                        </p>
+                        <div class="col-xs-12">
+                            <div style="border-bottom: 1px dotted black;"/>
+                        </div>
+                        <p/>
+                        <div class="centras">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none" width="100%">
+                                <tr style="border-style:none" class="text-left">
+                                    <td style="border-style:none">
+                                        <span t-field="o.company_id"/>
+                                        <br/>
+                                        <span t-field="o.company_id.company_registry"/>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="centras">
+                            <table class="centras" style="margin:0 auto; border-style:none" width="50%">
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <strong>
+                                            <span>Kasos pajamų orderio</span>
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <strong>
+                                        <td style="border-style:none">KVITAS Nr.
+                                            <span t-field="o.name"/>
+                                        </td>
+                                    </strong>
+                                </tr>
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <span t-esc="o.payment_date"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!--<table class="centras" style="margin-left:auto; margin-right:auto; border-style:none" width="50%">-->
+                            <!--<tr style="border-style:none">-->
+                                <!--<td style="border-style:none">-->
+                                    <!--<span t-field="o.company_id"/>-->
+                                    <!--<br/>-->
+                                    <!--<span t-field="o.company_id.company_registry"/>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                        <!--</table>-->
+                        <!--<strong>Kasos pajamų orderio</strong>-->
+                        <!--<p/>-->
+                        <!--<strong>KVITAS Nr.-->
+                            <!--<span t-field="o.name"/>-->
+                        <!--</strong>-->
+                        <p/>
+                        <t t-if="o.partner_id.is_company">
+                            <table width="75%">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none" width="50%">
+                                        <span>Priimta iš</span>
+                                        <span t-field="o.partner_id"/>
+                                        <t t-if="o.partner_id.kodas">,
+                                            <span t-field="o.partner_id.kodas"/>
+                                        </t>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center" width="50%">
+                                        <span>Pinigus mokančio asmens pareigos, vardas, pavardė, parašas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <t t-if="not o.partner_id.is_company">
+                            <table width="40%">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none">
+                                        <span>Priimta iš</span>
+                                        <span t-field="o.partner_id"/>
+                                        <t t-if="o.partner_id.kodas">,
+                                            <span t-field="o.partner_id.kodas"/>
+                                        </t>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center" width="20%">
+                                        <span>(parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <p/>
+                        Ūkinės operacijos ar ūkinio įvykio turinys:
+                        <br/>
+                        <span style="position: relative; top:10px;" t-field="o.communication"/>
+                        <!--<hr style="float: right; width: 75%; border-color: black"/>-->
+                        <hr style="width: 100%; border-color: black"/>
+                        <p/>
+                        <span t-esc="o._convert_sum_to_words(o.amount,'lt', o.currency_id.name)"/>
+                        <!--<p/>-->
+                        <!--<span t-esc="o.payment_date"/>-->
+                        <p/>
+                        <table width="45%" class="mt16" style="float: left; border-style:none">
+                            <t t-if="o.signed_employee_id">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none">
+                                        <span t-field="o.signed_employee_id.job_id"/>
+                                        <span t-field="o.signed_employee_id"/>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center" width="20%">
+                                        <span>(parašas)</span>
+                                    </td>
+                                </tr>
+                                <tr style="height:16px"/>
+                            </t>
+                            <tr style="border-style:none">
+                                <td rowspan="2" style="border-style:none">Kasininkas
+                                    <t t-if="o.cashier_id">
+                                        <span t-field="o.cashier_id"/>
+                                    </t>
+                                </td>
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>&amp;nbsp;</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center" width="20%">
+                                    <span>(parašas)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                </div>
+            </t>
+        </template>
+
+        <report
+                id="report_cash_register"
+                model="account.payment"
+                string="Kasos aparato pinigų įnešimo/išėmimo kvitas"
+                report_type="qweb-html"
+                name="l10n_lt.report_cash_register_template"
+                file="l10n_lt.report_cash_register_template"
+                paperformat="robo_paperformat_a4"
+        />
+
+        <template id="report_cash_register_template">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-lang="doc.company_id.partner_id.lang"
+                       t-call="l10n_lt.report_cash_register_template_document"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="report_cash_register_template_document">
+            <style type="text/css">
+                body.container {
+                margin-left: 7px !important;
+                }
+                .centras{
+                text-align: center;
+                margin-left:auto;
+                margin-right:auto;
+                }
+                .tr, th, td{
+                padding-left: 5px;
+                border: 1px solid black;
+                }
+            </style>
+            <t t-call="report.html_container">
+                <div class="page">
+                    <t t-set="o" t-value="doc"/>
+                    <t t-if="o.payment_type == 'outbound'">
+                        <div class="centras">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none" width="100%">
+                                <tr style="border-style:none">
+                                    <td align="left" style="border-style:none">
+                                        <span t-field="o.company_id"/>
+                                        <br/>
+                                        <span t-field="o.company_id.company_registry"/>
+                                    </td>
+                                </tr>
+
+                            </table>
+                            <div class="text-center">
+                                <span style="border-style:none" align="center">
+                                    <strong>
+                                        <span>KASOS APARATO PINIGŲ IŠĖMIMO KVITAS</span>
+                                    </strong>
+                                </span>
+                                <t t-if="o.state == 'canceled'">
+                                    <br/>
+                                    <span>(ANULIUOTA)</span>
+                                </t>
+                                <br/>
+                                <span>
+                                    Nr.
+                                    <span t-field="o.name"/>
+                                </span>
+                                <br/>
+                                <span style="border-style:none">
+                                    <span t-esc="o.payment_date"/>
+                                </span>
+                            </div>
+                        </div>
+                        <p/>
+
+                        <table class="table table-bordered mb32" style="table-layout:auto; border-color:black">
+                            <thead>
+                                <tr>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Analitinės
+                                        <br/>
+                                        apskaitos<br/>šifras
+                                    </td>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Suma
+                                        <span t-esc="o.currency_id.name"/>
+                                    </td>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Tikslinės
+                                        paskirties šifras
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td style="border-color:black"/>
+                                <td style="border-color:black; border-top:0">
+                                    <span t-field="o.amount"/>
+                                </td>
+                                <td style="border-color:black; border-top:0"/>
+                            </tbody>
+                        </table>
+                        Išduoti
+                        <span t-field="o.partner_id"/>
+                        <p/>
+                        Pagrindas:
+                        <br/>
+                        <span style="position: relative; top:10px;" t-field="o.communication"/>
+                        <hr style="width: 100%; border-color: black"/>
+                        <p/>
+                        <span t-esc="o._convert_sum_to_words(o.amount,'lt', 'EUR')"/>
+                        <p/>
+                        Gavau:
+                        <span t-esc="o._convert_sum_to_words(o.amount,'lt', o.currency_id.name)"/>
+                        <p/>
+                        <span t-esc="o.payment_date"/> &amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;
+                        <strong style="float: right">Gavėjo parašas
+                            <u>
+                                <span>&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;</span>
+                            </u>
+                        </strong>
+                        <p/>
+                        Pagal
+                        <p/>
+                        <table width="40%;">
+                            <tr style="border-style:none">
+                                <td rowspan="2" style="border-style:none">
+                                    <span>Išdavė kasininkas</span>
+                                    <span style="text-decoration: underline;" t-field="o.cashier_id"/>
+                                </td>
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>&amp;nbsp;</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center" width="20%">
+                                    <span>(parašas)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+
+
+                    <t t-if="o.payment_type == 'inbound'">
+                         <div class="centras">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none" width="100%">
+                                <tr style="border-style:none" class="text-left">
+                                    <td style="border-style:none">
+                                        <span t-field="o.company_id"/>
+                                        <br/>
+                                        <span t-field="o.company_id.company_registry"/>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="centras">
+                            <table class="centras" style="margin:0 auto; border-style:none" width="50%">
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <strong>
+                                            <span>KASOS APARATO PINIGŲ ĮNEŠIMO KVITAS</span>
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <strong>
+                                        <td style="border-style:none">Nr.
+                                            <span t-field="o.name"/>
+                                        </td>
+                                    </strong>
+                                </tr>
+                                <t t-if="o.state == 'canceled'">
+                                    <tr class="text-center">
+                                        <span>(ANULIUOTA)</span>
+                                    </tr>
+                                </t>
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <span t-esc="o.payment_date"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p/>
+
+                        <table class="table table-bordered mb32" style="table-layout:auto;border-color:black">
+                            <thead>
+                                <tr style="border-color:black">
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Analitinės
+                                        <br/>
+                                        apskaitos<br/>šifras
+                                    </td>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Suma
+                                        <span t-esc="o.currency_id.name"/>
+                                    </td>
+                                    <td rowspan="3" style="border-color:black; border-bottom-width:1px">Tikslinės
+                                        paskirties šifras
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td style="border-color:black"/>
+                                <td style="border-color:black">
+                                    <span t-field="o.amount"/>
+                                </td>
+                                <td style="border-color:black"/>
+                            </tbody>
+                        </table>
+                        <t t-if="o.partner_id.is_company">
+                            <table width="75%">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none" width="50%">
+                                        <span>Priimta iš</span>
+                                        <span t-field="o.partner_id"/>
+                                        <t t-if="o.partner_id.kodas">,
+                                            <span t-field="o.partner_id.kodas"/>
+                                        </t>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center" width="50%">
+                                        <span>Pinigus mokančio asmens pareigos, vardas, pavardė, parašas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <t t-if="not o.partner_id.is_company">
+                            <table style="width:35%;">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none">
+                                        <span>Priimta iš</span>
+                                        <span t-field="o.partner_id"/>
+                                        <t t-if="o.partner_id.kodas">,
+                                            <span t-field="o.partner_id.kodas"/>
+                                        </t>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center">
+                                        <span>parašas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <p/>
+                        Ūkinės operacijos ar ūkinio įvykio turinys:
+                        <br/>
+                        <span style="position: relative; top:10px;" t-field="o.communication"/>
+                        <hr style="width: 100%; border-color: black"/>
+                        <p/>
+                        <span t-esc="o._convert_sum_to_words(o.amount,'lt', o.currency_id.name)"/>
+                        <p/>
+                        <div class="text-left">
+                            <table width="50%">
+                            <tr>
+                                <td rowspan="2" style="border-style:none">
+                                    <strong>Gavo kasininkas
+                                <span style="text-decoration: underline;" t-field="o.cashier_id"/>
+                            </strong>
+                                 </td>
+                                 <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>&amp;nbsp;</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center" width="20%">
+                                    <span>parašas</span>
+                                </td>
+                            </tr>
+                        </table>
+                        </div>
+
+                        <p/>
+                        <p>
+                            <i>
+                                <sub>kirpimo linija</sub>
+                            </i>
+                        </p>
+                        <div class="col-xs-12">
+                            <div style="border-bottom: 1px dotted black;"/>
+                        </div>
+                        <p/>
+                        <div class="centras">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none" width="100%">
+                                <tr style="border-style:none" class="text-left">
+                                    <td style="border-style:none">
+                                        <span t-field="o.company_id"/>
+                                        <br/>
+                                        <span t-field="o.company_id.company_registry"/>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="centras">
+                            <table class="centras" style="margin:0 auto; border-style:none" width="50%">
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <strong>
+                                            <span>Kasos aparato pinigų įnešimo kvitas</span>
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <strong>
+                                        <td style="border-style:none">Nr.
+                                            <span t-field="o.name"/>
+                                        </td>
+                                    </strong>
+                                </tr>
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <span t-esc="o.payment_date"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p/>
+                        <t t-if="o.partner_id.is_company">
+                            <table width="75%">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none" width="50%">
+                                        <span>Priimta iš</span>
+                                        <span t-field="o.partner_id"/>
+                                        <t t-if="o.partner_id.kodas">,
+                                            <span t-field="o.partner_id.kodas"/>
+                                        </t>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center" width="50%">
+                                        <span>Pinigus mokančio asmens pareigos, vardas, pavardė, parašas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <t t-if="not o.partner_id.is_company">
+                            <table width="40%">
+                                <tr style="border-style:none">
+                                    <td rowspan="2" style="border-style:none">
+                                        <span>Priimta iš</span>
+                                        <span t-field="o.partner_id"/>
+                                        <t t-if="o.partner_id.kodas">,
+                                            <span t-field="o.partner_id.kodas"/>
+                                        </t>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span>&amp;nbsp;</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                    <td style="border-style:none;text-align:center" align="center" width="20%">
+                                        <span>(parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <p/>
+                        Ūkinės operacijos ar ūkinio įvykio turinys:
+                        <br/>
+                        <span style="position: relative; top:10px;" t-field="o.communication"/>
+                        <hr style="width: 100%; border-color: black"/>
+                        <p/>
+                        <span t-esc="o._convert_sum_to_words(o.amount,'lt', o.currency_id.name)"/>
+                        <p/>
+                        <table width="45%" class="mt16" style="float: left; border-style:none">
+                            <tr style="border-style:none">
+                                <td rowspan="2" style="border-style:none">Kasininkas
+                                    <t t-if="o.cashier_id">
+                                        <span t-field="o.cashier_id"/>
+                                    </t>
+                                </td>
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>&amp;nbsp;</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center" width="20%">
+                                    <span>(parašas)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

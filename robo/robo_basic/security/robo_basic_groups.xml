@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="group_robo_payment_export" model="res.groups">
+            <field name="name">Robo mokėjimų formavimas</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama apmokėti sąskaitą banke</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_payments')"/>
+        </record>
+        <record id="group_robo_manage_partners" model="res.groups">
+            <field name="name">Robo Manage Partners</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomi visi partneriai, keičiamos banko sąskaitos</field>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+        <record id="group_robo_manage_all_partners" model="res.groups">
+            <field name="name">Robo Manage All Partners</field>
+            <field name="front_help">Leidžiama valdyti darbuotojus</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="implied_ids" eval="[(4, ref('robo_basic.group_robo_manage_partners'))]"/>
+        </record>
+        <record id="group_robo_manage_2fa_credentials" model="res.groups">
+            <field name="name">Robo Manage 2FA credentials</field>
+        </record>
+        <record id="group_robo_premium_user_custom_defaults" model="res.groups">
+            <field name="name">Default groups to add to all users</field>
+        </record>
+        <record id="group_robo_see_income" model="res.groups">
+            <field name="name">See out-invoices</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomos pajamų sąskaitos</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+            <field name="implied_ids" eval="[(4, ref('robo_basic.group_robo_manage_partners'))]"/>
+        </record>
+        <record id="group_robo_cash_receipts" model="res.groups">
+            <field name="name">Robo Cash Receipts</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_help">Pilnas pinigų priėmimo kvitų valdymas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_kasa')"/>
+        </record>
+        <record id="group_robo_cash_receipts_force_account" model="res.groups">
+            <field name="name">See Force account field</field>
+        </record>
+        <record id="group_robo_debt_report" model="res.groups">
+            <field name="name">Robo Reduced Debt Report</field>
+        </record>
+        <record id="robo_statistics" model="res.groups">
+            <field name="name">Robo Statistics</field>
+        </record>
+        <record id="robo_show_full_receivables_graph" model="res.groups">
+            <field name="name">Robo show full receivables graph</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_help">Matomas pilnas pajamų grafikas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_robo_vadovas')"/>
+            <field name="implied_ids" eval="[(4, ref('robo_basic.group_robo_see_income'))]"/>
+        </record>
+        <record id="group_view_income_compare_chart" model="res.groups">
+            <field name="name">View Income Comparison PieChart</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomas pajamų palyginimo grafikas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_robo_vadovas')"/>
+        </record>
+
+        <record id="group_holiday_policy_self" model="res.groups">
+            <field name="name">Self Policy</field>
+        </record>
+
+        <record id="group_holiday_policy_department" model="res.groups">
+            <field name="name">Department Policy</field>
+            <field name="implied_ids" eval="[(4, ref('robo_basic.group_holiday_policy_self'))]"/>
+        </record>
+
+        <record id="group_holiday_policy_all" model="res.groups">
+            <field name="name">All Policy</field>
+            <field name="implied_ids" eval="[(4, ref('robo_basic.group_holiday_policy_self')),
+            (4, ref('robo_basic.group_holiday_policy_department'))]"/>
+        </record>
+        <record id="group_robo_cash_manager" model="res.groups">
+            <field name="name">Cash Manager</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Pilnas kasos išlaidų ir pajamų orderių valdymas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_kasa')"/>
+        </record>
+
+        <record id="group_robo_invoice_see_partner_tags" model="res.groups">
+            <field name="name">See partner tags on invoice</field>
+        </record>
+
+        <record id="group_robo_apr_settings" model="res.groups">
+            <field name="name">Change partner reminders settings</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama keisti partnerio mokėjimo priminimų nustatymus</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_sales')"/>
+        </record>
+
+        <record id="group_robo_select_invoice_journal" model="res.groups">
+            <field name="name">Select Journal on account_invoice</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama nustatyti sąskaitos-faktūros žurnalą</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+        </record>
+
+        <record id="group_robo_proforma_vat_visible" model="res.groups">
+            <field name="name">See Proforma VAT force field</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama rinktis ar išankstinėse sąskaitose rodyti priverstinio PVM laukelį</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+        </record>
+
+        <record id="group_robo_supplier_info" model="res.groups">
+            <field name="robo_front" eval="True"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_stock')"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_help">išplėstinio sandėlio modulis, leidžia sujungti produktus iš skirtingų tiekėjų</field>
+            <field name="name">See product supplier info</field>
+        </record>
+
+        <record id="sales_team.group_sale_salesman_all_leads" model="res.groups">
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomi visi pardavimų užsakymai</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_sales')"/>
+            <field name="implied_ids" eval="[(4, ref('robo_basic.group_robo_see_income'))]"/>
+        </record>
+
+        <record id="sales_team.group_sale_manager" model="res.groups">
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Pardavimų vadovas: pilnas pardavimų valdymas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_sales')"/>
+        </record>
+
+        <record id="sales_team.group_sale_salesman" model="res.groups">
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomi darbuotojo pardavimų užsakymai</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_sales')"/>
+        </record>
+
+        <record id="group_robo_create_on_behalf" model="res.groups">
+            <field name="name">Create Docs on behalf of others</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama kurti eDokumentus už kitus darbuotojus</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_edocs')"/>
+        </record>
+        <record id="robo_show_history_links" model="res.groups">
+            <field name="name">Robo Show History Links</field>
+        </record>
+        <record id="robo_URL_link" model="res.groups">
+            <field name="name">Robo URL</field>
+        </record>
+        <record id="group_robo_vat" model="res.groups">
+            <field name="name">Robo VAT</field>
+        </record>
+        <record id="group_robo_import_export" model="res.groups">
+            <field name="name">Robo Import/Export</field>
+        </record>
+        <record id="group_robo_simple_invoicing" model="res.groups">
+            <field name="name">Simple Invoicing</field>
+        </record>
+        <record id="group_robo_kasos_aparatas" model="res.groups">
+            <field name="name">Kasos aparatas</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Prieiga prie kasos aparatų</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_kasa')"/>
+        </record>
+        <record id="group_robo_periodic" model="res.groups">
+            <field name="name">Periodinės sąskaitos</field>
+        </record>
+        <record id="group_robo_periodic_front_statement" model="res.groups">
+            <field name="name">Periodiniai mokėjimo ruošiniai</field>
+        </record>
+        <record id="group_robo_edocument_manager" model="res.groups">
+            <field name="name">eDokumentai vadovas</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Pilnas eDokumentų valdymas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_edocs')"/>
+        </record>
+        <record id="group_robo_hr_manager" model="res.groups">
+            <field name="name">HR vadovas</field>
+            <field name="implied_ids"
+                   eval="[(6, 0, [ref('robo_basic.group_robo_edocument_manager'),ref('hr.group_hr_manager'),ref('robo_basic.group_robo_manage_all_partners'),ref('hr_payroll.group_hr_payroll_user')])]"/>
+        </record>
+        <record id="robo_security_free" model="ir.module.category">
+            <field name="name">Robo Free</field>
+        </record>
+        <record id="robo_security_premium" model="ir.module.category">
+            <field name="name">Robo Premium</field>
+        </record>
+        <record id="group_robo_free_employee" model="res.groups">
+            <field name="category_id" ref="robo_security_free"/>
+            <field name="name">Free Version User</field>
+            <field name="implied_ids"
+                   eval="[(5, 0, 0), (4, ref('robo_basic.group_robo_simple_invoicing')), (4, ref('sales_team.group_sale_salesman')), (4, ref('base.group_user')), (4, ref('base.group_multi_currency')), (4, ref('base.group_partner_manager')), (4, ref('robo_basic.robo_statistics'))]"/>
+        </record>
+        <record id="group_robo_free_manager" model="res.groups">
+            <field name="category_id" ref="robo_security_free"/>
+            <field name="name">Free Version Manager</field>
+            <field name="implied_ids"
+                   eval="[(5, 0, 0), (4, ref('robo_basic.group_robo_free_employee')), (4, ref('account.group_account_invoice')), (4, ref('sales_team.group_sale_salesman_all_leads')), (4, ref('base.group_user')), (4, ref('robo_basic.group_robo_manage_all_partners'))]"/>
+        </record>
+        <record id="group_robo_premium_user" model="res.groups">
+            <field name="category_id" ref="robo_security_premium"/>
+            <field name="name">Premium Version User</field>
+            <field name="implied_ids"
+                   eval="[(5, 0, 0), (4, ref('robo_basic.group_robo_simple_invoicing')), (4, ref('robo_basic.robo_show_history_links')), (4, ref('sales_team.group_sale_salesman')), (4, ref('base.group_user')), (4, ref('base.group_multi_currency')), (4, ref('base.group_partner_manager')), (4, ref('robo_basic.robo_statistics')), (4, ref('group_robo_premium_user_custom_defaults'))]"/>
+        </record>
+        <record id="group_robo_premium_manager" model="res.groups">
+            <field name="category_id" ref="robo_security_premium"/>
+            <field name="name">Premium Version Manager</field>
+            <field name="implied_ids"
+                   eval="[(5, 0, 0), (4, ref('robo_basic.group_robo_premium_user')), (4, ref('account.group_account_invoice')), (4, ref('sales_team.group_sale_manager')), (4, ref('base.group_user')), (4, ref('hr.group_hr_manager')), (4, ref('hr_payroll.group_hr_payroll_user')), (4, ref('robo_basic.group_robo_cash_manager')), (4, ref('robo_basic.group_holiday_policy_all')), (4, ref('robo_basic.group_robo_see_income')), (4, ref('robo_basic.group_robo_cash_receipts')), (4, ref('robo_basic.group_robo_apr_settings')), (4, ref('robo_basic.group_robo_manage_all_partners')), (4, ref('stock.group_stock_manager')), (4, ref('two_factor_otp_auth.mass_change_2fa_for_users')), (4, ref('group_robo_payment_export'))]"/>
+        </record>
+        <record id="group_robo_premium_accountant" model="res.groups">
+            <field name="category_id" ref="robo_security_premium"/>
+            <field name="name">Premium Version Accountant</field>
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_basic.robo_URL_link')), (4, ref('robo_basic.group_robo_import_export')), (4, ref('base.group_user')), (4, ref('robo_basic.group_robo_premium_manager')), (4, ref('account.group_account_manager')), (4, ref('stock.group_stock_manager')), (4, ref('mrp.group_mrp_manager')), (4, ref('hr.group_hr_manager')), (4, ref('hr_payroll.group_hr_payroll_manager')), (4, ref('hr_expense.group_hr_expense_manager')), (4, ref('hr_holidays.group_hr_holidays_manager')), (4, ref('sales_team.group_sale_salesman_all_leads')), (4, ref('product.group_pricelist_item')), (4, ref('robo_basic.group_robo_cash_receipts_force_account')), (4, ref('robo_basic.group_robo_kasos_aparatas'))]"/>
+        </record>
+        <record id="group_robo_premium_chief_accountant" model="res.groups">
+            <field name="category_id" ref="robo_security_premium"/>
+            <field name="name">Premium Version Chief Accountant</field>
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+        </record>
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_basic.group_robo_premium_accountant'), 0),(4, ref('robo_basic.group_robo_premium_chief_accountant'), 0)]"/>
+        </record>
+        <record id="account.group_account_invoice" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('account.group_proforma_invoices'), 0)]"/>
+        </record>
+    </data>
+</odoo>

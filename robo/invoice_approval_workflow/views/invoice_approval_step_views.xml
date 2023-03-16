@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_approval_step_view_form" model="ir.ui.view">
+            <field name="name">invoice.approval.step.view.form</field>
+            <field name="model">invoice.approval.step</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Invoice approval step">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_open_approval_conditions"
+                                    style="width: max-content !important"
+                                    class="oe_stat_button"
+                                    icon="fa-book"
+                                    type="object">
+                                <field name="condition_number" widget="statinfo" string="Conditions"/>
+                            </button>
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="approval_condition"/>
+                                <field name="approvals_needed"
+                                       attrs="{'invisible': [('approval_condition', '=', 'all')],
+                                               'required': [('approval_condition', '=', 'number_of_approvers')]
+                                       }"/>
+                                <field name="default_approver" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group col="4" colspan="4" string="Deadline">
+                                <field name="deadline_days"/>
+                                <field name="deadline_hours"/>
+                                <field name="deadline_reached_action"
+                                       attrs="{
+                                           'invisible': [('deadline_days', '=', 0), ('deadline_hours', '=', 0)],
+                                           'required': ['|', ('deadline_days', '!=', 0), ('deadline_hours', '!=', 0)],
+                                       }"/>
+                            </group>
+                            <group colspan="4" string="Approval conditions">
+                                <field name="condition_ids"
+                                       context="{'form_view_ref': 'invoice_approval_workflow.invoice_approval_condition_view_form'}"
+                                       nolabel="1" attrs="{'readonly': True}">
+                                    <tree create="0" edit="0" delete="0">
+                                        <field name="approver_id"/>
+                                        <field name="approver_type"/>
+                                        <field name="analytic_account_display"/>
+                                        <field name="account_display"/>
+                                        <field name="supplier_display"/>
+                                        <field name="requester_display"/>
+                                        <field name="amount_display"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="invoice_approval_step_view_tree" model="ir.ui.view">
+            <field name="name">invoice.approval.step.view.tree</field>
+            <field name="model">invoice.approval.step</field>
+            <field name="arch" type="xml">
+                <tree string="Invoice approval steps" import="0">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="approval_condition"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="invoice_approval_step_view_search" model="ir.ui.view">
+            <field name="name">invoice.approval.step.view.search</field>
+            <field name="model">invoice.approval.step</field>
+            <field name="arch" type="xml">
+                <search string="Invoice approval step search">
+                    <field name="name" string="Name"/>
+                    <field name="sequence" string="Sequence"/>
+                    <filter string="All approvers have to approve" name="approval_condition_all"
+                            domain="[('approval_condition', '=', 'all')]"/>
+                    <filter string="Some approvers have to approve" name="approval_condition_some"
+                            domain="[('approval_condition', '=', 'number_of_approvers')]"/>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="invoice_approval_step_action" model="ir.actions.act_window">
+            <field name="name">Invoice approval steps</field>
+            <field name="res_model">invoice.approval.step</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="context">{'default_order': 'sequence', 'robo_header': {}}</field>
+            <field name="view_id" ref="invoice_approval_step_view_tree"/>
+            <field name="search_view_id" ref="invoice_approval_step_view_search"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+                id="invoice_approvals_container_menu"
+                name="Approvals"
+                parent="invoice_approval_backend_menu"
+                sequence="1"
+                groups=""
+        />
+
+        <menuitem
+                id="invoice_approval_front_end_menu_container"
+                name="Invoice approval"
+                groups="invoice_approval_workflow.invoice_approval_enabled_group"
+                parent="robo.menu_start"
+                sequence="30"
+                force_web_icon="icon-file-preview,none,none"
+                robo_extended="1"
+                robo_front="True"
+        />
+
+        <menuitem
+                id="invoice_approval_step_menu_action"
+                name="Steps"
+                parent="invoice_approvals_container_menu"
+                action="invoice_approval_step_action"
+                sequence="1"
+                groups=""
+        />
+
+        <menuitem
+                id="invoice_approval_step_front_end_action"
+                name="Workflow"
+                parent="invoice_approval_front_end_menu_container"
+                action="invoice_approval_step_action"
+                sequence="3"
+                groups="invoice_approval_workflow.invoice_approval_administrator"
+                force_web_icon="icon-group-work,none,none"
+                robo_front="True"
+                searchable="True"
+                tags="invoice,approval,step"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sale_invoice_secondary_uom" model="ir.ui.view">
+            <field name="name">account.invoice.sale.secondary.uom</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='quantity']" position="after">
+                    <field name="secondary_uom_qty"/>
+                    <field name="secondary_uom_id" options="{'no_open': True, 'no_create': True}" domain="[('id', 'in', secondary_uom_domain and secondary_uom_domain[0][2])]"/>
+                    <field name="secondary_uom_domain" invisible="1"/>
+                </xpath>
+                <!--<xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='quantity']" position="attributes">-->
+                    <!--<attribute name="readonly">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='uom_id']" position="attributes">-->
+                    <!--<attribute name="readonly">1</attribute>-->
+                <!--</xpath>-->
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='price_unit']" position="after">
+                    <field name="secondary_uom_price_unit"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='price_unit']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="purchase_invoice_secondary_uom" model="ir.ui.view">
+            <field name="name">account.invoice.purchase.secondary.uom</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='quantity']" position="after">
+                    <field name="secondary_uom_qty"/>
+                    <field name="secondary_uom_id" options="{'no_open': True, 'no_create': True}" domain="[('id', 'in', secondary_uom_domain and secondary_uom_domain[0][2])]"/>
+                    <field name="secondary_uom_domain" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='quantity']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <!--<xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='uom_id']" position="attributes">-->
+                    <!--<attribute name="readonly">1</attribute>-->
+                <!--</xpath>-->
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='price_unit']" position="after">
+                    <field name="secondary_uom_price_unit"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='price_unit']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="robo_sale_invoice_secondary_uom" model="ir.ui.view">
+            <field name="name">robo.account.invoice.sale.secondary.uom</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='quantity']" position="after">
+                    <field name="secondary_uom_qty"/>
+                    <field name="secondary_uom_id" options="{'no_open': True, 'no_create': True}" domain="[('id', 'in', secondary_uom_domain and secondary_uom_domain[0][2])]"/>
+                    <field name="secondary_uom_domain" invisible="1"/>
+                </xpath>
+                <!--<xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='quantity']" position="attributes">-->
+                    <!--<attribute name="readonly">1</attribute>-->
+                <!--</xpath>-->
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='uom_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='price_unit']" position="after">
+                    <field name="secondary_uom_price_unit"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='price_unit']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="robo_purchase_invoice_secondary_uom" model="ir.ui.view">
+            <field name="name">robo.account.invoice.purchase.secondary.uom</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='quantity']" position="after">
+                    <field name="secondary_uom_qty"/>
+                    <field name="secondary_uom_id" options="{'no_open': True, 'no_create': True}" domain="[('id', 'in', secondary_uom_domain and secondary_uom_domain[0][2])]"/>
+                    <field name="secondary_uom_domain" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='quantity']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='uom_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='price_unit']" position="after">
+                    <field name="secondary_uom_price_unit"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//tree[1]//field[@name='price_unit']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

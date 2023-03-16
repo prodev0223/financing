@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="braintree_transaction_view_form" model="ir.ui.view">
+            <field name="name">braintree.transaction.view.form</field>
+            <field name="model">braintree.transaction</field>
+            <field name="arch" type="xml">
+                <form string="Braintree transaction" create="0" delete="1" update="1">
+                    <header>
+                        <button name="create_bank_statement" string="Create bank statement" type="object"
+                                attrs="{'invisible': [('bank_statement_line_id', '!=', False)]}"
+                                class="oe_highlight"/>
+                        <button name="create_bank_statement" string="Create disbursement bank statement" type="object"
+                                attrs="{'invisible': ['|', ('is_disbursed', '=', False),
+                                        ('disbursement_bank_statement_line_id', '!=', False)]}"
+                                class="oe_highlight"/>
+                        <button name="button_update_from_braintree" string="Update (Braintree)" type="object"
+                                attrs="{'invisible': [('status', '=', 'settled')]}"
+                                class="oe_highlight"/>
+                        <button name="button_update_from_braintree_disbursement"
+                                string="Update disbursement (Braintree)" type="object"
+                                attrs="{'invisible': [('is_disbursed', '=', True)]}"
+                                class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box">
+                            <button name="action_open_bank_statement" class="oe_stat_button" icon="fa-bars"
+                                    type="object" string="View bank statement"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    attrs="{'invisible': [('bank_statement_line_id', '=', False)]}"/>
+                            <button name="action_open_disbursement_bank_statement" class="oe_stat_button" icon="fa-bars"
+                                    type="object" string="View dis. statement"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    attrs="{'invisible': [('disbursement_bank_statement_line_id', '=', False)]}"/>
+                        </div>
+                        <label for="transaction_id" class="oe_edit_only"/>
+                        <h1>
+                            <field name="transaction_id"/>
+                        </h1>
+                        <group>
+                            <field name="merchant_account_id" readonly="1"/>
+                            <field name="date"/>
+                            <field name="amount"/>
+                            <field name="currency_id"/>
+                            <field name="partner_id"/>
+                            <field name="status" readonly="1"/>
+                            <field name="gateway_id" invisible="1"/>
+                            <field name="global_id" invisible="1"/>
+                            <field name="is_disbursed" invisible="1"/>
+                            <field name="bank_statement_line_id" invisible="1"/>
+                            <field name="disbursement_bank_statement_line_id" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="braintree_transaction_view_tree" model="ir.ui.view">
+            <field name="name">braintree.transaction.view.tree</field>
+            <field name="model">braintree.transaction</field>
+            <field name="arch" type="xml">
+                <tree string="Braintree transactions"
+                      decoration-muted="status != 'settled'"
+                      decoration-danger="status == 'settled' and not bank_statement_line_id"
+                      create="0" delete="0" import="0">
+                    <field name="merchant_account_id"/>
+                    <field name="date"/>
+                    <field name="gateway_id" invisible="1"/>
+                    <field name="amount"/>
+                    <field name="currency_id"/>
+                    <field name="partner_id"/>
+                    <field name="order_id"/>
+                    <field name="bank_statement_line_id" invisible="1"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+        <record id="braintree_transaction_view_search" model="ir.ui.view">
+            <field name="name">braintree.transaction.view.search</field>
+            <field name="model">braintree.transaction</field>
+            <field name="arch" type="xml">
+                <search string="Search Braintree transactions">
+                    <field name="merchant_account_id"/>
+                    <field name="date"/>
+                    <field name="currency_id"/>
+                    <field name="partner_id"/>
+                    <field name="status"/>
+                    <filter name="today" string="Today" domain="[('date','=',time.strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="['&amp;',('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['&amp;',('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="braintree_transaction_action" model="ir.actions.act_window">
+            <field name="name">Braintree transactions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">braintree.transaction</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+        </record>
+    </data>
+</odoo>

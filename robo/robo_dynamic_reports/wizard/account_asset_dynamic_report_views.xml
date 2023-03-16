@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_asset_dynamic_report_form_view" model="ir.ui.view">
+            <field name="name">account.asset.dynamic.report.form</field>
+            <field name="model">account.asset.dynamic.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div align="right">
+                            <button name="%(account_dynamic_reports.dynamic_report_change_report_settings_action)d"
+                                    type="action"
+                                    class="fa fa-cog"
+                                    context="{'report_model':'account.asset.dynamic.report'}"/>
+                        </div>
+                        <group>
+                            <group string="Date Range" colspan="4" col="6">
+                                <group colspan="2" col="1">
+                                    <field name="date_range" nolabel="1"/>
+                                </group>
+                                <group colspan="4" col="4">
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                </group>
+                            </group>
+                            <group string="Options" colspan="4" col="4">
+                                <group colspan="4" col="4">
+                                    <field name="target_assets" widget="radio"/>
+                                    <field name="report_language"/>
+                                </group>
+                                <group colspan="4" col="4">
+                                    <field name="asset_department_ids" widget="many2many_tags"
+                                           options="{'no_open': True, 'no_create': True}" colspan="4"/>
+                                    <field name="asset_category_ids" widget="many2many_tags"
+                                           options="{'no_open': True, 'no_create': True}" colspan="4" />
+                                </group>
+                            </group>
+                            <group string="Group by" colspan="4" col="4"
+                                   attrs="{'invisible': [('show_group_by_selection', '=', False)]}">
+                                <field name="group_by_field_ids" widget="many2many_tags" colspan="4"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                <field name="show_group_by_selection" attrs="{'invisible': True}" colspan="4"/>
+                            </group>
+                        </group>
+
+                        <footer>
+                            <button string="View" name="action_view" type="object"
+                                    class="btn-primary" context="{'force_refresh_data': True}"/>
+                            <button string="PDF" name="action_pdf" type="object"
+                                    class="btn-primary" context="{'force_refresh_data': True}"/>
+                            <button string="XLSX" name="action_xlsx" type="object"
+                                    class="btn-primary" context="{'force_refresh_data': True}"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_asset_dynamic_report_front_end_form_view" model="ir.ui.view">
+            <field name="name">account.asset.dynamic.report.front.end.form</field>
+            <field name="model">account.asset.dynamic.report</field>
+            <field name="inherit_id" ref="account_asset_dynamic_report_form_view"/>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@special='cancel']" position="replace">
+                    <button string="Cancel" type="action" name="%(robo.open_reports_action)d"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_asset_dynamic_report_wizard_action" model="ir.actions.act_window">
+            <field name="name">Account Asset</field>
+            <field name="res_model">account.asset.dynamic.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_asset_dynamic_report_form_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="account_asset_dynamic_report_front_end_wizard_action" model="ir.actions.act_window">
+            <field name="name">Account Asset</field>
+            <field name="res_model">account.asset.dynamic.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_asset_dynamic_report_front_end_form_view"/>
+            <field name="target">inline</field>
+        </record>
+
+        <record id="action_dynamic_account_asset_report" model="ir.actions.client">
+            <field name="name">Account Asset Report</field>
+            <field name="tag">dynamic.aa</field>
+        </record>
+
+        <menuitem id="account_report_account_asset" sequence="50" action="account_asset_dynamic_report_wizard_action"
+                  name="Account Asset" parent="account_dynamic_reports.account_reports_ins"
+                  groups="account.group_account_user"/>
+
+    </data>
+</odoo>

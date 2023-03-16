@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_client_ticket_wizard_form" model="ir.ui.view">
+            <field name="name">robo.client.ticket.wizard.form</field>
+            <field name="model">client.support.ticket.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form class="ticket-creation-form">
+                    <sheet>
+                        <group>
+                            <field name="reason" string="Pasirinkite temą"/>
+                        </group>
+                        <div class="oe_title">
+                            <h1 class="o_row">
+                                <field name="subject" placeholder="Tema..."
+                                       attrs="{'required': [('reason', '=', 'other')]}"/>
+                            </h1>
+                        </div>
+                        <field name="nbr_of_attachments" invisible="1"/>
+                        <field name="user_attachment_ids" invisible="1"/>
+                        <field name="attachment_drop_lock" invisible="1"/>
+                        <field name="unique_wizard_id" invisible="1"/>
+                        <group colspan="4">
+                            <field name="message" nolabel="1" widget="html"/>
+                        </group>
+                        <widget type="robo_attach_files"/>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="create_ticket" string="Sukurti naują užklausą"
+                                    type="object" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="oe_link" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="robo_client_ticket_wizard_action">
+            <field name="name">Nauja užklausa</field>
+            <field name="res_model">client.support.ticket.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_client_ticket_wizard_form')})]"/>
+        </record>
+
+        <record id="robo_button_new_client_support_ticket" model="robo.header.items">
+            <field name="header" ref="robo_header_help_ticket"/>
+            <field name="name">Užklausą</field>
+            <field name="icon">icon-document</field>
+            <field name="action" ref="robo.robo_client_ticket_wizard_action"/>
+            <field name="item_class">new_client_ticket</field>
+            <field name="help"></field>
+        </record>
+    </data>
+</odoo>

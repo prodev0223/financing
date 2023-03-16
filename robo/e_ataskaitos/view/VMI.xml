@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="sequence_vmi_pem_names" model="ir.sequence">
+            <field name="name">VMI Sertifikatų numeracija</field>
+            <field name="code">vmi_cert</field>
+            <field name="prefix">robolabs.lt.</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">2</field>
+        </record>
+        <record id="cron_update_vmi_docs" model="ir.cron">
+            <field name="name">Update VMI Doc state</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">vmi.document.export</field>
+            <field name="function">cron_data_update</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+    <data>
+        <record model="ir.ui.view" id="imones_forma_evrk">
+            <field name="name">imones.evrk.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='vat']" position="before">
+                    <field name="evrk"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="vmi_fr0600">
+            <field name="name">vmi.fr0600.form</field>
+            <field name="model">e.vmi.fr0600</field>
+            <field name="arch" type="xml">
+                <form string="FR0600">
+                    <group>
+                        <field name="data_nuo"/>
+                        <field name="data_iki"/>
+                        <field name="company_id"/>
+                        <field name="patikslinta"/>
+                    </group>
+                    <footer>
+                        <button name="fr0600" string="Generuoti" type="object"/>
+                        <button name="fr0600" string="Siųsti į VMI" type="object" context="{'eds': True}"/>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="vmi_fr0600_download">
+            <field name="name">vmi.fr0600.download.form</field>
+            <field name="model">e.vmi.fr0600</field>
+            <field name="arch" type="xml">
+                <form string="FR0600">
+                    <group>
+                        <field name="failas" nolabel="1" filename="failo_pavadinimas"/>
+                        <field name="failo_pavadinimas" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_vmi_fr0600_wizard">
+            <field name="name">VMI FR0600</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.vmi.fr0600</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vmi_fr0600"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem
+                name="e. Ataskaitos"
+                id="meniu_e_ataskaitos_root"
+                parent="account.menu_finance_reports"
+                sequence="12"
+        />
+
+        <record model="ir.ui.view" id="vmi_fr0564">
+            <field name="name">vmi.fr0564.form</field>
+            <field name="model">e.vmi.fr0564</field>
+            <field name="arch" type="xml">
+                <form string="FR0564">
+                    <group>
+                        <field name="fill_date"/>
+                        <field name="company_id"/>
+                        <field name="year"/>
+                        <field name="month"/>
+                        <field name="ignore_missing_vat"/>
+                    </group>
+                    <footer>
+                        <button name="FR0564" string="Generuoti" type="object"/>
+                        <button name="FR0564" string="Siųsti į VMI" type="object" context="{'eds': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr0564_download">
+            <field name="name">vmi.fr0564.download.form</field>
+            <field name="model">e.vmi.fr0564</field>
+            <field name="arch" type="xml">
+                <form string="FR0564">
+                    <group>
+                        <field name="file" nolabel="1" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Close" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vmi_fr0564_wizard">
+            <field name="name">VMI FR0564</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.vmi.fr0564</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vmi_fr0564"/>
+            <field name="target">new</field>
+        </record>
+        <record model="ir.ui.view" id="vmi_isaf">
+            <field name="name">vmi.isaf.form</field>
+            <field name="model">e.vmi.isaf</field>
+            <field name="arch" type="xml">
+                <form string="i.SAF">
+                    <field name="show_early_isaf_banner" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:6px;" colspan="4"
+                         attrs="{'invisible': [('show_early_isaf_banner', '=', False)]}">
+                        It is too early to submit an iSAF report, You will have to do it again later this month
+                        if more invoices come in until iSAF submission day.
+                    </div>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="year"/>
+                        <field name="month"/>
+                        <field name="date_from" string="Nuo"/>
+                        <field name="date_to" string="Iki"/>
+                        <field name="filter"/>
+                    </group>
+                    <footer>
+                        <button name="generate_isaf" string="Generuoti" type="object" class="oe_highlight"/>
+                        <button name="generate_isaf" string="Siųsti į VMI" type="object" class="oe_highlight" context="{'isaf': True}"/>
+                        <button name="open_isaf" string="Atidaryti lentelę" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_isaf_download">
+            <field name="name">vmi.isaf.download.form</field>
+            <field name="model">e.vmi.isaf</field>
+            <field name="arch" type="xml">
+                <form string="i.SAF">
+                    <group>
+                        <field name="file" nolabel="1" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Close" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vmi_isaf_wizard">
+            <field name="name">VMI i.SAF</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.vmi.isaf</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vmi_isaf"/>
+            <field name="target">new</field>
+        </record>
+        <record model="ir.ui.view" id="vmi_isaf_tree">
+            <field name="name">isaf.tree</field>
+            <field name="model">i.saf</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="inv_type"/>
+                    <field name="date_invoice"/>
+                    <field name="operacijos_data"/>
+                    <field name="registration_date"/>
+                    <field name="inv_number"/>
+                    <field name="name"/>
+                    <field name="vat"/>
+                    <field name="kodas"/>
+                    <field name="country_code"/>
+                    <field name="taxable_value"/>
+                    <field name="amount"/>
+                    <field name="total"/>
+                    <field name="tax_percentage"/>
+                    <field name="tax_code"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vmi_isaf_table_tree">
+            <field name="name">VMI i.SAF</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">i.saf</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,pivot</field>
+            <field name="view_id" ref="vmi_isaf_tree"/>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr0572">
+            <field name="name">vmi.fr0572.form</field>
+            <field name="model">e.vmi.fr0572</field>
+            <field name="arch" type="xml">
+                <form string="FR0572" version="7.0">
+                    <group>
+                        <field name="data_nuo"/>
+                        <field name="data_iki"/>
+                        <field name="kompanija"/>
+                        <!--<field name="skyrius"/>-->
+                        <!--<field name="gpm_saskaita"/>-->
+                    </group>
+                    <footer>
+                        <button name="fr0572" string="Generuoti" type="object"/>
+                        <button name="fr0572" string="Siųsti į VMI" type="object" context="{'eds': True}"/>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr0572_download">
+            <field name="name">vmi.fr0572.download.form</field>
+            <field name="model">e.vmi.fr0572</field>
+            <field name="arch" type="xml">
+                <form string="FR0572" version="7.0">
+                    <group>
+                        <field name="failas" nolabel="1" filename="failo_pavadinimas"/>
+                        <field name="failo_pavadinimas" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vmi_fr0572_wizard">
+            <field name="name">VMI FR0572</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.vmi.fr0572</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vmi_fr0572"/>
+            <field name="target">new</field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr0471">
+            <field name="name">vmi.fr0471.form</field>
+            <field name="model">e.vmi.fr0471</field>
+            <field name="arch" type="xml">
+                <form string="FR0573" version="7.0">
+                    <group>
+                        <field name="data_nuo"/>
+                        <field name="data_iki"/>
+                        <field name="kompanija"/>
+                    </group>
+                    <footer>
+                        <button name="fr0471" string="Generuoti" type="object"/>
+                        <button name="fr0471" string="Siųsti į VMI" type="object" context="{'eds': True}"/>
+                        <button name="open_report" string="Atidaryti reportą" type="object"/>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr0471_download">
+            <field name="name">vmi.fr0471.download.form</field>
+            <field name="model">e.vmi.fr0471</field>
+            <field name="arch" type="xml">
+                <form string="FR0471" version="7.0">
+                    <group>
+                        <field name="failas" nolabel="1" filename="failo_pavadinimas"/>
+                        <field name="failo_pavadinimas" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vmi_fr0471_wizard">
+            <field name="name">VMI FR0471</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.vmi.fr0471</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vmi_fr0471"/>
+            <field name="target">new</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vmi_fr_0471_report">
+            <field name="name">VMI FR0471 Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fr.0471.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="target">current</field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr_0471_report_pivot">
+            <field name="name">fr.0471.report.pivot</field>
+            <field name="model">fr.0471.report</field>
+            <field name="arch" type="xml">
+                <pivot string="FR0471" disable_linking="True">
+                    <field name="date" type="col"/>
+                    <field name="partner_id" type="row"/>
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr_0471_report_search">
+            <field name="name">fr.0471.report.search</field>
+            <field name="model">fr.0471.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id"/>
+                    <field name="b_klase_kodas_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="res_partner_code_type_extend" model="ir.ui.view">
+            <field name="name">res.partner.code.type.extend</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="imones_kodas.partneris_kodas_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='vat']" position="before">
+                    <field name="partner_code_type"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_gpm313form">
+            <field name="name">e.vmi.gpm313.form</field>
+            <field name="model">e.vmi.gpm313</field>
+            <field name="arch" type="xml">
+                <form string="GPM313">
+                    <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;"
+                     attrs="{'invisible': ['|',('corrections_exist', '=', False),('force', '=', True)]}">
+                    Nurodytu laikotarpiu yra GPM korekcijų, todėl deklaracija nebus pergeneruota iš naujo.
+                    Bus pateiktos anksčiau sugeneruotos vertės ir koreguotos vertės. Norėdami pergeneruoti GPM
+                    deklaraciją iš naujo, pažymėkite "Priverstinai atnaujinti".
+                    </div>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;"
+                     attrs="{'invisible': ['|',('corrections_exist', '=', False),('force', '=', False)]}">
+                    Nurodytu laikotarpiu yra GPM korekcijų, ar tikrai norite pergeneruoti deklaraciją iš naujo?
+                    </div>
+                    <group>
+                        <field name="data_nuo"/>
+                        <field name="data_iki"/>
+                        <field name="kompanija"/>
+                        <field name="force"/>
+                        <field name="partner_ids" widget="many2many_tags" domain="[('is_employee', '=', True)]"/>
+                        <field name="corrections_exist" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button name="form_gpm313" string="Generuoti" type="object"/>
+                        <button name="form_gpm313" string="Siųsti į VMI" context="{'eds': True}" type="object"/>
+                        <button name="open_report" string="Atidaryti ataskaitą" type="object"/>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_gpm313_download">
+            <field name="name">vmi.gpm313.download.form</field>
+            <field name="model">e.vmi.gpm313</field>
+            <field name="arch" type="xml">
+                <form string="GPM313">
+                    <group>
+                        <field name="failas" nolabel="1" filename="failo_pavadinimas"/>
+                        <field name="failo_pavadinimas" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vmi_gpm313_wizard">
+            <field name="name">VMI GPM313</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.vmi.gpm313</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vmi_gpm313form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.ui.view" id="tree_vmi_document_export">
+            <field name="name">vmi.document.export.tree</field>
+            <field name="model">vmi.document.export</field>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0" decoration-info="state == 'sent'"
+                      decoration-success="state == 'confirmed'"
+                      decoration-danger="state == 'rejected'">
+                    <field name="doc_name"/>
+                    <field name="ext_id"/>
+                    <field name="upload_date"/>
+                    <field name="last_update_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+       <record model="ir.actions.act_window" id="action_vmi_document_export">
+           <field name="name">Įkelti dokumentai</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">vmi.document.export</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="tree_vmi_document_export"/>
+           <field name="target">current</field>
+       </record>
+
+    </data>
+</odoo>
+

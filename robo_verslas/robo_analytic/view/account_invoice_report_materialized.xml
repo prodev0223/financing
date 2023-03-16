@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="account_invoice_report_materialized_view_search" model="ir.ui.view">
+            <field name="name">account.invoice.report.materialized.filter</field>
+            <field name="model">account.invoice.report.materialized</field>
+            <field name="inherit_id" ref="robo.account_invoice_report_materialized_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='categ_id']" position="after">
+                    <field name="invoice_line_id" string="Analytic tags" groups="robo_analytic.group_analytic_tags"
+                           filter_domain="[('invoice_line_id.analytic_tag_ids.name', 'ilike', self)]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

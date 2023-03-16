@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="battery_line_remove_wizard_view_form" model="ir.ui.view">
+            <field name="name">battery.line.remove.wizard.view.form</field>
+            <field name="model">battery.line.remove.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom:0px;" colspan="4">
+                        Būkite atsargūs pašalindami eilutes: Modifikacijos pakeis GPAIS ataskaitas.
+                        Eilutės turėtų būti šalinamos tik tada, kai jos yra sukurtos per klaidą.
+                        Jeigu įrašas nebenaudojamas, nustatykite 'Naudojamas iki' laukelį.
+                    </div>
+                    <group>
+                        <field name="product_id"/>
+                    </group>
+                    <field name="product_battery_line_ids" nolabel="1" widget="one2many_list">
+                        <tree create="0" open="0" edit="0" editable="bottom">
+                            <field name="battery_id"/>
+                            <field name="battery_qty"/>
+                            <field name="total_weight"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </tree>
+                    </field>
+                    <field name="num_lines" invisible="1"/>
+                    <footer style="text-align: center; margin-top:5%;">
+                        <button name="action_delete_lines" string="Ištrinti"
+                                attrs="{'invisible': ['|', ('num_lines', '&gt;', 1), ('num_lines', '&lt;', 1)] }"
+                                confirm="Ar tikrai norite ištrinti ši įrašą?"
+                                type="object" class="oe_highlight" style="margin-right: 10px;"/>
+                        <button name="action_delete_lines" string="Ištrinti"
+                                attrs="{'invisible': [('num_lines', '&lt;=', 1)] }"
+                                confirm="Ar tikrai norite ištrinti šiuos įrašus?"
+                                type="object" class="oe_highlight" style="margin-right: 10px;"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

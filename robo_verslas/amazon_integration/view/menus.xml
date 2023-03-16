@@ -1,0 +1,65 @@
+<odoo>
+    <data>
+        <menuitem
+                id="menu_amazon_root"
+                name="Amazon"
+                sequence="49"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                id="menu_amazon_orders"
+                name="Užsakymai"
+                action="action_open_amazon_order"
+                sequence="1"
+                parent="menu_amazon_root"
+        />
+        <menuitem
+                id="menu_amazon_marketplace"
+                name="Prekiavietės"
+                action="action_open_amazon_marketplace"
+                sequence="2"
+                parent="menu_amazon_root"
+        />
+        <menuitem
+                id="menu_amazon_product"
+                name="Produktai"
+                action="action_open_amazon_product"
+                sequence="3"
+                parent="menu_amazon_root"
+        />
+        <menuitem
+                id="menu_amazon_product_category"
+                name="Produktų kategorijos"
+                action="action_open_amazon_product_category"
+                sequence="4"
+                parent="menu_amazon_root"
+        />
+        <menuitem
+                id="menu_amazon_import_wizard"
+                name="XML Importas"
+                action="action_open_amazon_import_wizard"
+                sequence="5"
+                parent="menu_amazon_root"
+        />
+        <menuitem
+                id="menu_amazon_import_wizard_job"
+                name="Amazon importo darbai"
+                action="action_open_amazon_import_wizard_job"
+                sequence="6"
+                parent="menu_amazon_root"
+        />
+        <menuitem id="menu_amazon_order_report_front" parent="robo.menu_kita"
+                  name="Amazon užsakymų ataskaita"
+                  sequence="70" action="action_open_amazon_order_report"
+                  robo_front="True"
+                  groups="robo_basic.group_robo_premium_manager"
+                  searchable="True"
+                  tags="amazon,užsakymų,ataskaita"
+        />
+        <!--Need to do it like this otherwise it does not work-->
+        <record id="menu_amazon_order_report_front" model="ir.ui.menu">
+            <field name="web_icon">icon-pencil5,none,none</field>
+        </record>
+    </data>
+</odoo>

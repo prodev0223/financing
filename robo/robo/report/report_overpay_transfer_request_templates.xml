@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <report
+            id="action_report_overpay_transfer_request"
+            model="res.partner"
+            string="Overpay transfer request"
+            report_type="qweb-pdf"
+            name="robo.report_overpay_transfer_request"
+            file="robo.report_overpay_transfer_request"
+            menu="False"
+        />
+        <template id="report_overpay_transfer_request">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="partner">
+                    <t t-call="robo.report_overpay_transfer_request_document" t-lang="force_lang"/>
+                </t>
+            </t>
+        </template>
+        <template id="report_overpay_transfer_request_document">
+            <t t-name="robo.report_overpay_transfer_request_document">
+                <style type="text/css">
+                    h3 {
+                    text-align: center;
+                    }
+                    .centras{
+                    text-align: center;
+                    font-weight: bold;
+                    }
+                    .virsus{
+                    border-top: 1px solid black;
+                    }
+                </style>
+                <t t-call="report.external_layout">
+                    <t t-set="partner" t-value="partner.with_context({'lang':force_lang})"/>
+                    <div class="page">
+                        <p>
+                            <h3>
+                                <strong>Prašymas pervesti permoką</strong>
+                            </h3>
+                            <h4>
+                            <t>
+                                <span t-if="force_lang and str(force_lang) == 'en_US'" t-esc="date.strftime('%m/%d/%Y')"/>
+                                <span t-elif="not force_lang or str(force_lang) == 'lt_LT'" t-esc="date.strftime('%Y-%m-%d')"/>
+                            </t>
+                            </h4>
+                        </p>
+                        <p class="mt48">
+                            <strong>Gavėjas:</strong>
+                            <p>
+                                <strong>
+                                    <span t-field="partner.display_name"/>
+                                </strong>
+                            </p>
+                            <p>
+                                <span t-esc="partner"
+                                      t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                            </p>
+                            <t t-if="partner.phone">Tel:
+                                <span t-field="partner.phone"/>
+                                <t t-if="partner.fax">; fax:
+                                    <span t-field="partner.fax"/>
+                                </t>
+                                <br/>
+                            </t>
+                            <t t-if="partner.email">
+                                <span t-field="partner.email"/>
+                                <br/>
+                            </t>
+                        </p>
+                        <p class="mt16">
+                            Prašome grąžinti susidariusią permoką pagal žemiau esančius mokėjimus ir dokumentus
+                            į įmonės atsiskaitomąją sąskaitą <b><span t-esc="bank_account_number"/></b>
+                        </p>
+                        <table class="table table-condensed">
+                            <col width="20%"/>
+                            <col width="70%"/>
+                            <col width="10%"/>
+                            <thead>
+                                <tr>
+                                    <th t-att-colspan="3">
+                                        <strong>
+                                            <h4 class="centras" t-esc="company"/>
+                                        </strong>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="centras">Data</th>
+                                    <th class="centras">Pavedimo paskirtis</th>
+                                    <th class="centras">Suma (<t t-esc="currency"/>)</th>
+                                </tr>
+                            </thead>
+                                <t t-set="document_lines" t-value="lines.with_context({'lang':force_lang})"/>
+                                <tr t-foreach="document_lines" t-as="line">
+                                    <td style="white-space: nowrap;">
+                                        <div style="text-align:left" align="center"
+                                             t-field="line.date"/>
+                                    </td>
+                                    <td style="word-wrap: break-word;">
+                                        <div style="text-align:left;" align="center"
+                                             t-esc="line.purpose"/>
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        <div style="text-align:left" align="center"
+                                             t-esc="line.amount"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold; white-space: nowrap;">
+                                        Viso (<t t-esc="currency"/>): <t t-esc="total"/>
+                                    </td>
+                                    <td/>
+                                    <td/>
+                                </tr>
+                            <br/>
+                        </table>
+                        <br/>
+                        <br/>
+                        <table class="table table-condensed table-sm">
+                            <col width="45%"/>
+                            <col width="10%"/>
+                            <col width="45%"/>
+                            <tr>
+                                <td style="border-top: none">
+                                    <div align="center">
+                                        <t t-esc="company"/>
+                                    </div>
+                                </td>
+                                <td colspan="2" style="border: none"/>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>
+                                        <div align="center">
+                                            <t t-esc="representative"/>
+                                        </div>
+                                    </strong>
+                                </td>
+                                <td style="border: none" colspan="2"/>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid black;">
+                                    <div align="center">(pareigos, vardas, pavardė, parašas)</div>
+                                </td>
+                                <td style="border: none" colspan="2"/>
+                            </tr>
+                        </table>
+                        <div t-if="is_accountant" style="float:left; margin-right: 10px; padding-top: 2em;">
+                            <table style="border: 1px solid black; page-break-inside: avoid;">
+                                <tbody>
+                                    <tr>
+                                        <td style="padding-top: 10px; padding-left: 10px; padding-right: 10px;">
+                                            <span>Pasirašė: UAB „Robolabs“ įgaliotas(-a)</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 10px; padding-right: 10px;">
+                                            <span>buhalteris(-ė)</span>
+                                            <span t-esc="representative"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-left: 10px; padding-right: 10px;">
+                                            <span>Laiko žyma:</span>
+                                            <span t-esc="current_user_timestamp"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-bottom: 10px; padding-left: 10px; padding-right: 10px;">
+                                            <span>Pasirašyta RoboLabs sistemoje</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

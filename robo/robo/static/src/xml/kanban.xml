@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="KanbanView.Group">
+         <t t-jquery="[t-attf-class*=o_kanban_group]" t-operation="replace">
+            <div t-attf-class="o_kanban_group#{widget.data_records.length == 0 ? ' o_kanban_no_records' : ''}" t-att-data-id="widget.id or widget.db_id">
+                <div class="o_kanban_header">
+                    <div class="o_kanban_header_title" t-att-title="widget.data_records.length + ' records'" data-delay="500">
+                        <span class="o_column_title"><t t-esc="widget.title"/></span>
+                        <span class="o_column_unfold"><i class="fa fa-arrows-h"/></span>
+                        <span class="o_kanban_config dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-gear"/></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a class="o_kanban_toggle_fold" href="#">Sutraukti</a></li>
+                                <t t-if="widget.grouped_by_m2o">
+                                    <li t-if="widget.editable and widget.id"><a class="o_column_edit" href="#">Redaguoti etapą</a></li>
+                                    <li t-if="widget.deletable and widget.id"><a class="o_column_delete" href="#">Ištrinti</a></li>
+                                </t>
+                                <t t-if="widget.has_active_field">
+                                    <li><a class="o_column_archive" href="#">Suarchyvuoti</a></li>
+                                    <li><a class="o_column_unarchive" href="#">Išarchyvuoti</a></li>
+                                </t>
+                            </ul>
+                        </span>
+                        <span t-if="widget.quick_create" class="o_kanban_quick_add"><i class="fa fa-plus"/></span>
+                    </div>
+                </div>
+                <div t-if="widget.remaining > 0" class="o_kanban_load_more">
+                    <t t-call="KanbanView.LoadMore"/>
+                </div>
+            </div>
+         </t>
+    </t>
+
+    <t t-extend="KanbanView.LoadMore">
+        <t t-jquery="a" t-operation="replace">
+            <a href="#">Rodyti daugiau... (<t t-esc="widget.remaining"/> likę(s)</a>
+        </t>
+    </t>
+
+    <t t-name="KanbanView.ColumnQuickCreate">
+        <t t-jquery=".o_column_quick_create" t-operation="replace">
+            <div class="o_column_quick_create">
+                <div class="o_column_header">
+                    <span class="o_kanban_add_column"><i class="fa fa-chevron-right"/></span>
+                    <span class="o_kanban_title">Pridėti naują stulpelį</span>
+                </div>
+                <div class="o_kanban_quick_create">
+                    <input type="text" placeholder="Pridėti"/>
+                    <button class="btn btn-sm btn-primary o_kanban_add">Pridėti</button>
+                    <button class="btn btn-sm btn-default o_kanban_cancel">Atmesti</button>
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <t t-name="KanbanView.QuickCreate">
+        <t t-jquery=".o_kanban_quick_create" t-operation="replace">
+            <div class="o_kanban_quick_create">
+                <input type="text" placeholder="Pridėti"/>
+                <button class="btn btn-sm btn-primary o_kanban_add">Pridėti</button>
+                <button class="btn btn-sm btn-default o_kanban_cancel">Atmesti</button>
+            </div>
+        </t>
+    </t>
+
+
+</templates>

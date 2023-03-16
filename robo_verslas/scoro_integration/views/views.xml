@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_scoro_invoice" model="ir.ui.view">
+            <field name="name">tree.scoro.invoice</field>
+            <field name="model">scoro.invoice</field>
+            <field name="arch" type="xml">
+                <tree decoration-success="state == 'created'"
+                      decoration-info="state == 'imported'"
+                      decoration-danger="state in ['failed', 'warning']"
+                      string="Sąskaitos faktūros" create="1" edit="1" delete="1">
+                        <field name="external_number" class="oe_inline"/>
+                        <field name="external_id"/>
+                        <field name="payment_type"/>
+                        <field name="paid_sum"/>
+                        <field name="currency_rate"/>
+                        <field name="sum_wo_vat"/>
+                        <field name="vat_sum"/>
+                        <field name="invoice_based_tax"/>
+                        <field name="currency_code"/>
+                        <field name="date_invoice"/>
+                        <field name="date_due"/>
+                        <field name="state"/>
+                        <field name="system_move_state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tree_scoro_pay_type" model="ir.ui.view">
+            <field name="name">tree.scoro.payment.type</field>
+            <field name="model">scoro.payment.type</field>
+            <field name="arch" type="xml">
+                <tree decoration-success="state == 'working'"
+                      decoration-danger="state == 'failed'"
+                      string="Mokėjimo tipai" create="1" edit="1" delete="1"
+                      editable="bottom">
+                        <field name="name" class="oe_inline"/>
+                        <field name="internal_code"/>
+                        <field name="journal_id"/>
+                        <field name="create_acc_entries"/>
+                        <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tree_scoro_tax" model="ir.ui.view">
+            <field name="name">tree.scoro.tax</field>
+            <field name="model">scoro.tax</field>
+            <field name="arch" type="xml">
+                <tree string="Sąskaitos faktūros" create="0" edit="1" delete="0">
+                        <field name="vat_code_id"/>
+                        <field name="vat_percent"/>
+                        <field name="vat_type"/>
+                        <field name="tax_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Actions-->
+        <record id="action_scoro_invoice_tree" model="ir.actions.act_window">
+            <field name="name">Sąskaitos faktūros</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">scoro.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_scoro_invoice"/>
+        </record>
+        <record id="action_scoro_pay_type_tree" model="ir.actions.act_window">
+            <field name="name">Mokėjimo tipai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">scoro.payment.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_scoro_pay_type"/>
+        </record>
+        <record id="action_scoro_tax_tree" model="ir.actions.act_window">
+            <field name="name">Mokesčiai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">scoro.tax</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_scoro_tax"/>
+        </record>
+
+        <!--Forms-->
+        <record id="scoro_invoice_form" model="ir.ui.view">
+            <field name="name">scoro.invoice.form</field>
+            <field name="model">scoro.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Scoro Sąskaitos Faktūros" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_invoices_prep" type="object" states="imported,failed,warning"
+                                string="Sukurti Sąskaitą faktūrą" class="oe_highlight"/>
+                        <button name="create_account_move" type="object"
+                                attrs="{'invisible': ['|', ('system_move_state', 'in', ['created', 'reconciled']),
+                                ('state', '!=', 'created')]}"
+                                string="Sukurti mokėjimo įrašą" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="system_move_state" widget="statusbar"/>
+                        <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Sąskaitos Pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="external_number" class="oe_inline"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="external_invoice_ref" attrs="{'invisible': [('external_invoice_ref', '=', False)]}"/>
+                        <field name="external_id"/>
+                        <field name="payment_type"/>
+                        <field name="paid_sum"/>
+                        <field name="receivable_sum"/>
+                        <field name="currency_rate"/>
+                        <field name="sum_wo_vat"/>
+                        <field name="vat_sum"/>
+                        <field name="discount"/>
+                        <field name="invoice_based_tax"/>
+                        <field name="currency_code"/>
+                        <field name="date_invoice"/>
+                        <field name="date_due"/>
+                        <field name="paid_state"/>
+                        <field name="description"/>
+                        <field name="is_deleted_scoro"/>
+                        <field name="invoice_id" attrs="{'readonly': True, 'invisible': [('invoice_id', '=', False)]}"/>
+                        <field name="move_id" attrs="{'readonly': True, 'invisible': [('move_id', '=', False)]}"/>
+                        <field name="partner_id"/>
+                        <field name="credited_by_id" attrs="{'readonly': True, 'invisible': [('credited_by_id', '=', False)]}"/>
+                    </group>
+                    <notebook>
+                        <page string="Sąskaitos eilutės">
+                            <field name="scoro_invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Scoro Pardavimai"
+                                      decoration-info="state == 'imported'"
+                                      decoration-success="state == 'created'"
+                                      decoration-danger="state in ['failed', 'warning']"
+                                      create="1" edit="1" delete="1">
+                                    <field name="line_name"/>
+                                    <field name="product_id" attrs="{'readonly': True, 'invisible': [('product_id', '=', False)]}"/>
+                                    <field name="external_id"/>
+                                    <field name="quantity"/>
+                                    <field name="discount"/>
+                                    <field name="price_unit"/>
+                                    <field name="sum_wo_vat"/>
+                                    <field name="tax_id"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Kredituojamos Scoro sąskaitos">
+                            <field name="scoro_credit_invoice_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree>
+                                    <field name="external_number" class="oe_inline"/>
+                                    <field name="sum_wo_vat"/>
+                                    <field name="vat_sum"/>
+                                    <field name="invoice_based_tax"/>
+                                    <field name="currency_code"/>
+                                    <field name="date_invoice"/>
+                                    <field name="date_due"/>
+                                    <field name="paid_state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="form_scoro_tax" model="ir.ui.view">
+            <field name="name">form.scoro.tax</field>
+            <field name="model">scoro.tax</field>
+            <field name="arch" type="xml">
+                <form string="Sąskaitos faktūros">
+                    <sheet>
+                        <group string="Mokesčių nustatymai">
+                            <field name="vat_code_id"/>
+                            <field name="vat_percent"/>
+                            <field name="vat_type"/>
+                            <field name="tax_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+
+        <record model="ir.ui.view" id="raso_pay_search">
+            <field name="name">Sąskaitų Paieška</field>
+            <field name="model">scoro.invoice</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="imported" string="Būsena: Sąskaita importuota" domain="[('state','=','imported')]"/>
+                    <filter name="created" string="Būsena: Sąskaita sukurta" domain="[('state','=','created')]"/>
+                    <filter name="failed" string="Būsena: Klaida kuriant sąskaitą" domain="[('state','=','failed')]"/>
+                    <separator/>
+                    <filter name="no_action" string="Mokėjimo būsena: Nėra duomenų"
+                            domain="[('system_move_state','=','no_action')]"/>
+                    <filter name="waiting" string="Mokėjimo būsena: Laukiama sukūrimo"
+                            domain="[('system_move_state','=','waiting')]"/>
+                    <filter name="created" string="Mokėjimo būsena: Mokėjimas sukurtas"
+                            domain="[('system_move_state','=','created')]"/>
+                    <filter name="reconciled" string="Mokėjimo būsena: Mokėjimas sukurtas ir sudengtas"
+                            domain="[('system_move_state','=','reconciled')]"/>
+                    <filter name="failed" string="Mokėjimo būsena: Nepavyko sukurti mokėjimo"
+                            domain="[('system_move_state','=','failed')]"/>
+                    <separator/>
+                    <filter name="failed" string="Sąskaita ištrinta Scoro" domain="[('is_deleted_scoro','=', True)]"/>
+                    <separator/>
+                    <field name="external_number" filter_domain="[('external_number','ilike',self)]"/>
+                    <field name="external_invoice_ref" filter_domain="[('external_invoice_ref','ilike',self)]"/>
+                    <field name="external_id" filter_domain="[('external_id','ilike',self)]"/>
+                    <field name="pay_type_id"/>
+                    <field name="partner_id"/>
+                    <field name="invoice_id"/>
+                    <separator/>
+                    <field name="date_invoice" string="Sąskaitos data nuo" filter_domain="[('date_invoice', '&gt;=', self)]"/>
+                    <field name="date_invoice" string="Sąskaitos data iki" filter_domain="[('date_invoice', '&lt;=', self)]"/>
+                    <field name="date_due" string="Sąskaitos terminas nuo" filter_domain="[('date_due', '&gt;=', self)]"/>
+                    <field name="date_due" string="Sąskaitos terminas iki" filter_domain="[('date_due', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_system_move_state" string="Mokėjimo būsena" context="{'group_by':'system_move_state'}"/>
+                        <filter name="group_pay_type_id" string="Mokėjimo tipas"
+                                context="{'group_by':'group_pay_type_id'}"/>
+                        <filter name="group_invoice_id" string="Sąskaita faktūra"
+                                context="{'group_by':'invoice_id'}"/>
+                        <filter name="group_move_id" string="Žurnalo įrašas"
+                                context="{'group_by':'move_id'}"/>
+                        <filter name="group_partner_id" string="Partneris"
+                                context="{'group_by':'partner_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+        <!--Menu items-->
+        <menuitem
+                name="Scoro"
+                id="scoro_parent"
+                sequence="60"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Sąskaitos Faktūros"
+                id="scoro_invoices"
+                sequence="46"
+                action="action_scoro_invoice_tree"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="scoro_parent"
+        />
+        <menuitem
+                name="Mokėjimo tipai"
+                id="scoro_pay_types"
+                sequence="46"
+                action="action_scoro_pay_type_tree"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="scoro_parent"
+        />
+        <menuitem
+                name="Mokesčiai"
+                id="scoro_taxes"
+                sequence="46"
+                action="action_scoro_tax_tree"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="scoro_parent"
+        />
+    </data>
+</odoo>

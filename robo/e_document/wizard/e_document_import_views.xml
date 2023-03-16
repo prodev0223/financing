@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="e_document_import_view_form" model="ir.ui.view">
+            <field name="name">e.document.import.view.form</field>
+            <field name="model">e.document.import</field>
+            <field name="arch" type="xml">
+                <form string="eDocument import" edit="0" create="0" import="0">
+                    <sheet>
+                        <group>
+                            <group colspan="4" string="Import example">
+                                <div class="import-element-container">
+                                    <a class="import-download-container">
+                                        <img src='robo/static/src/img/xls-logo.svg' alt='XLS logo' help="Parsisiųsti"/>
+                                        <span>Import example</span>
+                                    </a>
+                                </div>
+                            </group>
+                            <group colspan="4" string="Import">
+                                <field style="border-radius: 4px !important;" name="file_to_import"
+                                       string="File to import"/>
+                                <field name="file_name" attrs="{'invisible': True}"/>
+                                <field name="auto_confirm"/>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="import_document" string="Import" type="object" class="oe_highlight"/>
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <menuitem id="menu_e_document_import_backend"
+                  name="Import"
+                  action="e_document_backend_action"
+                  parent="menu_e_document_backend_root"
+                  sequence="3"
+                  groups="robo_basic.group_robo_premium_accountant"/>
+
+    </data>
+</odoo>

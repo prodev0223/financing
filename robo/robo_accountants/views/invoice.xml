@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_invoice_tree_accountant_validated" model="ir.ui.view">
+            <field name="name">account.invoice.tree.accountant.validated</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='amount_total_signed']" position="after">
+                    <field name="accountant_validated"/>
+                </xpath>
+            </field>
+        </record>
+<!--        <record id="account_supplier_invoice_tree_accountant_validated" model="ir.ui.view">-->
+<!--            <field name="name">account.supplier.invoice.tree.accountant.validated</field>-->
+<!--            <field name="model">account.invoice</field>-->
+<!--            <field name="inherit_id" ref="account.invoice_supplier_tree"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//field[@name='amount_total_signed']" position="after">-->
+<!--                    <field name="accountant_validated"/>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
+        <record id="account_invoice_supplier_accountant_validated" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form.accountant.validated</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_open']" position="before">
+                    <field name="accountant_validated" invisible="1"/>
+                    <button name="mark_validated" class="oe_highlight" type="object" string="Pažymėti kaip patvirtintą" groups="robo_basic.group_robo_premium_accountant"
+                            attrs="{'invisible': ['|',('state','not in',['open','paid', 'proforma', 'proforma2', 'cancel']),('accountant_validated','=',True)]}"/>
+                    <button name="mark_invalidated" class="oe_highlight" type="object" string="Pažymėti kaip nepatvirtintą" groups="robo_basic.group_robo_premium_accountant"
+                            attrs="{'invisible': [('accountant_validated','=',False)]}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_cancel']" position="after">
+                    <button name="mark_proforma_paid" string="Pažymėti apmokėta" type="object"
+                            attrs="{'invisible':['|',('proforma_paid','!=', False), ('expense_state', 'not in', ('proforma','proforma2'))]}"/>
+                    <button name="mark_proforma_not_paid" string="Pažymėti neapmokėta" type="object"
+                            attrs="{'invisible':['|',('proforma_paid','!=', True), ('expense_state', 'not in', ('proforma','proforma2'))]}"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="accountant_validated_text" class="validate_by_accountant_text" nolabel="1" attrs="{'invisible':[('accountant_validated','=', False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='date_invoice']" position="attributes">
+                    <attribute name="context">{'skip_dates': True, 'date': date_invoice, 'vat_date_test': True}</attribute>
+                </xpath>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="PDF" name="pdf" attrs="{'invisible': [('show_pdf','=',False)]}">
+                        <field name="show_pdf" invisible="1"/>
+                        <field name="pdf" widget="pdf_viewer"/>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="reporting_amount_untaxed"/>
+                            <field name="reporting_amount_tax"/>
+                            <field name="reporting_amount_total"/>
+                        </group>
+                    </page>
+                    <page string="Prisegtos nuotraukos" name="image_gallery" attrs="{'invisible': [('show_image_gallery','=',False)]}">
+                        <field name="show_image_gallery" invisible="1"/>
+                        <field name="attached_images" widget="attachment_image_gallery"/>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="reporting_amount_untaxed2"/>
+                            <field name="reporting_amount_tax2"/>
+                            <field name="reporting_amount_total2"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_invoice_accountant_validated" model="ir.ui.view">
+            <field name="name">account.invoice.form.accountant.validated</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_sent']" position="before">
+                    <field name="accountant_validated" invisible="1"/>
+                    <button name="mark_validated" class="oe_highlight" type="object" string="Pažymėti kaip patvirtintą" groups="robo_basic.group_robo_premium_accountant"
+                            attrs="{'invisible': ['|',('state','not in',['cancel','open','paid','proforma','proforma2']),('accountant_validated','=',True)]}"/>
+                    <button name="mark_invalidated" class="oe_highlight" type="object" string="Pažymėti kaip nepatvirtintą" groups="robo_basic.group_robo_premium_accountant"
+                            attrs="{'invisible': [('accountant_validated','=',False)]}"/>
+                </xpath>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="PDF" name="pdf" attrs="{'invisible': [('show_pdf','=',False)]}">
+                        <field name="show_pdf" invisible="1"/>
+                        <field name="pdf" widget="pdf_viewer"/>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="amount_untaxed"/>
+                            <field name="amount_tax"/>
+                            <field name="amount_total"/>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_cancel']" position="after">
+                    <button name="mark_proforma_paid" string="Pažymėti apmokėta" type="object"
+                            attrs="{'invisible':['|',('proforma_paid','!=', False), ('state', 'not in', ('proforma','proforma2'))]}"/>
+                    <button name="mark_proforma_not_paid" string="Pažymėti neapmokėta" type="object"
+                            attrs="{'invisible':['|',('proforma_paid','!=', True), ('state', 'not in', ('proforma','proforma2'))]}"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="accountant_validated_text" class="validate_by_accountant_text" nolabel="1" attrs="{'invisible':[('accountant_validated','=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.actions.server" id="invoice_mark_validated_server_action">
+            <field name="name">Pažymėti kaip patvirtintą</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                object.browse(context.get('active_ids', False)).mark_validated()
+            </field>
+        </record>
+        <record model="ir.actions.server" id="invoice_mark_invalidated_server_action">
+            <field name="name">Pažymėti kaip nepatvirtintą</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                object.browse(context.get('active_ids', False)).mark_invalidated()
+            </field>
+        </record>
+        <record id="search_account_invoice_not_validated" model="ir.ui.view">
+            <field name="name">search.account.invoice.not.validated</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <separator/>
+                    <filter name="not_validated" string="Reikia peržiūrėti" domain="[('accountant_validated','=',False), ('state', 'not in', ['proforma', 'proforma2'])]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="add_not_validated_invoices_dashoard" model="ir.ui.view">
+            <field name="name">kanban.invoice.validation</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//t[contains(@t-name, 'JournalBodySalePurchase')]//div[contains(@class, 'o_kanban_primary_right')]" position="inside">
+                    <div class="row" t-if="journal_type == 'sale' || journal_type == 'purchase'">
+                        <div class="col-xs-6">
+                            <a type="object" name="open_action" context="{'search_default_not_validated': '1'}">
+                                <span title="Reikia peržiūrėti"><t t-esc="dashboard.num_not_validated"/> Reikia peržiūrėti</span>
+                            </a>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <span><t t-esc="dashboard.sum_not_validated"/></span>
+                        </div>
+                    </div>
+                </xpath>
+
+                <xpath expr="//t[contains(@t-name, 'JournalManage')]//div[contains(@class, 'o_kanban_manage_new')]" position="replace">
+                    <div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_new">
+                    <div class="o_kanban_card_manage_title">
+                        <span>New</span>
+                    </div>
+                    <div name="bank_cash_commands">
+                        <t t-if="journal_type == 'bank'">
+                            <a type="object" name="create_bank_statement">Transaction</a>
+                        </t>
+                        <t t-if="journal_type == 'cash'">
+                            <a type="object" name="create_cash_statement">Transaction</a>
+                        </t>
+                    </div>
+                    </div>
+                </xpath>
+
+                <xpath expr="//t[contains(@t-name, 'JournalBodyBankCash')]//div[contains(@class, 'o_kanban_primary_right')]//div[contains(@class, 'row')]" position="replace">
+                    <div class="row">
+                        <t t-if="dashboard.highlight and journal_type != 'cash'">
+                            <div class="col-xs-6" style="color: red">
+                            <span title="Balance in Odoo">Balansas DK</span>
+                        </div>
+                            <div class="col-xs-6 text-right" style="color: red">
+                                <span><t t-esc="dashboard.account_balance"/></span>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-6" style="color: green">
+                            <span title="Balance in Odoo">Balansas DK</span>
+                        </div>
+                        <div class="col-xs-6 text-right" style="color: green">
+                                <span><t t-esc="dashboard.account_balance"/></span>
+                            </div>
+                        </t>
+                            </div>
+                </xpath>
+                <xpath expr="//div[contains(@t-if, 'dashboard.last_balance != dashboard.account_balance')]" position="replace">
+                    <div class="row" name="latest_statement" t-if="dashboard.highlight and journal_type != 'cash'">
+                                <div class="col-xs-6">
+                                    <span title="Latest Statement" style="color: red">Paskutinis išrašas</span>
+                                </div>
+                                <div class="col-xs-6 text-right" style="color: red">
+                                    <span><t t-esc="dashboard.last_balance"/></span>
+                                </div>
+                            </div>
+                    <div class="row" name="latest_statement" t-if="dashboard.highlight and journal_type == 'cash'">
+                                <div class="col-xs-6">
+                                    <span title="Latest Statement" style="color: green">Paskutinis išrašas</span>
+                                </div>
+                                <div class="col-xs-6 text-right" style="color: green">
+                                    <span><t t-esc="dashboard.last_balance"/></span>
+                                </div>
+                            </div>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_bank_statement_search_extend" model="ir.ui.view">
+            <field name="name">account.bank.statement.search.extend</field>
+            <field name="model">account.bank.statement</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="account.view_bank_statement_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="sepa_imported"/>
+                    <separator/>
+                    <filter name="psd2_statement" string="PSD2 Išrašas" domain="[('psd2_statement', '=', True)]"/>
+                    <separator/>
+                    <filter name="imported" string="Importuota" domain="[('sepa_imported', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_bank_statement_line_search_extend" model="ir.ui.view">
+            <field name="name">account.bank.statement.line.search.extend</field>
+            <field name="model">account.bank.statement.line</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="account.view_bank_statement_line_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="imported_partner_name"/>
+                    <field name="imported_partner_code"/>
+                    <field name="imported_partner_iban"/>
+                    <separator/>
+                    <filter name="imported" string="Importuota" domain="[('statement_id.sepa_imported', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_bank_statement_line_tree_extend" model="ir.ui.view">
+            <field name="name">account.bank.statement.line.tree.extend</field>
+            <field name="model">account.bank.statement.line</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="account.view_bank_statement_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="imported_partner_name"/>
+                    <field name="imported_partner_code"/>
+                    <field name="imported_partner_iban"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="after">
+                    <field name="amount_currency"/>
+                    <field name="currency_id"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="string">Banko išrašų eilutės</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!--Override the form completely to make the form structure nicer-->
+        <record id="account.view_bank_statement_line_form" model="ir.ui.view">
+            <field name="name">bank.statement.line.form</field>
+            <field name="model">account.bank.statement.line</field>
+            <field name="priority">8</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div>
+                            <label string="Numeris"/>
+                            <h1 class="mt0">
+                                <field name="ref" attrs="{'readonly': [('sepa_imported', '=', True)]}"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="name"/>
+                            <field name="statement_id" attrs="{'readonly': [('sepa_imported', '=', True)]}"/>
+                            <field name="date" attrs="{'readonly': [('sepa_imported', '=', True)]}"/>
+                            <field name="partner_id"/>
+                            <field name="amount"/>
+                            <field name="journal_currency_id" invisible="1"/>
+                            <field name="sequence"/>
+                            <field name="note"/>
+                            <field name="sepa_imported" invisible="1"/>
+                            <field name="has_file_export_job_ids" invisible="1"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Transakcijos sumos" colspan="1" col="2">
+                                <field name="amount"/>
+                                <field name="amount_currency"/>
+                                <field name="currency_id"/>
+                            </group>
+                            <group string="Importuota partnerio informacija" colspan="1" col="2"
+                                   attrs="{'readonly': [('sepa_imported', '=', True)]}">
+                                <field name="imported_partner_name"/>
+                                <field name="imported_partner_code"/>
+                                <field name="imported_partner_iban"/>
+                            </group>
+                        </group>
+                        <group string="Eksportavimai į banką" name="bank_exports"
+                               attrs="{'invisible': [('has_file_export_job_ids','=',False)]}">
+                            <field name="bank_export_job_ids" nolabel="1" options="{'always_reload': True}"
+                                   mode="tree,kanban" widget="one2many_list"
+                                   groups="robo_basic.group_robo_premium_manager">
+                                <tree edit="0" create="0" delete="0" class="robo_tree_in_form"
+                                      decoration-success="export_state in ['processed', 'processed_partial']"
+                                      decoration-info="export_state in ['accepted', 'accepted_partial']"
+                                      decoration-danger="export_state in ['rejected', 'rejected_partial', 'rejected_sign']"
+                                      decoration-warning="export_state == 'waiting'">
+                                    <field name="tr_name"/>
+                                    <field name="date_exported"/>
+                                    <field name="tr_amount"/>
+                                    <field name="tr_partner_id"/>
+                                    <field name="tr_currency_id"/>
+                                    <field name="tr_bank_account_id"/>
+                                    <field name="export_state"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="account.action_bank_statement_tree" model="ir.actions.act_window">
+            <field name="context">{'journal_type':'bank', 'search_default_imported':1}</field>
+        </record>
+        <record id="account.action_bank_statement_line" model="ir.actions.act_window">
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+        <record id="pivot_account_bank_statement_line" model="ir.ui.view">
+            <field name="name">pivot.account.bank.statement.line</field>
+            <field name="model">account.bank.statement.line</field>
+            <field name="arch" type="xml">
+                <pivot string="Banko išrašų eilutės" disable_linking="True">
+                    <field name="partner_id" type="row"/>
+                    <field name="date" type="col"/>
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+    </data>
+    <data noupdate="1">
+        <function name="create_invoice_validation_actions" model="account.invoice"/>
+    </data>
+</odoo>

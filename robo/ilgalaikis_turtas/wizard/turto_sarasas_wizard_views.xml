@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_ilgalaikio_turto_sarasas_wizard_form_view" model="ir.ui.view">
+            <field name="name">ilgalaikio.turto.sarasas.wizard</field>
+            <field name="model">turto.sarasas.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="include_closed_assets"/>
+                            <field name="include_all_open_assets"/>
+                            <field name="advanced_report"/>
+                            <field name="by_department"/>
+                            <field name="asset_department_ids" attrs="{'invisible': [('by_department', '=', False)]}"
+                                   widget="many2many_tags"/>
+                            <field name="by_category"/>
+                            <field name="asset_category_ids" attrs="{'invisible': [('by_category', '=', False)]}"
+                                   widget="many2many_tags"/>
+                            <field name="force_lang"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:20%;">
+                            <button name="check_advanced_report" attrs="{'invisible':[('advanced_report', '!=', True)]}"
+                                    string="Excel" type="object" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button name="check_report" attrs="{'invisible':[('advanced_report', '==', True)]}"
+                                    string="Peržiūrėti" context="{'force_html': True}" type="object"
+                                    class="oe_highlight" style="margin-right: 10px;"/>
+                            <button name="check_report" attrs="{'invisible':[('advanced_report', '==', True)]}"
+                                    string="PDF" context="{'force_pdf': True}" type="object" class="oe_highlight"
+                                    style="margin-right: 10px;"/>
+                            <button name="xls_export" attrs="{'invisible':[('advanced_report', '==', True)]}"
+                                    string="Excel" type="object" class="oe_highlight"
+                                    context="{'xls_report': True}" style="margin-right: 10px;"/>
+                            <button name="%(robo.open_reports_action)d" type="action" string="Atšaukti"
+                                    class="oe_highlight" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_assets_report">
+            <field name="name">Ilgalaikio turto sąrašas</field>
+            <field name="res_model">turto.sarasas.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="robo.front_wizard_default_header"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+
+            <field name="view_id" ref="robo_ilgalaikio_turto_sarasas_wizard_form_view"/>
+        </record>
+
+        <menuitem id="menu_account_asset_asset_search_report"
+                  name="Ilgalaikio turto sąrašas"
+                  groups="robo_basic.group_robo_premium_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_assets_report"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="ilgalaikio,turto,sąrašas"
+        />
+    </data>
+</odoo>

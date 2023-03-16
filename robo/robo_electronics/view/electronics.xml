@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_template_electronics_report_ext" model="ir.ui.view">
+            <field name="name">product.template.electronics</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="groups_id" eval="[(4, ref('robo_electronics.robo_electronics_reports'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='purchase_method']" position="before">
+                    <field name="product_electronics_category" string="Elektronikos kategorija"/>
+                </xpath>
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page string="Elektronika">
+                        <field name="product_battery_line_ids" mode="tree,kanban">
+                            <tree editable="bottom" delete="0">
+                                <field name="battery_id"/>
+                                <field name="battery_qty"/>
+                                <field name="total_weight" digits="[10,6]"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                            </tree>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <field name="battery_id"/>
+                                        <field name="battery_qty"/>
+                                        <field name="total_weight" digits="[10,6]"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                            <kanban class="o_kanban_mobile">
+                                <field name="battery_id"/>
+                                <field name="battery_qty"/>
+                                <field name="total_weight" digits="[10,6]"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <span>
+                                                        <t t-esc="record.battery.value"/>:
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 text-muted">
+                                                    <strong>
+                                                        <span>
+                                                            Kiekis: <t t-esc="record.battery_qty.value"/>
+                                                        </span>
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 text-muted">
+                                                    <strong>
+                                                        <span>
+                                                            Svoris: <t t-esc="record.total_weight.value"/> t
+                                                        </span>
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_battery_kanban" model="ir.ui.view">
+            <field name="name">product.battery.kanban</field>
+            <field name="model">product.battery</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban string="Baterijos" import="0" create="0">
+                    <field name="name"/>
+                    <field name="category"/>
+                    <field name="weight"/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <strong><t t-esc="record.name.value"/></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span>Kategorija: <t t-esc="record.category.value"/></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span>Svoris: <t t-esc="record.weight.value"/> kg</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="product_battery_tree" model="ir.ui.view">
+            <field name="name">product.battery.tree</field>
+            <field name="model">product.battery</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0" create="0">
+                    <field name="name"/>
+                    <field name="category"/>
+                    <field name="weight"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="product_battery_form" model="ir.ui.view">
+            <field name="name">product.battery.form</field>
+            <field name="model">product.battery</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Baterijos">
+                    <sheet>
+                        <group>
+                            <field name="category" required="1"/>
+                            <field name="name" required="1"/>
+                            <field name="weight" required="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="open_robo_battery" model="ir.actions.act_window">
+            <field name="name">Baterijos</field>
+            <field name="res_model">product.battery</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="view_id" ref="product_battery_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('product_battery_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('product_battery_form')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('product_battery_kanban')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+            <field name="header" ref="robo_electronics_header"/>
+        </record>
+
+        <!--line-->
+        <record id="product_battery_line_search" model="ir.ui.view">
+            <field name="name">product.battery.line.search</field>
+            <field name="model">product.battery.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Baterijos">
+                    <field name="product_tmpl_id" string="Produktas"/>
+                    <field name="battery_id" required="1" string="Baterija"/>
+                    <group>
+                        <filter name="group_product_tmpl" string="Produktą" context="{'group_by':'product_tmpl_id'}"/>
+                        <filter name="group_battery_id" string="Bateriją" context="{'group_by':'battery_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="product_battery_line_form" model="ir.ui.view">
+            <field name="name">product.battery.line.form</field>
+            <field name="model">product.battery.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Baterijos/Akumuliatoriai">
+                    <sheet>
+                        <group>
+                            <field name="product_tmpl_id" required="1"/>
+                            <field name="battery_id" required="1" string="Pavadinimas"/>
+                            <field name="battery_qty"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="product_battery_line_tree" model="ir.ui.view">
+            <field name="name">product.battery.line.tree</field>
+            <field name="model">product.battery.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree editable='top' import="0" create="1">
+                    <field name="product_tmpl_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+                    <field name="battery_id" required="1" string="Baterija"/>
+                    <field name="battery_qty"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </tree>
+            </field>
+        </record>
+        <record id="product_battery_line_kanban" model="ir.ui.view">
+            <field name="name">product.battery.line.tree</field>
+            <field name="model">product.battery.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban string="Baterijos" import="0" create="0">
+                    <field name="product_tmpl_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+                    <field name="battery_id" required="1" string="Baterija"/>
+                    <field name="battery_qty"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <strong><t t-esc="record.product_tmpl_id.value"/></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span>Baterija: <t t-esc="record.battery_id.value"/></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span>Kiekis: <t t-esc="record.battery_qty.value"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="open_robo_battery_line" model="ir.actions.act_window">
+            <field name="name">Baterijos/Akumuliatoriai</field>
+            <field name="res_model">product.battery.line</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_id" ref="product_battery_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('product_battery_line_tree')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('product_battery_line_kanban')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('product_battery_line_form')})]"/>
+            <field name="view_id" ref="product_battery_line_tree"/>
+            <field name="search_view_id" ref="product_battery_line_search"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+            <field name="header" ref="robo_electronics_header"/>
+        </record>
+
+        <!--menu-->
+        <menuitem id="menu_robo_battery"
+                  parent="robo_stock.menu_robo_stock"
+                  name="Baterijos"
+                  sequence="5"
+                  action="open_robo_battery_line"
+                  groups="robo_electronics.robo_electronics_reports"
+                  force_web_icon="icon-battery-power,none,none"
+                  robo_front="True"
+                  searchable="True"
+                  tags="GPAIS,baterijos"
+        />
+
+        <!--wizard-->
+        <record id="electronics_report_wizard_form" model="ir.ui.view">
+            <field name="name">product.electronics.wizard.form</field>
+            <field name="model">product.electronics.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="package_direction" attrs="{'required': True}"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="check_report" string="Elektronika" type="object" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button name="check_report" string="Baterijos" type="object" class="oe_highlight"
+                                    context="{'battery': True}" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_electronics_report_wizard">
+            <field name="name">Elektronikos ataskaita</field>
+            <field name="res_model">product.electronics.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="robo.front_wizard_default_header"/>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+        </record>
+
+        <menuitem id="menu_electronics_search_report"
+                  name="Elektronikos ataskaita"
+                  groups="robo_electronics.robo_electronics_reports"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_electronics_report_wizard"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="elektronikos,ataskaita"
+        />
+
+        <!--Reports-->
+        <!--Electronics-->
+        <record id="view_report_product_electronics_pivot" model="ir.ui.view">
+            <field name="name">report.product.electronics.pivot</field>
+            <field name="model">report.product.electronics</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Elektronika" create="false" delete="false">
+                    <field name="date" type="col"/>
+                    <field name="product_qty" type="measure"/>
+                    <field name="weight_of_electronics" type="measure"/>
+                    <field name="product_electronics_category" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="view_report_product_electronics_search" model="ir.ui.view">
+            <field name="name">report.product.electronics.search</field>
+            <field name="model">report.product.electronics</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Elektronika">
+                    <field name="picking_id" string="Važtaraštis"/>
+                    <field name="product_tmpl_id" string="Produktas"/>
+                    <field name="product_electronics_category" string="Kategorija"/>
+
+                    <group>
+                        <filter name="positive" string="Turi kategoriją"
+                                domain="[('product_electronics_category', '!=', False)]"/>
+                        <separator/>
+                        <!--<filter name="category" string="Kategorija" domain="[('product_electronics_category', '=', 'pirmine')]"/>-->
+                        <!--<filter name="second_category" string="Antrinės" domain="[('package_category', '=', 'antrine')]"/>-->
+                        <!--<filter name="third_category" string="Tretinės" domain="[('package_category', '=', 'tretine')]"/>-->
+                        <separator/>
+                        <filter name="in" string="Importas" domain="[('package_direction', '=', 'in')]"/>
+                        <filter name="int" string="Vidiniai" domain="[('package_direction', '=', 'int')]"/>
+                        <filter name="out_lt" string="Į Lietuvos rinką"
+                                domain="[('package_direction', '=', 'out_lt')]"/>
+                        <filter name="out_kt" string="Į kitas šalis" domain="[('package_direction', '=', 'out_kt')]"/>
+                        <filter name="in_lt" string="Įvežta iš Lietuvos"
+                                domain="[('package_direction', '=', 'in_lt')]"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="open_report_product_electronics" model="ir.actions.act_window">
+            <field name="name">Elektros ir elektroninė įranga buityje</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">report.product.electronics</field>
+            <field name="search_view_id" ref="view_report_product_electronics_search"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_report_product_electronics_pivot"/>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+        </record>
+
+        <!--Batteries-->
+        <record id="view_report_product_batteries_pivot" model="ir.ui.view">
+            <field name="name">report.product.batteries.pivot</field>
+            <field name="model">report.product.batteries</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Baterijos/Akumuliatoriai" create="false" delete="false">
+                    <field name="date" type="col"/>
+                    <field name="qty_of_batteries" type="measure"/>
+                    <field name="weight_of_batteries" type="measure"/>
+                    <field name="battery_category" type="row"/>
+                    <!--<field name="battery_id" type="row"/>-->
+                </pivot>
+            </field>
+        </record>
+        <record id="view_report_product_batteries_search" model="ir.ui.view">
+            <field name="name">report.product.batteries.search</field>
+            <field name="model">report.product.batteries</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Baterijos/Akumuliatoriai">
+                    <field name="picking_id" string="Važtaraštis"/>
+                    <field name="product_tmpl_id" string="Produktas"/>
+                    <field name="battery_id" string="Baterija"/>
+                    <group>
+                        <filter name="positive" string="Teigiami kiekiai" domain="[('qty_of_batteries', '&gt;', 0)]"/>
+                        <separator/>
+                        <!--<filter name="first_category" string="Pirminės" domain="[('package_category', '=', 'pirmine')]"/>-->
+                        <!--<filter name="second_category" string="Antrinės" domain="[('package_category', '=', 'antrine')]"/>-->
+                        <!--<filter name="third_category" string="Tretinės" domain="[('package_category', '=', 'tretine')]"/>-->
+                        <separator/>
+                        <filter name="in" string="Importas" domain="[('package_direction', '=', 'in')]"/>
+                        <filter name="int" string="Vidiniai" domain="[('package_direction', '=', 'int')]"/>
+                        <filter name="out_lt" string="Į Lietuvos rinką"
+                                domain="[('package_direction', '=', 'out_lt')]"/>
+                        <filter name="out_kt" string="Į kitas šalis" domain="[('package_direction', '=', 'out_kt')]"/>
+                        <filter name="in_lt" string="Įvežta iš Lietuvos"
+                                domain="[('package_direction', '=', 'in_lt')]"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="open_report_product_batteries" model="ir.actions.act_window">
+            <field name="name">Baterijos/Akumuliatoriai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">report.product.batteries</field>
+            <field name="search_view_id" ref="view_report_product_batteries_search"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_report_product_batteries_pivot"/>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+        </record>
+
+    </data>
+
+</odoo>

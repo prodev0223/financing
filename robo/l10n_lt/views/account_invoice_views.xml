@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_invoice_add_search_view_ext" model="ir.ui.view">
+            <field name="name">account.invoice.add.search.view.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='late']" position="after">
+                    <separator/>
+                    <filter name="undefined" string="Neapibrėžta"
+                            domain="['|', ('invoice_line_ids.name', '=', 'Neapibrėžta'), ('invoice_line_ids.name', '=', 'Undefined')]"
+                            help="Turintis savyje bent vieną eilutę su paslauga 'neapibrėžta'"/>
+                </xpath>
+                <xpath expr="//filter[@name='late']" position="after">
+                    <separator/>
+                    <filter name="pay_today" string="Pay Today" domain="['&amp;', '|', ('date_due','=',context_today().strftime('%Y-%m-%d')),
+                     ('date_due', '=', False), ('state', '=', 'open')]"/>
+                </xpath>
+                <xpath expr="//filter[@name='refunds']" position="after">
+                    <filter name="canceled" string="Anuliuotos sąskaitos"
+                            domain="['&amp;', ('state','in',['cancel']),('move_name','!=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='amount_total']" position="after">
+                    <field name="show_signed" invisible="1"/>
+                    <field name="amount_total_company_signed" string="Total (EUR)"
+                           attrs="{'invisible': [('show_signed','=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='tax_line_ids']/.." position="after">
+                    <button colspan="2" name="recalculate_taxes" string="Update" help="Recalculates Taxes" type="object"
+                            class="oe_left btn-default"
+                            states="draft,proforma2"/>
+                </xpath>
+                <xpath expr="//field[@name='date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[2]//field[@name='company_id']" position="after">
+                    <field name="skip_isaf"/>
+                </xpath>
+                <xpath expr="//field[@name='date_due']" position="after">
+                    <field name="date_due_report" attrs="{'invisible': [('show_date_due_report', '=', False)]}"/>
+                    <field name="show_date_due_report" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[2]//field[@name='name']" position="after">
+                    <field name="force_taxes" attrs="{'readonly': [('state', 'in', ('open', 'paid'))]}"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('force_taxes','=',True),('state','not in',['draft'])]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_open']" position="after">
+                    <field name="picking_id" invisible="1"/>
+                    <field name="show_create_picking" invisible="1"/>
+                     <button name="create_picking" states="open,paid" string="Sukurti važtaraštį"
+                            type="object" groups="base.group_user"
+                            context="{'invoice_id': active_id}"
+                            attrs="{'invisible': ['|','|',('picking_id', '!=', False),
+                            ('show_create_picking', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_cancel']" position="after">
+                    <button name="action_cancel_paid" states="paid" string="Atšaukti" type="object"/>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="virtual_payment_move_id"
+                           attrs="{'invisible': [('virtual_payment_move_id', '=', False)]}"/>
+                    <field name="distributed_payment" attrs="{'invisible': [('type', '!=', 'in_invoice')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='move_id']" position="after">
+                    <field name="invoice_header"/>
+                </xpath>
+                <xpath expr="//notebook[1]" position="inside">
+                    <page string="Distributed payments" attrs="{'invisible': [('distributed_payment', '=', False)]}">
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                             attrs="{'invisible': [('distributed_total_amount','=',True)]}">
+                            The total amount does not match the invoice amount.
+                        </div>
+                        <group>
+                            <field name="distributed_account_id" attrs="{'required': [('distributed_payment', '=', True)]}"/>
+                            <field name="distributed_total_amount" invisible="1"/>
+                        </group>
+                        <button name="call_distributed_line_wizard" string="Eilučių pildymas" type="object"
+                                class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <field name="distributed_payment_ids">
+                            <tree string="Distributed payments settings" editable="bottom">
+                                <field name="date"/>
+                                <field name="amount" sum="Total amount"/>
+                                <field name="currency_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='move_id']" position="after">
+                    <field name="expense_id" string="Išlaidų čekis" invisible="1"/>
+                    <field name="hr_expense_id" string="Išlaidų čekis"/>
+                    <field name="expense_move_id" string="Avansinės apyskaitos įrašas"/>
+                    <field name="advance_payment" string="Sąskaita jau apmokėta (avansinė apyskaita)"
+                           attrs="{'invisible': [('expense_id','=',True)], 'readonly': ['|',('state','!=','draft'),('expense_move_id','!=',False)]}" invisible="True"/>
+                    <field name="advance_payment_date" attrs="{'invisible': [('advance_payment', '=', False)]}"/>
+                    <field name="advance_payment_amount" attrs="{'invisible': [('advance_payment', '=', False)]}"/>
+                    <field name="ap_employee_id" string="Darbuotojas"
+                           attrs="{'invisible': [('advance_payment','=',False)], 'required': [('advance_payment','=',True)], 'readonly': ['|',('state','!=','draft')]}"/>
+                    <field name="cash_advance_account_id" string="Atskaitingų asmenų skolų DK"
+                           attrs="{'invisible': ['|',('expense_id','=',True),('advance_payment','=',False)], 'readonly': ['|',('state','!=','draft'),('expense_move_id','!=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='payments_widget']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': [('distributed_payment', '=', True)]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='tax_line_ids']//field[@name='tax_id']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                    <attribute name="required">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//field[@name='invoice_line_tax_ids']" position="attributes">
+                    <attribute name="domain">[('type_tax_use','=','purchase'),('company_id','=',parent.company_id),('price_include','=',False)]</attribute>
+                </xpath>
+                <xpath expr="//sheet[1]//div[1]" position="before">
+                    <field name="fuel_expense_move_id" invisible="1"/>
+                    <field name="has_fuel_lines" invisible="1"/>
+                    <div class="oe_button_box" name="buttons" groups="account.group_account_user">
+                        <button class="oe_inline oe_stat_button" type="object" icon="fa-bars"
+                                name="show_related_fuel_accounting_entries" string="KURAS"
+                                attrs="{'invisible':[('fuel_expense_move_id', '=', False)]}"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="invoice_type"/>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_draft']" position="after">
+                    <button name="action_cancel_imt" string="Cancel" type="object"
+                            attrs="{'invisible':['|',('state','!=','paid'),('invoice_type','=','invoice')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='amount_total']" position="after">
+                    <field name="show_signed" invisible="1"/>
+                    <field name="amount_total_company_signed" string="Total (EUR)"
+                           attrs="{'invisible': [('show_signed','=',False)]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='amount_untaxed']" position="replace">
+                    <field name="reporting_amount_untaxed"/>
+                </xpath>
+                <xpath expr="//field[@name='amount_tax']" position="replace">
+                    <field name="reporting_amount_tax"/>
+                </xpath>
+                <xpath expr="//field[@name='amount_total']" position="replace">
+                    <field name="reporting_amount_total" class="oe_subtotal_footer_separator"/>
+                </xpath>
+                <xpath expr="//page[2]//field[@name='name']" position="after">
+                    <field name="force_taxes" attrs="{'readonly': [('state', 'in', ('open', 'paid'))]}"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('force_taxes','=',True),('state','not in',['draft'])]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_open']" position="after">
+                    <field name="picking_id" invisible="1"/>
+                    <field name="show_create_picking" invisible="1"/>
+                    <button name="create_picking" states="open,paid" string="Sukurti važtaraštį"
+                            type="object" groups="base.group_user"
+                            context="{'invoice_id': active_id}"
+                            attrs="{'invisible': ['|','|',('picking_id', '!=', False),
+                            ('show_create_picking', '=', False)]}"/>
+                </xpath>
+
+                <xpath expr="//button[@name='action_invoice_cancel']" position="after">
+                    <button name="action_cancel_paid" states="paid" string="Atšaukti" type="object"/>
+                </xpath>
+                <xpath expr="//field[@name='move_id']" position="after">
+                    <field name="expense_move_id"/>
+                    <field name="invoice_header"/>
+                </xpath>
+                <xpath expr="//field[@name='date_invoice']" position="attributes">
+                    <attribute name="context">{'date': date_invoice, 'vat_date_test': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_tax_ids']" position="attributes">
+                    <attribute name="context">
+                        {'type': parent.type, 'date': parent.date_invoice, 'vat_date_test': True}
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_invoice_tree_due_date_report" model="ir.ui.view">
+            <field name="name">account.invoice.tree.due.date.report</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_due']" position="replace">
+                    <field name="date_due_report" string="Terminas"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

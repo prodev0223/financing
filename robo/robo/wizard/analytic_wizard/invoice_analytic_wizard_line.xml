@@ -1,0 +1,122 @@
+<odoo>
+    <data>
+    <!--Forms-->
+        <record id="line_analytic_wizard_line_form" model="ir.ui.view">
+            <field name="name">invoice.analytic.wizard.line.form</field>
+            <field name="model">invoice.analytic.wizard.line</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Sąskaitos eilutės analitika">
+                    <sheet>
+                    <field name="locked_analytic_period" invisible="1"/>
+                    <field name="has_picking" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('locked_analytic_period', '=', False)]}">
+                        <field name="locked_analytic_period_message"/>
+                    </div>
+                     <group>
+                        <field name="default_action" required="1"/>
+                    </group>
+                    <group string="Keisti analitinę sąskaitą"
+                           attrs="{'invisible': [('default_action', '!=', 'change_accounts')]}">
+                        <group>
+                            <field name="old_analytic_id" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <group>
+                            <field name="analytic_id" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                    </group>
+                    <group attrs="{'invisible': [('default_action', '!=', 'change_accounts')]}">
+                        <field name="name"/>
+                        <field name="qty"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="amount"/>
+                    </group>
+                    <group string="Analitinių eilučių skaidymas"
+                           attrs="{'invisible': [('default_action', '!=', 'split_analytic_lines')]}">
+                        <field name="deferred_period"
+                               attrs="{'required': [('default_action', '=', 'split_analytic_lines')]}"/>
+                    </group>
+                    <field name="split_line_quantity_warning" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': ['|', ('default_action', '!=', 'split_invoice_line'),
+                         ('split_line_quantity_warning', '=', False)]}">
+                        Išskaidžius sąskaitos eilutę bus prarastas originalus produkto kiekis, jis bus nustatomas į 1.
+                    </div>
+                    <group string="Sąskaitos eilutės skaidymas"
+                           attrs="{'invisible': [('default_action', '!=', 'split_invoice_line')]}">
+                        <field name="line_amount"/>
+                        <field name="left_line_amount"/>
+                        <field name="account_analytic_id" string="1. Analitinė sąskaita"
+                               options="{'no_open': True, 'no_create': True, 'no_quick_create': True}"/>
+                        <field name="split_part_amount" string="2. Suma"/>
+                    </group>
+                    <group attrs="{'invisible': [('default_action', '!=', 'split_invoice_line')]}">
+                            <field name="line_split_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}"
+                                   context="{'default_wiz_id': id}">
+                            <tree
+                                  create="0" delete="1" class="robo_tree_in_form">
+                                <field name="wiz_id" invisible="1"/>
+                                <field name="amount" readonly="1"/>
+                                <field name="account_analytic_id" readonly="1"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                            </tree>
+                                <form>
+                                    <group>
+                                        <field name="account_analytic_id" required="1"
+                                               options="{'no_open': True, 'no_create': True}" readonly="0"/>
+                                    </group>
+                                </form>
+                        </field>
+                    </group>
+                    <group attrs="{'invisible': [('default_action', '!=', 'split_invoice_line')]}">
+                        <div>
+                            <p>
+                                <i>
+                                 Pasirinkite analitinę sąskaitą, tada įrašykite sumą - sistema automatiškai sukurs
+                                 išskaidytą eilutę. Išskaidytų eilučių bendra suma turi sutapti su skaidomos eilutės suma.
+                                 Jeigu norite pakoreguoti eilutes, ištrinkite jas sąraše ir pridėkite naują įrašą.
+                                 </i>
+                             </p>
+                         </div>
+                    </group>
+                    <group string="Susijusių analitinių eilučių datų keitimas"
+                           attrs="{'invisible': [('default_action', '!=', 'force_dates')]}">
+                        <field name="wizard_analytic_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                               options="{'no_open': True, 'always_reload': True}"
+                        context="{'parent_id': active_id}">
+                        <tree create="0" edit="1" delete="0" class="robo_tree_in_form" editable="bottom">
+                            <field name="date" required="True"/>
+                            <field name="account_id" required="True"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="amount" readonly="True" invisible="1"/>
+                            <field name="ref" readonly="True"/>
+                        </tree>
+                    </field>
+                    </group>
+                    </sheet>
+                    <footer style="text-align: center; margin-top:5%;">
+                        <button name="split_invoice_line" type="object" string="Skaidyti eilutę" class="oe_highlight"
+                                attrs="{'invisible': [('default_action', '!=', 'split_invoice_line')]}"/>
+                        <button name="split_invoice_line" type="object"
+                                string="Skaidyti eilutę (priverstinai)"
+                                context="{'skip_stock': True}" class="oe_highlight"
+                                attrs="{'invisible': ['|', ('has_picking', '=', False),
+                                ('default_action', '!=', 'split_invoice_line')]}"
+                                confirm="Šis veiksmas nemodifikuos susijusio važtaraščio, ar tikrai norite tęsti?"/>
+                        <button name="change_analytics" type="object" string="Keisti analitinę sąskaitą"
+                                class="oe_highlight" context="{'check_move_validity': False}"
+                                attrs="{'invisible': [('default_action', '!=', 'change_accounts')]}"/>
+                        <button name="write_analytic_line_changes" type="object" string="Išsaugoti pakeitimus"
+                                class="oe_highlight" attrs="{'invisible': [('default_action', '!=', 'force_dates')]}"/>
+                        <button name="split_analytic_lines" type="object" string="Skaidyti eilutes"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('default_action', '!=', 'split_analytic_lines')]}"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

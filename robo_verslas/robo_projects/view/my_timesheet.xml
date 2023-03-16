@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Main Menu-->
+        <menuitem id="menu_timesheet_parent"
+                  parent="robo.menu_start"
+                  name="Žiniaraščiai"
+                  sequence="51"
+                  groups="project.group_project_user"
+                  force_web_icon="icon-clock3,none,none"
+                  robo_extended="1"
+                  robo_front="True"
+        />
+
+        <!--action1-->
+        <record id="view_timesheet_grid_search" model="ir.ui.view">
+            <field name="name">account.analytic.line</field>
+            <field name="model">account.analytic.line</field>
+            <field name="arch" type="xml">
+                <search string="Timesheet">
+                    <field name="date"/>
+                    <field name="user_id"/>
+                    <field name="project_id"/>
+                    <field name="task_id"/>
+                    <field name="name"/>
+                    <filter name="mine" string="Mano žiniaraščiai" domain="[('user_id', '=', uid)]"/>
+                    <separator/>
+
+                    <filter name="submitted" string="Pateikti" domain="[('submitted', '=', True)]"/>
+                    <filter name="nonsubmitted" string="Nepateikti" domain="[('submitted', '=', False)]"/>
+
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_user" string="Naudotojas" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter name="group_by_project" string="Projektą" domain="[]" context="{'group_by':'project_id'}"/>
+                        <!--ROBO: do not add this filter-->
+                        <!--<filter name="group_by_month" string="Mėnesį" domain="[]" context="{'group_by':'date:month'}"/>-->
+                        <filter name="group_by_task" string="Užduotį" domain="[]" context="{'group_by':'task_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="view_timesheet_grid_search_manager" model="ir.ui.view">
+           <field name="name">account.analytic.line.search.manager</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="robo_projects.view_timesheet_grid_search"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_free_manager')), (4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='nonsubmitted']" position="after">
+                    <filter name="validated" string="Patvirtinti" domain="[('validated', '=', True)]"/>
+                    <filter name="nonvalidated" string="Nepatvirtinti" domain="[('validated', '=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_timesheet_sheet_grid" model="ir.ui.view">
+            <field name="name">account.analytic.line</field>
+            <field name="model">account.analytic.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <grid string="Žiniaraštis" adjustment="object" adjust_name="grid_adjust">
+                    <button type="object" name="submit" class="oe_submit btn-default" string="Pateikti"/>
+                    <button type="object" name="month_pattern" class="btn-default" string="Sukelti projektus"/>
+                    <field name="project_id" type="row"/>
+                    <field name="task_id" type="row"/>
+                    <field name="date" type="col">
+                        <range name="week" string="Savaitė" span="week" step="day"/>
+                        <range name="month" string="Mėnesis" span="month" step="day"/>
+                    </field>
+                    <field name="unit_amount" type="measure" widget="float_time"/>
+                    <!--<field name="user_id" invisible="1"/>-->
+                    <!--<empty>-->
+                        <!--<p class="oe_view_nocontent_create">-->
+                            <!--Click to add projects and tasks-->
+                        <!--</p>-->
+                        <!--<p>you will be able to register your working hours on the given task</p>-->
+                    <!--</empty>-->
+                </grid>
+            </field>
+        </record>
+        <record id="view_account_analytic_line_grid_tree" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree</field>
+            <field name="model">account.analytic.line</field>
+            <field name="priority">1</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Žiniaraščio įrašai" editable="top" import="0">
+                    <field name="date"/>
+                    <field name="user_id" invisible="1" on_change="0"/>
+                    <field name="project_id" required="1" options="{'no_open': True, 'no_create': True}" on_change="0"/>
+                    <field name="task_id" domain="[['project_id', '=', project_id]]" options="{'no_open': True, 'no_create': True}"/>
+                    <field name="name"/>
+                    <field name="unit_amount" widget="float_time"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_account_analytic_line_grid_form" model="ir.ui.view">
+            <field name="name">account.analytic.line.form</field>
+            <field name="model">account.analytic.line</field>
+            <field name="priority">1</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pridėti eilutę">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="project_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="task_id" domain="[['project_id', '=', project_id]]" context="{'default_project_id': project_id}" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="user_id" groups="project.group_project_manager" required="1" options="{&quot;no_open&quot;: True, 'no_create': True}" context="{'active_test': False}"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="unit_amount" string="Praleistas laikas" widget="float_time"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <field name="name" nolabel="1" widget="text" placeholder="Aprašykite savo veiklą" colspan="4"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--<record id="view_account_analytic_line_grid_form_ext" model="ir.ui.view">-->
+            <!--<field name="name">account.analytic.line.form.with.user</field>-->
+            <!--<field name="model">account.analytic.line</field>-->
+            <!--<field name="mode">primary</field>-->
+            <!--<field name="priority">2</field>-->
+            <!--<field name="groups_id" eval="[(4, ref('project.group_project_manager'))]"/>-->
+            <!--<field name="inherit_id" ref="robo_projects.view_account_analytic_line_grid_form"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//field[@name='task_id']" position="after">-->
+                    <!--<field name="user_id" required="1" options="{&quot;no_open&quot;: True, 'no_create': True}"/>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <record id="action_timesheet_current" model="ir.actions.act_window">
+            <field name="name">Laiko žiniaraštis</field>
+            <field name="res_model">account.analytic.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">grid,tree_robo,form</field>
+             <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'grid', 'view_id': ref('robo_projects.hr_timesheet_sheet_grid')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_projects.view_account_analytic_line_grid_form')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_projects.view_account_analytic_line_grid_tree')})]"/>
+            <field name="domain">['&amp;',('user_id', '=', uid), ('is_timesheet', '=', True)]</field>
+            <field name="view_id" ref="hr_timesheet_sheet_grid"/>
+            <field name="search_view_id" ref="view_timesheet_grid_search"/>
+             <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                </p>
+            </field>
+            <field name="header" ref="robo_projects.project_default"/>
+            <field name="robo_menu" ref="robo_projects.menu_timesheet_parent"/>
+            <field name="context">
+                {
+                    'view_tree_robo_default_group_by': 'date,project_id',
+                    'grid_range': 'month',
+                    'default_name': '/',
+                    'default_user_id': uid,
+                    'remove_button': True,
+                }
+            </field>
+        </record>
+        <!--end action1-->
+
+
+        <!--action2-->
+        <record id="timesheet_view_grid_by_user" model="ir.ui.view">
+            <field name="name">account.analytic.line.grid</field>
+            <field name="model">account.analytic.line</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+               <grid string="Laiko žiniaraštis" adjustment="object" adjust_name="grid_adjust" create="false" edit="false">
+                    <field name="user_id" type="row" section="1"/>
+                    <field name="project_id" type="row"/>
+                    <field name="date" type="col">
+                        <range name="week" string="Savaitė" span="week" step="day"/>
+                        <range name="month" string="Mėnesis" span="month" step="day"/>
+                    </field>
+                    <field name="unit_amount" type="measure" widget="float_time"/>
+                </grid>
+            </field>
+        </record>
+        <record id="timesheet_view_grid_by_user_ext" model="ir.ui.view">
+            <field name="name">account.analytic.line.grid.ext</field>
+            <field name="model">account.analytic.line</field>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_free_manager')), (4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="inherit_id" ref="robo_projects.timesheet_view_grid_by_user"/>
+            <field name="arch" type="xml">
+               <xpath expr="/grid" position="attributes">
+                    <attribute name="create">true</attribute>
+                    <attribute name="edit">true</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="timesheet_view_tree_by_user" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree</field>
+            <field name="model">account.analytic.line</field>
+            <field name="priority">10</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree editable="top" string="Žiniaraštis" import="false" create="0">
+                    <field name="date"/>
+                    <field name="user_id" required="1" options="{&quot;no_open&quot;: True}"/>
+                    <field name="name"/>
+                    <field name="project_id" required="1"/>
+                    <field name="task_id" context="{'default_project_id': project_id}" domain="[('project_id', '=', project_id)]"/>
+                    <field name="unit_amount" string="Laikas (h)" sum="Total time" widget="float_time"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="timesheet_action_all" model="ir.actions.act_window">
+            <field name="name">Laiko žiniaraščiai</field>
+            <field name="res_model">account.analytic.line</field>
+            <!--<field name="view_type"></field>-->
+            <field name="view_mode">grid,tree_robo</field>
+             <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'grid', 'view_id': ref('robo_projects.timesheet_view_grid_by_user')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_projects.timesheet_view_tree_by_user')})]"/>
+            <field name="domain">[('is_timesheet', '=', True)]</field>
+            <field name="view_id" ref="timesheet_view_grid_by_user"/>
+            <field name="search_view_id" ref="view_timesheet_grid_search"/>
+             <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                </p>
+            </field>
+            <field name="header" ref="robo_projects.project_default"/>
+            <field name="robo_menu" ref="robo_projects.menu_timesheet_parent"/>
+            <field name="context" eval="
+                {
+                    'view_tree_robo_default_group_by': 'user_id,date,project_id',
+                    'search_default_group_by_user': 1,
+                    'search_default_group_by_project': 1,
+                    'search_default_group_by_task': 1,
+                    'grid_range': 'month',
+                    'default_name': '/',
+                    'quick_create_view': ref('robo_projects.view_account_analytic_line_grid_form'),
+                }"
+            />
+        </record>
+        <!--end action2-->
+
+        <!--action3-->
+        <record id="timesheet_view_grid_validate" model="ir.ui.view">
+            <field name="name">account.analytic.line.grid.validate</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="robo_projects.hr_timesheet_sheet_grid"/>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+               <xpath expr="/grid">
+                    <button type="object" name="validate" class="oe_validate btn-defaut" string="Patvirtinti"/>
+                </xpath>
+                <xpath expr="/grid/button[@name='submit']" position="replace">
+                </xpath>
+                <xpath expr="/grid/button[@name='month_pattern']" position="replace">
+                </xpath>
+                <xpath expr="/grid" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="edit">false</attribute>
+                </xpath>
+                <xpath expr="//field[@name='project_id']" position="attributes">
+                    <attribute name="name">user_id</attribute>
+                    <attribute name="section">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='task_id']" position="replace"/>
+            </field>
+        </record>
+        <record id="timesheet_view_tree_validate" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree.validate</field>
+            <field name="model">account.analytic.line</field>
+            <field name="priority">1</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+               <tree string="Timesheet Lines" editable="top" import="0">
+                    <field name="date"/>
+                    <field name="project_id"/>
+                    <field name="task_id" domain="[['project_id', '=', project_id]]"/>
+                    <field name="name"/>
+                    <field name="unit_amount" widget="float_time"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_timesheet_previous_month" model="ir.actions.act_window">
+            <field name="name">Tvirtinti žiniaraščius</field>
+            <field name="res_model">account.analytic.line</field>
+            <field name="view_mode">grid</field>
+             <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'grid', 'view_id': ref('robo_projects.timesheet_view_grid_validate')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_projects.timesheet_view_tree_by_user')})]"/>
+            <field name="domain">[('is_timesheet', '=', True)]</field>
+            <field name="view_id" ref="timesheet_view_grid_validate"/>
+            <field name="search_view_id" ref="view_timesheet_grid_search"/>
+             <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                </p>
+            </field>
+            <field name="header" ref="robo_projects.project_default"/>
+            <field name="robo_menu" ref="robo_projects.menu_timesheet_parent"/>
+            <field name="context">
+                {
+                    'search_default_group_by_user': 1,
+                    'search_default_group_by_project': 1,
+                    'grid_range': 'month',
+                }
+            </field>
+        </record>
+        <!--end action3-->
+
+        <record id="timesheet_validation_view_form" model="ir.ui.view">
+            <field name="name">Patvirtinti žiniaraščius</field>
+            <field name="model">timesheet.validation</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Tvirtinti žiniaraščius">
+                <!--WARNING IF USER ACTUALLY unvalidates-->
+
+                    <!--<field name="next_date" invisible="1"/>-->
+                    <field name="show_warning" invisible="1"/>
+                    <div class="alert alert-info mb8" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('show_warning','=',False)]}">
+                        Pasirinktų darbuotojų patvirtinti įrašai nuo <field name="next_date" class="oe-inline"/> bus atitvirtinti.
+                    </div>
+                    Patvirtinti žiniaraščius pasirinktiems darbuotojams iki
+                    <field name="date"/>
+                    <field name="line_ids">
+                        <tree editable="bottom" create="false" delete="false">
+                            <field name="user_id" readonly="1" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="validate"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button type="object" string="Patvirtinti" name="action_validate" class="btn-primary"/>
+                        <button special="cancel" string="Atmesti" class="btn-default"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+        <record id="timesheet_submission_view_form" model="ir.ui.view">
+            <field name="name">Pateikti žiniaraščius</field>
+            <field name="model">timesheet.submission</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Tvirtinti žiniaraščius">
+                    <field name="show_warning" invisible="1"/>
+                    <div class="alert alert-info mb8" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('show_warning','=',False)]}">
+                        Darbuotojo pateikti įrašai nuo <field name="next_date" class="oe-inline"/> bus atitvirtinti.
+                    </div>
+
+                    Pateikti žiniaraščius iki <field name="date"/>
+                    <field name="line_ids">
+                        <tree editable="bottom" create="false" delete="false">
+                            <field name="user_id" readonly="1" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="validate"/>
+                        </tree>
+                    </field>
+
+                    <footer>
+                        <button type="object" string="Pateikti" name="action_submit" class="btn-primary"/>
+                        <button special="cancel" string="Atmesti" class="btn-default"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+        <record id="timesheet_pattern_view_form" model="ir.ui.view">
+            <field name="name">Projektų šablonas</field>
+            <field name="model">timesheet.month.pattern</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Projektų šablonas">
+                    <sheet>
+                        <group>
+                            <field name="month" string="Mėnesis" options="{'no_open': True, 'no_create': True}" domain="[('id', 'in', month_filter and month_filter[0][2])]"/>
+                            <field name="month_filter" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="project_ids" widget="many2many_tags" string="Projektai" domain="[('id', 'in', project_filter_ids and project_filter_ids[0][2])]" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="project_filter_ids" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button type="object" string="Pritaikyti" name="action_make_pattern" class="btn-primary"/>
+                        <button special="cancel" string="Atmesti" class="btn-default"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+
+        <!--MENU-->
+        <menuitem id="menu_my_timesheets_analysis"
+                  parent="robo_projects.menu_timesheet_parent"
+                  name="Mano žiniaraštis"
+                  sequence="64"
+                  action="action_timesheet_current"
+                  groups="project.group_project_user"
+                  force_web_icon="icon-timer,none,none"
+                  robo_front="True"
+                  searchable="True"
+                  tags="mano,žiniaraštis"
+
+        />
+        <menuitem id="menu_all_timesheets_analysis"
+                  parent="robo_projects.menu_timesheet_parent"
+                  name="Visi žiniaraščiai"
+                  sequence="65"
+                  action="timesheet_action_all"
+                  groups="project.group_project_manager"
+                  force_web_icon="icon-calendar-user,none,none"
+                  robo_front="True"
+                  searchable="True"
+                  tags="visi,žiniaraščiai"
+
+        />
+        <menuitem id="menu_validate_timesheets_analysis"
+                  parent="robo_projects.menu_timesheet_parent"
+                  name="Tvirtinti žiniaraščius"
+                  sequence="66"
+                  action="action_timesheet_previous_month"
+                  groups="project.group_project_manager"
+                  force_web_icon="icon-calendar-check,none,none"
+                  robo_front="True"
+                  searchable="True"
+                  tags="tvirtinti,žiniaraščius"
+        />
+        <!--END MENU-->
+
+    </data>
+</odoo>

@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="e_document_group_extra_fields" model="res.groups">
+            <field name="name">eDocument extra fields visible</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomas darbo normos koeficientas eDokumentuose</field>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_edocs')"/>
+        </record>
+        <record id="robo_basic.group_robo_premium_accountant" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('e_document.e_document_group_extra_fields'))]"/>
+        </record>
+        <record id="e_document_premium_user" model="ir.rule">
+            <field name="name">eDocument Premium User</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                '&amp;', '&amp;',
+                ('document_type', '=', 'prasymas'),
+                ('active', '=', True),
+                '|',
+                ('employee_id1','=',user.employee_ids and user.employee_ids[0].id or False),
+                ('employee_id1.department_id.manager_id.user_id', 'in', user.company_id.politika_atostogu_suteikimas == 'department' and user.ids or []),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+
+        <record id="e_document_premium_user_other" model="ir.rule">
+            <field name="name">eDocument Premium User - Other</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('document_type', '=', 'other'),
+                ('active', '=', True),
+                ('employee_id1','=',user.employee_ids and user.employee_ids[0].id or False),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+
+        <record id="e_document_business_trip_req_extra_worked_days_user" model="ir.rule">
+            <field name="name">eDocument Business Trip Req Extra WD User</field>
+            <field name="model_id" ref="e_document.model_e_document_business_trip_request_extra_worked_days"/>
+            <field name="domain_force">[
+                '|',
+                ('e_document_id.business_trip_document', '=', True),
+                '&amp;', '&amp;',
+                ('e_document_id.document_type', '=', 'prasymas'),
+                ('e_document_id.active', '=', True),
+                '|',
+                ('e_document_id.employee_id1','=',user.employee_ids and user.employee_ids[0].id or False),
+                ('e_document_id.employee_id1.department_id.manager_id.user_id', 'in', user.company_id.politika_atostogu_suteikimas == 'department' and user.ids or []),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('e_document.group_robo_business_trip_user'))]"/>
+        </record>
+        <record id="e_document_business_trip_extra_worked_days_user" model="ir.rule">
+            <field name="name">eDocument Business Trip Extra WD User</field>
+            <field name="model_id" ref="e_document.model_e_document_business_trip_extra_worked_days"/>
+            <field name="domain_force">[
+                '|',
+                ('business_trip_schedule_id.e_document_id.business_trip_document', '=', True),
+                '&amp;', '&amp;',
+                ('business_trip_schedule_id.e_document_id.document_type', '=', 'prasymas'),
+                ('business_trip_schedule_id.e_document_id.active', '=', True),
+                '|',
+                ('business_trip_schedule_id.e_document_id.employee_id1','=',user.employee_ids and user.employee_ids[0].id or False),
+                ('business_trip_schedule_id.e_document_id.employee_id1.department_id.manager_id.user_id', 'in', user.company_id.politika_atostogu_suteikimas == 'department' and user.ids or []),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('e_document.group_robo_business_trip_user'))]"/>
+        </record>
+        <record id="e_document_business_trip_line_user" model="ir.rule">
+            <field name="name">eDocument Business Trip Line User</field>
+            <field name="model_id" ref="e_document.model_e_document_business_trip_employee_line"/>
+            <field name="domain_force">[
+                '|',
+                ('e_document_id.business_trip_document', '=', True),
+                '&amp;', '&amp;',
+                ('e_document_id.document_type', '=', 'prasymas'),
+                ('e_document_id.active', '=', True),
+                '|',
+                ('e_document_id.employee_id1','=',user.employee_ids and user.employee_ids[0].id or False),
+                ('e_document_id.employee_id1.department_id.manager_id.user_id', 'in', user.company_id.politika_atostogu_suteikimas == 'department' and user.ids or []),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('e_document.group_robo_business_trip_user'))]"/>
+        </record>
+        <record id="e_document_business_trip_user" model="ir.rule">
+            <field name="name">eDocument Business Trip User</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                '|',
+                ('business_trip_document', '=', True),
+                '&amp;', '&amp;',
+                ('document_type', '=', 'prasymas'),
+                ('active', '=', True),
+                '|',
+                ('employee_id1','=',user.employee_ids and user.employee_ids[0].id or False),
+                ('employee_id1.department_id.manager_id.user_id', 'in', user.company_id.politika_atostogu_suteikimas == 'department' and user.ids or []),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('e_document.group_robo_business_trip_user'))]"/>
+        </record>
+        <record id="e_document_business_trip_request_extra_worked_days_free_user" model="ir.rule">
+            <field name="name">eDocument Free User</field>
+            <field name="model_id" ref="e_document.model_e_document_business_trip_request_extra_worked_days"/>
+            <field name="domain_force">[
+                '&amp;', '&amp;',
+                ('e_document_id.document_type', '=', 'prasymas'),
+                ('e_document_id.active', '=', True),
+                '|',
+                ('e_document_id.employee_id1.id', '=', user.employee_ids and user.employee_ids[0].id or False),
+                ('e_document_id.employee_id1.department_id.manager_id.user_id', 'in', user.company_id.politika_atostogu_suteikimas == 'department' and user.ids or []),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_free_employee'))]"/>
+        </record>
+        <record id="e_document_business_trip_request_extra_worked_days_premium_user" model="ir.rule">
+            <field name="name">eDocument Premium User</field>
+            <field name="model_id" ref="e_document.model_e_document_business_trip_request_extra_worked_days"/>
+            <field name="domain_force">[
+                '&amp;', '&amp;',
+                ('e_document_id.document_type', '=', 'prasymas'),
+                ('e_document_id.active', '=', True),
+                '|',
+                ('e_document_id.employee_id1.id', '=', user.employee_ids and user.employee_ids[0].id or False),
+                ('e_document_id.employee_id1.department_id.manager_id.user_id', 'in', user.company_id.politika_atostogu_suteikimas == 'department' and user.ids or []),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="e_document_business_trip_request_extra_worked_days_accountant" model="ir.rule">
+            <field name="name">eDocument Accountant</field>
+            <field name="model_id" ref="e_document.model_e_document_business_trip_request_extra_worked_days"/>
+            <field name="domain_force">[
+                ('e_document_id.document_type', '=', 'prasymas'),
+                ('e_document_id.active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+        <record id="e_document_line_premium_user" model="ir.rule">
+            <field name="name">eDocument Premium User</field>
+            <field name="model_id" ref="e_document.model_e_document_line"/>
+            <field name="domain_force">[
+                '&amp;', '&amp;',
+                ('e_document_id.document_type', '=', 'prasymas'),
+                ('e_document_id.active', '=', True),
+                '|',
+                ('e_document_id.employee_id1','=',user.employee_ids and user.employee_ids[0].id or False),
+                ('e_document_id.employee_id1.department_id.manager_id.user_id', 'in', user.company_id.politika_atostogu_suteikimas == 'department' and user.ids or []),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="e_document_premium_manager" model="ir.rule">
+            <field name="name">eDocument Premium Manager</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_manager')), (4, ref('robo_basic.group_robo_edocument_manager'))]"/>
+        </record>
+        <record id="e_document_line_premium_manager" model="ir.rule">
+            <field name="name">eDocument Premium Manager</field>
+            <field name="model_id" ref="e_document.model_e_document_line"/>
+            <field name="domain_force">[
+                ('e_document_id.active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_manager')), (4, ref('robo_basic.group_robo_edocument_manager'))]"/>
+        </record>
+        <record id="e_document_active" model="ir.rule">
+            <field name="name">eDocument system administrator</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                (1, '=', 1)
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="e_document_line_active" model="ir.rule">
+            <field name="name">eDocument system administrator</field>
+            <field name="model_id" ref="e_document.model_e_document_line"/>
+            <field name="domain_force">[
+                (1, '=', 1)
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="e_document_premium_user_delegate" model="ir.rule">
+            <field name="name">eDocument Premium User Delegate</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('id', 'in', [doc.id for doc in user.delegated_document_ids]),
+                ('active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="e_document_line_premium_user_delegate" model="ir.rule">
+            <field name="name">eDocument Premium User Delegate</field>
+            <field name="model_id" ref="e_document.model_e_document_line"/>
+            <field name="domain_force">[
+                ('id', 'in', [doc.id for doc in user.delegated_document_ids]),
+                ('e_document_id.active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="e_document_premium_user_department_delegate" model="ir.rule">
+            <field name="name">eDocument Premium User Department Delegate</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('id', 'in', [doc.id for doc in user.department_delegated_document_ids]),
+                ('active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        <record id="e_document_line_premium_user_department_delegate" model="ir.rule">
+            <field name="name">eDocument Premium User Department Delegate</field>
+            <field name="model_id" ref="e_document.model_e_document_line"/>
+            <field name="domain_force">[
+                ('id', 'in', [doc.id for doc in user.department_delegated_document_ids]),
+                ('e_document_id.active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="e_document_invited_to_sign" model="ir.rule">
+            <field name="name">eDocument Invited to Sign</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('user_ids.user_id', '=', user.id),
+                ('active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="e_document_line_invited_to_sign" model="ir.rule">
+            <field name="name">eDocument Invited to Sign</field>
+            <field name="model_id" ref="e_document.model_e_document_line"/>
+            <field name="domain_force">[
+                ('e_document_id.user_ids.user_id', '=', user.id),
+                ('e_document_id.active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="e_document_signed_users" model="ir.rule">
+            <field name="name">eDocument Invitation List User</field>
+            <field name="model_id" ref="e_document.model_signed_users"/>
+            <field name="domain_force">[
+                ('user_id', '=', user.id),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+
+        <record id="e_document_signed_users_manager" model="ir.rule">
+            <field name="name">eDocument Invitation List Manager</field>
+            <field name="model_id" ref="e_document.model_signed_users"/>
+            <field name="domain_force">[
+                (1, '=', 1),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+        <record id="e_document_signed_users_hr_manager" model="ir.rule">
+            <field name="name">eDocument Invitation List HR Manager</field>
+            <field name="model_id" ref="e_document.model_signed_users"/>
+            <field name="domain_force">[
+                (1, '=', 1),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_hr_manager'))]"/>
+        </record>
+        <record id="group_robo_mark_requests_signed" model="res.groups">
+            <field name="name">Pažymėti prašymus pasirašytais</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama nustatyti prašymų dokumentus pasirašytais</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_edocs')"/>
+        </record>
+        <record model="ir.rule" id="access_create_on_behalf_rule">
+            <field name="name">Create on Behalf</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('document_type', '=', 'prasymas'),
+                ('active', '=', True),
+                ('user_id', '=', user.id),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_create_on_behalf')), (4, ref('e_document.group_robo_mark_requests_signed'))]"/>
+        </record>
+
+        <record model="ir.rule" id="access_create_on_behalf_rule_other">
+            <field name="name">Create on Behalf - Other</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('document_type', '=', 'other'),
+                ('active', '=', True),
+                ('user_id', '=', user.id),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_create_on_behalf'))]"/>
+        </record>
+
+        <record model="ir.rule" id="access_e_document_time_line_employee">
+            <field name="name">Enable reading own e-document time lines</field>
+            <field name="model_id" ref="e_document.model_e_document_time_line"/>
+            <field name="domain_force">[
+                ('employee_id.user_id', '=', user.id),
+            ]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record model="ir.rule" id="write_e_document_time_line_employee">
+            <field name="name">Enable modifying own e-document time lines</field>
+            <field name="model_id" ref="e_document.model_e_document_time_line"/>
+            <field name="domain_force">[
+                ('employee_id.user_id', '=', user.id),
+                ('e_document_id.state', '=', 'draft')
+            ]
+            </field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record model="ir.rule" id="access_e_document_time_line_manager">
+            <field name="name">Enable modifying all e-document time lines</field>
+            <field name="model_id" ref="e_document.model_e_document_time_line"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_manager')), (4, ref('robo_basic.group_robo_hr_manager'))]"/>
+        </record>
+        <record model="ir.rule" id="write_e_document_fix_attendance_line_employee">
+            <field name="name">Enable modifying own e-document fix attendance lines</field>
+            <field name="model_id" ref="e_document.model_e_document_fix_attendance_line"/>
+            <field name="domain_force">[
+                ('e_document.employee_id1.user_id', '=', user.id),
+                ('e_document.document_type', '=', 'prasymas'),
+                ('e_document.state', '=', 'draft')
+                ]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record model="ir.rule" id="access_e_document_fix_attendance_line_manager">
+            <field name="name">Enable modifying all e-document fix attendance lines</field>
+            <field name="model_id" ref="e_document.model_e_document_fix_attendance_line"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="groups"
+                   eval="[(4, ref('robo_basic.group_robo_premium_manager')), (4, ref('robo_basic.group_robo_hr_manager'))]"/>
+        </record>
+        <record model="ir.rule" id="access_e_document_fix_attendance_line_employee">
+            <field name="name">Enable reading own e-document fix attendance lines</field>
+            <field name="model_id" ref="e_document.model_e_document_fix_attendance_line"/>
+            <field name="domain_force">[
+                ('e_document.employee_id1.user_id', '=', user.id),
+                ('e_document.document_type', '=', 'prasymas'),
+                ('e_document.state', '!=', 'draft')
+                ]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+    </data>
+</odoo>

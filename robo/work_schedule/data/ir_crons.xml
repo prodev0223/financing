@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cron_work_schedule_copy_to_factual" model="ir.cron">
+            <field name="name">Copy work schedule main schedule to factual</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="model">work.schedule</field>
+            <field name="function">cron_copy_schedule</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(months=0, day=1, hour=0, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_warn_about_leaving_employees_schedule_submission" model="ir.cron">
+            <field name="name">Create Message For Unsent schedules for leaving employees</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">hr.contract</field>
+            <field name="function">cron_warn_about_leaving_employees_schedule_submission</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(day=1, hour=0, minute=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_remind_about_schedules_to_fill_in" model="ir.cron">
+            <field name="name">Remind partners to fill in work schedules</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">work.schedule</field>
+            <field name="function">cron_reminder_to_fill_in_work_schedule</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(day=1, hour=0, minute=15)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_inform_about_truancy_lines" model="ir.cron">
+            <field name="name">Inform accountant to check truancy documents</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">work.schedule</field>
+            <field name="function">cron_inform_about_truancy_lines</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(day=1, hour=0, minute=15)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_create_empty_schedule_for_missing_employees" model="ir.cron">
+            <field name="name">Find missing contracts and create empty schedule for missing employees</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="model">work.schedule</field>
+            <field name="function">cron_create_empty_schedule_for_missing_employees</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=1, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

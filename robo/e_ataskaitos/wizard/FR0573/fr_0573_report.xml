@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.actions.act_window" id="action_vmi_fr_0573_report">
+            <field name="name">GPM313</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fr.0573.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot,tree</field>
+            <field name="target">current</field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr_0573_report_pivot">
+            <field name="name">fr.0573.report.pivot</field>
+            <field name="model">fr.0573.report</field>
+            <field name="arch" type="xml">
+                <pivot string="FR0573">
+                    <field name="date" type="col"/>
+                    <field name="partner_id" type="row"/>
+                    <field name="original_amount_bruto" type="measure"/>
+                    <field name="original_amount_neto" type="measure"/>
+                    <field name="original_amount_tax" type="measure"/>
+                    <field name="payslip_amount_bruto" type="measure"/>
+                    <field name="payslip_amount_neto" type="measure"/>
+                    <field name="payslip_amount_tax" type="measure"/>
+                    <field name="amount_bruto" type="measure"/>
+                    <field name="amount_neto" type="measure"/>
+                    <field name="amount_tax" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr_0573_report_tree">
+            <field name="name">fr.0573.report.tree</field>
+            <field name="model">fr.0573.report</field>
+            <field name="arch" type="xml">
+                <tree string="GPM313" editable="top">
+                    <field name="partner_id" required="1"/>
+                    <field name="origin"/>
+                    <field name="document_type" required="1"/>
+                    <field name="date"/>
+                    <field name="original_amount_npd" readonly="1"/>
+                    <field name="original_amount_bruto" readonly="1"/>
+                    <field name="original_amount_neto" readonly="1"/>
+                    <field name="original_amount_tax" readonly="1"/>
+                    <field name="original_amount_tax_paid" readonly="1"/>
+                    <field name="payslip_amount_bruto" readonly="1"/>
+                    <field name="payslip_amount_neto" readonly="1"/>
+                    <field name="payslip_amount_tax" readonly="1"/>
+                    <field name="amount_npd"/>
+                    <field name="amount_bruto" required="1"/>
+                    <field name="amount_neto" required="1"/>
+                    <field name="amount_tax" required="1"/>
+                    <field name="amount_tax_paid"/>
+                    <field name="gpm_for_responsible_person_amount"/>
+                    <field name="foreign_paid_gpm_amount"/>
+                    <field name="foreign_country_id"/>
+                    <field name="employer_payout"/>
+                    <field name="a_klase_kodas_id"/>
+                    <field name="b_klase_kodas_id"/>
+                    <field name="correction" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_fr_0573_report_search">
+            <field name="name">fr.0573.report.search</field>
+            <field name="model">fr.0573.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id"/>
+                    <field name="a_klase_kodas_id"/>
+                    <group>
+                        <filter name="iki_15" string="Iki 15 d" domain="[('iki_15', '=', True)]"/>
+                        <filter name="po_15" string="Po 15 d" domain="[('iki_15', '=', False)]"/>
+                        <separator/>
+                        <filter name="du" string="Darbo užmokestis"
+                                domain="[
+                                    ('a_klase_kodas_id', 'in', [
+                                        %(l10n_lt_payroll.a_klase_kodas_1)d,
+                                        %(l10n_lt_payroll.a_klase_kodas_3)d
+                                    ])
+                                ]"/>
+                        <filter name="not_du" string="Ne darbo užmokestis"
+                                domain="[
+                                    ('a_klase_kodas_id', 'not in', [
+                                        %(l10n_lt_payroll.a_klase_kodas_1)d,
+                                        %(l10n_lt_payroll.a_klase_kodas_3)d
+                                    ])
+                                ]"/>
+                        <separator/>
+                        <filter name="not_in_gpm313" string="Patenka į GPM313 (nėra 5 kl.)"
+                                domain="['|', ('a_klase_kodas_id', '=', False), ('a_klase_kodas_id.code', 'not in', ['05'])]"/>
+                        <separator/>
+                        <filter name="residents" string="Rezidentai"
+                                domain="[('partner_id.rezidentas', '=', 'rezidentas')]"/>
+                        <filter name="not_residents" string="Ne rezidentai"
+                                domain="[('partner_id.rezidentas', '!=', 'rezidentas')]"/>
+                        <separator/>
+                        <filter name="included_in_mothly_income_tax_report"
+                                string="Asmenys įtraukiami į mėnesinę pajamų mokesčio deklaraciją"
+                                domain="[('partner_id.skip_monthly_income_tax_report', '=', False)]"/>
+                        <filter name="not_included_in_mothly_income_tax_report"
+                                string="Asmenys neįtraukiami į mėnesinę pajamų mokesčio deklaraciją"
+                                domain="[('partner_id.skip_monthly_income_tax_report', '=', True)]"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

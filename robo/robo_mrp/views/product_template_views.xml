@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_stock_product_form_extend" model="ir.ui.view">
+            <field name="name">product.template.mrp.extend</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tracking']" position="after">
+                    <field name="autocreate_lot_number" groups="robo_stock.robo_stock_extended"
+                           attrs="{'invisible': [('tracking', 'not in', ['serial', 'lot'])]}"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_policy']" position="after">
+                    <field name="skip_recursive_bom_splitting" groups="robo_mrp.group_recursive_bom_production"/>
+                </xpath>
+                <xpath expr="//field[@name='property_stock_production']" position="after">
+                    <field name="default_production_location_id"
+                           domain="[('usage', '=', 'internal')]"
+                           options="{'no_create': True}"
+                           groups="robo_stock.robo_stock_extended"/>
+                    <field name="production_location_id"
+                           groups="robo_stock.robo_stock_extended"
+                           attrs="{'invisible': ['|', ('production_location_id', '=', False),('default_production_location_id', '!=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_template_stock_property_backend_form_extend" model="ir.ui.view">
+            <field name="name">product.template.stock.property.backend.form.extend</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_template_property_form"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_stock_production']" position="after">
+                    <field name="default_production_location_id"
+                           domain="[('usage', '=', 'internal')]"
+                           options="{'no_create': True}"
+                           groups="robo_stock.robo_stock_extended"/>
+                    <field name="production_location_id"
+                           groups="robo_stock.robo_stock_extended"
+                           attrs="{'invisible': ['|', ('production_location_id', '=', False),('default_production_location_id', '!=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_template_search_view" model="ir.ui.view">
+            <field name="name">product.template.search.robo.mrp</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='components']" position="after">
+                    <filter string="Neturi susijusių komplektacijų"
+                            name="no_related_boms" domain="[('bom_ids', '=', False), ('type', '=', 'product')]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

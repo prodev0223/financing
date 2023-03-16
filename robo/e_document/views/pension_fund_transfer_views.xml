@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="pension_fund_transfer_view_form" model="ir.ui.view">
+            <field name="inherit_id" ref="l10n_lt.pension_fund_transfer_view_form"/>
+            <field name="name">pension.fund.transfer.view.form</field>
+            <field name="model">pension.fund.transfer</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='transfer_purpose']" position="after">
+                    <field name="e_document_id" attrs="{'invisible': [('e_document_id', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,58 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_etaksi_data_import_job" model="ir.ui.view">
+            <field name="name">tree.etaksi.data.import.job</field>
+            <field name="model">etaksi.data.import.job</field>
+            <field name="arch" type="xml">
+                <tree string="Importavimo Darbai"
+                      create="0" delete="0" edit="0"
+                        decoration-info="state == 'in_progress'"
+                        decoration-success="state == 'finished'"
+                        decoration-danger="state == 'failed'">
+                    <field name="imported_file_name"/>
+                    <field name="execution_start_date" readonly="1"/>
+                    <field name="execution_end_date" readonly="1"/>
+                    <field name="state"/>
+                    <field name="fail_message" readonly="1"/>
+                    <field name="show_open_button" invisible="1"/>
+                    <field name="imported_file" filename="imported_file_name"/>
+                    <button name="action_open_invoices"
+                            string="Atidaryti sukurtas sąskaitas"
+                            type="object" icon="fa-arrow-right"
+                            attrs="{'invisible': [('show_open_button', '=', False)]}"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="form_etaksi_data_import_job" model="ir.ui.view">
+            <field name="name">form.etaksi.data.import.job</field>
+            <field name="model">etaksi.data.import.job</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                           <field name="execution_start_date" readonly="1"/>
+                            <field name="execution_end_date" readonly="1"/>
+                            <field name="state"/>
+                            <field name="fail_message" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_etaksi_data_import_job" model="ir.actions.act_window">
+            <field name="name">Darbai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">etaksi.data.import.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_etaksi_data_import_job"/>
+        </record>
+    </data>
+</odoo>

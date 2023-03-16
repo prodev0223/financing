@@ -1,0 +1,34 @@
+<odoo>
+    <data>
+        <record id="fr_0573_data_import_form" model="ir.ui.view">
+            <field name="name">fr.0573.data.import</field>
+            <field name="model">fr.0573.data.import</field>
+            <field name="arch" type="xml">
+                <form string="Duomenu importavimas">
+                    <sheet>
+                        <group col="2">
+                            <field name="xls_data" filename="xls_name"/>
+                            <field name="xls_name" invisible="1"/>
+                        </group>
+                        <group>
+                            <a href="e_ataskaitos/static/data/FR0573_importas.xlsx">Atsisiųsti XLS pavyzdį</a>
+                        </group>
+                    </sheet>
+                <footer>
+                    <button string="Importuoti duomenis" name="data_import" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_open_fr0573_data_import">
+            <field name="name">Importuoti duomenis</field>
+            <field name="res_model">fr.0573.data.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="fr_0573_data_import_form"/>
+        </record>
+    </data>
+</odoo>

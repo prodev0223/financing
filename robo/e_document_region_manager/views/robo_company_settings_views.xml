@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">company.settings.form</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside">
+                    <button name="%(e_document_region_manager.e_document_region_manager_action)d"
+                            string="Region managers" type="action" class="oe_link"
+                            groups="robo_basic.group_robo_premium_manager"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_e_document_region_manager_settings_search"
+                  name="Region managers"
+                  parent="robo.menu_company_settings_search"
+                  action="e_document_region_manager.e_document_region_manager_action"
+                  groups="robo_basic.group_robo_premium_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="department,region,managers"
+        />
+    </data>
+</odoo>

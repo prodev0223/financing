@@ -1,0 +1,208 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="raso_shoplist_tree" model="ir.ui.view">
+            <field name="name">raso.shoplist.tree</field>
+            <field name="model">raso.shoplist</field>
+            <field name="arch" type="xml">
+                <tree decoration-warning="need_to_update"
+                      decoration-success="state == 'working'"
+                      decoration-danger="state == 'failed'"
+                      string="Parduotuvių sąrašas" create="1" edit="1" delete="1">
+                    <field name="shop_no"/>
+                    <field name="generic_pos"/>
+                    <field name="location_id"/>
+                    <field name="state"/>
+                    <field name="level"/>
+                    <field name="ip_address"/>
+                    <field name="sco_address"/>
+                    <field name="remarks"/>
+                    <field name="revision_number_display"/>
+                    <field name="need_to_update"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="raso_shoplist_action" model="ir.actions.act_window">
+            <field name="name">Parduotuvių sąrašas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">raso.shoplist</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="raso_shoplist_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="raso_shoplist_form" model="ir.ui.view">
+            <field name="name">raso.shoplist.form</field>
+            <field name="model">raso.shoplist</field>
+            <field name="arch" type="xml">
+                <form string="Parduotuvė" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="import_shops" type="object" string="Importuoti į RASO" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <field name="last_update_state" invisible="1"/>
+                    <field name="need_to_update" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('last_update_state', '!=', 'waiting')]}">
+                        <div><h4>Laukiama atsakymo paskutiniam importuotam įrašui</h4></div>
+                    </div>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('need_to_update', '=', False)]}">
+                        <div><h4>Įrašo versija naujesnė nei RASO serveryje</h4></div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('last_update_state', '!=', 'rejected')]}">
+                        <div><h4>Paskutinis importas į RASO serverį buvo atmestas</h4></div>
+                    </div>
+                    <sheet>
+                    <div>
+                        <label string="Parduotuvės kodas"/>
+                        <h1 class="mt0">
+                            <field name="shop_no" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="shop_name"/>
+                            <field name="address"/>
+                            <field name="city"/>
+                            <field name="level"/>
+                            <field name="ip_address"/>
+                            <field name="sco_address"/>
+                            <field name="remarks"/>
+                            <field name="generic_pos"/>
+                            <field name="location_id"/>
+                        </group>
+                         <group string="Raso Importas">
+                        <field name="revision_number_display"/>
+                        <field name="raso_revision"/>
+                         </group>
+                        <notebook>
+                        <page string="Parduotuvės kasos aparatai">
+                        <field name="pos_ids" nolabel="1" widget="one2many_list" mode="tree,kanban">
+                                <tree string="Pos Lines" class="robo_invoice_edit robo_tree_in_form" editable="bottom"
+                                    decoration-success="is_generic == True">
+                                    <field name="pos_no"/>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="journal_id"/>
+                                    <field name="is_generic"/>
+                                </tree>
+                            <form string="Kasa" create="1" edit="1" delete="1">
+                            <div>
+                                <label string="Kasos Pavadinimas"/>
+                                <h1 class="mt0">
+                                    <field name="name" class="oe_inline"/>
+                                </h1>
+                            </div>
+                                <group>
+                                    <field name="journal_id"/>
+                                    <field name="is_generic"/>
+                                    <field name="location_id"/>
+                                    <field name="partner_id"/>
+                                    <field name="shop_id"/>
+                                    <field name="pos_no" attrs="{'invisible': [('is_generic','=', True)]}"/>
+                                </group>
+                                <footer>
+                                    <button name="open_register" string="Nuoroda į įrašą" type="object"
+                                            groups="base.group_user" class="oe_highlight"/>
+                                </footer>
+                            </form>
+                        </field>
+                        </page>
+                        <page string="Parduotuvės prekių kainos">
+                        <field name="price_ids" nolabel="1" mode="tree,kanban">
+                            <tree string="Price lines" editable="bottom" class="robo_tree_in_form">
+                                <field name="product_id"/>
+                                <field name="price_no"/>
+                                <field name="price"/>
+                                <field name="qty"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                            </tree>
+                            <form>
+                        <div>
+                            <label string="Produkto kodas"/>
+                            <h1 class="mt0">
+                                <field name="product_id" class="oe_inline"/>
+                            </h1>
+                        </div>
+                            <group>
+                                <field name="price_no"/>
+                                <field name="qty"/>
+                                <field name="price"/>
+                            </group>
+                                <footer>
+                                    <button name="open_price" string="Nuoroda į įrašą" type="object"
+                                            groups="base.group_user" class="oe_highlight"/>
+                                </footer>
+                                </form>
+                        </field>
+                        </page>
+                            <page string="Parduotuvės prekių nuolaidos">
+                            <field name="discount_ids" nolabel="1" mode="tree,kanban">
+                                <tree string="Discount lines" editable="bottom" class="robo_tree_in_form">
+                                    <field name="product_id"/>
+                                    <field name="shop_id"/>
+                                    <field name="name"/>
+                                    <field name="status"/>
+                                    <field name="quantity"/>
+                                    <field name="price"/>
+                                    <field name="discount_amount"/>
+                                </tree>
+                                <form>
+                                <div>
+                                    <label string="Nuolaidos pavadinimas"/>
+                                    <h1 class="mt0">
+                                        <field name="name" class="oe_inline"/>
+                                    </h1>
+                                </div>
+                                    <group>
+                                <field name="product_id"/>
+                                <field name="shop_id"/>
+                                <field name="discount_amount"/>
+                                <field name="status"/>
+                                 <field name="quantity"/>
+                                    </group>
+                                    <footer>
+                                    <button name="open_discounts" string="Nuoroda į įrašą" type="object"
+                                            groups="base.group_user" class="oe_highlight"/>
+                                </footer>
+                                </form>
+                        </field>
+                        </page>
+                    </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Functions-->
+        <record model="ir.actions.server" id="import_shops_action_rec_force">
+            <field name="name">Importuoti parduotuves į RASO</field>
+            <field name="model_id" ref="raso_retail.model_raso_shoplist"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).with_context(force=True).import_shops()
+            </field>
+            <field name="robo_front" eval="0"/>
+        </record>
+        <function name="import_shops_action_force" model="raso.shoplist"/>
+        <!--Searches-->
+        <record model="ir.ui.view" id="raso_shop_search">
+            <field name="name">Parduotuvių Paieška</field>
+            <field name="model">raso.shoplist</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="shop_no" filter_domain="[('shop_no','ilike',self)]"/>
+                    <separator/>
+                    <filter name="need_to_update" domain="[('need_to_update','=', True)]" string='Reikia atnaujinti'/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="amazon_sp_region_view_tree" model="ir.ui.view">
+            <field name="name">amazon.sp.region.view.tree</field>
+            <field name="model">amazon.sp.region</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="1" delete="0" import="0"
+                      decoration-warning="api_state == 'expired'"
+                      decoration-danger="api_state == 'failed'"
+                      decoration-info="api_state == 'not_initiated'"
+                      decoration-success="api_state == 'working'">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="api_state"/>
+                    <field name="last_session_user_id"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="amazon_sp_region_view_form" model="ir.ui.view">
+            <field name="name">amazon.sp.region.view.form</field>
+            <field name="model">amazon.sp.region</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Amazon SP region" create="0" edit="1" delete="0">
+                    <header>
+                        <field name="api_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'working')]}">
+                            <div class="alert alert-success" role="alert" style="margin-bottom: 2px;">
+                                SP region is configured and authenticated
+                            </div>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'expired')]}">
+                            <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;">
+                                SP region authentication is expired
+                            </div>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'failed')]}">
+                            <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;">
+                                SP region configuration failed
+                            </div>
+                        </group>
+                        <div>
+                            <label string="Name"/>
+                            <h1 class="mt0">
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="code" readonly="1"/>
+                            <field name="last_session_user_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="region_endpoint" readonly="1"/>
+                            <field name="last_api_error_message" readonly="1"
+                                   attrs="{'invisible': [('api_state', '=', 'working')]}"/>
+                        </group>
+                        <group string="Related marketplaces">
+                            <field name="marketplace_ids" nolabel="1" widget="one2many_list"
+                                   context="{'active_test': False}" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree edit="1" delete="0" create="0" editable="bottom"
+                                      decoration-warning="state != 'configured'"
+                                      decoration-muted="not activated"
+                                      decoration-success="state == 'configured'">
+                                    <field name="name" readonly="1"/>
+                                    <field name="code" readonly="1"/>
+                                    <field name="country_code" readonly="1"/>
+                                    <field name="partner_id" readonly="1"/>
+                                    <field name="activated"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <footer style="text-align: center;">
+                            <button name="authenticate_region_api" class="oe_highlight" type="object"
+                                    style="background-color: rgb(70,136,71) !important;"
+                                    string="Authenticate region API" default_focus="1"/>
+                            <button name="action_open_marketplaces" class="oe_highlight" type="object"
+                                    string="Open region marketplaces" default_focus="1"/>
+                        </footer>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="amazon_sp_region_view_search" model="ir.ui.view">
+            <field name="name">amazon.sp.region.view.search</field>
+            <field name="model">amazon.sp.region</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <separator/>
+                    <filter name="activated" string="Activated"
+                            domain="[('api_state','=', 'not_initiated')]"/>
+                    <filter name="non_activated" string="Not activated"
+                            domain="[('api_state','=', 'failed')]"/>
+                    <filter name="activated" string="Activated"
+                            domain="[('api_state','=', 'working')]"/>
+                    <filter name="non_activated" string="Not activated"
+                            domain="[('api_state','=', 'expired')]"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_amazon_sp_region" model="ir.actions.act_window">
+            <field name="name">Amazon SP-API regions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.region</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="amazon_sp_region_view_tree"/>
+            <field name="robo_front" eval="1"/>
+            <field name="context">{'robo_header':{}, 'active_test': False}</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('amazon_sp_api.amazon_sp_region_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('amazon_sp_api.amazon_sp_region_view_form')})]"
+            />
+        </record>
+        <record id="action_open_amazon_sp_region_back" model="ir.actions.act_window">
+            <field name="name">Amazon SP-API regions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.region</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="amazon_sp_region_view_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_amazon_sp_regions"
+                name="Regions"
+                sequence="2"
+                parent="menu_amazon_sp_management_root"
+                action="action_open_amazon_sp_region_back"
+        />
+    </data>
+</odoo>

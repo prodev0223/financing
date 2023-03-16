@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="community_journal" model="account.journal">
+             <field name="name">Bendrijos</field>
+             <field name="code">DNSB</field>
+             <field name="type">general</field>
+         </record>
+     </data>
+    <data>
+        <record id="community_res_partner" model="ir.ui.view">
+        <field name="name">community.res.partner</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="robo.new_clients_customer_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="after">
+                <group string="Bendrijos nustatymai" groups="robo_basic.group_robo_premium_manager">
+                    <field name="community_member"/>
+                    <field name="area" attrs="{'invisible':[('community_member','=',False)], 'required': [('community_member', '!=', False)]}"/>
+                    <field name="date_start" attrs="{'invisible':[('community_member','=',False)], 'required': [('community_member', '!=', False)]}"/>
+                    <field name="date_end" attrs="{'invisible':[('community_member','=',False)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="community_wizard_view">
+        <field name="name">community.wizard</field>
+        <field name="model">community.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="action"/>
+                </group>
+                <footer>
+                    <button name="generate_report" type="object" string="Sukurti sąskaitas" class="oe_highlight"/>
+                    <button name="cancel" type="special" string="Atšaukti"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="open_community_action">
+        <field name="name">Sukurti bendrijos sąskaitas</field>
+        <field name="res_model">community.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="community_wizard_view"/>
+    </record>
+    <menuitem id="menu_community" parent="robo.menu_kita" name="Bendrijos"
+          sequence="70" action="open_community_action"
+          robo_front="True"
+          groups="robo_basic.group_robo_premium_manager"
+    />
+    <record model="ir.ui.menu" id="menu_community">
+        <field name="web_icon">icon-library2,none,none</field>
+    </record>
+
+    <template id="community_invoice_report" inherit_id="saskaitos.report_invoice_document">
+        <xpath expr="//span[@name='invoice_header']" position="before">
+            <span t-if="o.community_invoice">
+                Mokėjimo išrašas
+            </span>
+        </xpath>
+        <xpath expr="//span[@name='invoice_header']" position="replace">
+            <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid') and not o.company_id.vat and not o.community_invoice">
+                        Invoice
+            </span>
+        </xpath>
+        <xpath expr="//span[@name='vat_invoice_header']" position="replace">
+            <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid') and o.company_id.vat and not o.community_invoice">
+                        VAT Invoice
+            </span>
+        </xpath>
+    </template>
+
+    </data>
+</odoo>

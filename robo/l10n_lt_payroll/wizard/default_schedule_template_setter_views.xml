@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.actions.act_window" id="schedule_value_reset_action">
+            <field name="name">Darbo grafiko nustatymas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">default.schedule.template.setter</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <record model="ir.ui.view" id="default_schedule_template_setter_view_form">
+            <field name="name">Darbo grafiko nustatymas</field>
+            <field name="model">default.schedule.template.setter</field>
+            <field name="arch" type="xml">
+                <form create="false" edit="false">
+                    <group>
+                        <div>Pasirinkite kurį grafiką norite nustatyti:</div>
+                    </group>
+                    <footer>
+                        <button type="object" class="oe_highlight" name="set_default_schedule_values"
+                                string="Nuo 8 iki 17"
+                                confirm="Ar tikrai norite pakeisti dabartinio grafiko reikšmes ir nustatyti šį grafiką į standartinį 5d.d. 40val. 08:00-12:00 ir 13:00-17:00 darbo grafiką?"/>
+                        <button type="object" context="{'start_at_9_am':True}" class="oe_highlight"
+                                name="set_default_schedule_values" string="Nuo 9 iki 18"
+                                confirm="Ar tikrai norite pakeisti dabartinio grafiko reikšmes ir nustatyti šį grafiką į 5d.d. 40val. 09:00-12:00 ir 13:00-18:00 darbo grafiką?"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,30 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="from_amazon_region" model="ir.ui.view">
+            <field name="name">form.amazon.region</field>
+            <field name="model">amazon.region</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Amazon regionas">
+                    <sheet>
+                        <div>
+                            <label string="Pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="code" readonly="1"/>
+                            <field name="api_state" readonly="1"/>
+                            <field name="amazon_account_id"/>
+                            <field name="amazon_access_key" password="1"/>
+                            <field name="amazon_secret_key" password="1"/>
+                            <field name="activated"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

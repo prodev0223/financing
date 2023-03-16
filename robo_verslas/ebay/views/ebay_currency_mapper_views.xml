@@ -1,0 +1,68 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="ebay_currency_mapper_view_tree" model="ir.ui.view">
+            <field name="name">ebay.currency.mapper.view.tree</field>
+            <field name="model">ebay.currency.mapper</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1" import="0">
+                    <field name="external_code"/>
+                    <field name="currency_id"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="ebay_currency_mapper_view_form" model="ir.ui.view">
+            <field name="name">ebay.currency.mapper.view.form</field>
+            <field name="model">ebay.currency.mapper</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="eBay currency mapper" create="1" delete="0" edit="1">
+                    <sheet>
+                        <div>
+                            <label string="External code"/>
+                            <h1 class="mt0">
+                                <field name="external_code" class="oe_inline" required="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="currency_id" required="1"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="ebay_currency_mapper_view_search" model="ir.ui.view">
+            <field name="name">ebay.currency.mapper.view.search</field>
+            <field name="model">ebay.currency.mapper</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="external_code" filter_domain="[('external_code', 'ilike', self)]"/>
+                    <separator/>
+                    <field name="currency_id"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTION-->
+        <record id="action_open_ebay_currency_mapper" model="ir.actions.act_window">
+            <field name="name">Ebay currency mapper</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ebay.currency.mapper</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="ebay_currency_mapper_view_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_ebay_currency_mappers"
+                name="Currency mappers"
+                sequence="2"
+                action="action_open_ebay_currency_mapper"
+                parent="menu_ebay_management_root"
+        />
+    </data>
+</odoo>

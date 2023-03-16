@@ -1,0 +1,35 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="form_etaksi_invoice_mass_mailing" model="ir.ui.view">
+            <field name="name">form.etaksi.invoice.mass.mailing</field>
+            <field name="model">etaksi.invoice.mass.mailing</field>
+            <field name="arch" type="xml">
+                <form string="Masinis sąskaitų siuntimas">
+                    <sheet>
+                        <group>
+                            <div><p>
+                                Naudojantis šiuo vedliu galite siųsti visas sąskaitas parteriams.<br/>
+                                <br/><br/>
+                                <i>PASTABA: Sąskaitos bus siunčiamos kaip foninė funkcija,
+                                    patikrinkite meniu 'eTaksi/Sąskaitų siuntimo darbai',
+                                    kad pamatytumėte ar sąskaitos išsisiuntė sėkmingai</i>
+                            </p></div>
+                        </group>
+                        <group>
+                            <field name="invoice_ids" nolabel="1" widget="one2many_list">
+                                <tree class="robo_tree_in_form" edit="0" create="0">
+                                    <field name="move_name" readonly="1" string="Sąskaita"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                <footer>
+                    <button string="Siųsti sąskaitas" name="mass_mail_invoices" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

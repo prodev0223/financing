@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="SalaryCalculationTable">
+            <table class="atlyginimu_skaiciuokle">
+                <tr class='big_blue'>
+                    <td>Paskaičiuotas atlyginimas (bruto)</td>
+                    <td><t t-esc="gross_salary"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr>
+                    <td>Pritaikytas NPD</td>
+                    <td><t t-esc="untaxable_amount"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr>
+                    <td>Pajamų mokestis</td>
+                    <td><t t-esc="income_tax"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr>
+                    <td>Sodra. Sveikatos draudimas</td>
+                    <td><t t-esc="health_insurance"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr>
+                    <td>Sodra. Pensijų ir soc. draudimas</td>
+                    <td><t t-esc="pension_insurance"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr>
+                    <td>Sodra. Papildomas pensijos kaupimas</td>
+                    <td><t t-esc="voluntary_sodra"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr class='big_green'>
+                    <td>Neto atlyginimas</td>
+                    <td><t t-esc="net_amount"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr>
+                    <td>Darbdavio sodros įmokos</td>
+                    <td><t t-esc="employer_taxes"/><t t-esc="currency_symbol"/></td>
+                </tr>
+                <tr class='big_blue'>
+                    <td>Darbo vietos kaštai</td>
+                    <td><t t-esc="workplace_cost"/><t t-esc="currency_symbol"/></td>
+                </tr>
+            </table>
+        </template>
+    </data>
+</odoo>

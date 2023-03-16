@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_period_profit_close_wizard_form" model="ir.ui.view">
+            <field name="name">Periodo pelno uždarymas</field>
+            <field name="model">account.period.profit.close</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Periodo pelno uždarymas">
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="journal_id"/>
+                        <field name="account_id"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="move_profit"/>
+                        <field name="calculate_profit_tax"/>
+                        <field name="income_amount" attrs="{'invisible': [('calculate_profit_tax', '=', False)]}"/>
+                        <field name="profit_amount" attrs="{'invisible': [('calculate_profit_tax', '=', False)]}"/>
+                        <field name="employee_count" attrs="{'invisible': [('calculate_profit_tax', '=', False)]}"/>
+                        <field name="profit_tax_percent" attrs="{'invisible': [('calculate_profit_tax', '=', False)]}"/>
+                        <field name="profit_tax" attrs="{'invisible': [('calculate_profit_tax', '=', False)]}"/>
+                    </group>
+                    <footer>
+                        <button name="close_period_profit" string="Patvirtinti" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_account_period_profit_close" model="ir.actions.act_window">
+            <field name="name">Periodo pelno uždarymas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.period.profit.close</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="account_period_profit_close_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="menu_action_account_period_profit_close"
+                  action="action_account_period_profit_close"
+                  parent="account.menu_finance_entries"
+                  sequence="50"/>
+    </data>
+</odoo>

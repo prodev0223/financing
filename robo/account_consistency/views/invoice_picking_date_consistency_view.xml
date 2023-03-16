@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="action_invoice_picking_date_consistency_wizard" model="ir.actions.act_window">
+            <field name="name">Fix stock move dates</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">invoice.picking.date.consistency.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+        </record>
+
+        <record id="invoice_picking_date_consistency_view" model="ir.ui.view">
+            <field name="name">invoice.picking.date.consistency.wizard.view</field>
+            <field name="model">invoice.picking.date.consistency.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Fix stock accounting dates" create="0" edit="false">
+                    <header>
+                        <button name="fix_all" type="object" string="Fix all"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="domain_selection"/>
+                            <field name="fix_record_ids">
+                                <tree colors="green: state=='fixed'">
+                                    <field name="invoice_id"/>
+                                    <field name="date_invoice"/>
+                                    <field name="min_date"/>
+                                    <field name="max_date"/>
+                                    <field name="state" invisible="1"/>
+                                    <field name="diff_quarter"/>
+                                    <field name="diff_month"/>
+                                    <button name="fix" string="Fix" type="object" help="Sets pickings, stock moves and accounting moves dates to invoice date"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_invoice_picking_date_consistency" model="ir.actions.act_window">
+            <field name="name">Dates fix history</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">invoice.picking.date.consistency</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" eval="False"/>
+            <!--<field name="target">new</field>-->
+        </record>
+
+        <record id="invoice_picking_date_consistency_tree_view" model="ir.ui.view">
+            <field name="name">invoice.picking.date.consistency.tree</field>
+            <field name="model">invoice.picking.date.consistency</field>
+            <field name="arch" type="xml">
+                <tree string="Stock move dates history">
+                    <field name="invoice_id"/>
+                    <field name="date_invoice"/>
+                </tree>
+            </field>
+        </record>
+
+        <menuitem name="Stock accounting dates"
+                  id="menu_acconting_date_wizard_fix"
+                  parent="menu_consistency_tests"
+                  action="action_invoice_picking_date_consistency_wizard"
+                  sequence="1"
+                  groups="account.group_account_manager"/>
+
+        <menuitem name="Automated dates fixing history"
+                  id="menu_acconting_date_fix_history"
+                  parent="menu_consistency_tests"
+                  action="action_invoice_picking_date_consistency"
+                  sequence="2"
+                  groups="account.group_account_manager"/>
+    </data>
+</odoo>

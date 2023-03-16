@@ -1,0 +1,44 @@
+<odoo>
+    <data>
+        <record id="robo_stock_product_category_form" model="ir.ui.view">
+            <field name="name">product.category.form.r.keeper</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_category_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='general_information_group']" position="after">
+                    <group name="r_keeper_settings" string="rKeeper nustatymai"
+                           groups="r_keeper.group_r_keeper_front_end">
+                        <group colspan="4" col="2">
+                            <group string="rKeeper kategorija" colspan="1" col="2">
+                                <field name="r_keeper_category"/>
+                            </group>
+                            <group string="Paaiškinimai" colspan="1" col="2">
+                                <div class="alert alert-info" role="alert" style="margin-bottom: 2px;">
+                                    Pažymėjus, visi produktai priklausantys šiai kategorijai
+                                    bus naudojami rKeeper integracijoje, susijusių pardavimų taškų eilutėse
+                                </div>
+                            </group>
+                            <group>
+                                <field name="pos_filtering_activated" invisible="1"/>
+                                <field name="r_keeper_pos_category"
+                                       attrs="{'invisible': [('pos_filtering_activated', '=', False)]}"/>
+                            </group>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_category_search_view" model="ir.ui.view">
+            <field name="name">product.category.search.r.keeper</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <separator/>
+                    <filter name="r_keeper_category" domain="[('r_keeper_category', '=', True)]"
+                            string="rKeeper produktų kategorija"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

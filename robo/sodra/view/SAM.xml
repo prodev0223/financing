@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="sodra_sam">
+            <field name="name">sam.sodra.form</field>
+            <field name="model">e.sodra.sam</field>
+            <field name="arch" type="xml">
+            <form string="SAM">
+                <group>
+                    <field name="company_id" />
+                    <field name="skyrius" />
+                    <field name="data_nuo" />
+                    <field name="data_iki" />
+                    <field name="patikslinta" />
+                    <field name="metai" attrs="{'invisible': [('patikslinta','=',False)]}"/>
+                    <field name="menuo" attrs="{'invisible': [('patikslinta','=',False)]}"/>
+                </group>
+                <footer>
+                    <button name="sam" string="Generuoti" type="object" />
+                    <button name="send" string="Siųsti į SODRA" type="object"/>
+                    <button string="Uždaryti" class="oe_link" special="cancel" />
+                </footer>
+              </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="sodra_sam_download">
+            <field name="name">sam.sodra.download.form</field>
+            <field name="model">e.sodra.sam</field>
+            <field name="arch" type="xml">
+                <form string="SAM parsisiuntimas">
+                    <field name="show_warning_message" invisible="1"/>
+                    <group colspan="4" col="4">
+                        <group colspan="4" col="4">
+                            <field name="warning_message" widget="html" readonly="1" nolabel="1" attrs="{'invisible': [('show_warning_message','=',False)]}"/>
+                        </group>
+                        <group colspan="4" col="4">
+                            <field name="download_line_ids" readonly="1" nolabel="1" options="{'reload_on_button': True}">
+                                 <tree>
+                                     <field name="file" nolabel="1" filename="file_name"/>
+                                     <field name="file_name" invisible="1"/>
+                                     <field name="url" widget="roboAnchor" invisible="not context.get('sodra', False)"/>
+                                 </tree>
+                            </field>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="res_company_draudejo_kodas_view">
+            <field name="name">res.company.draudejo_kodas</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_registry']" position="after">
+                    <field name="draudejo_kodas"/>
+                </xpath>
+            </field>
+        </record>
+       <record model="ir.actions.act_window" id="action_sodra_sam_wizard">
+           <field name="name">SODRA SAM</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">e.sodra.sam</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">form</field>
+           <field name="view_id" ref="sodra_sam"/>
+           <field name="target">new</field>
+       </record>
+
+        <menuitem
+              name="SAM"
+              id="meniu_e_ataskaitos_SODRA_SAM2"
+              parent="meniu_e_ataskaitos_SODRA_root"
+              sequence="1"
+              action="action_sodra_sam_wizard"
+              />
+    </data>
+</odoo>
+

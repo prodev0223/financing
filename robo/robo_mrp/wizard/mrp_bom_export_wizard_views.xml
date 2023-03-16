@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Form-->
+        <record id="form_mrp_bom_export_wizard" model="ir.ui.view">
+            <field name="name">form.mrp.bom.export.wizard</field>
+            <field name="model">mrp.bom.export.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Komplektacijų eksportavimo vedlys">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                            Šiame vedlyje galite eksportuoti/spausdinti pasirinktą komplektaciją į PDF arba XLS
+                            failų formatus. Jeigu įmonėje įgalintos sudėtinės komplektacijos
+                            taip pat galite pasirinkti komponentų išskeidimo tipą.
+                        </div>
+                        <group>
+                            <field name="bom_id" readonly="1"/>
+                            <field name="recursive_bom_production" invisible="1"/>
+                            <field name="bom_explosion_mode"
+                                   attrs="{'invisible': [('recursive_bom_production', '=', False)],
+                                           'required': [('recursive_bom_production', '=', True)]}"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Eksportuoti XLS"
+                                name="button_export_xls" type="object" class="btn-primary"/>
+                        <button string="Eksportuoti PDF"
+                                name="button_export_pdf" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </odoo>
+</data>

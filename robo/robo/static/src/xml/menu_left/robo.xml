@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates>
+
+    <t t-name="RoboHelpLine">
+        <div class="robo-help-line super-hide">
+            <div class="robo-help-line-row">
+                 <div class="robo-accountant-picture robo-help-line-col">
+                    <img t-if="widget.logo" class="img-circle" t-attf-title="{{widget.name}}" t-attf-src="data:image/*;base64,{{widget.logo}}" alt="Buhalteris"/>
+                    <img t-if="!widget.logo" class="img-circle" t-attf-title="{{widget.name}}" src="/robolabs_logo" alt="Buhalteris"/>
+                </div>
+                <div class="robo-mobile robo-help-line-col" t-if="widget.mobile"><span><i class="icon-smartphone"/><span class="info-name">Mobilus tel.:</span></span><span class="info-detail"><span><t t-esc="widget.name"/></span><strong><t t-esc="widget.mobile"/></strong></span></div>
+                <div class="robo-mail robo-help-line-col" t-if="widget.email"><span><i class="icon-at-sign"/><span class="info-name">Paštas:</span></span><a t-attf-href="mailto:{{widget.email}}" class="info-detail"><t t-esc="widget.email"/></a></div>
+            </div>
+             <div class="robo-help-line-row">
+                <span class="robo-mobile-info-detail"></span>
+             </div>
+        </div>
+    </t>
+
+    <t t-name="LogoMenu">
+        <div tabindex="0" class="robo-client-initial">
+            <div class="robo-client-initial-circle">
+                <img class="img-circle oe_topbar_avatar" t-att-src="_s + '/web/static/src/img/user_menu_avatar.png'"/>
+            </div>
+            <div class="robo-navbar-name"><span class="oe_topbar_name"/><p class="oe_topbar_company"/></div>
+            <i class="lnr lnr-chevron-down robo-logo-toggle-icon"/>
+            <i t-if="widget.show_logo_menu_switch" class="lnr lnr-menu robo-logo-menu-switch"/>
+        </div>
+    </t>
+
+    <t t-name="LogoPopOver">
+        <ul class="logo-dropdown-menu">
+            <div class="logo-menu-item" data-menu="settings"><i class="lnr lnr-smile push-left"/>Mano profilis</div>
+            <div class="logo-menu-item" data-menu="mail"><i class="lnr lnr-inbox push-left"/>Prenumeratos</div>
+            <div class="logo-menu-item" data-menu="logout"><i class="lnr lnr-exit push-left"/>Atsijungti</div>
+        </ul>
+        <div t-if="widget.show_company_settings" class="company-settings">
+            <div class="popover-section">
+                <div class="title-text">
+                    <t t-if="widget.company_name"><t t-esc="widget.company_name"/></t>
+                    <t t-else="">Jūsų kompanija</t>
+                </div>
+            </div>
+            <ul class="logo-dropdown-menu">
+                <div class="logo-menu-item" data-menu="company_setup"><i class="lnr lnr-apartment push-left"/>Kompanijos profilis</div>
+            </ul>
+
+        </div>
+    </t>
+
+    <t t-name="LogoBell">
+        <div class="o_roboMessages_item">
+            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="Žinutės" href="#">
+                <i class="fa fa-bell-o faa-ring faa-slow robo-logo-alarm" aria-hidden="true"/>
+                <span class="o_notification_counter"/>
+            </a>
+            <ul class="o_mail_navbar_dropdown dropdown-menu">
+                <li class="o_mail_navbar_dropdown_top">
+                    <!--<div>-->
+                        <!--<button type="button" class="btn btn-sm o_filter_button o_selected">Žinutės</button>-->
+                    <!--</div>-->
+                    <button type="button" class="btn btn-sm o_all_messages">Visos žinutės</button>
+                    <button type="button" class="btn btn-sm o_read_all_messages">Perskaityti visas</button>
+                    <div class="unread-info"><span class="count_messages badge"></span></div>
+                </li>
+                <li class="o_mail_navbar_dropdown_messages"/>
+            </ul>
+        </div>
+    </t>
+
+
+    <t t-name="MessageTemplate">
+        <t t-foreach="messages" t-as="message">
+            <div t-attf-class="o_mail_messsage_preview {{message.priority}}" t-att-data-id="message.id">
+                <div class="o_message_image"/>
+                <div class="o_message_info">
+                    <div class="o_message_title">
+                        <span class="o_message_name">
+                            <t t-esc="message.subject"/>
+                        </span>
+                        <span class="o_last_message_date"> <t t-esc="message.date"/> </span>
+                    </div>
+                    <div class="o_last_message_preview">
+                        <t t-raw="message.body"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <t t-name="robo.needaction_counter">
+        <div id="menu_counter" class="badge pull-right">
+            <t t-if="widget.needaction_counter &gt; 10"> 10+ </t>
+            <t t-if="widget.needaction_counter &lt;= 10"> <t t-esc="widget.needaction_counter"/> </t>
+        </div>
+    </t>
+
+    <t t-name="robo.expense_needaction_counter">
+        <div id="menu_counter" class="badge pull-right robo-expenses-badge"  data-toggle="tooltip" title="Importuota naujų sąskaitų">
+            <t t-if="widget.needaction_counter &gt; 10"> 10+ </t>
+            <t t-if="widget.needaction_counter &lt;= 10"> <t t-esc="widget.needaction_counter"/> </t>
+        </div>
+    </t>
+
+    <t t-name="robo.e_document_needaction_counter">
+        <div id="menu_counter" class="badge pull-right robo-e_document-badge"  data-toggle="tooltip" title="Laukiantys pasirašymo">
+            <t t-if="widget.needaction_counter &gt; 10"> 10+ </t>
+            <t t-if="widget.needaction_counter &lt;= 10"> <t t-esc="widget.needaction_counter"/> </t>
+        </div>
+    </t>
+
+    <t t-name="kitaMenuPopover">
+        <t t-foreach="menus" t-as="menu">
+            <div t-attf-class="robo-kita-menu-item" t-attf-data-menu="{{menu.id}}">
+                <div>
+                    <span t-attf-class="{{menu.icon}} robo-menu-icon"></span>
+                </div>
+                <div class="robo-menu-name">
+                    <p><t t-esc="menu.name"/></p>
+                </div>
+                <span class="robo-a-clear-fix"></span>
+            </div>
+
+        </t>
+    </t>
+
+</templates>

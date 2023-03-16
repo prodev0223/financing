@@ -1,0 +1,61 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="form_r_keeper_configuration" model="ir.ui.view">
+            <field name="name">form.r.keeper.configuration</field>
+            <field name="model">r.keeper.configuration</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="rKeeper konfigūracija" create="0" delete="0">
+                    <sheet>
+                        <group>
+                            <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                Sveiki atvyke į rKeeper konfigūraciją. Šiame vedlyje galite
+                                koreguoti įvairius rKeeper integracijos nustatymus
+                            </div>
+                        </group>
+                        <group string="rKeeper nustatymai" colspan="1" col="1">
+                            <group attrs="{'invisible': [('integration_configured', '=', True)]}">
+                                <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;">
+                                    Integracija nėra sukonfigūruota
+                                </div>
+                            </group>
+                            <group attrs="{'invisible': [('integration_configured', '=', False)]}">
+                                <div class="alert alert-success" role="alert" style="margin-bottom: 2px;">
+                                    Integracija sėkmingai sukonfigūruota
+                                </div>
+                            </group>
+                        </group>
+                        <group>
+                            <group colspan="1" col="2" string="Apskaitos nustatymai">
+                                <field name="accounting_threshold_date" required="1"/>
+                                <field name="cron_job_creation_interval" required="1"/>
+                                <field name="integration_configured" invisible="1"/>
+                                <field name="cron_job_creation_weekday"
+                                       attrs="{'invisible': [('cron_job_creation_interval', '!=', 'weekly')],
+                                   'required': [('cron_job_creation_interval', '=', 'weekly')]}"/>
+                            </group>
+                            <group string="Gamybos nustatymai" colspan="1" col="2">
+                                <field name="manufacturing_surplus_enabled" invisible="1"/>
+                                <field name="split_resources_between_new_production_creation_and_reservation"/>
+                                <field name="enable_automatic_sale_manufacturing"/>
+                                <field name="automatic_sale_manufacturing_mode"
+                                       attrs="{'invisible': [('enable_automatic_sale_manufacturing', '=', False)],
+                                               'required': [('enable_automatic_sale_manufacturing', '=', True)]}"/>
+                                <field name="automatic_surplus_manufacturing_mode"
+                                       attrs="{'invisible': [('manufacturing_surplus_enabled', '=', False)],
+                                               'required': [('manufacturing_surplus_enabled', '=', True)]}"/>
+                                <field name="auto_surplus_skip_uom_id"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       attrs="{'invisible': [('manufacturing_surplus_enabled', '=', False)]}"/>
+                            </group>
+                            <group string="Kiti nustatymai" colspan="1" col="2">
+                                <field name="enable_pos_product_filtering"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,235 @@
+<template>
+
+    <div t-name="RoboListView" t-attf-class="table-responsive {{(robo_fit)? '': 'container'}}">
+        <table class="o_list_view table o-robo-list-view">
+            <t t-set="columns_count"
+               t-value="visible_columns.length + (options.selectable ? 1 : 0) + (options.deletable ? 1 : 0)"/>
+            <thead class="robo-header">
+                <tr t-if="options.header">
+                    <t t-foreach="columns" t-as="column">
+                        <th t-if="column.meta">
+                            <t t-esc="column.string"/>
+                        </th>
+                    </t>
+                    <th t-if="options.selectable" class="o_list_record_selector" width="1">
+                        <div class="o_checkbox">
+                            <input type="checkbox"/>
+                            <span/>
+                            <!--<span><i class="fa fa-check"/></span>-->
+                        </div>
+                    </th>
+                    <t t-foreach="columns" t-as="column">
+                        <th t-if="!column.meta and column.invisible !== '1'" t-att-data-id="column.id"
+                            t-attf-class="#{column.class ? column.class : ''}
+                            #{((options.sortable and column.sortable and column.tag !== 'button') ? 'o_column_sortable' : '')}
+                            #{(['monetary', 'float', 'integer'].includes(column.type) ? 'o_column_align_right' : '')}"
+                            t-att-width="column.width()">
+                            <t t-if="column.tag !== 'button'">
+                                <t t-raw="column.heading()"/>
+                            </t>
+                        </th>
+                    </t>
+                    <th t-if="options.deletable" class="o_list_record_delete"/>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td t-if="options.selectable"/>
+                    <td t-foreach="aggregate_columns" t-as="column" t-att-data-field="column.id"
+                        t-att-title="column.label">
+                    </td>
+                    <td t-if="options.deletable" class="o_list_record_delete"/>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <t t-name="RecentActiveClients">
+        <t t-call="RecentDataBoxes">
+            <div t-attf-class="box-template box-client r-cursor create-record {{robo_subtype=='customer' ? '': 'supplier'}}">
+                <div class="create-new-text">
+                    <i class="lnr lnr-plus-circle"></i>
+                    <span>Naujas</span>
+                </div>
+            </div>
+            <div t-attf-data-id="{{record.id}}" t-attf-class="box-active box-client box-face r-cursor {{robo_subtype=='customer' ? '': 'supplier'}}" t-foreach="records" t-as="record">
+                 <div class="box-content">
+                    <div class="client-logo"><t t-esc="record.display_name[0]"/></div>
+                    <div class="client-info">
+                        <div class="client-name r-truncate-special"><t t-esc="record.display_name"/></div>
+                    </div>
+                    <div class="client-info2">
+                        <div class="client-email r-truncate" t-if="record.email" t-attf-title="{{record.email}}" ><i class="lnr lnr-envelope"/><t t-esc="record.email"/></div>
+                        <div class="client-phone r-truncate" t-if="record.phone"><i class="lnr lnr-phone-handset"/><t t-esc="record.phone"/></div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <t t-name="RecentInvoices">
+        <t t-call="RecentDataBoxes">
+            <t t-if="robo_subtype =='expenses'">
+                <div class="box-template box-invoice r-cursor create-record expenses first-step">
+                    <div class="create-new-text">
+                        <i class="lnr lnr-plus-circle"></i>
+                        <span>Naujos išlaidos</span>
+                    </div>
+                </div>
+                <div class="box-template box-invoice r-cursor create-record expenses second-step new-invoice o_hidden" data-xml-id="robo.new_supplier_invoice">
+                    <div class="create-new-text">
+                        <i class="lnr lnr-plus-circle"></i>
+                        <span>Nauja sąskaita</span>
+                    </div>
+                </div>
+                <div class="box-template box-invoice r-cursor create-record expenses second-step new-cheque o_hidden" data-xml-id="robo.new_cheque_action">
+                    <div class="create-new-text">
+                        <i class="lnr lnr-plus-circle"></i>
+                        <span>Naujas čekis <span style="display:block;">(be sąskaitos)</span></span>
+                    </div>
+                </div>
+                <div class="box-template box-invoice r-cursor create-record expenses second-step new-invoice-cheque o_hidden" data-xml-id="robo.new_expenses_with_cheque">
+                    <div class="create-new-text">
+                        <i class="lnr lnr-plus-circle"></i>
+                        <span>Nauja sąskaita su čekiu</span>
+                    </div>
+                </div>
+                <div t-attf-data-id="{{record.id}}" class="box-active box-invoice box-face r-cursor expenses" t-foreach="records" t-as="record">
+                    <div class="box-content">
+                        <div class="invoice-number r-truncate"><t t-esc="record.number or ''"/></div>
+                        <div class="invoice-client r-truncate"><t t-esc="record.partner_id[1]"/></div>
+                        <div class="invoice-date r-truncate"><t t-esc="record.date_invoice"/></div>
+                        <div class="invoice-amount"><t t-esc="format(record.amount_total_signed,1)"/><t t-esc="' ' + getCurrency(record.currency_id[1])"/></div>
+                    </div>
+                    <span t-attf-class="{{stateClass[record.expense_state]}}"><t t-esc="stateNames[record.expense_state]"/></span>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="box-template box-invoice r-cursor create-record">
+                    <div class="create-new-text">
+                        <i class="lnr lnr-plus-circle"></i>
+                        <span>Nauja sąskaita</span>
+                    </div>
+                </div>
+                <div t-attf-data-id="{{record.id}}" class="box-active box-invoice box-face r-cursor" t-foreach="records" t-as="record">
+                <div class="box-content">
+                    <div class="invoice-number r-truncate"><t t-esc="record.number or ''"/></div>
+                    <div class="invoice-client r-truncate"><t t-esc="record.partner_id[1]"/></div>
+                    <div class="invoice-date r-truncate"><t t-esc="record.date_invoice"/></div>
+                    <div class="invoice-amount"><t t-esc="format(record.amount_total_signed,1)"/><t t-esc="' ' + getCurrency(record.currency_id[1])"/></div>
+                </div>
+                <span t-attf-class="{{stateClass[record.state]}}"><t t-esc="stateNames[record.state]"/></span>
+            </div>
+            </t>
+            <!--<div t-attf-data-id="{{record.id}}" class="box-active box-invoice box-face r-cursor" t-foreach="records" t-as="record">-->
+                <!--<div class="box-content">-->
+                    <!--<div class="invoice-number r-truncate"><t t-esc="record.number or ''"/></div>-->
+                    <!--<div class="invoice-client r-truncate"><t t-esc="record.partner_id[1]"/></div>-->
+                    <!--<div class="invoice-date r-truncate"><t t-esc="record.date_invoice"/></div>-->
+                    <!--<div class="invoice-amount"><t t-esc="format(record.amount_total_signed,1)"/><t t-esc="' ' + getCurrency(record.currency_id[1])"/></div>-->
+                <!--</div>-->
+                <!--<span t-attf-class="{{stateClass[record.state]}}"><t t-esc="stateNames[record.state]"/></span>-->
+            <!--</div>-->
+        </t>
+    </t>
+
+    <t t-name="RecentDataBoxes">
+       <section class="container boxes">
+            <h2>Neseniai atnaujinti</h2>
+            <div class="boxes-row">
+                <t t-raw="0"/>
+            </div>
+        </section>
+    </t>
+
+
+    <t t-name="RoboListView.rows" t-foreach="records.length" t-as="index">
+        <t t-call="RoboListView.row">
+            <t t-set="record" t-value="records.at(index)"/>
+        </t>
+    </t>
+
+    <tr t-name="RoboListView.row"
+            t-att-data-id="record.get('id')"
+            t-attf-style="#{(view.fonts || view.colors) ? view.style_for(record) : ''}"
+            t-attf-class="#{view.compute_decoration_classnames(record)}">
+        <t t-set="asData" t-value="record.toForm().data"/>
+        <t t-foreach="columns" t-as="column">
+            <td t-if="column.meta"> </td>
+        </t>
+        <td t-if="options.selectable" class="o_list_record_selector">
+            <t t-set="checked" t-value="options.select_view_id == record.get('id') ? 'checked' : null"/>
+            <input t-if="options.radio" type="radio" name="radiogroup" t-att-checked="checked"/>
+            <div t-if="!options.radio" class="o_checkbox">
+                <input type="checkbox" name="radiogroup" t-att-checked="checked"/>
+                <!--<span/>-->
+                <span><i class="fa fa-check"/></span>
+            </div>
+        </td>
+        <t t-foreach="columns" t-as="column">
+            <t t-set="number" t-value="column.type === 'integer' or column.type == 'float' or column.type == 'monetary' or column.id == 'state_amount'"/>
+             <!--or column.type == 'monetary2'-->
+            <t t-set="text" t-value="column.type === 'text' and column.id !== 'state_amount'"/>
+            <t t-set="modifiers" t-value="column.modifiers_for(asData)"/>
+            <t t-if="column.class and 'tooltip_expanded' == column.class">
+                <t t-set="helper_expander" t-value="tooltip_expansion_check(record, column)"/>
+            </t>
+            <t t-else="">
+                <t t-set="helper_expander" t-value="column"/>
+            </t>
+            <td t-if="!column.meta and column.invisible !== '1'" t-att-title="helper_expander.help"
+                t-attf-class="#{modifiers.readonly ? 'o_readonly' : ''} #{number ? 'o_list_number' : ''} #{text ? 'o_list_text' : ''} #{column.id === 'sequence' ? 'o_handle_cell' : ''} #{column.tag === 'button' ? 'o_list_button' : ''}"
+                t-att-data-field="column.id"
+                ><t t-raw="render_cell(record, column)"/></td>
+        </t>
+        <td t-if="options.deletable" class='o_list_record_delete'>
+            <span name="delete" class="fa fa-trash-o"/>
+        </td>
+    </tr>
+
+    <t t-name="RoboFrontActions">
+        <t t-foreach="widget.sections" t-as="section">
+            <li t-foreach="widget.items[section.name]" t-as="item" t-attf-class="{{item.classname?item.classname:''}} robo-front-actions">
+                <a t-att-title="item.title or None" t-att-data-section="section.name" t-att-data-index="item_index" t-att-href="item.url">
+                    <span>
+                        <span class="icon-cog"/>
+                        <t t-raw="item.label"/>
+                    </span>
+                </a>
+            </li>
+        </t>
+
+    </t>
+
+    <t t-extend="ListView.buttons">
+        <t t-jquery=".o_list_buttons" t-operation="append">
+            <t t-if="widget.robo_front">
+                <div class="btn-group" style="display: none">
+                    <a aria-expanded="true" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown"
+                       href="#">Veiksmas
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <button type="button" class="btn btn-sm remove_item">
+                                <span class="icon-trash2"/>
+                                Ištrinti
+                            </button>
+                        </li>
+                    </ul>
+
+                </div>
+            </t>
+        </t>
+    </t>
+
+
+    <div t-name="ListView.row.image" class="text-center column_picture">
+        <img t-att-height="widget.height || 32" t-att-src="src"/>
+    </div>
+
+    <div t-name="ListView.row.document_image" class="text-center document_picture">
+        <img t-att-height="widget.height || 32" t-att-src="src" class="small_picture" data-toggle="tooltip" data-html="true" t-att-title="title"/>
+    </div>
+
+
+</template>

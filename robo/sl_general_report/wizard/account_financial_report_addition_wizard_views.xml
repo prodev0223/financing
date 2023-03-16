@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <record id="account_financial_report_addition_wizard_form_view" model="ir.ui.view">
+            <field name="name">account.financial.report.addition.wizard.form.view</field>
+            <field name="model">account.financial.report.addition.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Partnerių skolų balansas">
+                    <sheet>
+                        <group string="Filtrai">
+                            <group style="text-align: center; margin-bottom:5%;">
+                                <field name="financial_year"/>
+                            </group>
+                            <group col="2">
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                            </group>
+                        </group>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="download_excel" string="Excel" type="object" default_focus="1"
+                                    class="oe_highlight"
+                                    style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="btn-default" special="cancel"
+                                    style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="account_financial_report_addition_wizard_action" model="ir.actions.act_window">
+            <field name="name">Priedai prie finansinės</field>
+            <field name="res_model">account.financial.report.addition.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_front" eval="True"/>
+            <field name="view_id" ref="account_financial_report_addition_wizard_form_view"/>
+            <field name="context">{}
+            </field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="account_financial_report_addition_wizard_menu"
+                  name="Priedai prie finansinės"
+                  action="account_financial_report_addition_wizard_action"
+                  parent="account.menu_finance_legal_statement"
+                  sequence="21"/>
+    </data>
+</odoo>

@@ -1,0 +1,323 @@
+<odoo>
+    <data>
+        <record model="ir.actions.server" id="server_action_invoice">
+            <field name="name">Kurti sąskaitas faktūras</field>
+            <field name="model_id" ref="gemma.model_gemma_sale_line"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).invoice_action()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="server_action_invoices" model="gemma.sale.line"/>
+        <record model="ir.actions.server" id="server_action_cancel_sales">
+            <field name="name">Anuliuoti pardavimus</field>
+            <field name="model_id" ref="gemma.model_gemma_sale_line"/>
+            <field name="code">
+                    action = object.browse(context.get('active_ids', False)).cancel_records()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="server_action_cancel_sales_f" model="gemma.sale.line"/>
+        <record model="ir.actions.server" id="server_action_cancel_sales_pay">
+            <field name="name">Anuliuoti pardavimus ir susijusius mokėjimus</field>
+            <field name="model_id" ref="gemma.model_gemma_sale_line"/>
+            <field name="code">
+                    action = object.browse(context.get('active_ids', False)).with_context(include_payments=True).cancel_records()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="server_action_cancel_sales_pay_f" model="gemma.sale.line"/>
+        <record id="gemma_sale_line_form" model="ir.ui.view">
+            <field name="name">gemma.sale.line.form</field>
+            <field name="model">gemma.sale.line</field>
+            <field name="arch" type="xml">
+                <form string="Gemma pardavimas" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="invoice_action" states="imported,failed,warning,awaiting" type="object"
+                                string="Sukurti Sąskaitą faktūrą" class="oe_highlight"
+                                context="{'force_creation': True}"/>
+                        <button name="fields_compute" type="object"
+                                string="Perskaičiuoti laukus" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Produkto kodas"/>
+                        <h1 class="mt0">
+                            <field name="ext_product_code" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="ext_product_name"/>
+                            <field name="buyer_id"/>
+                            <field name="price"/>
+                            <field name="qty"/>
+                            <field name="receipt_id"/>
+                            <field name="receipt_total"/>
+                            <field name="sale_date"/>
+                            <field name="bed_day_date"/>
+                            <field name="rehabilitation_date"/>
+                            <field name="product_id"/>
+                            <field name="ext_sale_id"/>
+                            <field name="ext_sale_db_id"/>
+                            <field name="ext_sale_done" readonly="1"/>
+                            <field name="vat_code"/>
+                            <field name="invoice_id" attrs="{'invisible': [('invoice_id', '=', False)]}"/>
+                            <field name="refund_id" attrs="{'invisible': [('refund_id', '=', False)]}"/>
+                            <field name="correction_id" attrs="{'invisible': [('correction_id', '=', False)]}"/>
+                            <field name="cash_register_id" attrs="{'invisible': [('cash_register_id', '=', False)]}"/>
+                            <field name="ext_invoice_id" attrs="{'invisible': [('ext_invoice_id', '=', False)]}"/>
+                            <field name="payment_id" attrs="{'invisible': [('payment_id', '=', False)]}"/>
+                            <field name="tax_id" attrs="{'invisible': [('tax_id', '=', False)]}"/>
+                            <field name="partner_id" attrs="{'invisible': [('partner_id', '=', False)]}"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="gemma_sale_line_tree" model="ir.ui.view">
+            <field name="name">gemma.sale.line.tree</field>
+            <field name="model">gemma.sale.line</field>
+            <field name="arch" type="xml">
+                <tree string="Pardavimai"
+                      create="1" edit="1" delete="1"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state in ['failed', 'warning']"
+                      decoration-warning="state == 'cancel_locked'">
+                    <field name="ext_product_code"/>
+                    <field name="ext_product_name"/>
+                    <field name="ext_sale_id"/>
+                    <field name="ext_sale_db_id"/>
+                    <field name="price" sum="price"/>
+                    <field name="qty"/>
+                    <field name="sale_date"/>
+                    <field name="bed_day_date"/>
+                    <field name="rehabilitation_date"/>
+                    <field name="receipt_id"/>
+                    <field name="price_list_text"/>
+                    <field name="partner_id"/>
+                    <field name="state"/>
+                    <field name="ext_sale_done"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="gemma_sale_search">
+            <field name="name">Pardavimų paieška</field>
+            <field name="model">gemma.sale.line</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="import" string="Būsena: Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="create" string="Būsena: Sukurta" domain="[('state','=','created')]"/>
+                    <filter name="fail" string="Būsena: Importuota su klaidomis" domain="[('state','=','warning')]"/>
+                    <filter name="fail2" string="Būsena: Klaida kuriant sąskaitą" domain="[('state','=','failed')]"/>
+                    <filter name="awaiting" string="Būsena: Laukiama guldymo datos" domain="[('state','=','awaiting')]"/>
+                    <filter name="awaiting_rehab" string="Būsena: Laukiama reabilitacijos datos" domain="[('state','=','awaiting_rehab')]"/>
+                    <filter name="cancel" string="Būsena: Atšauktas" domain="[('state','=','canceled')]"/>
+                    <filter name="locked" string="Būsena: Užrakinta, neatšaukta" domain="[('state','=','cancel_locked')]"/>
+                    <separator/>
+                    <filter name="ext_sale_done" string="Atlikta Polije" domain="[('ext_sale_done','=', True)]"/>
+                    <filter name="ext_sale_not_done" string="Neatlikta Polije" domain="[('ext_sale_done','=', False)]"/>
+                    <separator/>
+                    <field name="partner_id" filter_domain="[('partner_id','ilike',self)]"/>
+                    <field name="ext_product_name" filter_domain="[('ext_product_name','ilike',self)]"/>
+                    <field name="ext_product_code" filter_domain="[('ext_product_code','ilike',self)]"/>
+                    <field name="receipt_id" filter_domain="[('receipt_id','ilike',self)]"/>
+                    <field name="ext_sale_id" filter_domain="[('ext_sale_id','ilike',self)]"/>
+                    <field name="ext_sale_db_id" filter_domain="[('ext_sale_db_id','ilike',self)]"/>
+                    <field name="buyer_id"/>
+                    <separator/>
+                    <field name="sale_date" string="Data nuo (Pardavimo)" filter_domain="[('sale_date', '&gt;=', self)]"/>
+                    <field name="bed_day_date" string="Data nuo (Guldymo)" filter_domain="[('bed_day_date', '&gt;=', self)]"/>
+                    <separator/>
+                    <filter name="komercine_slauga" string="Komercinė slauga" domain="[('product_id.product_tmpl_id.categ_id', 'in', [96])]"/>
+                    <filter name="reabilitacija" string="Reabilitacija" domain="[('product_id.product_tmpl_id.categ_id', 'in', [92,93,95,99,124])]"/>
+                    <separator/>
+                    <field name="sale_date" string="Data iki (Pardavimo)" filter_domain="[('sale_date', '&lt;=', self)]"/>
+                    <field name="bed_day_date" string="Data iki (Guldymo)" filter_domain="[('bed_day_date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo (Pardavimo)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo (Pardavimo)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai (Pardavimo)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai (Pardavimo)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('sale_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('sale_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo (Guldymo)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('bed_day_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('bed_day_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('bed_day_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('bed_day_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo (Guldymo)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('bed_day_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('bed_day_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('bed_day_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('bed_day_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai (Guldymo)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('bed_day_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('bed_day_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('bed_day_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('bed_day_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai (Guldymo)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('bed_day_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('bed_day_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('bed_day_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('bed_day_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo (Reabilitacijos)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('rehabilitation_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('rehabilitation_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('rehabilitation_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('rehabilitation_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo (Reabilitacijos)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('rehabilitation_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('rehabilitation_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('rehabilitation_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('rehabilitation_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai (Reabilitacijos)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('rehabilitation_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('rehabilitation_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('rehabilitation_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('rehabilitation_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai (Reabilitacijos)" domain="['|',
+                                                                        '&amp;',
+                                                                            ('rehabilitation_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('rehabilitation_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('rehabilitation_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('rehabilitation_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Pardavimo data" context="{'group_by':'sale_date'}"/>
+                        <filter name="group_date_bed" string="Guldymo data" context="{'group_by':'bed_day_date'}"/>
+                        <filter name="group_partner_id" string="Partneris"
+                                context="{'group_by':'partner_id'}"/>
+                    </group>
+
+                </search>
+            </field>
+        </record>
+        <record id="gemma_sale_action" model="ir.actions.act_window">
+            <field name="name">Pardavimai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">gemma.sale.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="gemma_sale_line_tree"/>
+            <field name="search_view_id" ref="gemma_sale_search"/>
+        </record>
+        <record id="gemma_sale_line_form_front" model="ir.ui.view">
+            <field name="name">gemma.sale.line.form</field>
+            <field name="model">gemma.sale.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pardavimai">
+                    <sheet>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="price"/>
+                            <field name="qty"/>
+                            <field name="sale_date"/>
+                            <field name="bed_day_date"/>
+                            <field name="rehabilitation_date"/>
+                            <field name="state"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="gemma_sale_line_tree_front" model="ir.ui.view">
+            <field name="name">gemma.sale.line.tree</field>
+            <field name="model">gemma.sale.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Pardavimai"
+                      create="0" edit="0" delete="0"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state in ['failed', 'warning']">
+                    <field name="ext_product_code"/>
+                    <field name="ext_product_name"/>
+                    <field name="partner_id"/>
+                    <field name="price"/>
+                    <field name="qty"/>
+                    <field name="sale_date"/>
+                    <field name="bed_day_date"/>
+                    <field name="rehabilitation_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="gemma_sale_line_pivot_front" model="ir.ui.view">
+            <field name="name">gemma.sale.line.pivot</field>
+            <field name="model">gemma.sale.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Pardavimai">
+                    <field name="price" type="measure"/>
+                    <field name="sale_date" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_gemma_sale_front">
+            <field name="name">Pardavimai</field>
+            <field name="res_model">gemma.sale.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot,tree_robo</field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="header_gemma"/>
+            <field name="search_view_id" ref="gemma_sale_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('gemma_sale_line_pivot_front')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('gemma_sale_line_tree_front')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

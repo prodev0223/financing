@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_employee_bonus_periodic_up_front_action" model="ir.actions.server">
+            <field name="name">Create periodic bonus up front</field>
+            <field name="model_id" ref="l10n_lt_payroll.model_hr_employee_bonus_periodic"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).create_hr_employee_bonus_periodic_up_front()
+            </field>
+        </record>
+        <function name="create_hr_employee_bonus_periodic_up_front_action" model="hr.employee.bonus.periodic"/>
+        <record id="periodic_bonus_tree" model="ir.ui.view">
+            <field name="name">periodic.bonus.tree</field>
+            <field name="model">hr.employee.bonus.periodic</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0" editable="bottom">
+                    <field name="bonus_id" options="{'no_open': False, 'no_create': True}"/>
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <field name="action"/>
+                    <field name="date_stop"/>
+                    <button name="open_bonuses" type="object" string="Sukurtos premijos"
+                            icon="icon-register one_and_half_size"/>
+                    <button name="delete" type="object" string="Ištrinti" icon="fa-remove one_and_half_size"/>
+                </tree>
+            </field>
+        </record>
+        <record id="periodic_bonus_kanban" model="ir.ui.view">
+            <field name="name">periodic.bonus.kanban</field>
+            <field name="model">hr.employee.bonus.periodic</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false" create="false">
+                    <field name="bonus_id"/>
+                    <field name="date"/>
+                    <field name="action"/>
+                    <field name="date_stop"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.bonus_id.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <t t-esc="record.date.value"/>
+                                            <t t-esc="record.action.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="action_periodic_bonus" model="ir.actions.act_window">
+            <field name="name">Periodiniai mokėjimai</field>
+            <field name="res_model">hr.employee.bonus.periodic</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('periodic_bonus_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('periodic_bonus_kanban')})]"/>
+        </record>
+        <menuitem id="menu_periodic_bonus"
+                  parent="l10n_lt_payroll.menu_payment_employee"
+                  name="Periodinės premijos"
+                  sequence="151"
+                  action="action_periodic_bonus"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="intrastat_extended" model="res.groups">
+            <field name="name">Intrastat extended</field>
+        </record>
+        <record id="robo_basic.group_robo_premium_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('sl_intrastat.intrastat_extended'))]"/>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="isakymas_del_priedo_skyrimo_grupei_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl priedo skyrimo grupei pagal darbo laiką</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header attrs="{'invisible': [('hide_view', '=', True)]}">
+                        <button name="confirm" type="object" string="Formuoti" states="draft"/>
+                        <button name="sign" type="object" class="oe_highlight" string="Pasirašyti" states="confirm"
+                                confirm="Patvirtinu, kad perskaičiau ir susipažinau."/>
+                        <button name="simulate_signing" type="object" class="oe_highlight" string="Patikrinti"
+                                states="confirm" groups="robo_basic.group_robo_premium_accountant"/>
+                        <field name="allow_approve" invisible="1"/>
+                        <field name="allow_reject" invisible="1"/>
+                        <field name="approve_status" invisible="1"/>
+                        <button name="set_draft" type="object" string="Atstatyti į juodraštį"
+                                states="confirm"/>
+                        <button name="cancel" type="object" string="Atšaukti"
+                                confirm="Ar tikrai norite atšaukti dokumentą?" states="draft,confirm"/>
+                        <field name="show_cancel_request" invisible="1"/>
+                        <button name="action_download" type="object" string="Atsisiųsti"
+                                states="confirm,e_signed"/>
+                        <field name="cancelled_ids" invisible="1"/>
+                        <field name="cancel_id" invisible="1"/>
+                        <button name="cancel_order" type="object" string="Panaikinti įsakymą"
+                                confirm="Ar tikrai norite panaikinti šį įsakymą?"
+                                attrs="{'invisible': ['|', ('state','!=','e_signed'), ('cancelled_ids', '!=', [])]}"/>
+                        <field name="state" widget="statusbar"/>
+                        <field name="rejected" invisible="1"/>
+                        <button name="action_copy" type="object" string="Kurti kopiją"
+                                states="draft,confirm,e_signed"/>
+                    </header>
+                    <field name="failed_workflow" invisible="1"/>
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('failed_workflow','=', False)]}"
+                         groups="robo_basic.group_robo_premium_accountant">
+                        Nepavyko įvykdyti dokumento darbo eigos
+                    </div>
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': ['|', ('state','!=','e_signed'), ('rejected', '!=', True)]}">
+                        ŠIS DOKUMENTAS BUVO ATMESTAS IR NEBEGALIOJA
+                    </div>
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': [('state','!=','confirm')]}">
+                            Nepamirškite pasirašyti!
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <div class=" oe_right oe_button_box">
+                            <field name="record_id" attrs="{'invisible':1}"/>
+                            <field name="record_model" attrs="{'invisible':1}"/>
+                            <field name="document_type" attrs="{'invisible':1}"/>
+                            <button name="toggle_active" type="object" groups="base.group_system" class="oe_stat_button"
+                                    icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{'terminology': 'archive'}"/>
+                            </button>
+                            <button name="toggle_skip_constraints" type="object"
+                                    groups="robo_basic.group_robo_premium_accountant" class="oe_stat_button"
+                                    icon="fa-check-circle" attrs="{'invisible':[('state', 'in', ['draft', 'cancel'])]}">
+                                <field name="skip_constraints" widget="boolean_button"
+                                       options="{'terminology': {'string_true': 'Netikrinama', 'string_false': 'Tikrinama', 'hover_true': 'Įjungti tikrinimą', 'hover_false': 'Išjungti tikrinimą'}}"/>
+                            </button>
+                            <button name="toggle_skip_constraints_confirm" type="object"
+                                    groups="robo_basic.group_robo_premium_accountant" class="oe_stat_button"
+                                    icon="fa-check-circle"
+                                    attrs="{'invisible':[('state', 'in', ['confirm', 'e_signed'])]}">
+                                <field name="skip_constraints_confirm" widget="boolean_button"
+                                       options="{'terminology': {'string_true': 'Netikrinama', 'string_false': 'Tikrinama', 'hover_true': 'Įjungti tikrinimą', 'hover_false': 'Išjungti tikrinimą'}}"/>
+                            </button>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_related_document"
+                                    string="Dokumentai" help="Nueiti į susijusius dokumentus" type="object"
+                                    attrs="{'invisible':['|', ('record_id','=',0), ('record_model', '!=', 'e.document')]}"
+                                    icon="fa-link" widget="statinfo"
+                                    groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_related_record"
+                                    string="Įrašai" help="Nueiti į susijusius įrašus"
+                                    type="object"
+                                    attrs="{'invisible':['|',('record_id','=',0), ('record_model', '=', 'e.document')]}"
+                                    icon="fa-link" widget="statinfo" groups="robo_basic.group_robo_premium_accountant"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_cancelled_ids"
+                                    string="Atšaukiantis dokumentas"
+                                    help="Nueiti į atšaukiantį įsakymą" type="object"
+                                    attrs="{'invisible':[('cancelled_ids', '=', [])]}" icon="fa-link" widget="statinfo"
+                                    groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_cancel_id"
+                                    string="Atšaukiamas dokumentas"
+                                    help="Nueiti į atšaukiamą įsakymą" type="object"
+                                    attrs="{'invisible':[('cancel_id', '=', False)]}" icon="fa-link" widget="statinfo"
+                                    groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"/>
+                        </div>
+                        <group attrs="{'invisible': [('hide_view', '=', True)]}">
+                            <group>
+                                <field name="locked" invisible="1"/>
+                                <field name="hide_view" invisible="1"/>
+                                <field name="template_id" invisible="1"/>
+                                <field name="cancel_uid" attrs="{'invisible': [('state', '!=', 'cancel')]}"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="company_id" options="{'no_create': True, 'no_open': True}"
+                                       string="Įmonės pavadinimas" required="True" invisible="1"/>
+                                <field name="date_document" options="{'no_create': True, 'no_open': True}"
+                                       string="Dokumento pildymo data" required="True" invisible="0"/>
+                                <field name="document_number" options="{'no_create': True, 'no_open': True}"
+                                       string="Dokumento numeris" required="True" invisible="0"/>
+                                <field name="vieta" options="{'no_create': True, 'no_open': True}"
+                                       string="Dokumento pildymo vieta" required="True" invisible="0"/>
+                                <field name="job_id2" options="{'no_create': True, 'no_open': True}"
+                                       string="Darbuotojo(-s) pareigos" required="0" invisible="1"/>
+                                <field name="bonus_type_selection" options="{'no_create': True, 'no_open': True}"
+                                       string="Premijos r&#363;šis" required="True" invisible="0"/>
+                                <field name="bonus_input_type" options="{'no_create': True, 'no_open': True}"
+                                       string="Skaičiuojama" required="True" invisible="0"/>
+                            </group>
+                            <group>
+                                <field name="date_1" options="{'no_create': True, 'no_open': True}"
+                                       string="Laikotarpio, už kurį skiriama, pradžia" required="True"
+                                       invisible="0"/>
+                                <field name="date_2" options="{'no_create': True, 'no_open': True}"
+                                       string="Laikotarpio, už kurį skiriama, pabaiga" required="True"
+                                       invisible="0"/>
+                                <field name="date_3" options="{'no_create': True, 'no_open': True}"
+                                       string="Mėnesio, su kurio darbo užmokesčiu išmokėti, pirma diena"
+                                       required="True" invisible="0"/>
+                                <field name="extra_text"/>
+                            </group>
+                            <field name="omnisend_bonus_line_ids" nolabel="1" widget="one2many_list"
+                                   options="{'no_open': True}">
+                                <tree string="El. dokumento eilutės" editable="bottom" open="0"
+                                      class="robo_tree_in_form">
+                                    <field name="employee_id" required="1" string="Darbuotojo vardas"
+                                           options="{'no_create':True, 'no_open': True}"/>
+                                    <field name="full_bruto" required="1" string="Priedo dydis, EUR" sum="full_bruto"/>
+                                    <field name="work_norm" required="1" string="Darbo dienų skaičius"/>
+                                    <field name="worked_time" required="1" string="Išdirbtų darbo dienų skaičius"/>
+                                    <field name="adjusted_bruto" required="1" string="Perskaičiuotas priedo dydis, EUR" sum="adjusted_bruto"/>
+                                </tree>
+                                <form string="El. dokumento eilutės" editable="bottom" open="false">
+                                    <group>
+                                        <field name="employee_id" required="1" string="Darbuotojo vardas"
+                                               options="{'no_create': True}"/>
+                                        <field name="full_bruto" required="1" string="Priedo dydis, EUR"/>
+                                        <field name="work_norm" required="1" string="Darbo dienų skaičius"/>
+                                        <field name="worked_time" required="1" string="Išdirbtų darbo dienų skaičius"/>
+                                        <field name="adjusted_bruto" required="1" string="Perskaičiuotas priedo dydis, EUR"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </group>
+                        <field name="final_document" widget="html" states="draft" readonly="1"/>
+                        <field name="generated_document" widget="pdf_viewer" states="confirm,e_signed"
+                               filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                        <label for="generated_document" string="Atsisiųsti" states="confirm,e_signed"/>
+                        <field name="generated_document_download" string="" states="confirm,e_signed"
+                               filename="file_name"/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="isakymas_del_priedo_skyrimo_grupei_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl priedo skyrimo grupei pagal darbo laiką</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'omnisend.isakymas_del_priedo_skyrimo_grupei_template', 'default_bonus_type_selection': '1men', u'e_document_view_type':
+                u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="omnisend.isakymas_del_priedo_skyrimo_grupei_form"/>
+        </record>
+
+
+        <record id="isakymas_del_priedo_skyrimo_grupei_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl priedo skyrimo grupei pagal darbo laiką</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="False"/>
+            <field name="parent_id" ref="e_document.isakymas"/>
+            <field name="action" ref="omnisend.isakymas_del_priedo_skyrimo_grupei_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas,priedas,premija,Skyrimas grupė grupei</field>
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+
+        <record id="isakymas_del_priedo_skyrimo_grupei_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Skiriu darbuotojų grupei piniginį {{ bonus_input_type }} priedą prie {{ date_3.__getslice__(0, 7)}}
+                    mėnesio darbo užmokesčio už laikotarpį {{ date_1 }} - {{ date_2 }}.
+                    <br/>
+                    {{ employees_table_text }} {{ extra_text }}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl priedo skyrimo grupei pagal darbo laiką</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="45%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="omnisend.isakymas_del_priedo_skyrimo_grupei_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS
+                                DĖL PRIEDO SKYRIMO
+                                {% if len(e_document_line_ids) > 1 %}
+                                GRUPEI
+                                {% endif %}
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                    </span>
+                                                </p>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p>
+                                                    <span>{{ manager_id }}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                                <br/>
+                                <span>ĮSAKYMAS
+                                    DĖL PRIEDO SKYRIMO
+                                    {% if len(e_document_line_ids) > 1 %}
+                                    GRUPEI
+                                    {% endif %}
+                                </span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span t-field="doc.employee_id.work_location"/>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        Skiriu darbuotojų grupei piniginį {{ bonus_input_type }} priedą prie {{ date_3.__getslice__(0,
+                        7)}} mėnesio darbo užmokesčio už laikotarpį {{ date_1 }} - {{ date_2 }}.
+                        <br/>
+                        {{ employees_table_text }} {{ extra_text }}
+                    </div>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="45%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{manager_job_id}} {{ manager_id }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.omnisend_isakymas_del_priedo_skyrimo_grupei_workflow()</field>
+            <field name="date_from_field_name" eval="False"/>
+            <field name="date_to_field_name" eval="False"/>
+            <field name="send_manager" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="sign_mail_channel_ids" eval="[(4, ref('e_document.signed_orders_about_bonus_award_mail_channel'))]"/>
+            <field name="allow_copy" eval="True"/>
+        </record>
+    </data>
+</odoo>

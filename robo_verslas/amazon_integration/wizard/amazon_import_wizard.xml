@@ -1,0 +1,48 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="form_amazon_import_wizard" model="ir.ui.view">
+            <field name="name">form.amazon.import.wizard</field>
+            <field name="model">amazon.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="XML Duomenų importas">
+                    <sheet>
+                        <group>
+                            <div>
+                                <p>
+                                    Naudojantis šiuo vedliu galite importuoti Amazon XML failus į sistemą.
+                                    Galite importuoti užsakymų (orders) arba produktų (products) XML failus.
+                                    <br/>
+                                    <i>PASTABA: XML Failai bus importuojami kaip foninė funkcija,
+                                        patikrinkite meniu 'XML Importo darbai', kad pamatytumėte ar importavimas
+                                        pavyko sėkmingai
+                                    </i>
+                                </p>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="xml_data" filename="xml_file_name" required="1"/>
+                            <field name="xml_type"/>
+                            <field name="xml_file_name" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Importuoti Duomenis" name="button_xml_import" type="object"
+                                class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_amazon_import_wizard" model="ir.actions.act_window">
+            <field name="name">XML Duomenų Importavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>

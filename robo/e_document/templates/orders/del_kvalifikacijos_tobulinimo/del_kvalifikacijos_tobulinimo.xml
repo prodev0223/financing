@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="isakymas_del_kvalifikacijos_tobulinimo_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl kvalifikacijos tobulinimo</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="before">
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('state', '=', 'e_signed')]}">
+                        Please note that this order is used in the case of qualification improvement when it takes place
+                        at the employee’s workplace. If the employee leaves the workplace, business trip order should be used instead.
+                    </div>
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name="action_approve" type="object" class="oe_highlight" string="Patvirtinti"
+                            confirm="Ar tikrai norite tvirtinti darbuotojo prašymą?"
+                            attrs="{'invisible': ['|', ('approve_status', '!=', 'waiting_approval'), ('allow_approve', '=', False)]}"/>
+                    <button name="action_reject" type="object" class="oe_highlight" string="Atmesti"
+                            confirm="Ar tikrai norite atmesti darbuotojo prašymą?"
+                            attrs="{'invisible': ['|', ('approve_status', '!=', 'waiting_approval'), ('allow_reject', '=', False)]}"/>
+                    <button name="cancel_request" type="object" string="Atšaukti"
+                            confirm="Ar tikrai norite atšaukti dokumentą?"
+                            attrs="{'invisible': ['|', ('show_cancel_request', '=', False), ('state', '!=', 'e_signed')]}"/>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <group colspan="2" col="3">
+                            <span col="1" colspan="1" style="font-weight: bold;">Renginio trukmė</span>
+                            <field name="date_from" required="True" invisible="0" nolabel="1"/>
+                            <field name="date_to" required="True" invisible="0" nolabel="1"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="text_2" options="{'no_create': True, 'no_open': True}"
+                                   string="Renginio pavadinimas" required="True" invisible="0"/>
+                            <field name="text_3" options="{'no_create': True, 'no_open': True}"
+                                   string="Renginio vieta" required="True" invisible="0"/>
+                            <field name="text_5" options="{'no_create': True, 'no_open': True}"
+                                   string="Renginio adresas" required="True" invisible="0"/>
+                            <field name="employee_id3" options="{'no_create': True, 'no_open': True}"
+                                   string="Finansininko(-ės) Vardas Pavardė" required="0" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group colspan="4" col="4">
+                        <field name="qualification_order_employee_lines" nolabel="1" options="{'no_open': True}"
+                               required="True" invisible="0">
+                            <tree editable="bottom">
+                                <field name="employee_id"/>
+                                <!--                                    <field name="request_date"/>-->
+                            </tree>
+                            <form>
+                                <group>
+                                    <field name="employee_id"/>
+                                    <!--                                        <field name="request_date"/>-->
+                                </group>
+                            </form>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_kvalifikacijos_tobulinimo_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl kvalifikacijos tobulinimo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'isakymas_del_kvalifikacijos_tobulinimo_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.isakymas_del_kvalifikacijos_tobulinimo_form"/>
+        </record>
+
+        <record id="isakymas_del_kvalifikacijos_tobulinimo_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl kvalifikacijos tobulinimo</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.isakymas_del_kvalifikacijos_tobulinimo_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas,Kvalifikacijos kėlimas,kvalifikacijos
+                tobulinimas,kvalifikacija,žinios,kilti,žinių,ziniu,zinios,isakymas
+            </field>
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+        <record id="isakymas_del_kvalifikacijos_tobulinimo_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    L e i d ž i u {{ qualification_order_employee_text }} {{ qualification_order_date_string }}dalyvauti
+                    renginyje {{ text_2 }}, kuris vyks {{kur(text_3,'Aa')}}, adresu {{ text_5 }}. {{ extra_text_html }}
+                    {{ qualification_order_employee_group_text }}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl kvalifikacijos tobulinimo</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.isakymas_del_kvalifikacijos_tobulinimo_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS
+                                DĖL {{ qualification_employee_name }}KVALIFIKACIJOS TOBULINIMO
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p>
+                                                    <span>{{ manager_id }}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                                <br/>
+                                <span>ĮSAKYMAS
+                                    DĖL {{ qualification_employee_name }}KVALIFIKACIJOS TOBULINIMO
+                                </span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        L e i d ž i u {{ qualification_order_employee_text }} {{ qualification_order_date_string
+                        }}dalyvauti
+                        renginyje {{ text_2 }}, kuris vyks {{kur(text_3,'Aa')}}, adresu {{ text_5 }}.
+                        {{ extra_text_html }}
+                        {{ qualification_order_employee_group_text }}
+                    </div>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="65%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{manager_job_id}} {{ manager_id }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.isakymas_del_kvalifikacijos_tobulinimo_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+        </record>
+    </data>
+</odoo>

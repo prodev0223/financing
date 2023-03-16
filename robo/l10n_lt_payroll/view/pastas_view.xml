@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_hr_payslip_form_email" model="ir.ui.view">
+            <field name="name">hr.payslip.form.email</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="//field[@name='payslip_run_id']" position="after">
+                 <field name="issiustas_email"/>
+              </xpath>
+            </field>
+         </record>
+
+        <record id="view_hr_payslip_tree_email" model="ir.ui.view">
+            <field name="name">hr.payslip.tree.email</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="neto_skirtumas"/>
+                    <field name="issiustas_email"/>
+                </xpath>
+                <xpath expr="//field[@name='number']" position="after">
+                    <field name="tabelio_numeris"/>
+                </xpath>
+            </field>
+        </record>
+
+         <record id="sistema_payslip_search_email" model="ir.ui.view">
+            <field name="name">sistema.payslip.search.email</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_filter"/>
+            <field name="type">search</field> 
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='payslip_run_id']" position="after">
+                    <field name='issiustas_email' filter_domain="['|',('issiustas_email','=',True)]" string="Išsiųstas el. laiškas"/>
+               </xpath>
+               <xpath expr="//filter[@name='state']" position="before">
+                    <filter string="Ar išsiųsta el. paštu?" context="{'group_by':'issiustas_email'}"/>
+               </xpath>
+            </field>
+        </record>
+       </data> 
+</odoo>
+

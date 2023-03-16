@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--Picking-->
+        <record id="robo_stock_header_picking_new" model="robo.header.items">
+            <field name="header" ref="robo_stock.robo_stock_header_picking"/>
+            <field name="name">Važtaraštį</field>
+            <field name="icon">icon-document</field>
+            <field name="action" ref="robo_stock.new_open_robo_stock_picking"/>
+            <field name="item_class">new_stock_picking</field>
+            <field name="help"></field>
+        </record>
+        <!--end Picking-->
+
+        <!--Sale order-->
+        <record id="robo_button_header_sale_new" model="robo.header.items">
+            <field name="header" ref="robo_stock.robo_stock_header_sale"/>
+            <field name="name">Pardavimą</field>
+            <field name="icon">icon-exit-right</field>
+            <field name="action" ref="robo_stock.new_open_robo_sale_orders"/>
+            <field name="item_class">new_sale_order</field>
+            <field name="help"></field>
+        </record>
+        <!--end Sale order-->
+
+        <!--Purchase order-->
+        <record id="robo_button_header_purchase_new" model="robo.header.items">
+            <field name="header" ref="robo_stock.robo_stock_header_purchase"/>
+            <field name="name">Pirkimą</field>
+            <field name="icon">icon-enter-right</field>
+            <field name="action" ref="robo_stock.new_open_robo_purchase_orders"/>
+            <field name="item_class">new_purchase_order</field>
+            <field name="help"></field>
+        </record>
+        <!--end Purchase order-->
+
+        <!--Product-->
+        <record id="robo_stock_header_product_new" model="robo.header.items">
+            <field name="header" ref="robo_stock.robo_stock_header_product"/>
+            <field name="name">Produktą</field>
+            <field name="icon">icon-box</field>
+            <field name="action" ref="robo_stock.open_robo_stock_product"/>
+            <field name="item_class">new_product</field>
+            <field name="help">Naujas produktas</field>
+        </record>
+
+        <!--Landed cost-->
+        <record id="robo_stock_header_landed_cost_new" model="robo.header.items">
+            <field name="header" ref="robo_stock.robo_stock_header_landed_cost"/>
+            <field name="name">Savikainos koregavimą</field>
+            <field name="icon">icon-calculator</field>
+            <field name="action" ref="robo_stock.new_open_robo_stock_landed_costs"/>
+            <field name="item_class">new_landing_const</field>
+            <field name="help"></field>
+        </record>
+
+        <!--stock inventory-->
+        <record id="robo_stock_header_stock_inventory_new" model="robo.header.items">
+            <field name="header" ref="robo_stock.robo_stock_header_stock_inventory"/>
+            <field name="name">Atsargų nurašymą</field>
+            <field name="icon">icon-abacus</field>
+            <field name="action" ref="robo_stock.open_robo_stock_inventory"/>
+            <field name="item_class">new_robo_stock</field>
+            <field name="help"></field>
+        </record>
+
+        <!--product category-->
+        <record id="robo_stock_header_product_category_new" model="robo.header.items">
+            <field name="header" ref="robo_stock.robo_stock_header_product_category"/>
+            <field name="name">Kategoriją</field>
+            <field name="icon">icon-store</field>
+            <field name="action" ref="robo_stock.new_open_robo_stock_product_categories"/>
+            <field name="item_class">new_product_category</field>
+            <field name="help"></field>
+        </record>
+        <!--Stock location route-->
+        <record id="header_new_stock_location_route" model="robo.header.items">
+            <field name="name">Maršrutą</field>
+            <field name="icon">icon-cart-exchange</field>
+            <field name="action" ref="action_open_stock_location_route_new"/>
+            <field name="item_class">new_route</field>
+            <field name="help">Naujas maršrutas</field>
+            <field name="header" ref="header_stock_location_route"/>
+        </record>
+        <!--Stock location path-->
+        <record id="header_new_stock_location_path" model="robo.header.items">
+            <field name="name">Išskirstymo taisyklę</field>
+            <field name="icon">icon-clipboard-left</field>
+            <field name="action" ref="robo_stock.action_open_stock_location_path"/>
+            <field name="item_class">new_location_path</field>
+            <field name="help">Nauja išskirstymo taisyklė</field>
+            <field name="header" ref="robo_stock.header_stock_location_path"/>
+        </record>
+        <!--Procurement rule-->
+        <record id="header_new_procurement_rule" model="robo.header.items">
+            <field name="name">Planinio užsakymo taisyklę</field>
+            <field name="icon">icon-clipboard-text</field>
+            <field name="action" ref="robo_stock.action_open_procurement_rule"/>
+            <field name="item_class">new_procurement_rule</field>
+            <field name="help">Nauja planinio užsakymo taisyklė</field>
+            <field name="header" ref="robo_stock.header_procurement_rule"/>
+        </record>
+        <!--Stock warehouse orderpoint-->
+        <record id="header_new_stock_warehouse_orderpoint" model="robo.header.items">
+            <field name="name">Automatinio užsakymo taisyklę</field>
+            <field name="icon">icon-clipboard-text</field>
+            <field name="action" ref="robo_stock.action_open_stock_warehouse_orderpoint"/>
+            <field name="item_class">new_stock_warehouse_orderpoint</field>
+            <field name="help">Nauja automatinio užsakymo taisyklė</field>
+            <field name="header" ref="robo_stock.header_stock_warehouse_orderpoint"/>
+        </record>
+    </data>
+</odoo>

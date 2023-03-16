@@ -1,0 +1,137 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="robo_stock_product_tree" model="ir.ui.view">
+            <field name="name">product.template.tree.r.keeper</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="r_keeper_update"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">r_keeper_update</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_template_tree_view" model="ir.ui.view">
+            <field name="name">product.template.tree.r.keeper</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="r_keeper_update"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">r_keeper_update</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="robo_stock_product_form" model="ir.ui.view">
+            <field name="name">product.template.form.r.keeper</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//br" position="before">
+                    <header>
+                        <button name="action_open_pos_update_wizard" type="object"
+                                string="Atnaujinti pardavimo taškus" class="oe_highlight"
+                                groups="r_keeper.group_r_keeper_front_end"
+                                attrs="{'invisible': [('r_keeper_product', '=', False)]}"/>
+                    </header>
+                    <field name="r_keeper_update" invisible="1"/>
+                    <field name="r_keeper_product" invisible="1"/>
+                    <div class="alert alert-warning" role="alert"
+                         groups="r_keeper.group_r_keeper_front_end" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('r_keeper_update', '=', False), ('r_keeper_product', '=', False)]}">
+                        <div>
+                            <h4>Produkto laukeliai turintis įtaką rKeeper pardavimo taškams buvo atnaujinti.
+                                <i>
+                                    <b>Nepamirškite atnaujinti susijusių pardavimo taškų produktų informacijos.</b>
+                                </i>
+                                Tą galite padaryti paspaudę 'Veiksmas' -> 'Atnaujinti pardavimo taškus'
+                            </h4>
+                        </div>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='default_code']" position="replace">
+                    <field name="r_keeper_product" invisible="1"/>
+                    <field name="default_code" help=""
+                           attrs="{'invisible': [('product_variant_count', '>', 1)],
+                                       'required': [('r_keeper_product', '=', True)]}"/>
+                </xpath>
+                <xpath expr="//group[@name='general_information_group']" position="after">
+                    <group name="r_keeper_settings" string="rKeeper nustatymai"
+                           groups="r_keeper.group_r_keeper_front_end"
+                           attrs="{'invisible': [('r_keeper_product', '=', False)]}">
+                        <group colspan="4" col="2">
+                            <group string="Susijęs produktas" colspan="1" col="2">
+                                <field name="r_keeper_related_product_id"/>
+                            </group>
+                            <group string="Paaiškinimai" colspan="1" col="2">
+                                <div class="alert alert-info" role="alert" style="margin-bottom: 2px;">
+                                    Su šiuo produktu susijusi prekė. Laukelis turi įtakos tik rKeeper
+                                    duomenų eksporte, kasos aparate prie esamos prekės bus pririšama
+                                    pažymėta prekė
+                                </div>
+                            </group>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Produkto statusas" colspan="1" col="2">
+                                <field name="r_keeper_product_state"
+                                       attrs="{'required': [('r_keeper_product', '=', True)]}"/>
+                            </group>
+                            <group string="Paaiškinimai" colspan="1" col="2">
+                                <div class="alert alert-info" role="alert" style="margin-bottom: 2px;">
+                                    <i>PASTABA</i>
+                                    Jeigu produkto statusas bus pakeičiamas į 'Ištrintas'
+                                    rKeeper serveryje jo atkurti nebeišeis. Rekomenduojama naudoti požymį 'Neaktyvus'.
+                                </div>
+                            </group>
+                        </group>
+                        <group string="Kiti laukeliai" colspan="4">
+                            <field name="r_keeper_price_unit"/>
+                            <field name="r_keeper_vat_rate"
+                                   attrs="{'required': [('r_keeper_product', '=', True)]}"/>
+                            <field name="r_keeper_is_weighed"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="product_template_search_view" model="ir.ui.view">
+            <field name="name">product.template.search.r.keeper</field>
+            <field name="model">product.template</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='pricelist_id']" position="after">
+                    <separator/>
+                    <filter name="r_keeper_update"
+                            domain="[('r_keeper_update', '=', True)]"
+                            string='Reikalingas rKeeper atnaujinimas'
+                    />
+                    <filter name="r_keeper_update"
+                            domain="[('r_keeper_product', '=', True)]"
+                            string='rKeeper produktas'
+                    />
+                </xpath>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_pos_update_wizard_multi" model="ir.actions.server">
+            <field name="name">Atnaujinti pardavimo taškus</field>
+            <field name="model_id" ref="r_keeper.model_product_template"/>
+            <field name="group_ids" eval="[(4, ref('r_keeper.group_r_keeper_front_end'))]"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo_stock.robo_stock_product_tree')])]"/>
+            <field name="code">
+                if user.is_manager():
+                action = object.browse(context.get('active_ids', False)).action_open_pos_update_wizard()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_action_pos_update_wizard_multi" model="product.template"/>
+    </data>
+</odoo>

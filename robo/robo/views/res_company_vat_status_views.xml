@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="res_company_vat_status_tree" model="ir.ui.view">
+            <field name="name">res.company.vat.status.tree</field>
+            <field name="model">res.company.vat.status</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree editable="bottom" default_order="date_to desc" import="0">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="attachment" filename="file_name"/>
+                    <field name="file_name" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_open_company_vat_status" model="ir.actions.act_window">
+            <field name="name">PVM mokėtojo statusas</field>
+            <field name="res_model">res.company.vat.status</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo</field>
+            <field name="domain">[]</field>
+            <field name="context">{'robo_header':{}}</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

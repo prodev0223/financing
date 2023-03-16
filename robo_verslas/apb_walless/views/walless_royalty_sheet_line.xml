@@ -1,0 +1,39 @@
+<odoo>
+    <data>
+        <!--Form-->
+        <record id="form_walless_royalty_sheet_line" model="ir.ui.view">
+            <field name="name">form.walless.royalty.sheet.line</field>
+            <field name="model">walless.royalty.sheet.line</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Honorarų suvestinės eilutė"
+                      create="0" edit="1" delete="0">
+                    <sheet>
+                        <group string="Informacija">
+                            <field name="employee_id" readonly="1"/>
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="monthly_royalty"/>
+                            <field name="monthly_days"/>
+                            <field name="days_worked"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Skaičiuojamos sumos" colspan="1" col="2">
+                                <field name="monthly_royalty_factual"/>
+                                <field name="extra_monthly_bonus"/>
+                                <field name="extra_monthly_deductions"/>
+                                <field name="final_amount" sum="final_amount"/>
+                            </group>
+                            <group string="Išmokamos sumos" colspan="1" col="2">
+                                <field name="vsd_amount"/>
+                                <field name="hypothetical_vsd_amount"/>
+                                <field name="psd_amount"/>
+                                <field name="gpm_amount"/>
+                                <field name="payable_amount"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

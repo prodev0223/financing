@@ -1,0 +1,372 @@
+﻿& div.robo_onboarding_progress_bar {
+    height: 30px;
+    margin-bottom: 5px;
+    z-index: 1 !important;
+    position: relative;
+
+    @media screen and (min-width: 3000px) {
+        height: 75px;
+    }
+
+    & div.no_onboarding_progress {
+        & > span {
+            color: black;
+            text-align: center;
+            left: 48%;
+            position: absolute;
+
+            @media screen and (min-width: 3000px) {
+                font-size: 40px;
+            }
+        }
+    }
+
+    & > div {
+        background-color: #59b725;
+        transition: width 1.5s ease;
+        background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-image: -o-linear-gradient(135deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-size: 40px 40px;
+
+        & > span {
+            line-height: 30px;
+
+            @media screen and (min-width: 3000px) {
+                line-height: 75px;
+                font-size: 45px;
+            }
+        }
+    }
+}
+
+div.o_onboarding_form_container, div.robo_onboarding_widget {
+    & .onboarding-comment {
+        background-color: #555;
+        color: white;
+        padding: 10px;
+        border-radius: 6px;
+        position: absolute;
+        z-index: 1;
+        font-size: 15px;
+        visibility: hidden;
+        width: inherit;
+        text-transform: none;
+        bottom: 125%;
+        display: none;
+        max-width: 100%;
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 20%;
+            margin-left: -5px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+    }
+
+    & i, img {
+        margin: 0 10px;
+        width: 25px;
+
+        @media screen and (max-width: 500px) {
+            width: 20px;
+        }
+
+        @media screen and (min-width: 3000px) {
+            width: 45px;
+        }
+    }
+
+    & div.robo_onboarding_widget_header {
+        padding: 0;
+        cursor: pointer;
+
+        & div.onboarding_status_container {
+            display: none;
+            visibility: hidden;
+        }
+
+    }
+
+    & div.category_data_container {
+        display: block;
+        vertical-align: top;
+        width: 100%;
+        padding: 5px 20px;
+        font-family: 'RobotoLight', Arial, sans-serif;
+
+        & > ul {
+            padding-left: 0 !important;
+
+            & > li {
+                & .category-title {
+                    position: relative;
+                    &:hover .onboarding-comment{
+                        visibility: visible;
+                        display: initial;
+                    }
+                }
+            }
+        }
+    }
+
+    & .robo_onboarding_task_container_container {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        padding: 1%;
+
+        @media screen and (max-width: 1200px) {
+            padding: 2%;
+            grid-template-columns: auto;
+        }
+
+        & .robo_main_onboarding_data {
+            margin: 2%;
+
+            @media screen and (max-width: 1200px) {
+                width: 100%;
+                margin: 0 auto 5% auto;
+            }
+        }
+    }
+
+    & li {
+        list-style: none;
+    }
+
+    & ul {
+        @media screen and (max-width: 500px) {
+            padding-left: 0;
+        }
+
+        & li.robo_onboarding_category {
+            @media screen and (max-width: 500px) {
+                margin-bottom: 40px;
+            }
+
+            & > span:first-of-type {
+                font-size: 19px;
+                font-family: "Roboto", Arial, sans-serif;
+                border-bottom: 1px solid lightgray;
+                padding: 2px;
+                width: inherit;
+                display: flex;
+                margin-bottom: 10px;
+                color: gray;
+                text-transform: uppercase;
+                font-weight: lighter;
+                @media screen and (max-width: 500px) {
+                    font-size: 15px;
+                }
+                @media screen and (min-width: 3000px) {
+                    font-size: 45px;
+                }
+            }
+
+            &.robo_onboarding_completed {
+                color: #9B9B9B;
+            }
+
+            & .task-container {
+                padding: 2px 0 !important;
+                display: flex !important;
+                align-items: center;
+                align-content: center;
+                position: relative;
+
+                &:hover .onboarding-comment{
+                    visibility: visible;
+                    display: initial;
+                }
+            }
+
+            & ul {
+                padding-inline-start: 20px;
+            }
+        }
+
+        & li.robo_onboarding_task.robo_onboarding_completed {
+            text-decoration: line-through;
+            color: #9B9B9B;
+        }
+
+        & li.robo_onboarding_task {
+            font-size: 17px;
+            margin: 10px auto;
+            text-align: left;
+            @media screen and (max-width: 500px) {
+                font-size: 13px;
+            }
+            @media screen and (min-width: 3000px) {
+                font-size: 40px;
+            }
+        }
+
+        & li.robo_onboarding_task.robo_onboarding_has_action {
+            cursor: pointer;
+
+            & > div > span {
+                color: #2a80b9;
+            }
+        }
+    }
+}
+
+div.o_onboarding_form_container {
+    width: 80%;
+    margin: 4% auto;
+
+    & div.robo_onboarding_widget_header {
+        padding: initial;
+        cursor: initial;
+        padding: 24px 16px !important;
+        margin: 2%;
+
+        & div.onboarding_status_container {
+            visibility: visible;
+            display: flex !important;
+            width: 100%;
+            justify-content: space-between;
+            flex-direction: row;
+            font-weight: 100 !important;
+            color: #626262;
+            font-size: 18px;
+            font-family: 'RobotoLight', Arial, sans-serif;
+            text-transform: uppercase;
+            padding: 0 5px;
+            @media screen and (min-width: 3000px) {
+                font-size: 45px;
+            }
+        }
+    }
+}
+
+
+div.robo_onboarding_sheet {
+    background-color: white !important;
+    padding: 24px 16px;
+    border-radius: 5px;
+    box-shadow: 0 2px 11px 0px rgba(0, 0, 0, 0.15);
+    & h2 {
+        font-family: 'RobotoLight', Arial, sans-serif;
+        text-transform: uppercase;
+        color: #626262;
+        font-size: 20px !important;
+
+        @media screen and (min-width: 3000px) {
+            font-size: 45px !important;
+        }
+    }
+}
+
+div.robo_onboarding_widget {
+    max-width: 1200px;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: rgba(255,255,255,0) !important;
+    box-shadow: none;
+    transition-duration: 0.2s;
+    margin: 10px auto 0 auto;
+
+    &:hover, &.robo_onboarding_widget_active {
+        background-color: white !important;
+        box-shadow: 0 2px 11px 0px rgba(0, 0, 0, 0.15);
+
+        & div.robo_onboarding_widget_header {
+
+            & div.onboarding_status_container {
+                visibility: visible;
+                display: flex !important;
+                width: 100%;
+                justify-content: space-between;
+                flex-direction: row;
+                font-weight: 100 !important;
+                color: #9B9B9B;
+                font-size: 17px;
+                border-bottom: 1px solid #d8d8d8;
+            }
+        }
+    }
+
+    & div.category_data_container {
+        padding: 24px 16px;
+        padding-left: 45px;
+        padding-right: 45px;
+
+        @media screen and (max-width: 500px) {
+            padding: 0;
+        }
+    }
+
+}
+
+
+.robo_onboarding_invisible {
+    display:none !important;
+    visibility: hidden;
+}
+
+.onboarding_status_banner {
+    background-color: #dedede;
+    color: black;
+    position: relative;
+    width: inherit;
+    z-index: 5;
+
+    & a {
+        display: flex;
+        justify-content: center;
+        color: black;
+        align-items: center;
+        text-transform: uppercase;
+        font-family: 'RobotoLight', Arial, sans-serif;
+        padding: 3px;
+        z-index: 5;
+        font-weight: bold;
+
+        & > div {
+            display: flex;
+            vertical-align: middle;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1%;
+
+            @media screen and (max-width: 1120px) {
+                width: 95%;
+            }
+            @media screen and (max-width: 860px) {
+                width: 100%;
+            }
+        }
+    }
+
+    & div.onboarding_status_bar {
+        @media screen and (max-width: 860px) {
+            display: none;
+        }
+    }
+
+    & div.robo_onboarding_progress_bar {
+        height: 25px;
+        width: 50%;
+        margin: 0;
+        border-radius: 5px;
+        margin-left: 1%;
+        position: relative;
+        justify-content: initial;
+
+        & > div > span {
+            line-height: 25px;
+        }
+
+        @media screen and (max-width: 860px) {
+            width: 90%;
+            margin-left: 0;
+        }
+    }
+}

@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--MRP production-->
+        <record id="mrp_production_add_accounting" model="ir.ui.view">
+            <field name="name">mrp.production.accounting</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <div class="oe_right" states="done,progress" groups="account.group_account_user">
+                        <button name="open_account_move_lines" type="object" class="oe_stat_button" icon="fa-bars"
+                                string="Apskaitos įrašai"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <record id="robo_mrp_production_tree_view" model="ir.ui.view">
+            <field name="name">robo.mrp.production.tree</field>
+            <field name="model">mrp.production</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0" create="0" decoration-bf="message_needaction==True"
+                      default_order="date_planned_start desc" decoration-info="state=='confirmed'"
+                      decoration-danger="date_planned_start&lt;current_date and state not in ('done','cancel')"
+                      decoration-muted="state == 'cancel'"
+                      decoration-success="state == 'done'" string="Manufacturing Orders">
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="name" string="Numeris"/>
+                    <field name="date_planned_start" string="Planuojama gamyba"/>
+                    <field name="product_id" string="Gaminys"/>
+                    <field name="product_qty" sum="product_qty" string="Kiekis"/>
+                    <field name="product_uom_id" string="Mat. vnt." options="{'no_open':True,'no_create':True}"
+                           groups="product.group_uom"/>
+                    <field name="availability" string="Rezervacija"/>
+                    <field name="routing_id" groups="mrp.group_mrp_routings" string="Taisyklė"/>
+                    <field name="origin" string="Susijęs dokumentas"/>
+                    <field name="state" string="Būsena"/>
+                </tree>
+            </field>
+        </record>
+        <record id="robo_mrp_production_form_view" model="ir.ui.view">
+            <field name="name">robo.mrp.production.form</field>
+            <field name="model">mrp.production</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Gamybos užsakymai">
+                    <header>
+                        <button name="action_confirm_production" type="object" string="Paruošti gamybą"
+                                attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('production_type', '!=', 'static')]}"
+                                class="oe_highlight"/>
+                        <button name="button_action_assign"
+                                attrs="{'invisible': [('availability', 'in', ('assigned', 'none'))]}"
+                                string="Rezervuoti" type="object" class="oe_highlight"/>
+                        <button name="produce_simplified" string="Patvirtinti" type="object" class="oe_highlight"
+                                attrs="{'invisible': ['|', ('availability', 'not in', ('assigned', 'none')), ('state', 'in', ['cancel', 'done', 'draft'])]}"/>
+                        <button name="action_set_draft" type="object" string="Atstatyti į juodraštį"
+                                attrs="{'invisible': ['|', ('state', '!=', 'confirmed'), ('production_type', '!=', 'static')]}"
+                                class="oe_highlight"/>
+                        <button name="action_cancel_production" type="object" confirm="Ar tikrai norite atšaukti?"
+                                string="Atšaukti" states="done"/>
+                        <button name="action_cancel" type="object" string="Atšaukti"
+                                confirm="Ar tikrai norite atšaukti?"
+                                attrs="{'invisible': ['|', ('state', 'in', ('done','cancel')), ('check_to_done', '=', True)]}"/>
+                        <button name="button_scrap" type="object" string="Nurašyti"
+                                attrs="{'invisible': ['|', ('availability', '=', 'none'), ('state', 'in', ('cancel', 'done'))]}"/>
+                        <button name="button_unreserve" type="object" string="Atšaukti rezervaciją"
+                                attrs="{'invisible': ['|', ('state', 'in', ['done', 'cancel']), ('availability', 'in', ['none', 'waiting'])]}"/>
+                        <button name="renew_production_locations" type="object" string="Atnaujinti komponentų lokacijas"
+                                groups="robo_mrp.group_recursive_bom_production"
+                                attrs="{'invisible': [('state', 'in', ['done', 'cancel', 'draft'])]}"/>
+                        <button name="action_open_production_copy_wizard" type="object"
+                                string="Kurti išplėstinę kopiją" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                        <span class="label label-danger"
+                              attrs="{'invisible': ['|', ('availability', 'in', ('assigned', 'none')), ('state', 'not in', ('confirmed','progress'))]}">
+                            Raw materials not available!
+                        </span>
+                        <field name="state" widget="statusbar" statusbar_visible="confirmed,reserved,progress,done"/>
+                    </header>
+                    <sheet>
+                        <div class="alert alert-warning" role="alert"
+                             groups="robo_mrp.group_bom_expiry_dates"
+                             style="margin-bottom: 2px;">
+                            Įmonėje įgalintas komplektacijų galiojimo datų funkcionalumas,
+                            turėkite omeny, kad fiksuotos gamybos metu komplektacijos kurių galiojimo periodas
+                            nepatenka į planuojamą gamybos datą bus išfiltruojamos.
+                        </div>
+                        <field name="post_visible" invisible="1"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(robo_mrp.robo_action_mrp_production_moves)d"
+                                    type="action" string="Gaminių judėjimas"
+                                    class="oe_stat_button" icon="fa-arrows-v"
+                                    groups="stock.group_stock_manager"
+                                    attrs="{'invisible': [('state', 'not in', ('progress', 'cancel', 'done'))]}"/>
+                            <button class="oe_stat_button" name="action_see_move_scrap" type="object" icon="fa-arrows-v"
+                                    attrs="{'invisible': [('scrap_count', '=', 0)]}"
+                                    groups="robo_basic.group_robo_premium_accountant">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="scrap_count"/>
+                                    </span>
+                                    <span class="o_stat_text">Nurašymai</span>
+                                </div>
+                            </button>
+                            <div class="oe_right" states="done,progress,cancel"
+                                 groups="robo_basic.group_robo_premium_accountant">
+                                <button name="open_account_move_lines" type="object" class="oe_stat_button"
+                                        icon="fa-bars" string="Apskaitos įrašai"/>
+                            </div>
+                            <field name="workorder_ids" string="Gamybos žingsniai" invisible="1"/>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Numeris" nolabel="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="has_moves" invisible="1"/>
+                                <field name="check_to_done" invisible="1"/>
+                                <field name="let_modify" invisible="1"/>
+                                <field name="saved_mo" invisible="1"/>
+                                <field name="company_dynamic" invisible="1"/>
+                                <field name="date_planned_start" string="Planuojama"/>
+                                <field name="product_id"
+                                       attrs="{'readonly': ['|', ('state', 'in', ('done', 'cancel')), '&amp;', ('has_moves', '=', True), ('let_modify', '=', False)]}"
+                                       string="Gaminys"
+                                       domain="[('bom_ids', '!=', False)]"
+                                       options="{'no_create': True, 'no_open': True}"
+                                />
+                                <field name="product_tmpl_id" string="Gaminys"
+                                       options="{'no_create': True, 'no_open': True}" invisible="1"
+                                       context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"
+                                />
+                                <label for="product_qty" string="Kiekis"/>
+                                <div class="o_row">
+                                    <field name="product_qty"
+                                           attrs="{'readonly': ['|', ('state', 'in', ('done', 'cancel')), '&amp;', ('has_moves', '=', True), ('let_modify', '=', False)]}"/>
+                                    <field name="product_uom_id" options="{'no_open':True,'no_create':True}"
+                                           groups="product.group_uom"
+                                           attrs="{'readonly': [('has_moves', '=', True), ('let_modify', '=', False)]}"/>
+                                    <button type="action"
+                                            name="%(robo_mrp.robo_action_change_production_qty)d"
+                                            string="Atnaujinti" states="confirmed,planned,progress" class="oe_link"
+                                            attrs="{'invisible': [('state', 'in', ['done', 'cancel'])]}"/>
+                                </div>
+                                <field name="bom_id"
+                                       string="Komplektacija"
+                                       domain="['&amp;', '|',
+                                            ('product_id','=',product_id),
+                                            '&amp;',
+                                                ('product_tmpl_id.product_variant_ids','=',product_id),
+                                                ('product_id','=',False),
+                                                ('type', '=', 'normal')]"
+                                       context="{'default_product_tmpl_id': product_tmpl_id, 'form_view_ref': 'robo_mrp.robo_mrp_bom_form_view'}"
+                                       attrs="{'readonly': [('has_moves', '=', True)], 'required': [('production_type', '!=', 'dynamic')], 'invisible': [('production_type', '=', 'dynamic')]}"
+                                       options="{'no_quick_create': True}"
+                                />
+                                <field name="routing_id" string="Taisyklės" groups="mrp.group_mrp_routings"/>
+                                <field name="created_components" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="production_type" attrs="{'invisible': [('company_dynamic', '=', False)],
+                                            'readonly': ['|', ('saved_mo', '=', True), '&amp;',
+                                            ('has_moves', '=', True), ('let_modify', '=', False)]}"/>
+                                <field name="force_accounting_date"/>
+                                <field name="accounting_date" string="Accounting date"
+                                       attrs="{'invisible': [('force_accounting_date', '=', False)]}"/>
+                                <field name="date_planned_finished" invisible="1" string="Pabaigta"
+                                       attrs="{'invisible': [('force_accounting_date', '=', False)]}"/>
+                                <field name="user_id" options="{'no_open': 1, 'no_create': 1}"/>
+                                <field name="origin" string="Susijęs dokumentas"/>
+                                <field name="company_id" groups="base.group_multi_company"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       attrs="{'readonly': [('has_moves', '=', True)]}"/>
+                                <field name="recursive_bom_production_mode" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Komponentai" attrs="{'invisible': [('let_modify', '!=', True)]}">
+                                <field name="move_raw_ids" options="{'reload_on_button': True}" mode="tree,kanban"
+                                       context="{'default_location_id': location_src_id, 'default_location_dest_id': location_dest_id,
+                                                 'manufacturing_move_line': True,
+                                                 'default_name': name, 'form_view_ref': 'robo_stock.view_move_picking_form'}">
+                                    <kanban create="1" delete="1">
+                                        <field name="let_modify" invisible="1"/>
+                                        <field name="name" invisible="1"/>
+                                        <field name="product_id" required="1" string="Komponentas" readonly="1"
+                                               context="{'location': location_id}"/>
+                                        <field name="product_uom" groups="product.group_uom" string="Mat.vnt."
+                                               readonly="1"/>
+                                        <field name="has_tracking" invisible="1" string="Sekamas SN"/>
+                                        <field name="is_done" invisible="1" string="Baigta"/>
+                                        <field name="sequence" invisible="1" string="Seka"/>
+                                        <field name="location_id" domain="[('usage', '=', 'internal')]"
+                                               options="{'no_open':True,'no_create':True}"
+                                               groups="robo_stock.robo_stock_extended"
+                                               string="Žaliavų vieta"/>
+                                        <field name="location_dest_id" string="Nurašymų vietą"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="state" invisible="1" string="Būsena"/>
+                                        <field name="quants_to_date"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="quantity_available" string="Rezervuotas kiekis"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="product_uom_qty" readonly="1" sum="product_uom_qty"
+                                               attrs="{'required': [('product_id', '!=', False)], 'readonly': [('let_modify', '!=', True)]}"
+                                               string="Planuojama sunaudoti"/>
+                                        <field name="quantity_done" invisible="1"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                    <t t-esc="record.quantity_available.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Sunaudojimui:
+                                                                <t t-esc="record.product_uom_qty.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Sunaudota:
+                                                                <t t-esc="record.quantity_done.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                    <tree editable="bottom" delete="1" default_order="is_done desc,sequence"
+                                          decoration-muted="is_done"
+                                          decoration-warning="quantity_done&gt;product_uom_qty"
+                                          decoration-success="quantity_done==product_uom_qty"
+                                          decoration-danger="insufficient_stock"
+                                          create="1"
+                                          class="robo_tree_in_form">
+                                        <field name="name" invisible="1"/>
+                                        <field name="insufficient_stock" invisible="1"/>
+                                        <field name="quants_to_date_real" invisible="1"/>
+                                        <field name="product_id" required="1" string="Komponentas"
+                                               context="{'location': location_id}" options="{'no_quick_create': True}"/>
+                                        <field name="product_uom" groups="product.group_uom" string="Mat.vnt."/>
+                                        <field name="price_unit_forced"
+                                               attrs="{'readonly': [('is_consumable', '=', False)]}"/>
+                                        <field name="is_consumable" invisible="1"/>
+                                        <field name="has_tracking" invisible="1" string="Sekamas SN"/>
+                                        <field name="is_done" invisible="1" string="Baigta"/>
+                                        <field name="sequence" invisible="1" string="Seka"/>
+                                        <field name="location_id" domain="[('usage', '=', 'internal')]"
+                                               options="{'no_open':True,'no_create':True}"
+                                               groups="robo_stock.robo_stock_extended"
+                                               string="Žaliavų vieta"/>
+                                        <field name="location_dest_id" string="Nurašymų vietą"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="state" invisible="1" string="Būsena"/>
+                                        <field name="quants_to_date"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="quantity_available" string="Rezervuotas kiekis"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="production_type" invisible="1"/>
+                                        <field name="product_uom_qty" sum="product_uom_qty"
+                                               attrs="{'required': [('product_id', '!=', False)], 'readonly': [('production_type', '!=', 'dynamic')]}"
+                                               string="Planuojama sunaudoti"/>
+                                        <field name="total_move_amount" readonly="1" string="Planuojama savikaina"
+                                               sum="Planuojama savikaina"/>
+                                        <field name="quantity_done"
+                                               attrs="{'readonly': ['|', ('is_done', '=', True), ('has_tracking', 'in', ['lot','serial'])]}"
+                                               string="Sunaudota" invisible="1"/>
+                                        <button name="split_move_lot" string="Skenuoti SN" type="object"
+                                                icon="fa-list"
+                                                attrs="{'invisible': [('has_tracking', 'not in', ['lot','serial'])]}"/>
+                                    </tree>
+                                </field>
+                                <group colspan="4" col="1">
+                                    <button name="recreate_raw_moves" type="object"
+                                            string="Perkurti komponentus" class="oe_highlight"
+                                            attrs="{'invisible': ['|', ('created_components', '=', False),
+                                                                       ('production_type', '=', 'dynamic')]}"/>
+                                </group>
+                            </page>
+                            <page string="Komponentai" attrs="{'invisible': [('let_modify', '=', True)]}">
+                                <field name="move_raw_ids_second" options="{'reload_on_button': True}"
+                                       mode="tree,kanban"
+                                       context="{'default_location_id': location_src_id, 'default_location_dest_id': location_dest_id,
+                                       'manufacturing_move_line': True,
+                                       'form_view_ref': 'robo_stock.view_move_picking_form'}">
+                                    <kanban create="0" delete="0">
+                                        <field name="let_modify" invisible="1"/>
+                                        <field name="product_id" required="1" string="Komponentas" readonly="1"
+                                               context="{'location': location_id}"/>
+                                        <field name="product_uom" groups="product.group_uom" string="Mat.vnt."
+                                               readonly="1"/>
+                                        <field name="has_tracking" invisible="1" string="Sekamas SN"/>
+                                        <field name="is_done" invisible="1" string="Baigta"/>
+                                        <field name="sequence" invisible="1" string="Seka"/>
+                                        <field name="location_id" domain="[('usage', '=', 'internal')]"
+                                               options="{'no_open':True,'no_create':True}"
+                                               groups="robo_stock.robo_stock_extended"
+                                               string="Žaliavų vieta"/>
+                                        <field name="location_dest_id" string="Nurašymų vietą"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="state" invisible="1" string="Būsena"/>
+                                        <field name="quants_to_date"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="quantity_available" string="Rezervuotas kiekis"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="product_uom_qty" readonly="1" sum="product_uom_qty"
+                                               attrs="{'required': [('product_id', '!=', False)], 'readonly': [('let_modify', '!=', True)]}"
+                                               string="Planuojama sunaudoti"/>
+                                        <field name="quantity_done" invisible="1"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                    <t t-esc="record.quantity_available.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Sunaudojimui:
+                                                                <t t-esc="record.product_uom_qty.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Sunaudota:
+                                                                <t t-esc="record.quantity_done.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                    <tree editable="bottom" delete="0" default_order="is_done desc,sequence"
+                                          decoration-muted="is_done"
+                                          decoration-warning="quantity_done&gt;product_uom_qty"
+                                          decoration-success="quantity_done==product_uom_qty"
+                                          decoration-danger="quants_to_date_real &lt; product_uom_qty and quantity_available != product_uom_qty"
+                                          create="0"
+                                          class="robo_tree_in_form">
+                                        <field name="quants_to_date_real" invisible="1"/>
+                                        <field name="product_id" required="1" string="Komponentas" readonly="1"
+                                               context="{'location': location_id}" options="{'no_quick_create': True}"/>
+                                        <field name="product_uom" groups="product.group_uom"
+                                               string="Mat.vnt." readonly="1"/>
+                                        <field name="price_unit_forced"
+                                               attrs="{'readonly': [('is_consumable', '=', False)]}"/>
+                                        <field name="is_consumable" invisible="1"/>
+                                        <field name="has_tracking" invisible="1" string="Sekamas SN"/>
+                                        <field name="is_done" invisible="1" string="Baigta"/>
+                                        <field name="sequence" invisible="1" string="Seka"/>
+                                        <field name="location_id" domain="[('usage', '=', 'internal')]"
+                                               options="{'no_open':True,'no_create':True}"
+                                               groups="robo_stock.robo_stock_extended"
+                                               string="Žaliavų vieta"/>
+                                        <field name="location_dest_id" string="Nurašymų vietą"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="state" invisible="1" string="Būsena"/>
+                                        <field name="quants_to_date"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="quantity_available" string="Rezervuotas kiekis"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="product_uom_qty" readonly="1" sum="product_uom_qty"
+                                               attrs="{'required': [('product_id', '!=', False)]}"
+                                               string="Planuojama sunaudoti"/>
+                                        <field name="total_move_amount" readonly="1" string="Planuojama savikaina"
+                                               sum="Planuojama savikaina"/>
+                                        <field name="quantity_done"
+                                               attrs="{'readonly': ['|', ('is_done', '=', True), ('has_tracking', 'in', ['lot','serial'])]}"
+                                               string="Sunaudota" invisible="1"/>
+                                        <button name="split_move_lot" string="Skenuoti SN" type="object"
+                                                icon="fa-list"
+                                                attrs="{'invisible': [('has_tracking', 'not in', ['lot','serial'])]}"/>
+                                    </tree>
+                                </field>
+                                <group colspan="4" col="1">
+                                    <button name="recreate_raw_moves" type="object"
+                                            string="Perkurti komponentus" class="oe_highlight"
+                                            attrs="{'invisible': ['|', ('created_components', '=', False),
+                                                                       ('production_type', '=', 'dynamic')]}"/>
+                                </group>
+                            </page>
+
+                            <page string="Pagrindiniai komponentai"
+                                  groups="robo_mrp.group_recursive_bom_production"
+                                  attrs="{'invisible': ['|', '|', ('bom_id', '=', False),
+                                         ('recursive_bom_production_mode', '=', 'explode_none'),
+                                         ('production_type', '=', 'dynamic')]}">
+                                <group string="Informacija" colspan="4" col="1">
+                                    <div class="alert alert-info" role="alert"
+                                         style="margin-bottom: 2px;">
+                                        Apačioje pateiktoje lentelėje galite matyti visus pagrindinius
+                                        komponentus kurie įeina į šios gamybos komplektaciją (be skaidymų).
+                                        Priklausomai nuo pasirinkto sudėtinės gamybos tipo,
+                                        pagrindinėje komponentų lentelėje bus atvaizduojamas pilnas išskaidymas
+                                        arba dalinis.
+                                    </div>
+                                </group>
+                                <field name="parent_bom_component_table"
+                                       widget="payslip_note" nolabel="1" model="mrp.bom.line"/>
+                                <group colspan="4" col="1">
+                                    <button name="recalculate_bom_tables" type="object"
+                                            string="Perskaičiuoti komponentus" class="oe_highlight"/>
+                                </group>
+                            </page>
+                            <page string="Visi sudėtiniai komponentai"
+                                  groups="robo_mrp.group_recursive_bom_production"
+                                  attrs="{'invisible': ['|', ('bom_id', '=', False),
+                                         ('production_type', '=', 'dynamic')]}">
+                                <group string="Informacija" colspan="4" col="1">
+                                    <div class="alert alert-info" role="alert"
+                                         style="margin-bottom: 2px;">
+                                        Apačioje pateiktoje lentelėje galite matyti visus išskaidytus komponentus
+                                        kurie įeiną į šios gamybos komplektaciją.
+                                        Hierarchijos lygis indikuoja išskaidymo gylį. Pvz. 2 lygio komponentai
+                                        naudojami viršuje pateikto, 1 hierarchijos lygio komponento gamybai ir tt.
+                                    </div>
+                                </group>
+                                <field name="exploded_bom_table"
+                                       widget="payslip_note" nolabel="1" model="mrp.bom.line"/>
+                                <group colspan="4" col="1">
+                                    <button name="recalculate_bom_tables" type="object"
+                                            string="Perskaičiuoti komponentus" class="oe_highlight"/>
+                                </group>
+                            </page>
+                            <page string="Komponentų atšaukimas" states="cancel">
+                                <field name="cancel_move_raw_ids" options="{'reload_on_button': True}"
+                                       mode="tree,kanban"
+                                       context="{'form_view_ref': 'robo_stock.view_move_picking_form'}" readonly="1">
+                                    <kanban>
+                                        <field name="product_id" required="1" string="Komponentas"/>
+                                        <field name="product_uom" groups="product.group_uom" string="Mat.vnt."/>
+                                        <field name="has_tracking" invisible="1" string="Sekamas SN"/>
+                                        <field name="is_done" invisible="1" string="Baigta"/>
+                                        <field name="sequence" invisible="1" string="Seka"/>
+                                        <field name="location_id" domain="[('id', 'child_of', parent.location_id)]"
+                                               invisible="1" string="Žaliavų vieta"/>
+                                        <field name="location_dest_id" string="Nurašymų vietą"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="state" invisible="1" string="Būsena"/>
+                                        <field name="quants_to_date"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="quantity_available" string="Rezervuotas kiekis"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="product_uom_qty" readonly="1" sum="product_uom_qty"
+                                               attrs="{'required': [('product_id', '!=', False)]}"
+                                               string="Planuojama sunaudoti"/>
+                                        <!--<field name="quantity_done"-->
+                                        <!--attrs="{'readonly': ['|', ('is_done', '=', True), ('has_tracking', 'in', ['lot','serial'])]}"-->
+                                        <!--string="Consumed"/>-->
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                    <t t-esc="record.quantity_available.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Sunaudojimui:
+                                                                <t t-esc="record.product_uom_qty.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Sunaudota:
+                                                                <t t-esc="record.quantity_done.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                    <tree editable="bottom" delete="0" default_order="is_done desc,sequence"
+                                          decoration-muted="is_done"
+                                          decoration-warning="quantity_done&gt;product_uom_qty"
+                                          decoration-success="quantity_done==product_uom_qty"
+                                          decoration-danger="insufficient_stock"
+                                          create="0"
+                                          class="robo_tree_in_form">
+                                        <field name="quants_to_date_real" invisible="1"/>
+                                        <field name="product_id" required="1" string="Komponentas"/>
+                                        <field name="product_uom" groups="product.group_uom" string="Mat.vnt."/>
+                                        <field name="has_tracking" invisible="1" string="Sekamas SN"/>
+                                        <field name="is_done" invisible="1" string="Baigta"/>
+                                        <field name="sequence" invisible="1" string="Seka"/>
+                                        <field name="insufficient_stock" invisible="1"/>
+                                        <field name="location_id" domain="[('id', 'child_of', parent.location_id)]"
+                                               invisible="1" string="Žaliavų vieta"/>
+                                        <field name="location_dest_id" string="Nurašymų vietą"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="state" invisible="1" string="Būsena"/>
+                                        <field name="quants_to_date"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="quantity_available" string="Rezervuotas kiekis"
+                                               attrs="{'invisible': [('is_done', '=', True)]}"/>
+                                        <field name="product_uom_qty" readonly="1" sum="product_uom_qty"
+                                               attrs="{'required': [('product_id', '!=', False)]}"
+                                               string="Planuojama sunaudoti"/>
+                                        <field name="quantity_done"
+                                               attrs="{'readonly': ['|', ('is_done', '=', True), ('has_tracking', 'in', ['lot','serial'])]}"
+                                               string="Sunaudota" invisible="1"/>
+                                        <button name="split_move_lot" string="Skenuoti SN" type="object"
+                                                icon="fa-list"
+                                                attrs="{'invisible': [('has_tracking', 'not in', ['lot','serial'])]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Pagaminta produkcija">
+                                <field name="move_finished_ids" options="{'reload_on_button': True}" mode="tree,kanban"
+                                       context="{'default_location_id': location_src_id, 'default_location_dest_id': location_dest_id,
+                                        'form_view_ref': 'robo_stock.view_move_picking_form'}" readonly="1">
+                                    <tree editable="bottom" delete="0" default_order="is_done desc,sequence"
+                                          decoration-muted="is_done"
+                                          decoration-warning="quantity_done&gt;product_uom_qty"
+                                          decoration-success="quantity_done==product_uom_qty" create="0"
+                                          class="robo_tree_in_form">
+                                        <field name="product_id" required="1" string="Gaminys" readonly="1"/>
+                                        <field name="product_uom" groups="product.group_uom" string="Mat.vnt."
+                                               readonly="1"/>
+                                        <field name="is_done" invisible="1" string="Baigta"/>
+                                        <field name="sequence" invisible="1" string="Seka"/>
+                                        <field name="has_tracking" invisible="1" string="Sekamas SN"/>
+                                        <field name="location_id" domain="[('id', 'child_of', parent.location_id)]"
+                                               invisible="1" string="Gamybos vieta"/>
+                                        <field name="location_dest_id" string="Pagamintos produkcijos vieta"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="state" invisible="1" string="Būsena"/>
+                                        <field name="product_uom_qty" readonly="1"
+                                               attrs="{'required': [('product_id', '!=', False)]}"
+                                               string="Planuojama pagaminti"/>
+                                        <field name="quantity_done"
+                                               attrs="{'readonly': ['|', ('is_done', '=', True), ('has_tracking', 'in', ['lot','serial'])]}"
+                                               string="Pagaminta"/>
+                                        <button name="split_move_lot" string="Skenuoti SN" type="object"
+                                                icon="fa-list"
+                                                attrs="{'invisible': [('has_tracking', 'not in', ['lot','serial'])]}"/>
+                                    </tree>
+                                    <kanban>
+                                        <field name="product_id" required="1"/>
+                                        <field name="product_uom_qty"/>
+                                        <field name="quantity_done"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Pagaminimui:
+                                                                <t t-esc="record.product_uom_qty.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Pagaminta:
+                                                                <t t-esc="record.quantity_done.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                            <page string="Atšaukta pagaminta produkcija" states="cancel">
+                                <field name="cancel_move_finished_ids" options="{'reload_on_button': True}"
+                                       mode="tree,kanban"
+                                       context="{'form_view_ref': 'robo_stock.view_move_picking_form'}" readonly="1">
+                                    <tree editable="bottom" delete="0" default_order="is_done desc,sequence"
+                                          decoration-muted="is_done"
+                                          decoration-warning="quantity_done&gt;product_uom_qty"
+                                          decoration-success="quantity_done==product_uom_qty" create="0"
+                                          class="robo_tree_in_form">
+                                        <field name="product_id" required="1" string="Gaminys" readonly="1"/>
+                                        <field name="product_uom" groups="product.group_uom" string="Mat.vnt."
+                                               readonly="1"/>
+                                        <field name="is_done" invisible="1" string="Baigta"/>
+                                        <field name="sequence" invisible="1" string="Seka"/>
+                                        <field name="has_tracking" invisible="1" string="Sekamas SN"/>
+                                        <field name="location_id" domain="[('id', 'child_of', parent.location_id)]"
+                                               invisible="1" string="Gamybos vieta"/>
+                                        <field name="location_dest_id" string="Pagamintos produkcijos vieta"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="state" invisible="1" string="Būsena"/>
+                                        <field name="product_uom_qty" readonly="1"
+                                               attrs="{'required': [('product_id', '!=', False)]}"
+                                               string="Planuojama pagaminti"/>
+                                        <field name="quantity_done"
+                                               attrs="{'readonly': ['|', ('is_done', '=', True), ('has_tracking', 'in', ['lot','serial'])]}"
+                                               string="Pagaminta"/>
+                                        <button name="split_move_lot" string="Skenuoti SN" type="object"
+                                                icon="fa-list"
+                                                attrs="{'invisible': [('has_tracking', 'not in', ['lot','serial'])]}"/>
+                                    </tree>
+                                    <kanban>
+                                        <field name="product_id" required="1"/>
+                                        <field name="product_uom_qty"/>
+                                        <field name="quantity_done"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Pagaminimui:
+                                                                <t t-esc="record.product_uom_qty.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                Pagaminta:
+                                                                <t t-esc="record.quantity_done.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                            <page string="Kita">
+                                <group>
+                                    <group groups="stock.group_stock_multi_locations">
+                                        <field name="picking_type_id"
+                                               attrs="{'readonly': [('has_moves', '=', True), ('saved_mo', '=', True)]}"
+                                               domain="[('code', '=', 'mrp_operation')]"
+                                               options="{'no_open':1,'no_create':1}" string="Operacija"/>
+                                        <label for="location_src_id" string="Žaliavų vieta"/>
+                                        <div class="o_row">
+                                            <field name="location_src_id" domain="[('usage','=','internal')]"
+                                                   attrs="{'readonly': [('has_moves', '=', True), ('saved_mo', '=', True)]}"
+                                                   options="{'no_open':1,'no_create':1}"/>
+                                            <button type="action" name="%(robo_action_change_production_location)d"
+                                                    string="Atnaujinti" class="oe_link"
+                                                    states="confirmed,planned"
+                                                    attrs="{'invisible': [('state','=','done')]}"/>
+                                        </div>
+                                        <label for="location_dest_id" string="Gaminių vieta"/>
+                                        <div class="o_row">
+                                            <field name="location_dest_id" domain="[('usage','=','internal')]"
+                                                   attrs="{'readonly': [('has_moves', '=', True), ('saved_mo', '=', True)]}"
+                                                   options="{'no_open':1,'no_create':1}"/>
+                                            <button type="action" name="%(robo_action_change_production_location)d"
+                                                    string="Atnaujinti" class="oe_link"
+                                                    states="confirmed,planned"
+                                                    attrs="{'invisible': [('state','=','done')]}"/>
+                                        </div>
+                                    </group>
+                                    <group>
+                                        <field name="availability" string="Rezervacija"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Gamybos modifikavimo taisyklės"
+                                  groups="robo_mrp.group_production_modification_rules">
+                                <group string="Informacija" colspan="4" col="1">
+                                    <div class="alert alert-info" role="alert"
+                                         style="margin-bottom: 2px;">
+                                        Apačioje pateiktoje lentelėje galite matyti visas gamybos
+                                        modifikavimo taisykles. Taisyklė atlieka vieną iš trijų veiksmų
+                                        * Prideda produktą. * Pakeičia produktą. * Panaikina produktą.
+                                        Po gamybos patvirtinimo galite matyti kurios taisyklės buvo
+                                        pritaikytos ir kurių taisyklių pritaikyti nepavyko
+                                    </div>
+                                </group>
+                                <field name="production_modification_rule_ids"
+                                       mode="tree,kanban" nolabel="1" widget="one2many_list"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree editable="bottom" edit="1" create="0" delete="1">
+                                        <field name="applied_action" readonly="1"/>
+                                        <field name="remove_product_id" readonly="1"/>
+                                        <field name="add_product_id" readonly="1"/>
+                                        <field name="action_quantity"/>
+                                        <field name="application_count"/>
+                                        <field name="location_src_id"/>
+                                        <field name="evaluation_message" readonly="1"/>
+                                        <field name="applied" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="robo_mrp_production_kanban_view" model="ir.ui.view">
+            <field name="name">mrp.production.kanban</field>
+            <field name="model">mrp.production</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" import="0" create="0">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="product_qty"/>
+                    <field name="product_uom_id" options="{'no_open':True,'no_create':True}"/>
+                    <field name="date_planned_start"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.product_id.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span class="pull-right text-right">
+                                                <t t-esc="record.product_qty.value"/>
+                                                <t t-esc="record.product_uom_id.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <t t-esc="record.name.value"/>
+                                            <t t-esc="record.date_planned_start.value and record.date_planned_start.value.split(' ')[0] or False"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span t-attf-class="pull-right text-right label #{['draft', 'cancel'].indexOf(record.state.raw_value) > -1 ? 'label-default' : ['none'].indexOf(record.state.raw_value) > -1 ? 'label-danger' : ['confirmed'].indexOf(record.state.raw_value) > -1 ? 'label-warning' : ['done'].indexOf(record.state.raw_value) > -1 ? 'label-success' : 'label-primary'}">
+                                            <t t-esc="record.state.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="robo_view_production_calendar" model="ir.ui.view">
+            <field name="name">mrp.production.calendar</field>
+            <field name="model">mrp.production</field>
+            <field name="robo_front">True</field>
+            <field eval="2" name="priority"/>
+            <field name="arch" type="xml">
+                <calendar color="routing_id" date_start="date_planned_start" string="Gamybos užsakymai">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="product_qty"/>
+                </calendar>
+            </field>
+        </record>
+        <record id="robo_view_production_pivot" model="ir.ui.view">
+            <field name="name">mrp.production.pivot</field>
+            <field name="model">mrp.production</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Gamybos užsakymai">
+                    <field name="date_planned_start" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="robo_view_mrp_production_filter" model="ir.ui.view">
+            <field name="name">mrp.production.select</field>
+            <field name="model">mrp.production</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Gamybos paieška">
+                    <field name="name" string="Gamyba"
+                           filter_domain="['|',('name','ilike',self),('origin','ilike',self)]"/>
+                    <filter string="Neįvykdyti" name="todo"
+                            domain="[('state', 'in', ('draft', 'confirmed', 'planned','progress'))]"
+                            help="Nepatvirtinti gamybos užsakymai"/>
+                    <separator/>
+                    <filter string="Juodraščiai" name="draft" domain="[('state','=','draft')]"/>
+                    <filter string="Paruošti" name="confirmed" domain="[('state','=','confirmed')]"/>
+                    <filter string="Suplanuoti" name="planned" domain="[('state','=','planned')]"/>
+                    <filter string="Vykdomi" name="inprogress" domain="[('state','=','progress')]"
+                            help="Gamybos užsakymai, kurie šiuo metu yra gamyboje.."/>
+                    <filter string="Patvirtinti" name="done" domain="[('state', '=', 'done')]"/>
+                    <filter string="Laukiama" name="waiting" domain="[('availability', '=', 'waiting')]"/>
+                    <separator/>
+                    <filter string="Vėluojama"
+                            domain="['&amp;', ('date_planned_start', '&lt;', current_date), ('state', 'in', ['confirmed', 'draft'])]"
+                            name="late" help="Vėluoja produkcija"/>
+                    <separator/>
+                    <field name="location_src_id" domain="[('usage', '=', 'internal')]"/>
+                    <field name="location_dest_id" domain="[('usage', '=', 'internal')]"/>
+                    <separator/>
+                    <!--<filter string="No Routing" domain="[('routing_id','=', False)]" name="norouting" groups="mrp.group_mrp_routings"/>-->
+                    <field name="product_id" string="Produktas"/>
+                    <field name="product_id" string="Produkto elementas"
+                           filter_domain="[('move_raw_ids.product_id','ilike',self)]"/>
+                    <!--<field name="name" string="Work Center" filter_domain="[('routing_id.operation_ids.workcenter_id','ilike',self)]"/>-->
+                    <!--<field name="routing_id" groups="mrp.group_mrp_routings"/>-->
+                    <group expand="0" string="Group By...">
+                        <filter string="Produktą" domain="[]" context="{'group_by':'product_id'}"/>
+                        <!--<filter string="Routing" domain="[]" context="{'group_by':'routing_id'}"/>-->
+                        <filter string="Būsena" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Suplanuotą mėnesį" domain="[]" context="{'group_by':'date_planned_start'}"
+                                help="Suplanuota data pagal mėnesį"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--SERVER ACTIONS-->
+        <record id="action_production_copy_wizard_multi" model="ir.actions.server">
+            <field name="name">Kurti gamybų kopijas</field>
+            <field name="model_id" ref="robo_mrp.model_mrp_production"/>
+            <field name="group_ids" eval="[(4, ref('robo_mrp.group_robo_mrp'))]"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo_mrp.robo_mrp_production_tree_view')])]"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids')).action_open_production_copy_wizard()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_action_production_copy_wizard_multi" model="mrp.production"/>
+        <!-- // SERVER ACTIONS-->
+        <record id="open_robo_mrp_production" model="ir.actions.act_window">
+            <field name="name">Gamyba</field>
+            <field name="res_model">mrp.production</field>
+            <field name="view_mode">tree_robo,form,calendar,pivot,kanban</field>
+            <field name="view_id" ref="robo_mrp_production_tree_view"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_mrp_production_tree_view')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('robo_mrp_production_kanban_view')}),
+                (0, 0, {'view_mode': 'calendar', 'view_id': ref('robo_view_production_calendar')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('robo_view_production_pivot')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_mrp_production_form_view')})]"/>
+            <field name="search_view_id" ref="robo_view_mrp_production_filter"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="menu_robo_mrp_start"/>
+            <field name="header" ref="robo_mrp_production"/>
+            <field name="context" eval="{
+                'showDuplicate': True,
+                'search_add_custom': True,
+                }"/>
+        </record>
+        <!--END MRP production-->
+        <menuitem id="menu_robo_mrp_production"
+                  parent="menu_robo_mrp_start"
+                  action="open_robo_mrp_production"
+                  groups="mrp.group_mrp_user"
+                  sequence="10"
+                  robo_front="True"
+                  force_web_icon="icon-factory,none,none"
+                  searchable="True"
+                  tags="gamyba"
+        />
+        <!--END MENU-->
+    </data>
+</odoo>

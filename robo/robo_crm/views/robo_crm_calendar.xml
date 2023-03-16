@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="robo_view_calendar_event_form_popup" model="ir.ui.view">
+            <field name="name">calendar.event.form</field>
+            <field name="model">calendar.event</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form_popup"/>
+            <field name="arch" type="xml">
+                <xpath expr="//label[@for='duration']" position="replace">
+                    <label string="Trukmė" for="duration" attrs="{'invisible': [('allday','=',True)]}"/>
+                </xpath>
+
+                <xpath expr="//span" position="replace">
+                    <span> val.</span>
+                </xpath>
+
+                <xpath expr="//field[@name='alarm_ids']" position="replace">
+                     <field name="alarm_ids" string="Priminimai" widget="many2many_tags" />
+                </xpath>
+            </field>
+         </record>
+        <record id="robo_view_calendar_event_form" model="ir.ui.view">
+            <field name="name">calendar.event.form</field>
+            <field name="model">calendar.event</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//label[@for='duration']" position="replace">
+                    <label string="Trukmė" for="duration" attrs="{'invisible': [('allday','=',True)]}"/>
+                </xpath>
+
+                <xpath expr="//span" position="replace">
+                    <span> val.</span>
+                </xpath>
+
+                <xpath expr="//field[@name='alarm_ids']" position="replace">
+                     <field name="alarm_ids" string="Priminimai" widget="many2many_tags" />
+                </xpath>
+
+                <xpath expr="//field[@name='stop_date']" position="replace">
+                    <field name="stop_date" string="Pabaiga" attrs="{'invisible': [('allday','=',False)], 'readonly': [('id', '!=', False), ('recurrency','=',True)]}"/>
+                </xpath>
+
+                <xpath expr="//page//field[@name='attendee_ids']" position="attributes">
+                    <attribute name="name">attendee_ids</attribute>
+                    <attribute name="widget">one2many</attribute>
+                    <attribute name="class">robo_form_tree</attribute>
+                </xpath>
+
+                <xpath expr="//div[@class='oe_chatter']" position="replace">
+                    <div groups="robo_basic.group_robo_premium_accountant">
+                        <div class="oe_chatter">
+                            <field name="message_ids" widget="robo_mail_thread"/>
+                        </div>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="view_calendar_event_calendar" model="ir.ui.view">
+            <field name="name">calendar.event.calendar</field>
+            <field name="model">calendar.event</field>
+            <field name="robo_front">True</field>
+            <field name="priority" eval="2"/>
+            <field name="arch" type="xml">
+                <calendar string="Susitikimai" date_start="start" date_stop="stop" date_delay="duration"
+                             display="[name]" color="color_partner_id" attendee="partner_ids" avatar_model="res.partner"
+                             use_contacts="False" event_open_popup="%(calendar.view_calendar_event_form_popup)s" quick_add="False">
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="color_partner_id"/>
+                    <field name="partner_ids"/>
+                </calendar>
+            </field>
+        </record>
+        <record id="view_calendar_event_search" model="ir.ui.view">
+            <field name="name">calendar.event.search</field>
+            <field name="model">calendar.event</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Susitikimų paieška">
+                    <field name="name" string="Susitikimas" filter_domain="[('name','ilike',self)]"/>
+                    <field name="partner_ids" string="Dalyviai"/>
+                    <field name="categ_ids" string="Žymos"/>
+                    <field name="user_id" string="Atsakingas asmuo"/>
+                    <field name="show_as" string="Rodyti laiką kaip"/>
+                    <field name="opportunity_id" string="Pardavimo užklausa"/>
+                    <field name="privacy" string="Slaptumas"/>
+                    <filter string="Mano įvykiai" domain="[('user_id','=',uid)]" help="Mano įvykiai"/>
+                    <filter string="Mano susitikimai" help="Mano susitikimai" name="mymeetings" context='{"mymeetings": 1}'/>
+                    <filter string="Neskaitytos žinutės" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                    <separator/>
+                    <group expand="0" string="Grupuoti pagal">
+                        <filter string="Atsakingas asmuo" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter string="Prieinamumas" domain="[]" context="{'group_by':'show_as'}"/>
+                        <filter string="Slaptumas" domain="[]" context="{'group_by':'privacy'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_calendar_event" model="ir.actions.act_window">
+            <field name="name">Susitikimai</field>
+            <field name="res_model">calendar.event</field>
+            <field name="view_mode">calendar,tree_robo,form</field>
+            <field name="view_id" ref="view_calendar_event_calendar"/>
+            <field name="search_view_id" ref="view_calendar_event_search"/>
+            <field name="robo_menu" ref="menu_robo_crm"/>
+            <field name="help"> </field>
+        </record>
+
+        <record id="action_view_calendar_event_calendar" model="ir.actions.act_window.view">
+            <field name="act_window_id" ref="action_calendar_event"/>
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">calendar</field>
+            <field name="view_id" ref="view_calendar_event_calendar"/>
+        </record>
+        <record id="action_view_calendar_event_tree" model="ir.actions.act_window.view">
+            <field name="act_window_id" ref="action_calendar_event"/>
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">tree_robo</field>
+            <field name="view_id" ref="calendar.view_calendar_event_tree"/>
+        </record>
+        <record id="action_view_calendar_event_form" model="ir.actions.act_window.view">
+            <field name="act_window_id" ref="action_calendar_event"/>
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="calendar.view_calendar_event_form"/>
+        </record>
+    </data>
+</odoo>

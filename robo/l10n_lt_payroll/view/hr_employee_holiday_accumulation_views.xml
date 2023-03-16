@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_employee_holiday_accumulation_view_form" model="ir.ui.view">
+            <field name="hr.employee.holiday.accumulation.view.form"/>
+            <field name="model">hr.employee.holiday.accumulation</field>
+            <field name="arch" type="xml">
+                <form edit="1" create="1">
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <group colspan="4" col="4">
+                                <group colspan="2" col="2">
+                                    <field name="appointment_id" options="{'no_create': True}"/>
+                                    <field name="employee_id" options="{'no_create': True}" readonly="False"
+                                           attrs="{'readonly': [('appointment_id', '!=', False)]}"/>
+                                    <field name="post" attrs="{'readonly': [('appointment_id', '!=', False)]}"/>
+                                </group>
+                                <group colspan="2" col="2">
+                                    <field name="date_from" attrs="{'readonly': [('appointment_id', '!=', False)]}"/>
+                                    <field name="date_to" attrs="{'readonly': [('appointment_id', '!=', False)]}"/>
+                                </group>
+                            </group>
+                            <group colspan="4" col="4">
+                                <group colspan="2" col="2" string="Accumulation">
+                                    <field name="accumulated_days"
+                                           attrs="{'readonly': [('appointment_id', '!=', False)]}"/>
+                                    <field name="compensated_days"
+                                           attrs="{'readonly': [('appointment_id', '!=', False)]}"/>
+                                    <field name="accumulation_type"
+                                           attrs="{'readonly': [('appointment_id', '!=', False)]}"/>
+                                    <field name="accumulation_balance"/>
+                                </group>
+                                <group colspan="2" col="2" string="Usage">
+                                    <field name="used_days_by_holidays"/>
+                                    <field name="used_days_from_other"/>
+                                    <field name="used_days_total"/>
+                                </group>
+                            </group>
+                            <group colspan="4" string="Holiday usage lines">
+                                <field name="holiday_usage_line_ids" nolabel="1" widget="one2many_list"
+                                       domain="[('confirmed', '=', True)]"
+                                       context="{'form_view_ref': 'l10n_lt_payroll.hr_employee_holiday_usage_line_view_form'}">
+                                    <tree>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                        <field name="used_days" sum="used_days"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_employee_holiday_accumulation_view_tree" model="ir.ui.view">
+            <field name="name">hr.employee.holiday.accumulation.view.tree</field>
+            <field name="model">hr.employee.holiday.accumulation</field>
+            <field name="arch" type="xml">
+                <tree string="Holiday accumulation">
+                    <field name="appointment_id"/>
+                    <field name="employee_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="post"/>
+                    <field name="accumulated_days" attrs="{'readonly': [('appointment_id', '!=', False)]}"
+                           sum="accumulated_days"/>
+                    <field name="used_days_total" sum="used_days_total"/>
+                    <field name="accumulation_balance" sum="accumulation_balance"/>
+                    <field name="accumulation_type"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_employee_holiday_accumulation_search" model="ir.ui.view">
+            <field name="name">hr.employee.holiday.accumulation.search</field>
+            <field name="model">hr.employee.holiday.accumulation</field>
+            <field name="arch" type="xml">
+                <search string="Holiday accumulations">
+                    <field name="employee_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="post"/>
+                    <field name="accumulation_type"/>
+                    <group expand="1" string="Group By">
+                        <filter name="employee_id" string="Employee" context="{'group_by':'employee_id'}"/>
+                        <filter name="post" string="Post" context="{'group_by':'post'}"/>
+                        <filter name="accumulation_type" string="Leaves accumulation type" context="{'group_by':'accumulation_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_open_hr_employee_holiday_accumulation" model="ir.actions.act_window">
+            <field name="name">Holiday accumulation</field>
+            <field name="res_model">hr.employee.holiday.accumulation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="hr_employee_holiday_accumulation_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_employee_holiday_accumulation_view_tree')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('hr_employee_holiday_accumulation_view_form')})]"/>
+        </record>
+
+        <menuitem id="menu_hr_employee_holiday_accumulation"
+                  name="Holiday accumulation"
+                  action="action_open_hr_employee_holiday_accumulation"
+                  parent="hr_holidays.menu_hr_holidays_configuration"
+                  groups="robo_basic.group_robo_premium_accountant"/>
+    </data>
+</odoo>

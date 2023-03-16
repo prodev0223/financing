@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="stock_inventory_import_wizard" model="ir.ui.view">
+        <field name="name">stock.inventory.import.wizard</field>
+        <field name="model">stock.inventory.import</field>
+        <field name="robo_front">True</field>
+        <field name="arch" type="xml">
+            <form string="Stock inventory import">
+                <group>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                        To import stock inventory information, use the template provided below.
+                    </div>
+                </group>
+                <group>
+                    <button name="export_inventory_template" string="Export template" type="object"
+                        class="btn-link"/>
+                </group>
+                <group string="Inventory import" col="2">
+                    <field name="xls_data" filename="xls_name"/>
+                    <field name="xls_name" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="import_inventory" string="Import inventory" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

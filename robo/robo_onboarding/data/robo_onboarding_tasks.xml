@@ -1,0 +1,257 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_onboarding_task_1" model="robo.onboarding.task">
+            <field name="name">Pasirašyta sutartis</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_1')"/>
+            <field name="sequence">1</field>
+            <field name="weight">2</field>
+            <field name="comment">Atsako pardavėjas.</field>
+        </record>
+        <record id="robo_onboarding_task_2" model="robo.onboarding.task">
+            <field name="name">Atsiųsta pradinė informacija</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_1')"/>
+            <field name="sequence">2</field>
+            <field name="weight">2</field>
+            <field name="comment">Pardavėjas nusiunčia įžanginį laišką klientui, buhalteris pridedamas į CC.</field>
+        </record>
+        <record id="robo_onboarding_task_3" model="robo.onboarding.task">
+            <field name="name">Buhalteris atsiuntė įžanginį el. laišką</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_1')"/>
+            <field name="sequence">3</field>
+            <field name="weight">2</field>
+            <field name="comment">
+                &lt;ul&gt;
+                    &lt;li&gt;
+                        Prisistatome, pateikiame informaciją apie kontaktus. Informuojame apie apskaitos perkėlimo
+                        procesą;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        Informuojame, kad prašysime suteikti prisijungimus sau ir Daivarui;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        Užprašome seno buhalterio kontaktų. Jei negauname kontaktų, siunčiame tris priminimus emailu ir
+                        telefonu kas 24 valandas 3-jų dienų bėgyje.
+                    &lt;/li&gt;
+                &lt;/ul&gt;
+            </field>
+            <field name="email_template">
+                <![CDATA[<p><span>Laba diena, <strong>[</strong></span><strong>Vardeni Pavardeni]</strong><span>, </span></p>
+<p><span>Esu <strong>[Vardenis]</strong> ir būsiu jūsų įmonės buhalterė! A&scaron; taip pat sukoordinuosiu Jūsų įmonės buhalterijos perėmimą. Kartais pra&scaron;ysiu jūsų ir jūsų buhalterės pateikti tam tikrą informaciją. Malonėkite pateikti pra&scaron;omą informaciją kaip įmanoma greičiau. &Scaron;i informacija bus būtina siekiant perkelti apskaitą į RoboLabs.</span></p>
+<p><span>Taigi, ko i&scaron; jūsų reikia dabar: </span></p>
+<ul>
+<li><span>Informuokite savo buhalterę, kad nuo <strong>[DATA]</strong> apskaitą vedame mes, UAB RoboLabs. <strong>[METAI]</strong> finansinius metus turėtų uždaryti jūsų ankstesnė buhalterė. </span></li>
+<li><span>Pasidalinkite, pra&scaron;au, savo buhalterio kontaktais</span><span>. Informuokite jį/ją, kad a&scaron; susisieksiu dėl jūsų istorinių duomenų perdavimo, ir kad tuos duomenis jis/ji privalo mums pateikti. </span></li>
+<li><span>Suteikti mums įgaliojimus VMI ir RC.&nbsp;</span><span>Prisijungimų mums reikia tam, kad jūsų įmonės vardu galėtume teikti būtinas ataskaitas. Instrukcijas, kaip tą padaryti, rasite čia:&nbsp;<a href="https://pagalba.robolabs.lt/lt/nuo_ko_pradeti">https://pagalba.robolabs.lt/lt/nuo_ko_pradeti</a></span><span></span></li>
+</ul>
+<p>Įgaliotų asmenų sąra&scaron;as:</p>
+<table border="1" style="border-collapse: collapse; width: 100%;">
+<tbody>
+<tr style="height: 21px;">
+<td style="width: 20%; height: 21px;"><strong>Vardas pavardė</strong></td>
+<td style="width: 20%; height: 21px;"><strong>Asmens kodas</strong></td>
+<td style="width: 20%; height: 21px;"><strong>El. pa&scaron;to adresas</strong></td>
+<td style="width: 20%; height: 21px;"><strong>Telefono numeris</strong></td>
+<td style="width: 20%; height: 21px;"><strong>Suteikiami įgaliojimai</strong></td>
+</tr>
+<tr style="height: 21px;">
+<td style="width: 20%; height: 21px;">Daivaras Anužis</td>
+<td style="width: 20%; height: 21px;">39207201060</td>
+<td style="width: 20%; height: 21px;">daivaras.anuzis@robolabs.lt</td>
+<td style="width: 20%; height: 21px;">+370 612 46381</td>
+<td style="width: 20%; height: 21px;">Registrų centre</td>
+</tr>
+<tr style="height: 21px;">
+<td style="width: 20%; height: 21px;">Gintarė Katinaitė</td>
+<td style="width: 20%; height: 21px;"><span>48608151812</span></td>
+<td style="width: 20%; height: 21px;">gintare.katinaite@robolabs.lt</td>
+<td style="width: 20%; height: 21px;">+370 647 03188</td>
+<td style="width: 20%; height: 21px;">Mano VMI</td>
+</tr>
+<tr style="height: 21px;">
+<td style="width: 20%; height: 21px;"><strong>[Vardenis Pavardenis]</strong></td>
+<td style="width: 20%; height: 21px;"><strong>[asmens kodas]</strong></td>
+<td style="width: 20%; height: 21px;"><strong>[el. pa&scaron;to adresas]</strong></td>
+<td style="width: 20%; height: 21px;"><strong>[telefono numeris]</strong></td>
+<td style="width: 20%; height: 21px;">Registrų centre</td>
+</tr>
+</tbody>
+</table>
+<p><br />Šie asmens duomenys yra konfidencialūs ir suteikiami tik el.laiške (prie kurio prisegtas šis dokumentas)
+nurodytiems adresatams - įmonės vadovams ar įgaliotiems asmenims. Šių duomenų tikslinė naudojimo paskirtis - suteikti atitinkamus
+įgaliojimus atstovauti jų įmones santykiuose su valstybės institucijomis (SODRA, VMI, VĮ REGISTRŲ CENTRAS ir kt.) pagal
+buhalterinės apskaitos paslaugų sutartį su apskaitos paslaugas teikiančia įmone UAB “Robolabs”.</p>
+<p>Griežtai draudžiama šiuos duomenis neleistinai naudoti - įskaitant, bet neapsiribojant: naudoti ne pagal šią tikslinę
+paskirtį, bet kokia forma perduoti tretiesiems asmenims, skelbti viešai ir bet kokia forma bei tikslu kitaip atskleisti.</p>
+<p><br />Kol kas tiek, lauksiu buhalterio kontaktų ir įgaliojimų.</p>
+<p>Jeigu turite klausimų, ra&scaron;ykite į <a href="mailto:accounting@robolabs.lt">accounting@robolabs.lt</a>.</p>
+<p><strong>[Vardenis]</strong></p>]]>
+            </field>
+        </record>
+        <record id="robo_onboarding_task_4" model="robo.onboarding.task">
+            <field name="name">Gauti buvusio buhalterio kontaktai</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_1')"/>
+            <field name="sequence">4</field>
+            <field name="weight">2</field>
+            <field name="comment">
+                Kontaktai, kurie buvo paprašyti įžanginiame el. laiške.
+            </field>
+        </record>
+        <record id="robo_onboarding_task_5" model="robo.onboarding.task">
+            <field name="name">Gauti VMI bei RC prisijungimai</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_1')"/>
+            <field name="sequence">5</field>
+            <field name="weight">2</field>
+            <field name="comment">
+                Siunčiama Mano VMI tik Gintarės, RC - buhalterio ir Daivaro asmens duomenys.
+                Nuoroda: https://pagalba.robolabs.lt/lt/nuo_ko_pradeti
+            </field>
+        </record>
+        <record id="robo_onboarding_task_6" model="robo.onboarding.task">
+            <field name="name">Susitikimas su klientu</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_1')"/>
+            <field name="sequence">6</field>
+            <field name="weight">10</field>
+            <field name="comment">
+                Į susitikimą pasiimame vieną iš labiau patyrusių kolegų (Deividas, Gintarė, Justina). Susitikimo galima
+                nedaryti tik tuo atveju, jei klientas neprieinamas arba griežtai atsisako susitikti. Tokiu atveju
+                deriname telefoninį / video skambutį aparti šiems klausimams. Susitikimo metu:
+                &lt;ul&gt;
+                    &lt;li&gt;
+                        Prisistatome;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        Paaiškinime apie onboardingo procesą;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        Pademonstruojame naujos SF sukūrimą;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        Pademonstruojame Prašymo ir Įsakymo sukūrimą;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        Paaiškiname apie dokumento pateikimo būdus;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        Kartu su klientu atliekame pradinę sistemos konfigūraciją;
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        Parodome, kaip pajungti Swedbanką (jeigu aktualu);
+                    &lt;/li&gt;
+                    &lt;li&gt;
+                        Atsakome į rūpimus klausimus.
+                    &lt;/li&gt;
+                &lt;/ul&gt;
+            </field>
+            <field name="email_template">
+                <![CDATA[<p>Sveiki,</p>
+<p>jus trukdo <strong>[Vardenis]</strong> i&scaron; RoboLabs. Norėčiau pasiderinti su jumis valandos susitkimą aptarti jūsų veiklą bei atlikti pradinę sistemos konfgūraciją. Taip pat aptarsime jūsų veiklos specifiką, ir parodysiu, kaip naudotis Robo platforma. Sakykite, ar tiktų jums atvykti<strong> [Nurodoma susitikimo vieta ir laikas]</strong>?</p>]]>
+            </field>
+        </record>
+
+
+        <record id="robo_onboarding_task_7" model="robo.onboarding.task">
+            <field name="name">Supildytas kompanijos profilis</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_2')"/>
+            <field name="sequence">1</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_8" model="robo.onboarding.task">
+            <field name="name">Suvestos banko sąskaitos</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_2')"/>
+            <field name="sequence">2</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_9" model="robo.onboarding.task">
+            <field name="name">Nustatyta ilgalaikio turto riba</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_2')"/>
+            <field name="sequence">3</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_10" model="robo.onboarding.task">
+            <field name="name">Nustatyti įsakymus pasirašantys asmenys</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_2')"/>
+            <field name="sequence">4</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_11" model="robo.onboarding.task">
+            <field name="name">Nustatytos dokumentų numeracijos</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_2')"/>
+            <field name="sequence">5</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_12" model="robo.onboarding.task">
+            <field name="name">Nustatyta atlyginimų banko sąskaita</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_2')"/>
+            <field name="sequence">6</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_13" model="robo.onboarding.task">
+            <field name="name">Prijungiamas Swedbank / Paysera / Revolut</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_2')"/>
+            <field name="sequence">7</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_14" model="robo.onboarding.task">
+            <field name="name">Sutvarkytos darbuotojų teisės</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_2')"/>
+            <field name="sequence">8</field>
+            <field name="weight">5</field>
+        </record>
+
+
+        <record id="robo_onboarding_task_15" model="robo.onboarding.task">
+            <field name="name">Sukurti prisijungimai darbuotojams</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_3')"/>
+            <field name="sequence">1</field>
+            <field name="weight">5</field>
+            <field name="email_template">
+                <![CDATA[<p>Sveiki, <strong>[Vardeni]</strong>,</p>
+<p>pateikite, pra&scaron;au, darbuotojų sara&scaron;ą: vardą, pavardę, emailą, banko sąskaitos numerį, pareigas ir skyrių. &Scaron;ios informacijos reikia, kad galėčiau darbuotojams sukurti prisijungimus. Visi darbuotojai automati&scaron;kai turės apribotas teises (matys tik savo dokumentus ir pana&scaron;iai). Darbuotojų teises galėsime keisti.</p>]]>
+            </field>
+        </record>
+
+
+        <record id="robo_onboarding_task_16" model="robo.onboarding.task">
+            <field name="name">Darbuotojai ir atlyginimai</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_4')"/>
+            <field name="sequence">1</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_17" model="robo.onboarding.task">
+            <field name="name">Produktai ir Paslaugos</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_4')"/>
+            <field name="sequence">2</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_18" model="robo.onboarding.task">
+            <field name="name">Tiekėjų ir Klientų skolos</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_4')"/>
+            <field name="sequence">3</field>
+            <field name="weight">5</field>
+        </record>
+        <record id="robo_onboarding_task_19" model="robo.onboarding.task">
+            <field name="name">Atsargos (esant sandėlio apskaitai)</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_4')"/>
+            <field name="sequence">4</field>
+            <field name="weight">5</field>
+        </record>
+
+
+        <record id="robo_onboarding_task_20" model="robo.onboarding.task">
+            <field name="name">Importuoti buhalteriniai likučiai</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_5')"/>
+            <field name="sequence">1</field>
+            <field name="weight">10</field>
+        </record>
+
+
+        <record id="robo_onboarding_task_21" model="robo.onboarding.task">
+            <field name="name">RoboLabs paruošta naudojimui</field>
+            <field name="category_id" eval="ref('robo_onboarding.robo_onboarding_category_6')"/>
+            <field name="sequence">1</field>
+            <field name="weight">5</field>
+        </record>
+
+    </data>
+</odoo>

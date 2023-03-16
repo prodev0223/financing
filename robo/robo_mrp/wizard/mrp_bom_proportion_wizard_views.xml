@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Form-->
+        <record id="mrp_bom_proportion_wizard_view_form" model="ir.ui.view">
+            <field name="name">mrp.bom.proportion.wizard.view.form</field>
+            <field name="model">mrp.bom.proportion.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Component proportion calculation wizard">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                            In this wizard you can calculate the proportions for the BOM elements
+                        </div>
+                        <group>
+                            <field name="bom_id" readonly="1"/>
+                            <field name="quantity" required="1"/>
+                        </group>
+                        <group>
+                            <field name="component_proportion_table" readonly="1"
+                                   widget="payslip_note" nolabel="1" model="mrp.bom.line"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Calculate proportion"
+                                name="button_calculate_proportions" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </odoo>
+</data>

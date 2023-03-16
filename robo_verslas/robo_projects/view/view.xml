@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="base.group_user" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('analytic.group_analytic_accounting'))]"/>
+        </record>
+
+        <!--</record>-->
+        <record id="hr_employee_robo_project_extend" model="ir.ui.view">
+            <field name="name">Employee robo project extend</field>
+            <field name="model">hr.employee</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='job_id']" position="after">
+                    <field name="timesheet_cost" string="Žiniaraščio valandos kaina"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="res_partner_job_code_extend" model="ir.ui.view">
+            <field name="name">res.partner.job.code</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.new_clients_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='supplier_payment_term_days']" position="after">
+                    <field name="job_code"/>
+                    <field name="force_timesheet_cost" string="Priverstinis valandinis įkainis"/>
+                    <field name="timesheet_cost" string="Valandinis įkainis" attrs="{'invisible': [('force_timesheet_cost','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

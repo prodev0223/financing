@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="safety_net_approval_condition_view_form" model="ir.ui.view">
+            <field name="name">safety.net.approval.condition.view.form</field>
+            <field name="model">safety.net.condition</field>
+            <field name="inherit_id" ref="invoice_approval_workflow.invoice_approval_condition_view_form"/>
+            <field name="mode">primary</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='approver_id']" position="replace"></xpath>
+                <xpath expr="//field[@name='step_id']" position="replace"></xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

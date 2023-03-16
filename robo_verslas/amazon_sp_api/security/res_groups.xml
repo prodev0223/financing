@@ -1,0 +1,18 @@
+<odoo>
+    <data>
+        <record id="group_amazon_sp_api_front" model="res.groups">
+            <field name="name">Amazon SP-API: Front management</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+        <record id="robo_basic.group_robo_premium_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('amazon_sp_api.group_amazon_sp_api_front'))]"/>
+        </record>
+    </data>
+    <data>
+        <record id="group_amazon_sp_api_quantitative_integration" model="res.groups">
+            <field name="name">Amazon SP-API: Quantitative integration</field>
+        </record>
+    </data>
+</odoo>

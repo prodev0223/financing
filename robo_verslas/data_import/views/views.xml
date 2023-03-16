@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+            <record id="view_front_data_import" model="ir.ui.view">
+            <field name="name">front.data.import</field>
+            <field name="model">front.data.import</field>
+            <field name="arch" type="xml">
+                <form string="Duomenu importavimas">
+                    <group col="2">
+                        <field name="xls_data" filename="xls_name"/>
+                        <field name="account_analytic_id" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="product_id" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="tax_id" options="{'no_open': True, 'no_create': True}" domain="[('type_tax_use', '=', 'sale'), ('price_include', '=', False)]"/>
+                        <field name="action"/>
+                        <field name="check_amounts"/>
+                    </group>
+                    <group>
+                        <a href="data_import/static/data/Duomenu_importas.xlsx">Atsisiųsti XLS pavyzdį</a>
+                    </group>
+                <footer>
+                    <button string="Importuoti Duomenis" name="data_import" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_front_data_import">
+        <field name="name">Importuoti duomenis</field>
+        <field name="res_model">front.data.import</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_front_data_import"/>
+    </record>
+
+        <menuitem id="menu_front_data_import" parent="robo.menu_kita" name="Duomenų importavimas"
+                  sequence="70" action="action_front_data_import"
+                  robo_front="True"
+                  groups="data_import.group_front_data_import"
+                  searchable="True"
+                  tags="duomenų,importavimas"
+    />
+    <record model="ir.ui.menu" id="menu_front_data_import">
+        <field name="web_icon">icon-hdd-up,none,none</field>
+    </record>
+    </data>
+</odoo>

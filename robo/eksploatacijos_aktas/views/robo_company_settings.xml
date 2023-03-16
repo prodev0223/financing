@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">company.settings.form</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside" >
+                    <button name="%(action_alignment_committee)d" string="Vizavimo komisijos" type="action" class="oe_link"/>
+                </xpath>
+                <xpath expr="//group[@name='politika']" position="inside" >
+                    <field name="operation_act_creation"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_alignment_committee_settings_search"
+                  name="Vizavimo komisijos"
+                  parent="robo.menu_company_settings_search"
+                  action="action_alignment_committee"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="vizavimo,komisijos"
+        />
+    </data>
+</odoo>

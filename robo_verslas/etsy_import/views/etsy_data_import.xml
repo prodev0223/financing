@@ -1,0 +1,54 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="form_etsy_data_import" model="ir.ui.view">
+            <field name="name">etsy.data.import</field>
+            <field name="model">etsy.data.import</field>
+            <field name="arch" type="xml">
+                <form string="Data import">
+                    <sheet>
+                        <group col="2">
+                            <field name="xlsx_data" filename="xlsx_name"/>
+                            <field name="xlsx_name" invisible="1"/>
+                        </group>
+                        <group col="2">
+                            <field name="default_product_id" domain="[('acc_product_type', '=', 'product')]"
+                                   options="{'no_create':True, 'no_open':True}"/>
+                            <field name="default_service_id" domain="[('type', '=', 'service')]"
+                                   options="{'no_create':True, 'no_open':True}"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Import Data" name="data_import" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record model="ir.actions.act_window" id="action_open_etsy_data_import">
+            <field name="name">Import Data</field>
+            <field name="res_model">etsy.data.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="form_etsy_data_import"/>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                name="Etsy invoice import"
+                id="etsy_data_import"
+                sequence="49"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Import Data"
+                id="etsy_data_import_wizard"
+                action="action_open_etsy_data_import"
+                sequence="49"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="etsy_data_import"
+        />
+    </data>
+</odoo>

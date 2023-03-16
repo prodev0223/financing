@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="downtime_report_form_front" model="ir.ui.view">
+            <field name="name">Prastovų suvestinė</field>
+            <field name="model">downtime.report</field>
+            <field name="robo_front">True</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Prastovų suvestinė">
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="year"/>
+                            <field name="month"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="generate_report" string="Excel" type="object"
+                                    class="oe_highlight" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" type="action" name="%(robo.open_reports_action)d"
+                                    class="oe_highlight" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_downtime_report_front" model="ir.actions.act_window">
+            <field name="name">Prastovų suvestinė</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">downtime.report</field>
+            <field name="robo_front">True</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="downtime_report_form_front"/>
+            <field name="target">inline</field>
+            <field name="header" ref="robo.front_wizard_default_header"/>
+        </record>
+
+        <menuitem id="menu_downtime_search_report"
+                  name="Prastovų suvestinė"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="action_downtime_report_front"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="prastovų,suvestinė"
+        />
+    </data>
+</odoo>

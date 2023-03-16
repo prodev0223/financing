@@ -1,0 +1,122 @@
+<template>
+    <t t-name="robo.Chatter">
+        <div class="o_chatter">
+            <div t-if="!widget.options.readonly" class="o_chatter_topbar">
+                <button t-if="!widget.accountant &amp;&amp; !widget.options.only_internal_log" type="button" class="btn btn-sm btn-primary o_chatter_button_new_message" title="Klausk buhalterio">
+                    Rašykite buhalteriui
+                </button>
+                <button t-if="widget.accountant &amp;&amp; !widget.options.only_internal_log" type="button" class="btn btn-sm btn-primary o_chatter_button_new_message_client" title="Atsakyti klientui">
+                    Atsakyti klientui
+                </button>
+                <button t-if="widget.accountant &amp;&amp; !widget.options.only_internal_log" type="button" class="btn btn-sm btn-primary o_chatter_button_new_message_client_ticket" title="Atsakyti klientui">
+                    Atsakyti klientui ir uždaryti
+                </button>
+                <button t-if="widget.options.display_log_button and (widget.is_user or widget.options.only_internal_log)" class="btn btn-sm btn-link o_chatter_button_log_note" title="Registruoti komentarą">
+                    Palikti vidinį komentarą
+                </button>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="robo.TicketChatter">
+        <div class="o_chatter">
+            <div t-if="!widget.options.readonly" class="o_chatter_topbar">
+                <button t-if="!widget.accountant &amp;&amp; !widget.options.only_internal_log" type="button" class="btn btn-sm btn-primary o_chatter_ticket_button_new_message" title="Klausk buhalterio">
+                    Rašykite buhalteriui
+                </button>
+                <button t-if="widget.accountant &amp;&amp; !widget.options.only_internal_log" type="button" class="btn btn-sm btn-primary o_chatter_ticket_button_new_message_client" title="Atsakyti klientui">
+                    Atsakyti klientui
+                </button>
+                <button t-if="widget.accountant &amp;&amp; !widget.options.only_internal_log" type="button" class="btn btn-sm btn-primary o_chatter_ticket_button_new_message_client_ticket" title="Atsakyti klientui">
+                    Atsakyti klientui ir uždaryti
+                </button>
+            </div>
+        </div>
+    </t>
+
+    <div t-name="robo.ChatComposer" class="o_chat_composer">
+         <div class="o_composer_attachments_list"/>
+         <!--<t t-if="widget.extended">-->
+             <!--<div class="o_composer_subject">-->
+                 <!--<input tabindex="1" type="text" placeholder="Subject"></input>-->
+                 <!--<div class="btn-group o_composer_buttons">-->
+                    <!--<button tabindex="3" class="btn btn-sm btn-primary o_composer_button_send" type="button"><t t-esc="widget.options.send_text"/></button>-->
+                    <!--<button tabindex="4" class="btn btn-sm btn-icon fa fa-smile-o o_composer_button_emoji" type="button" data-toggle="popover"/>-->
+                    <!--<button tabindex="5" class="btn btn-sm btn-icon fa fa-paperclip o_composer_button_add_attachment" type="button"/>-->
+                 <!--</div>-->
+             <!--</div>-->
+         <!--</t>-->
+         <div t-attf-class="o_composer #{widget.extended ? 'o_extended_composer' : ''}">
+             <div t-if='widget.options.is_log' class="alert alert-info" role="alert" style="margin-bottom:0px;">
+                 <t t-if=" widget.options.accountant">Ši žinutė neformuos pranešimo klientui</t><t t-else="">Ši žinutė neformuos pranešimo buhalteriui</t>.
+            </div>
+             <div class="o_composer_input">
+                 <textarea class="o_composer_text_field" tabindex="2" placeholder="Jūsų tekstas..."/>
+             </div>
+             <t t-if="!widget.extended">
+                 <div class="btn-group o_composer_buttons">
+                    <button tabindex="3" class="btn btn-sm btn-primary o_composer_button_send" type="button"><t t-esc="widget.options.send_text"/></button>
+                    <button tabindex="4" class="btn btn-sm btn-icon fa fa-smile-o o_composer_button_emoji" type="button" data-toggle="popover"/>
+                    <button tabindex="5" class="btn btn-sm btn-icon fa fa-paperclip o_composer_button_add_attachment" type="button"/>
+                 </div>
+             </t>
+         </div>
+
+         <span class="hide">
+            <t t-call="HiddenInputFile">
+                <t t-set="fileupload_id" t-value="widget.fileupload_id"/>
+                <t t-set="fileupload_action" t-translation="off">/web/binary/upload_attachment</t>
+                <input type="hidden" name="model" value="mail.compose.message"/>
+                <input type="hidden" name="id" value="0"/>
+                <input type="hidden" name="session_id" t-att-value="widget.session.session_id"/>
+            </t>
+         </span>
+         <span t-att-class="widget.emoji_container_classname"></span>
+    </div>
+
+    <t t-extend="mail.ChatThread.Message">
+        <t t-jquery="p.o_mail_info t[t-if='message.is_note']" t-operation="replace">
+            <t t-if="message.is_note"></t>
+        </t>
+        <t t-jquery="span.o_thread_tooltip_container" t-operation="replace">
+            <span class="o_thread_tooltip_content">
+                <span t-if="options.display_email_icon &amp;&amp; message.customer_email_data &amp;&amp; message.customer_email_data.length" class="o_thread_tooltip_container">
+                    <i t-att-class="'o_thread_tooltip o_thread_message_email o_thread_message_email_' + message.customer_email_status + ' fa fa-envelope-o'"/>
+                    <span class="o_thread_tooltip_content">
+                        <t t-if="message.customer_email_status == 'read'">
+                            <span>El. laiškas buvo perskaitytas.</span><br/>
+                        </t>
+                        <t t-foreach="message.customer_email_data" t-as="customer">
+                            <span>
+                                <t t-if="customer[2] == 'sent'"><i class='fa fa-check'/></t>
+                                <t t-if="customer[2] == 'bounce'"><i class='fa fa-exclamation'/></t>
+                                <t t-if="customer[2] == 'exception'"><i class='fa fa-exclamation'/></t>
+                                <t t-if="customer[2] == 'ready'"><i class='fa fa-send-o'/></t>
+                                <t t-if="customer[2] == 'read'"><i class='fa fa-eye' style="color: green"/></t>
+                                <t t-esc="customer[1]"/>
+                            </span>
+                            <br />
+                        </t>
+                    </span>
+                </span>
+            </span>
+        </t>
+        <!--Hide chatter redirect on user name click-->
+        <t t-jquery="strong[data-oe-model='res.partner'][t-att-data-oe-id]" t-operation="replace">
+             <strong t-if="!message.mailto &amp;&amp; message.author_id[0]"
+                    data-oe-model="res.partner" t-attf-data-oe-id=""
+                    t-attf-class="#{message.author_redirect? 'o_mail_redirect_hide' : ''}">
+                <t t-esc="message.displayed_author"/>
+            </strong>
+        </t>
+        <!--Hide chatter redirect on user avatar click-->
+        <t t-jquery=".o_thread_message_sidebar img[t-att-data-oe-id]" t-operation="replace">
+              <img t-if="message.avatar_src &amp;&amp; message.display_author" t-att-src="message.avatar_src"
+                data-oe-model="res.partner" t-attf-data-oe-id=""
+                t-attf-class="o_thread_message_avatar #{message.author_redirect ? 'o_mail_redirect_hide' : ''}"/>
+        </t>
+
+    </t>
+
+
+</template>

@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="revolut_account_view_form" model="ir.ui.view">
+            <field name="name">revolut.account.view.form</field>
+            <field name="model">revolut.account</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Revolut API nustatymai">
+                    <sheet>
+                        <group string="Details">
+                            <field name="name"/>
+                            <field name="uuid"/>
+                            <field name="currency_id"/>
+                            <field name="revolut_api_id"/>
+                            <field name="is_currency_crypto" readonly="1"/>
+                        </group>
+                        <group string="Legs">
+                            <field name="leg_ids" nolabel="1" readonly="1" options="{'no_open': True, 'no_create':True}">
+                                <tree>
+                                    <field name="transaction_id"/>
+                                    <field name="uuid"/>
+                                    <field name="amount"/>
+                                    <field name="fee"/>
+                                    <field name="balance"/>
+                                    <field name="currency_id"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="revolut_account_view_tree" model="ir.ui.view">
+            <field name="name">revolut.account.view.tree</field>
+            <field name="model">revolut.account</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <tree string="Revolut API sąskaitos" decoration-muted="is_currency_crypto==True">
+                    <field name="is_currency_crypto" invisible="1"/>
+                    <field name="name"/>
+                    <field name="uuid"/>
+                    <field name="currency_id"/>
+                    <field name="revolut_api_id"/>
+                    <field name="bank_account_iban"/>
+                    <field name="bank_account_bic"/>
+                    <button name="set_iban_bic" type="object" string="Gauti sąskaitos IBAN ir BIC" icon="fa-arrow-down"/>
+                </tree>
+            </field>
+        </record>
+        <record id="revolut_account_action" model="ir.actions.act_window">
+            <field name="name">Revolut API sąskaitos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">revolut.account</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5,0,0),
+                          (0,0,{'view_mode':'tree', 'view_id': ref('revolut_account_view_tree')}),
+                          (0,0,{'view_mode':'form', 'view_id': ref('revolut_account_view_form')})]"/>
+            <field name="target">current</field>
+        </record>
+    </data>
+</odoo>

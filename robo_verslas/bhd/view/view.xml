@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="sale_order_add_margin">
+            <field name="name">sale.order.add.margin</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="robo_stock.robo_sale_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet//group[1]" position="inside">
+                    <group>
+                        <field name="margin"/>
+                        <button name="add_margin" type="object" string="Pridėti antkainį" states="sale"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='confirmation_date']" position="after">
+                    <field name="team_id" string="Pardavimų komanda" options="{'no_open':True, 'no_create':True}"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="robo_stock_product_extend_tracking_form">
+            <field name="name">product.template.tracking.extend</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tracking']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="robo_stock_picking_extend_tracking_form">
+            <field name="name">stock.picking.tracking.extend</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='do_new_transfer']" position="after">
+                    <field name="show_force_incoming" invisible="1"/>
+                    <button name="force_incoming_shipping" states="draft,partially_available,assigned" string="Perduoti prekes (be SN)" type="object" class="oe_highlight" attrs="{'invisible': ['|',('show_force_incoming', '=', False), ('state','not in',['assigned'])]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account.email_template_edi_invoice" model="mail.template">
+            <field name="body_html"><![CDATA[
+    <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px;">
+        % if object.partner_lang in ['en_US']:
+           <p>Greetings,</p>
+            % if object.state in ['proforma','proforma2']:
+                <p>We are sending you a pro-forma invoice no. ${object.proforma_number if object.proforma_number else object.id|safe} for the goods / services provided.</p>
+            % else:
+                <p>We are sending you an invoice no. ${object.number} for the goods / services provided.</p>
+            % endif
+            <p>
+                This electronic invoice has been drawn up and sent in accordance with Article 79 of the Law on Value Added Tax of the Republic of Lithuania. 11d. as well as the provisions of the EU Council Directives 2006/11 / EC and 2010/45 / EU. The requirements for the storage of electronic VAT invoices are set out in Article 78 of the Law on Value Added Tax of the Republic of Lithuania, which states that the VAT invoice shall be kept in the form in which it is received, i.e. No need to print an e-invoice VAT invoice. The details of this electronic invoice are based on Article 80 of the Law on Value Added Tax of the Republic of Lithuania. and Article 13 of the Law on Accounting of the LAC. 8d.
+            </p>
+            <p>
+            <p>For questions please contact us via phone number +370 5 2306148.</p>
+            <p>Use "Adobe Acrobat Reader" software to view the attached document.</p>
+            </p>
+            <p>Sincerely,</p>
+            <p>${object.company_id.name|safe}</p>
+            <div style="padding-top:20px;color:rgba(150,150,150,0.7);font-size:10px">Modern accounting solutions - www.robolabs.lt<div>
+        % else:
+           <p>Laba diena,</p>
+            % if object.state in ['proforma','proforma2']:
+                <p>Siunčiame Jums išankstinę sąskaitą Nr. ${object.proforma_number if object.proforma_number else object.id|safe} už suteiktas prekes / paslaugas.</p>
+            % else:
+                <p>Siunčiame Jums sąskaitą Nr. ${object.number} už suteiktas prekes / paslaugas.</p>
+            % endif
+            <p>
+            Ši elektroninė sąskaita faktūra surašyta ir išsiųsta vadovaujantis LR Pridėtinės vertės mokesčio įstatymo 79 str. 11d. taip pat Europos Sąjungos Tarybų direktyvų Nr.2006/11/EB ir 2010/45/ES nuostatomis. Elektroninių PVM sąskaitų faktūrų saugojimo reikalavimai nustatyti LR Pridėtinės vertės mokesčio įstatymo 78 str., kuriame nurodyta, kad PVM sąskaita faktūra saugoma tokia forma, kokia ji yra gauta, t.y. atsispausdinti elektroninės sąskaitos PVM sąskaitos faktūros nereikia. Šios elektroninės PVM sąskaitos faktūros rekvizitai surašyti remiantis LR Pridėtinės vertės mokesčio įstatymo 80 str. ir LB buhalterinės apskaitos įstatymo 13 str. 8d.
+            </p>
+            <p>
+            <p>Jei turite klausimu skambinkite mums tel. +370 5 2306148</p>
+            <p>Prisegto dokumento peržiūrai naudokite "Adobe Acrobat Reader" programą.</p>
+            </p>
+            <p>Pagarbiai,</p>
+            <p>${object.company_id.name|safe}</p>
+            <div style="padding-top:20px;color:rgba(150,150,150,0.7);font-size:10px">Buhalterija šiuolaikiškai - www.robolabs.lt<div>
+        % endif
+    </div>
+        ]]></field>
+        </record>
+        <record model="ir.ui.view" id="stock_picking_lot_import_wizard_form">
+            <field name="name">stock.picking.lot.import.wizard.form</field>
+            <field name="model">stock.picking.lot.import.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="picking_id" invisible="1"/>
+                        <field name="data" required="1"/>
+                    </group>
+                    <footer>
+                        <button name="scan_serials" string="Importuoti" type="object" class="oe_highlight"/>
+                        <button name="cancel" special="cancel" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="paperformat_a4_narrow_bhd" model="report.paperformat">
+            <field name="name">European A4 narrow (BHD)</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top" eval="5"/>
+            <field name="header_spacing" eval="15"/>
+            <field name="margin_left" eval="7"/>
+            <field name="margin_right" eval="7"/>
+            <field name="margin_bottom" eval="20"/>
+        </record>
+        <record id="saskaitos.account_invoices_sl" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="bhd.paperformat_a4_narrow_bhd"/>
+        </record>
+        <record model="ir.ui.view" id="robo_stock_picking_extend_scanning_import">
+            <field name="name">stock.picking.extend</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='do_prepare_partial']" position="after">
+                    <button name="open_lot_import_wizard" string="Importuoti SN" type="object"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="robo_stock_product_intrastat">
+            <field name="name">product.template.intrastat</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='intrastat_id']" position="attributes">
+                    <attribute name="options">{'no_create': False, 'no_open': False}</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="robo_stock_product_intrastat">
+            <field name="name">product.template.intrastat</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='intrastat_id']" position="attributes">
+                    <attribute name="options">{'no_create': False, 'no_open': False}</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="robo_mrp_add_force_button">
+            <field name="name">mrp.production.force.sn</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="robo_mrp.robo_mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='produce_simplified']" position="after">
+                    <button name="produce_simplified_force" type="object" string="Patvirtinti (be SN)" attrs="{'invisible': [('state', 'in', ['cancel', 'done'])]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="epson_report_view">
+            <field name="name">epson.report</field>
+            <field name="model">epson.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <footer>
+                        <button name="generate" type="object" string="Atsisiųsti" class="oe_highlight"/>
+                        <button name="cancel" type="special" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_epson_report_action">
+            <field name="name">EPSON ataskaita</field>
+            <field name="res_model">epson.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="epson_report_view"/>
+        </record>
+        <menuitem id="menu_epson_report" parent="robo.menu_kita" name="EPSON"
+                  sequence="70" action="open_epson_report_action"
+                  robo_front="True"
+                  searchable="True" tags="EPSON,ataskaita"
+        />
+        <record model="ir.ui.menu" id="menu_epson_report">
+            <field name="web_icon">icon-printer,none,none</field>
+        </record>
+        <record model="ir.ui.view" id="mrp_unbuild_add_force_reserve">
+            <field name="name">mrp.unbuild.add.force.reserve</field>
+            <field name="model">mrp.unbuild</field>
+            <field name="inherit_id" ref="robo_mrp.robo_mrp_unbuild_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='reserve']" position="after">
+                    <button name="reserve_force" string="Rezervuoti (be SN)" type="object" states="draft" class="oe_highlight"/>
+                </xpath>
+            </field>
+        </record>
+        <template id="report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//div[contains(@class, 'invoice_additional')]" position="replace">
+                <div class="row invoice_additional">
+                    <t t-if="o.sudo().company_id.vat">
+                        <t t-if="o.invoice_type == 'imt'">
+                            <div class="col-xs-6 pull-right invoice_imt">
+                                <table class="table table-condensed"
+                                       style="margin-top:15px; white-space: nowrap;page-break-inside: avoid">
+                                    <tr class="border-robo-invoice robo-custom-border">
+                                        <td>
+                                            <strong>Apmokestinamoji vertė:</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_untaxed"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="white-space: normal">
+                                            <span>PVM tarifas</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.imt_tax_rate"/>
+                                            %
+                                        </td>
+                                    </tr>
+                                    <tr class="border-robo-invoice robo-custom-border">
+                                        <td>
+                                            <strong>PVM:</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.imt_tax_amount"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </t>
+                        <t t-if="o.invoice_type == 'invoice'">
+                            <div class="col-xs-6 pull-left" style="max-width:50%">
+                                <p class="invoice_comment" t-if="o.comment">
+                                    <span>
+                                        <strong>PASTABA:</strong>
+                                    </span>
+                                    <span t-field="o.comment"/>
+                                </p>
+                            </div>
+                            <div class="col-xs-6 pull-right invoice_pvm">
+                                <table class="table table-condensed mt16"
+                                       style="white-space: nowrap;page-break-inside: avoid">
+                                    <tr class="border-robo-invoice robo-custom-border">
+                                        <td>
+                                            <span t-attf-class="invoice_{{o.state}}">Suma be PVM:</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.reporting_amount_untaxed"/>
+                                        </td>
+                                    </tr>
+                                    <t t-if="o.tax_line_ids">
+                                        <tr>
+                                            <td style="white-space: normal" t-if="len(o.tax_line_ids) == 1">
+                                                PVM
+                                                <span t-esc="', '.join([ lt.tax_id.description if lt.tax_id and lt.tax_id.description else lt.name or '' for lt in o.tax_line_ids ])"/>
+                                            </td>
+                                            <td style="white-space: normal" t-if="len(o.tax_line_ids) &gt; 1">
+                                                PVM
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="o.reporting_amount_tax"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="not o.tax_line_ids">
+                                        <tr>
+                                            <td>
+                                                <span>PVM 0%:</span>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="o.reporting_amount_tax"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr class="border-robo-invoice robo-custom-border">
+                                        <td>
+                                            <span t-attf-class="invoice_{{o.state}}">Suma su PVM:</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.reporting_amount_total"/>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-robo-invoice robo-custom-border">
+                                        <td>
+                                            <span t-attf-class="invoice_{{o.state}}">Viso mokėti:</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_total"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </t>
+                        <t t-if="o.print_detailed_taxes">
+                            <div class="col-xs-6 invoice_detail_taxes">
+                                <table class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th>Tax</th>
+                                            <th class="text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="o.tax_line_ids" t-as="t">
+                                            <td>
+                                                <span t-field="t.name"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="t.amount"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                    </t>
+                    <t t-if="not o.sudo().company_id.vat">
+                        <div class="col-xs-6 pull-right invoice_proforma_total">
+                            <table class="table table-condensed">
+                                <tr class="border-black">
+                                    <td>
+                                        <strong>Suma:</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="o.reporting_amount_total"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </t>
+                </div>
+            </xpath>
+        </template>
+        <record model="ir.ui.view" id="partner_bank_edit">
+            <field name="name">partner.bank.edit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="robo.new_clients_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='bank']" position="attributes">
+                    <attribute name="groups">robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_stock.robo_stock_extended</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="sale_order_product_list_print" model="ir.ui.view">
+            <field name="name">sale.order.product.list.print</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="robo_stock.robo_sale_order_form"/>
+            <field name="arch" type="xml">
+				<xpath expr="//button[@name='sale_order_offer_print']" position="before">
+                    <button name="action_product_list_export_excel" string="Eksportuoti produktų sąrašą"
+                            type="object"/>
+                </xpath>
+			</field>
+        </record>
+    </data>
+</odoo>

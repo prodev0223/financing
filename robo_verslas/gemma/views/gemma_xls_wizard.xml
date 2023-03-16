@@ -1,0 +1,33 @@
+<odoo>
+    <data>
+        <record id="view_gemma_xls_wizard" model="ir.ui.view">
+            <field name="name">gemma.xls.wizard</field>
+            <field name="model">gemma.xls.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Duomenų importas">
+                    <group col="2">
+                        <field name="xls_data" filename="xls_name"/>
+                        <field name="product_id"/>
+                        <field name="tax_id"/>
+                        <field name="only_gp_sales"/>
+                    </group>
+                <footer>
+                    <button string="Importuoti Duomenis" name="data_import" type="object" class="btn-primary"/>
+                    <button string="Patikrinti Duomenis" name="data_import" type="object" class="btn-primary" context="{'xls_check': True}"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_gemma_xls_wizard" model="ir.actions.act_window">
+            <field name="name">XLS Importavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">gemma.xls.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+
+    </data>
+</odoo>

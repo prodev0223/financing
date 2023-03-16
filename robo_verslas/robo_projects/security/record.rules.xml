@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record model="ir.rule" id="project_public_members_rule">
+            <field name="name">Project: employees: following required for follower-only projects</field>
+            <field name="model_id" ref="project.model_project_project"/>
+            <field name="domain_force">['|',
+                                            ('privacy_visibility', '=', 'employees'),
+                                            '|',
+                                                ('team_involvement_ids.user_id', '=', user.id),
+                                                ('user_id', '=', user.id)
+                                        ]</field>
+            <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_read" eval="True"/>
+        </record>
+        <record model="ir.rule" id="project_user_own_project_rule">
+            <field name="name">Project: users: own projects</field>
+            <field name="model_id" ref="project.model_project_project"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('project.group_project_user'))]"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_read" eval="True"/>
+        </record>
+        <record model="ir.rule" id="project_manager_own_project_rule">
+            <field name="name">Project: manager: all projects</field>
+            <field name="model_id" ref="project.model_project_project"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('project.group_project_manager'))]"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_read" eval="True"/>
+        </record>
+
+        <record id="issue_user_rule" model="ir.rule">
+            <field name="name">Project/Issue: employees: no need to follow or (following project or following issue</field>
+            <field name="model_id" ref="project_issue.model_project_issue"/>
+            <field name="domain_force">['|',
+                                            ('project_id.user_id', '=', user.id),
+                                            '|',
+                                                ('project_id.privacy_visibility', '=', 'employees'),
+                                                ('project_id.team_involvement_ids.user_id', '=', user.id),
+                                        ]</field>
+            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+        <record model="ir.rule" id="project.task_visibility_rule">
+            <field name="name">Project/Task: employees: follow required for follower-only projects</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="domain_force">[
+            '|',
+                ('project_id.privacy_visibility', '=', 'employees'),
+                '|',
+                    ('project_id.team_involvement_ids.user_id', 'in', [user.id]),
+                    '|',
+                        ('project_id.user_id', '=', user.id),
+                        ('user_id', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+        <record id="analytic_line_user_rule" model="ir.rule">
+            <field name="name">Account analytic line user</field>
+            <field name="model_id" ref="analytic.model_account_analytic_line"/>
+            <field name="domain_force">['|',
+                                            ('user_id', '=', user.id),
+                                            ('project_manager', '=', user.id)]</field>
+            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+        <record id="analytic_line_robo_manager_rule" model="ir.rule">
+            <field name="name">Account analytic line manager</field>
+            <field name="model_id" ref="analytic.model_account_analytic_line"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('robo_basic.group_robo_premium_manager')),(4,ref('robo_basic.group_robo_free_manager')),
+            (4,ref('project.group_project_manager'))]"/>
+        </record>
+
+        <record id="hr_timesheet_sheet_sheet_user" model="ir.rule">
+            <field name="name">Timesheet sheet user</field>
+            <field name="model_id" ref="hr_timesheet_sheet.model_hr_timesheet_sheet_sheet"/>
+            <field name="domain_force">[('user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('project.group_project_user'))]"/>
+        </record>
+        <record id="hr_timesheet_sheet_sheet_manager" model="ir.rule">
+            <field name="name">Timesheet sheet manager</field>
+            <field name="model_id" ref="hr_timesheet_sheet.model_hr_timesheet_sheet_sheet"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('project.group_project_manager'))]"/>
+        </record>
+    </data>
+</odoo>

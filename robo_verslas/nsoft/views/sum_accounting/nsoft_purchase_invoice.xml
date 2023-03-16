@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_nsoft_purchase_invoice" model="ir.ui.view">
+            <field name="name">tree.nsoft.purchase.invoice</field>
+            <field name="model">nsoft.purchase.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="nSoft Pirkimo sąskaitos faktūros"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state in ['failed']" create="1" edit="1" delete="1">
+                    <field name="invoice_number"/>
+                    <field name="ext_invoice_id"/>
+                    <field name="date_invoice"/>
+                    <field name="ext_create_date"/>
+                    <field name="partner_id"/>
+                    <field name="amount_total_wo_vat"/>
+                    <field name="amount_total_w_vat"/>
+                    <field name="amount_vat"/>
+                    <field name="warehouse_name"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="create_purchase_invoice_action_act" model="ir.actions.server">
+            <field name="name">Kurti sąskaitas faktūras</field>
+            <field name="model_id" ref="nsoft.model_nsoft_purchase_invoice"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).purchase_invoice_creation_prep()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_purchase_invoice_action_func" model="nsoft.purchase.invoice"/>
+        <record id="action_open_nsoft_purchase_invoice" model="ir.actions.act_window">
+            <field name="name">Pirkimo sąskaitos faktūros</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.purchase.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_nsoft_purchase_invoice"/>
+        </record>
+        <!--Forms-->
+        <record id="form_nsoft_purchase_invoice" model="ir.ui.view">
+            <field name="name">form.nsoft.purchase.invoice</field>
+            <field name="model">nsoft.purchase.invoice</field>
+            <field name="arch" type="xml">
+                <form string="nSoft Pirkimo sąskaitos Faktūros"
+                      create="1" edit="1" delete="1">
+                    <header>
+                        <button name="purchase_invoice_creation_prep"
+                                type="object" states="imported,failed"
+                                string="Sukurti Sąskaitą faktūrą" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Sąskaitos Pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="invoice_number" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="ext_invoice_id"/>
+                            <field name="date_invoice"/>
+                            <field name="ext_create_date"/>
+                            <field name="partner_name"/>
+                            <field name="partner_code"/>
+                            <field name="partner_vat"/>
+                            <field name="comments"/>
+                            <field name="payment_mode"/>
+                            <field name="warehouse_name"/>
+                            <field name="warehouse_code"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Sąskaitos sumos" colspan="1" col="2">
+                                <field name="amount_total_wo_vat"/>
+                                <field name="amount_total_w_vat"/>
+                                <field name="amount_vat"/>
+                                <field name="is_refund"/>
+                            </group>
+                            <group string="Sisteminiai laukeliai" colspan="1" col="2">
+                                <field name="partner_id"
+                                       attrs="{'readonly': True, 'invisible': [('partner_id', '=', False)]}"/>
+                                <field name="warehouse_id"
+                                       attrs="{'readonly': True, 'invisible': [('warehouse_id', '=', False)]}"/>
+                                <field name="invoice_id"
+                                       attrs="{'readonly': True, 'invisible': [('invoice_id', '=', False)]}"/>
+                            </group>
+                        </group>
+                        <field name="nsoft_purchase_invoice_line_ids" nolabel="1"
+                               widget="one2many_list" mode="tree,kanban"
+                               options="{'no_open': True, 'always_reload': True}">
+                            <tree string="nSoft Pirkimo sąskaitos eilutės"
+                                  decoration-info="state == 'imported'"
+                                  decoration-success="state == 'created'"
+                                  decoration-danger="state in ['failed']"
+                                  create="1" edit="1" delete="1"
+                                  class="robo_tree_in_form">
+                                <field name="product_id"/>
+                                <field name="amount_wo_vat"/>
+                                <field name="amount_w_vat"/>
+                                <field name="amount_vat"/>
+                                <field name="ext_product_category_id"/>
+                                <field name="nsoft_product_category_id"/>
+                                <field name="tax_id"/>
+                                <field name="state"/>
+                            </tree>
+                            <form string="nSoft Pirkimai" create="1" edit="1" delete="1">
+                            <sheet>
+                            <div>
+                                <label string="Produktas"/>
+                                <h1 class="mt0">
+                                    <field name="product_id" class="oe_inline"/>
+                                </h1>
+                            </div>
+                                <group>
+                                    <field name="amount_wo_vat"/>
+                                    <field name="amount_w_vat"/>
+                                    <field name="amount_vat"/>
+                                    <field name="ext_product_category_id"/>
+                                    <field name="nsoft_product_category_id"/>
+                                    <field name="tax_id"/>
+                                </group>
+                            </sheet>
+                        </form>
+                        </field>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+        <record id="search_nsoft_purchase_invoice" model="ir.ui.view">
+            <field name="name">Pirkimo sąskaitų paieška</field>
+            <field name="model">nsoft.purchase.invoice</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="import" string="Būsena: Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="create" string="Būsena: Sukurta" domain="[('state','=','created')]"/>
+                    <filter name="failed" string="Būsena: Klaida kuriant sąskaitą" domain="[('state','=','failed')]"/>
+                    <separator/>
+                    <field name="invoice_number" filter_domain="[('invoice_number','ilike',self)]"/>
+                    <field name="partner_id" filter_domain="[('partner_id','ilike',self)]"/>
+                    <field name="partner_code" filter_domain="[('partner_code','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Pirkimai"
+                id="menu_nsoft_purchase_base"
+                sequence="60"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nsoft_sum_accounting"
+        />
+        <menuitem
+                name="Pirkimo sąskaitos faktūros"
+                id="menu_nsoft_purchase_invoice"
+                sequence="62"
+                action="action_open_nsoft_purchase_invoice"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="menu_nsoft_purchase_base"
+        />
+    </data>
+</odoo>

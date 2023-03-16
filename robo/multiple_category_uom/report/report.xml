@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="invoice_report_secondary_uom" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//span[@t-field='l.print_qty']" position="replace">
+                <span t-field="l.print_secondary_uom_qty"/>
+            </xpath>
+            <!--<xpath expr="//span[@t-field='l.price_unit_tax_excluded']" position="replace">-->
+                <!--<span t-esc="formatLang(l.secondary_uom_price_unit_tax_excluded, 2, o.partner_lang)"/>-->
+            <!--</xpath>-->
+            <xpath expr="//span[@t-field='l.uom_id']" position="replace">
+                <span t-if="o.invoice_type == 'invoice'" t-field="l.secondary_uom_id"
+                      groups="product.group_uom"/>
+            </xpath>
+            <!--<xpath expr="//span[@t-field='l.price_unit_tax_included_discount']" position="replace">-->
+                <!--<span t-esc="formatLang(l.total_with_tax_amount / l.secondary_uom_qty, 4, o.partner_lang)"/>-->
+            <!--</xpath>-->
+            <xpath expr="//td[contains(@class, 'invoice_line_price_unit')]" position="replace">
+                <!-- TODO:This should be adpated for currencies, but currently brolis does not have invoice in foreign currencies-->
+                <td class="text-right invoice_line_price_unit">
+                    <t t-if='incl_vat'>
+                        <span t-esc="formatLang(l.total_with_tax_amount / l.secondary_uom_qty, 4, o.partner_lang)"/>
+                    </t>
+                    <t t-else="">
+                        <span t-esc="formatLang(l.secondary_uom_price_unit_tax_excluded, 2, o.partner_lang)"/>
+                    </t>
+                </td>
+            </xpath>
+        </template>
+        <template id="delivery_secondary_uom" inherit_id="sl_general_report.report_delivery_document">
+            <xpath expr="//span[@t-field='move.product_uom_qty']" position="replace">
+                <span t-field="move.secondary_uom_qty"/>
+            </xpath>
+            <xpath expr="//span[@t-field='move.product_uom']" position="replace">
+                <span t-field="move.secondary_uom_id"/>
+            </xpath>
+            <xpath expr="//table[@t-if='o.pack_operation_ids']//span[@t-field='pack_operation.qty_done']/../.."
+                   position="replace">
+                <td class="text-right">
+                    <span t-field="pack_operation.secondary_uom_qty"/>
+                    <span t-field="pack_operation.secondary_uom_id"/>
+                </td>
+            </xpath>
+        </template>
+        <template id="sale_quotation_multiple_uom" inherit_id="robo_stock.template_sale_offer">
+            <xpath expr="//span[@t-field='l.product_uom_qty']/.."
+                   position="replace">
+                <td class="text-right">
+                    <span t-field="l.secondary_uom_qty"/>
+                    <span t-field="l.secondary_uom_id"/>
+                </td>
+            </xpath>
+            <xpath expr="//span[@t-field='l.price_unit']" position="replace">
+                <span t-field="l.secondary_uom_price_unit"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

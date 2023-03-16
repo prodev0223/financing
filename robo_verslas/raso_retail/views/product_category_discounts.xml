@@ -1,0 +1,200 @@
+<odoo>
+    <data>
+        <record id="raso_group_discounts_tree" model="ir.ui.view">
+            <field name="name">product.category.discounts.tree</field>
+            <field name="model">product.category.discounts</field>
+            <field name="arch" type="xml">
+                 <tree decoration-warning="need_to_update"
+                       decoration-danger="not category_id"
+                       decoration-success="category_id"
+                       string="Mokėjimai" create="1" edit="1" delete="1">
+                     <field name="category_id"/>
+                     <field name="shop_id"/>
+                     <field name="sum_from"/>
+                     <field name="sum_to"/>
+                     <field name="name"/>
+                     <field name="status"/>
+                     <field name="discount_for_groups"/>
+                     <field name="based_on_time"/>
+                     <field name="sale_forbidden"/>
+                     <field name="card_required"/>
+                     <field name="dic_type"/>
+                     <field name="weekdays"/>
+                     <field name="starts_at"/>
+                     <field name="revision_number_display"/>
+                     <field name="need_to_update"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="raso_group_discounts_action" model="ir.actions.act_window">
+            <field name="name">Produktų kategorijų nuolaidos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.category.discounts</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="raso_group_discounts_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="raso_group_discounts_form" model="ir.ui.view">
+            <field name="name">product.category.discounts.form</field>
+            <field name="model">product.category.discounts</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Mokėjimai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="import_category_discounts" type="object" string="Importuoti į RASO" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    </header>
+                    <field name="last_update_state" invisible="1"/>
+                    <field name="importable_to_raso" invisible="1"/>
+                    <field name="need_to_update" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'waiting'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Laukiama atsakymo paskutiniam importuotam įrašui</h4></div>
+                    </div>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('need_to_update', '=', False)]}">
+                        <div><h4>Įrašo versija naujesnė nei RASO serveryje</h4></div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'rejected'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Paskutinis importas į RASO serverį buvo atmestas</h4></div>
+                    </div>
+                    <sheet>
+                    <div>
+                        <label string="Nuolaidos pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline" required="1"/>
+                        </h1>
+                    </div>
+                        <group>
+                    <field name="category_id" readonly="1"/>
+                    <field name="status"/>
+                    <field name="shop_id"/>
+                    <field name="all_shop_discount"/>
+                    <field name="sum_from"/>
+                    <field name="sum_to"/>
+                    <field name="discount"/>
+                    <field name="status"/>
+                    <field name="discount_for_groups"/>
+                    <field name="based_on_time"/>
+                    <field name="sale_forbidden"/>
+                    <field name="card_required"/>
+                    <field name="weekdays"/>
+                    <field name="starts_at"/>
+                    <field name="ends_at"/>
+                        </group>
+                         <group string="Raso Importas">
+                            <field name="revision_number_display"/>
+                            <field name="raso_revision"/>
+                         </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="raso_group_discounts_form_back" model="ir.ui.view">
+            <field name="name">product.category.discounts.form</field>
+            <field name="model">product.category.discounts</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="import_category_discounts" type="object" string="Importuoti į RASO" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    </header>
+                    <field name="last_update_state" invisible="1"/>
+                    <field name="importable_to_raso" invisible="1"/>
+                    <field name="need_to_update" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'waiting'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Laukiama atsakymo paskutiniam importuotam įrašui</h4></div>
+                    </div>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('need_to_update', '=', False)]}">
+                        <div><h4>Įrašo versija naujesnė nei RASO serveryje</h4></div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'rejected'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Paskutinis importas į RASO serverį buvo atmestas</h4></div>
+                    </div>
+                    <sheet>
+                    <div>
+                        <label string="Nuolaidos pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline" required="1"/>
+                        </h1>
+                    </div>
+                        <group>
+                    <field name="category_id"/>
+                    <field name="status"/>
+                    <field name="shop_id"/>
+                    <field name="all_shop_discount"/>
+                    <field name="sum_from"/>
+                    <field name="sum_to"/>
+                    <field name="discount"/>
+                    <field name="status"/>
+                    <field name="discount_for_groups"/>
+                    <field name="based_on_time"/>
+                    <field name="sale_forbidden"/>
+                    <field name="card_required"/>
+                    <field name="weekdays"/>
+                    <field name="starts_at"/>
+                    <field name="ends_at"/>
+                        </group>
+                         <group string="Raso Importas">
+                            <field name="revision_number_display"/>
+                            <field name="raso_revision"/>
+                         </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Functions-->
+        <record model="ir.actions.server" id="import_group_discounts_action_rec">
+            <field name="name">Importuoti kategorijų nuolaidas į RASO</field>
+            <field name="model_id" ref="raso_retail.model_product_category_discounts"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).import_category_discounts()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="import_group_discounts_action" model="product.category.discounts"/>
+        <!--Searches-->
+        <record id="raso_product_category_discounts_filter" model="ir.ui.view">
+            <field name="name">raso.product.category.discounts.filter</field>
+            <field name="model">product.category.discounts</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="card_required" domain="[('card_required','=', True)]" string='Reikalinga lojalumo kortelė'/>
+                    <filter name="card_required" domain="[('card_required','=', False)]" string='Nereikalinga lojalumo kortelė'/>
+                    <separator/>
+                    <field name="name" filter_domain="[('name','ilike',self)]"/>
+                    <field name="category_id"/>
+                    <field name="shop_id"/>
+                    <separator/>
+                    <field name="starts_at" string="Data nuo (Galiojimo pradžia)" filter_domain="[('starts_at', '&gt;=', self)]"/>
+                    <field name="starts_at" string="Data iki (Galiojimo pradžia)" filter_domain="[('starts_at', '&lt;=', self)]"/>
+                    <field name="ends_at" string="Data nuo (Galiojimo pabaiga)" filter_domain="[('ends_at', '&gt;=', self)]"/>
+                    <field name="ends_at" string="Data iki (Galiojimo pabaiga)" filter_domain="[('ends_at', '&lt;=', self)]"/>
+                    <group>
+                        <filter name="group_product_id" string="Produktas" context="{'group_by':'product_id'}"/>
+                        <filter name="group_shop_id" string="Parduotuvė" context="{'group_by':'shop_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

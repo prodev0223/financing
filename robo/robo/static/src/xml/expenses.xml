@@ -1,0 +1,82 @@
+<template>
+
+    <t t-name="DragDropXML">
+
+
+        <a t-if="widget.get('effective_readonly')" href="javascript:void(0)" class="o__form_uri">
+            <div class="dragDropClass">
+                <span/>
+                <div class="dragDropinnerbox" id="robo-expense-upload">
+                    <span class="dragDropText">Prisekite failą</span>
+                </div>
+            </div>
+        </a>
+        <div t-if="!widget.get('effective_readonly')" class="o_form_field_binary_file">
+            <div class="dragDropClass">
+                <span/>
+                <div class="dragDropinnerbox" id="robo-expense-upload">
+                    <span class="dragDropText">Nutempkite arba <a href="javascript:void(0)" class="open-file o_select_file_button">pasirinkite</a> dokumentą</span>
+                    <a href="javascript:void(0)"><i class="lnr lnr-trash o_clear_file_button"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <t t-call="robo.HiddenInputFile">
+            <t t-set="fileupload_id" t-value="widget.fileupload_id"/>
+            <t t-set="fileupload_style" t-translation="off">overflow-x: hidden</t>
+        </t>
+
+    </t>
+
+
+    <t t-name="robo.HiddenInputFile">
+        <div t-attf-class="o_hidden_input_file #{fileupload_class or ''}" t-att-style="fileupload_style">
+            <form class="o_form_binary_form" t-att-target="fileupload_id"
+                  method="post" enctype="multipart/form-data" t-att-action="fileupload_action || '/web/binary/upload'">
+                <input type="hidden" name="csrf_token" t-att-value="csrf_token"/>
+                <input type="hidden" name="session_id" value="" t-if="widget.session.override_session"/>
+                <input type="hidden" name="callback" t-att-value="fileupload_id"/>
+                <input type="file" class="o_form_input_file" name="ufile" accept="application/pdf,image/*" />
+                <input t-if="widget.widget=='image'" type="file" class="o_form_input_file" name="ufile" accept="image/*"/>
+                <t t-raw="0"/>
+            </form>
+            <iframe t-att-id="fileupload_id" t-att-name="fileupload_id" style="display: none"/>
+        </div>
+    </t>
+
+    <t t-extend="robo.HiddenInputFile" t-name="robo.HiddenInputPDFFile">
+        <t t-jquery="input[type='file']:first" t-operation="replace">
+            <input type="file" class="o_form_input_file" name="ufile" accept="image/*" />
+        </t>
+    </t>
+
+     <t t-name="filemime">
+        <div class="file-mime" style="margin-top: -15px;">
+            <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(mime)"/>
+            <div t-if="!webimage" class="o_image decrease-picture" t-att-data-mimetype="mime"/>
+            <div t-if="webimage" class="o_image decrease-picute" data-mimetype="image"/>
+        </div>
+     </t>
+
+
+    <t t-name="RecentExpenses">
+        <t t-call="RecentDataBoxes">
+            <div class="box-template box-expense r-cursor create-record">
+                <div class="create-new-text">
+                    <i class="lnr lnr-plus-circle"></i>
+                    <span>Naujos išlaidos</span>
+                </div>
+            </div>
+            <div t-attf-data-id="{{record.id}}" class="box-active box-expense box-face r-cursor" t-foreach="records" t-as="record">
+                <div class="box-content">
+                    <div class="expense-product r-truncate"><t t-esc="record.name"/></div>
+                    <div class="expense-employee r-truncate"><t t-esc="record.employee_id[1] or ''"/></div>
+                    <div class="expense-date r-truncate"><t t-esc="record.date or ''"/></div>
+                    <div class="expense-amount"><t t-esc="format(record.total_amount)"/><t t-esc="' ' + record.currency_id[1]"/></div>
+                </div>
+                <span t-attf-class="{{stateClass[record.state]}}"><t t-esc="stateNames[record.state]"/></span>
+            </div>
+        </t>
+    </t>
+
+</template>

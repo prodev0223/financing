@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="robo.webclient_bootstrap_sub_menu"
+              inherit_id="robo_theme_v10.webclient_bootstrap"
+              name="App Drawer - Web Client">
+        <xpath expr="//div[@class='o_main']" position="replace">
+            <div class="o_main">
+                <div class="o_sub_menu user super-hide" groups="base.group_user,base.group_portal">
+                    <t t-call="robo.menu_secondary_left"/>
+                </div>
+                <div class="o_main_content"/>
+            </div>
+        </xpath>
+    </template>
+
+
+    <template id="robo.menu_secondary_left">
+        <div class="o_sub_menu_logo"/>
+        <div class="o_sub_menu_content">
+            <t t-foreach="menu_data['children']" t-as="menu">
+                <t t-if="menu['name'] in ['Robo Vadovas', 'Robo Manager']">
+                    <ul style="display: none" class="oe_secondary_menu nav navbar-nav "
+                        t-att-data-menu-parent="menu['id']">
+                        <li>
+                            <t t-call="web.menu_secondary_submenu">
+                               <t t-set="robo_menu" t-value="True"/>
+                            </t>
+                        </li>
+                    </ul>
+                </t>
+            </t>
+        </div>
+        <div class="o_sub_menu_footer">
+                <div class="robo-menu-fit-icons">
+                    <span class="icon-backward-circle robo-menu-icon robo-menu-fit-icon" style="float: none"></span>
+                    <span class="icon-forward-circle robo-menu-icon robo-menu-fit-icon" style="float: none"></span>
+                </div>
+                <div class="robo-help-menu">
+                    <div class="robo-help-icon">
+                        <span class="icon-lifebuoy robo-menu-icon"></span>
+                    </div>
+                    <div class="robo-menu-name">
+                        <p>Pagalba</p>
+                    </div>
+                    <span class="robo-a-clear-fix"></span>
+                </div>
+
+                <div class="robo_copyright">
+                    <i class="fa fa-copyright" aria-hidden="true"></i>
+                    <script type="text/javascript">
+                      document.write(new Date().getFullYear());
+                    </script> UAB „Robolabs“
+                </div>
+        </div>
+    </template>
+
+
+</odoo>

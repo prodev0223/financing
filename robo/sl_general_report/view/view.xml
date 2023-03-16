@@ -1,0 +1,314 @@
+<odoo>
+    <data>
+        <record id="accounting_report_view_extend" model="ir.ui.view">
+            <field name="name">accounting.report.extend</field>
+            <field name="model">accounting.report</field>
+            <field name="inherit_id" ref="account.accounting_report_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="before">
+                    <field name="balance_hierarchy_warning" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('balance_hierarchy_warning', '=', False)]}">
+                        Pasirinkus didesnį hierarchijos lygį nei 1, balanso eksportavimas
+                        Excel formatu yra neleidžiamas.
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='target_move']" position="after">
+                    <field name="display_account" widget="radio"/>
+                    <field name="hierarchy_level"/>
+                </xpath>
+                <xpath expr="//button[@name='check_report']" position="before">
+                    <button name="xls_export" string="Export" type="object" class="oe_highlight"
+                            attrs="{'invisible': [('balance_hierarchy_warning', '=', True)]}"
+                            context="{'xls_report': True}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_report_general_ledger_view_extend" model="ir.ui.view">
+            <field name="name">account.report.general.ledger.view.extend</field>
+            <field name="model">account.report.general.ledger</field>
+            <field name="inherit_id" ref="account.account_report_general_ledger_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='initial_balance']" position="after">
+                    <field name="display_partner" widget="radio"/>
+                </xpath>
+                <xpath expr="//field[@name='target_move']" position="before">
+                    <field name="detail_level"/>
+                </xpath>
+                <xpath expr="//field[@name='sortby']" position="attributes">
+                    <attribute name="invisible">[('detail_level', '=', 'sum')]</attribute>
+                </xpath>
+                <xpath expr="//button[@name='check_report']" position="before">
+                    <button name="xls_export" string="Export" type="object" class="oe_highlight"
+                            context="{'xls_report': True}"/>
+                </xpath>
+                <xpath expr="//field[@name='journal_ids']" position="after">
+                    <group col="2">
+                        <field name="filtered_account_ids" attrs="{'invisible': [('display_account','!=','filter')], 'required': [('display_account','=','filter')]}" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="filtered_partner_ids" attrs="{'invisible': [('display_partner','!=','filter')], 'required': [('display_partner','=','filter')]}" widget="many2many_tags" options="{'no_create': True}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_report_balance_view_extend" model="ir.ui.view">
+            <field name="name">account.report.balance.view.extend</field>
+            <field name="model">account.balance.report</field>
+            <field name="inherit_id" ref="account.account_report_balance_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='check_report']" position="before">
+                    <button name="xls_export" string="Export" type="object" class="oe_highlight"
+                            context="{'xls_report': True}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_aged_balance_view_extend" model="ir.ui.view">
+            <field name="name">account.aged.balance.view.extend</field>
+            <field name="model">account.aged.trial.balance</field>
+            <field name="inherit_id" ref="account.account_aged_balance_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='check_report']" position="before">
+                    <button name="xls_export" string="Export" type="object" class="oe_highlight"
+                            context="{'xls_report': True}"/>
+                </xpath>
+                <xpath expr="//field[@name='target_move']" position="after">
+                    <field name="display_partner" string="Filtruoti partnerius" widget="radio"/>
+                    <field name="filtered_partner_ids" attrs="{'invisible': [('display_partner','!=','filter')], 'required': [('display_partner','=','filter')]}" widget="many2many_tags" options="{'no_create': True}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_move_line_report_search" model="ir.ui.view">
+            <field name="name">account.move.line.report.search</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <search string="Accounting Analysis">
+                    <field name="name"/>
+                    <field name="ref"/>
+                    <field name="date"/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="account_id"/>
+                    <field name="journal_id"/>
+                    <filter name="posted" string="Posted" domain="[('move_id.state','=','posted')]"/>
+                    <filter name="unposted" string="Draft" domain="[('move_id.state','!=','posted')]"/>
+                    <separator/>
+                    <filter name="reconciled" string="Reconciled" domain="[('reconciled','=',True)]"/>
+                    <filter name="unreconciled" string="Unreconciled" domain="['&amp;', ('reconciled','=',False), ('account_id.reconcile', '=', True)]"/>
+                    <separator/>
+                    <filter name="no_invoice" string="Neturi sąskaitos faktūros" domain="[('invoice_id','=',False)]" groups="robo_basic.group_robo_premium_manager"/>
+                    <separator/>
+                    <filter string="Šie metai" name="thisyear"
+                            domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', time.strftime('%Y-12-31')),('date','&gt;=',time.strftime('%Y-01-01'))]"
+                            help=""/>
+                    <filter name="current_month" string="Šis mėnuo"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(months=-1,day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="last_two_months" string="Paskutiniai 2 mėnesiai"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(years=1, month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter name="debit" string="Debit &gt; 0" domain="[('debit','&gt;',0)]"/>
+                    <filter name="credit" string="Credit &gt; 0" domain="[('credit','&gt;',0)]"/>
+                    <separator/>
+                    <filter name="ar_debts" string="AR debts"
+                            domain="['&amp;',('account_id.user_type_id','=',1), ('amount_residual', '&gt;', 0)]"/>
+                    <filter name="ar_payments" string="AR payments"
+                            domain="['&amp;',('account_id.user_type_id','=',1), ('amount_residual', '&lt;', 0)]"/>
+                    <filter name="ap_debts" string="AP debts"
+                            domain="['&amp;',('account_id.user_type_id','=',2), ('amount_residual', '&lt;', 0)]"/>
+                    <filter name="ap_payments" string="AP payments"
+                            domain="['&amp;',('account_id.user_type_id','=',2), ('amount_residual', '&gt;', 0)]"/>
+
+                    <separator/>
+                    <filter name="due" string="Due"
+                            domain="['&amp;','&amp;','&amp;',('date_maturity', '&lt;=', context_today().strftime('%Y-%m-%d')), ('account_id.user_type_id','in',(1,2)), ('reconciled', '=', False), ('amount_residual', '!=', 0)]"/>
+                    <separator/>
+                    <field name="product_id"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Partner" name="partner_id"
+                                context="{'group_by':'partner_id','residual_visible':True}"/>
+                        <filter string="Account" name="group_account_id" context="{'group_by':'account_id'}"/>
+                        <separator/>
+                        <filter string="Date Month" context="{'group_by':'date:month'}"/>
+                        <filter name="cashlow_activity" string="Cashflow Activity"
+                                context="{'group_by':'cashflow_activity_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="view_account_move_line_report_search_front" model="ir.ui.view">
+            <field name="name">account.move.line.report.search</field>
+            <field name="model">account.move.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="ref"/>
+                    <field name="date"/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="account_id"/>
+<!--                    <field name="account_code"/>-->
+                    <field name="journal_id"/>
+                    <filter name="posted" string="Užregistruota" domain="[('move_id.state','=','posted')]"/>
+                    <filter name="unposted" string="Neužregistruota" domain="[('move_id.state','!=','posted')]"/>
+                    <separator/>
+                    <filter name="reconciled" string="Sudengta" domain="[('reconciled','=',True)]"/>
+                    <filter name="unreconciled" string="Nesudengta" domain="['&amp;', ('reconciled','=',False), ('account_id.reconcile', '=', True)]"/>
+                    <separator/>
+                    <filter name="no_invoice" string="Neturi sąskaitos faktūros" domain="[('invoice_id','=',False)]" groups="robo_basic.group_robo_premium_manager"/>
+                    <separator/>
+                    <filter string="Šie metai" name="thisyear"
+                            domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', time.strftime('%Y-12-31')),('date','&gt;=',time.strftime('%Y-01-01'))]"
+                            help=""/>
+                    <filter name="current_month" string="Šis mėnuo"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(months=-1,day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="last_two_months" string="Paskutiniai 2 mėnesiai"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(years=1, month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter name="debit" string="Debetas &gt; 0" domain="[('debit','&gt;',0)]"/>
+                    <filter name="credit" string="Kreditas &gt; 0" domain="[('credit','&gt;',0)]"/>
+                    <separator/>
+                    <filter name="ar_debts" string="AR Skolos"
+                            domain="['&amp;',('account_id.user_type_id','=',1), ('amount_residual', '&gt;', 0)]"/>
+                    <filter name="ar_payments" string="AR Mokėjimai"
+                            domain="['&amp;',('account_id.user_type_id','=',1), ('amount_residual', '&lt;', 0)]"/>
+                    <filter name="ap_debts" string="AP Skolos"
+                            domain="['&amp;',('account_id.user_type_id','=',2), ('amount_residual', '&lt;', 0)]"/>
+                    <filter name="ap_payments" string="AP Mokėjimai"
+                            domain="['&amp;',('account_id.user_type_id','=',2), ('amount_residual', '&gt;', 0)]"/>
+
+                    <separator/>
+                    <filter name="due" string="Mokėjimo terminas"
+                            domain="['&amp;','&amp;','&amp;',('date_maturity', '&lt;=', context_today().strftime('%Y-%m-%d')), ('account_id.user_type_id','in',(1,2)), ('reconciled', '=', False), ('amount_residual', '!=', 0)]"/>
+                    <separator/>
+                    <field name="product_id"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Partneris" name="partner_id"
+                                context="{'group_by':'partner_id','residual_visible':True}"/>
+                        <filter string="Sąskaita" name="group_account_id" context="{'group_by':'account_id'}"/>
+                        <separator/>
+                        <filter string="Mėnuo" context="{'group_by':'date:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="view_account_move_line_report_pivot" model="ir.ui.view">
+            <field name="name">view.account.move.line.report.pivot</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <pivot string="Accounting Analysis" disable_linking="True">
+                    <field name="date" type="col"/>
+                    <field name="credit" type="measure"/>
+                    <field name="debit" type="measure"/>
+                    <field name="balance" type="measure"/>
+                    <field name="cashflow_balance" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="action_account_move_line_report_all" model="ir.actions.act_window">
+            <field name="name">Accounting Analysis</field>
+            <field name="res_model">account.move.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="context">{'search_default_year': 1,
+                'search_default_current_month': 1,
+                'search_default_posted': True}
+            </field>
+            <field name="search_view_id" ref="view_account_move_line_report_search"/>
+            <field name="help">From this report, you can have an overview of all your account movement.</field>
+        </record>
+        <record id="account_move_line_report_chart_view" model="ir.ui.view">
+            <field name="name">account.move.line.chart.report</field>
+            <field name="model">account.move.line</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <pivot disable_linking="1">
+                    <field name="account_id" type="row"/>
+                    <field name="amount_residual" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="action_account_move_line_income_chart" model="ir.actions.act_window">
+            <field name="name">Apskaitos analizė</field>
+            <field name="res_model">account.move.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="account_move_line_report_chart_view"/>
+            <field name="context">{'search_default_posted': True, 'search_default_unreconciled': True, 'search_default_no_invoice': True}
+            </field>
+            <field name="domain" eval="[('user_type_id', '=', ref('account.data_account_type_receivable'))]"/>
+            <field name="search_view_id" ref="view_account_move_line_report_search_front"/>
+            <field name="robo_front" eval="True"/>
+            <field name="help">From this report, you can have an overview of all your account movement.</field>
+        </record>
+        <record id="action_account_move_line_expense_chart" model="ir.actions.act_window">
+            <field name="name">Apskaitos analizė</field>
+            <field name="res_model">account.move.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="robo_front" eval="True"/>
+            <field name="view_id" ref="account_move_line_report_chart_view"/>
+            <field name="context">{'search_default_posted': True, 'search_default_unreconciled': True, 'search_default_no_invoice': True}
+            </field>
+            <field name="domain" eval="[('user_type_id', '=', ref('account.data_account_type_payable'))]"/>
+            <field name="search_view_id" ref="view_account_move_line_report_search_front"/>
+            <field name="help">From this report, you can have an overview of all your account movement.</field>
+        </record>
+
+        <menuitem name="Accounting" action="action_account_move_line_report_all"
+                  id="menu_action_account_move_line_report_all"
+                  parent="account.account_reports_business_intelligence_menu" sequence="21"/>
+        <record id="view_account_form_extend" model="ir.ui.view">
+            <field name="name">view.account.form.extend</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+                <!--Hiding default project STATUS choices and adding a new one -->
+                <xpath expr="//field[@name='deprecated']" position="after">
+                    <field name="cashflow_activity_id" widget="selection"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="base.action_partner_customer_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+        </record>
+        <record id="base.action_partner_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('base.view_partner_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('base.view_partner_form')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('base.res_partner_kanban_view')})]"/>
+        </record>
+        <record id="base.action_partner_supplier_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+        </record>
+        <record id="account_report_partner_ledger_view_extend" model="ir.ui.view">
+            <field name="name">accounting.report.extend</field>
+            <field name="model">account.report.partner.ledger</field>
+            <field name="inherit_id" ref="account.account_report_partner_ledger_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='check_report']" position="before">
+                    <button name="xls_export" string="Export" type="object" class="oe_highlight"
+                            context="{'xls_report': True}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_report_print_journal_view_extend" model="ir.ui.view">
+            <field name="name">accounting.report.print.journal.extend</field>
+            <field name="model">account.print.journal</field>
+            <field name="inherit_id" ref="account.account_report_print_journal_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='check_report']" position="before">
+                    <button name="xls_export" string="Export" type="object" class="oe_highlight"
+                            context="{'xls_report': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_asset_view" model="ir.ui.view">
+            <field name="name">account.asset.asset.form.extend</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_asset_form"/>
+            <field name="arch" type="xml">
+                <!--REPLACE THE WHOLE FORM DUE TO MANY CHANGES-->
+                <xpath expr="//form" position="replace">
+                    <form string="Asset">
+                        <header>
+                            <button name="validate" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+                            <button name="action_self_production" string="Self-production" type="object"
+                                    attrs="{'invisible': ['|',('invoice_id','!=',False),('state','!=','draft')]}"/>
+                            <button type="object" name="compute_depreciation_board" string="Compute Depreciation"
+                                    states="draft"/>
+                            <field name="written_off_or_sold" invisible="1"/>
+                            <button name="action_set_to_close" type="object" string="Write Off"
+                                    attrs="{'invisible':[('written_off_or_sold', '=', True)]}"/>
+                            <button name="set_to_draft" string="Set to Draft" type="object"
+                                    attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                            <button name="%(account_asset.action_asset_modify)d" string="Revaluate Asset" states="open" type="action"
+                                    attrs="{'invisible':['|', ('method','!=','linear')]}"/>
+                            <button name="force_close" type="object" string="Close"
+                                    help="Closes the asset without creating entries, so that they can be created manually.
+                            It is used for special cases"
+                                    confirm="Are you sure you want to close this asset without creating other entries?"
+                                    states="open"/>
+                            <field name="state" widget="statusbar" statusbar_visible="draft,open"/>
+                        </header>
+                        <sheet>
+                            <div class="oe_button_box" name="button_box">
+                                <button class="oe_stat_button" name="open_entries" type="object" icon="fa-pencil">
+                                    <field string="Items" name="entry_count" widget="statinfo"/>
+                                </button>
+                            </div>
+                            <div class="oe_title">
+                                <label for="name" class="oe_edit_only"/>
+                                <h1>
+                                    <field name="name" placeholder="e.g. Laptop iBook"/>
+                                </h1>
+                            </div>
+                            <field name="type" invisible="1"/>
+                            <field name="currency_id" groups="base.group_multi_currency" invisible="1"/>
+                            <field name="company_id" options="{'no_create': True}"
+                                           groups="base.group_multi_company"/>
+                            <group colspan="4" col="4">
+                                <group colspan="4" col="4" string="Pagrindinė informacija">
+                                    <field name="pirkimo_data"/>
+                                    <field name="date_close" states="close"/>
+                                    <field name="date" help="Date of asset"/>
+                                    <field name="date_first_depreciation"/>
+                                    <field name="category_id" domain="[('type', '=', 'purchase')]"
+                                           context="{'default_type': 'purchase'}" help="Category of asset"/>
+                                    <field name="code"/>
+                                    <field name="invoice_id" string="Invoice" options="{'no_create': True}"/>
+                                    <field name="partner_id" string="Vendor" domain="[('supplier', '=', True)]"/>
+                                    <field name="account_analytic_id"
+                                           string="Analitinė sąskaita"
+                                           groups="analytic.group_analytic_accounting"
+                                           options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="asset_department_id"/>
+                                </group>
+                                <group colspan="4" col="3" string="Materialinė informacija">
+                                    <group colspan="3" col="4">
+                                        <field name="salvage_value" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"
+                                           attrs="{'invisible': [('type','=','sale')]}"/>
+                                        <field name="historical_change_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    </group>
+                                    <group colspan="1" col="2" string="Originalios reikšmės">
+                                        <field name="original_quantity"/>
+                                        <field name="original_value" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="original_price_unit" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    </group>
+                                    <group colspan="1" col="2" string="Pradinės reikšmės">
+                                        <field name="quantity"/>
+                                        <field name="value" widget="monetary" options="{'currency_field': 'currency_id'}"
+                                           help="Gross value of asset"/>
+                                        <field name="price_unit" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    </group>
+                                    <group colspan="1" col="2" string="Likutinės reikšmės">
+                                        <field name="residual_quantity"/>
+                                        <field name="value_residual_effective" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <!--<field name="total_value_residual" widget="monetary" options="{'currency_field': 'currency_id'}"/>-->
+                                        <field name="residual_price_unit" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="current_value" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    </group>
+                                </group>
+                                <group colspan="4" col="3" style="margin-top: 0">
+                                    <group colspan="1" col="2" style="margin-top: 0">
+                                        <span style="color: gray; text-align: justify" col="1" colspan="2">
+                                            Pradinės įsigyjimo reikšmės. Naudojamos pradinei informacijai pateikti,
+                                            nenaudojamos skaičiavimuose.
+                                        </span>
+                                    </group>
+                                    <group colspan="1" col="2" style="margin-top: 0">
+                                        <span style="color: gray; text-align: justify" col="1" colspan="2">
+                                            Reikšmės, nuo kurių atliekami skaičiavimai, perkainavimai ir kita.
+                                            Dažniausiai sutampa su originaliomis reikšmėmis, nebent ilgalaikio turto
+                                            įrašas buvo perimtas iš kitos buhalterijos (trūksta nusidėvėjimo
+                                            informacijos ar panašiai).
+                                        </span>
+                                    </group>
+                                    <group colspan="1" col="2" style="margin-top: 0">
+                                        <span style="color: gray; text-align: justify" col="1" colspan="2">
+                                            Reikšmės, galiojančios šiuo metu, po visų nudėvėjimų, perkainavimų ir kitų
+                                            vertės pokyčių.
+                                        </span>
+                                    </group>
+                                </group>
+                            </group>
+                            <notebook colspan="4">
+                                <page string="Depreciation Board">
+                                    <field name="depreciation_line_ids" mode="tree"
+                                           options="{'reload_whole_on_button': true}" readonly="1">
+                                        <tree string="Depreciation Lines" decoration-info="(move_check == False)"
+                                              create="false" edit="false" delete="false">
+                                            <field name="depreciation_date"/>
+                                            <field name="account_analytic_id" string="Analitinė sąskaita"
+                                                   groups="analytic.group_analytic_accounting"
+                                                   options="{'no_create': True, 'no_open': True}"/>
+                                            <field name="amount" widget="monetary" string="Nudėvėjimas" readonly="1"/>
+                                            <field name="is_amount_not_by_norm" invisible="1"/>
+                                            <field name="amount_not_by_norm" widget="monetary"
+                                                   string="Nudėvėjimas (Ne pagal normą)" readonly="1"
+                                                   attrs="{'invisible': [('is_amount_not_by_norm', '!=', True)]}"/>
+                                            <field name="revaluation_depreciation" widget="monetary"
+                                                   string="Nudėvėjimas (perkainavimo)" readonly="1"/>
+                                            <field name="depreciated_value" readonly="1" string="Nudėvėta"/>
+                                            <field name="revaluation_total_depreciated_amount" readonly="1"
+                                                   string="Nudėvėta (perkainavimo)"/>
+                                            <field name="remaining_value"/>
+                                            <field name="remaining_revaluation_value"/>
+                                            <field name="total_amount_to_be_depreciated"/>
+
+
+                                            <field name="move_check" invisible="1"/>
+                                            <field name="move_posted_check" invisible="1"/>
+                                            <field name="parent_state" invisible="1"/>
+                                            <button name="create_move" type="object" widget="widgetonbutton"/>
+                                        </tree>
+                                        <form string="Depreciation Lines">
+                                            <group readonly="1">
+                                                <group>
+                                                    <field name="parent_state" invisible="1"/>
+                                                    <field name="name"/>
+                                                    <field name="sequence"/>
+                                                    <field name="move_id"/>
+                                                    <field name="move_check"/>
+                                                    <field name="parent_state" invisible="1"/>
+                                                </group>
+                                                <group>
+                                                    <field name="amount" widget="monetary"/>
+                                                    <field name="depreciation_date"/>
+                                                    <field name="account_analytic_id" string="Analitinė sąskaita"
+                                                           groups="analytic.group_analytic_accounting"
+                                                           options="{'no_create': True, 'no_open': True}"/>
+                                                    <field name="depreciated_value"/>
+                                                    <field name="remaining_value"/>
+                                                </group>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </page>
+                                <page string="Depreciation Information">
+                                    <group>
+                                        <field name="method" widget="radio"
+                                               attrs="{'invisible': [('type','=','sale')]}"/>
+                                        <field name="method_progress_factor"
+                                               attrs="{'invisible':[('method','in',['linear', 'cant_be_depreciated'])], 'required':[('method','=','degressive')]}"/>
+                                        <field name="method_time" string="Time Method Based On" widget="radio"
+                                               attrs="{'invisible': ['|', ('type','!=','purchase'), ('method', '=', 'cant_be_depreciated')]}"/>
+                                        <field name="account_depreciation_id"/>
+                                        <field name="account_asset_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="method_number" string="Mėnesių skaičius"
+                                               attrs="{'invisible':['|', ('method_time','=','end'), ('method', '=', 'cant_be_depreciated')], 'required':[
+                                               ('method_time','=','number'), ('method', '!=', 'cant_be_depreciated')]}"/>
+                                        <field name="method_end"
+                                               attrs="{'required': [('method_time','=','end'), ('method', '!=', 'cant_be_depreciated')], 'invisible':['|', ('method_time','=','number'), ('method', '=', 'cant_be_depreciated')]}"/>
+                                        <field name="is_depreciated_not_by_norm" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                        <field name="method_number_not_by_norm"
+                                               attrs="{'invisible': [('is_depreciated_not_by_norm', '=', False)],
+                                                       'readonly': [('state', '!=', 'draft')],
+                                                       'required': [('is_depreciated_not_by_norm', '=', True)]}"/>
+                                    </group>
+                                </page>
+                                <page string="Material Responsibility" name="page_responsible">
+                                    <group>
+                                        <group>
+                                            <button name="action_add_responsible" string="Assign new employee"
+                                                    type="object"/>
+                                        </group>
+                                        <group colspan="4" col="4">
+                                            <field name="responsible_employee_id"/>
+                                            <field name="responsible_date"/>
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <field name="responsible_history" nolabel="1">
+                                            <tree>
+                                                <field name="employee_id"/>
+                                                <field name="date"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </page>
+                                <page name="revaluation_history" string="Revaluation History"
+                                      attrs="{'invisible': [('revaluation_history_ids', '=', [])]}">
+                                    <field name="revaluation_history_ids">
+                                        <tree open="false">
+                                            <field name="date" readonly="1"/>
+                                            <field name="name" readonly="1"/>
+                                            <field name="old_value" readonly="1"/>
+                                            <field name="new_value" readonly="1"/>
+                                            <field name="value_difference" readonly="1"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page name="change" string="Pagerinimai">
+                                    <button name="action_change_value" string="Pakeisti vertę" type="object"
+                                            states="open"/>
+                                    <group>
+                                        <field name="change_line_ids" nolabel="1">
+                                            <tree editable="bottom">
+                                                <field name="date"/>
+                                                <field name="change_amount"/>
+                                                <field name="method_number"/>
+                                                <field name="comment"/>
+                                            </tree>
+                                            <form>
+                                                <group>
+                                                    <field name="date"/>
+                                                    <field name="change_amount"/>
+                                                    <field name="invoice_ids" create="False"
+                                                           attrs="{'invisible': [('invoice_ids', '=', [])]}"/>
+                                                    <field name="invoice_line_ids" create="False"
+                                                           attrs="{'invisible': [('invoice_line_ids', '=', [])]}"/>
+                                                    <field name="method_number"/>
+                                                    <field name="comment"/>
+                                                </group>
+                                            </form>
+                                        </field>
+                                    </group>
+                                </page>
+                                <page name="sales" string="Pardavimai">
+                                    <button name="action_sell" string="Parduoti" type="object" states="open"/>
+                                    <group>
+                                        <field name="sale_line_ids" nolabel="1" readonly="1">
+                                            <tree create="0" editable="0" edit="0" delete="0">
+                                                <field name="date_invoice"/>
+                                                <field name="invoice_id"/>
+                                                <field name="quantity" sum="quantity"/>
+                                                <field name="price_unit"/>
+                                                <field name="price_subtotal" sum="price_subtotal"/>
+                                                <field name="state"/>
+                                            </tree>
+                                            <form create="0" edit="0">
+                                                <sheet>
+                                                    <group>
+                                                        <field name="invoice_id" context="{'form_view_ref': 'account.invoice_form'}"/>
+                                                        <field name="quantity"/>
+                                                        <field name="price_unit"/>
+                                                        <field name="price_subtotal"/>
+                                                        <field name="state"/>
+                                                    </group>
+                                                </sheet>
+                                            </form>
+                                        </field>
+                                    </group>
+                                </page>
+                                <!--TODO-->
+                                <!--<page name="split_entries" string="Išskaidymai">-->
+                                    <!--<button name="action_asset_split" string="Išskaidyti" type="object" states="open"/>-->
+                                    <!--<group>-->
+                                        <!--<field name="split_asset_ids" nolabel="1" readonly="1">-->
+                                            <!--<tree create="0" editable="0" edit="0">-->
+                                                <!--<field name="name"/>-->
+                                            <!--</tree>-->
+                                        <!--</field>-->
+                                    <!--</group>-->
+                                <!--</page>-->
+                            </notebook>
+                        </sheet>
+                        <div class="oe_chatter">
+                            <field name="message_ids" widget="robo_mail_thread"/>
+                        </div>
+                    </form>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_asset.action_account_asset_asset_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <record id="account_asset_pivot_view" model="ir.ui.view">
+            <field name="name">account.asset.pivot</field>
+            <field name="model">account.asset.asset</field>
+            <field name="arch" type="xml">
+                <pivot string="Ilgalaikis turtas">
+                    <field name="category_id" type="col"/>
+                    <field name="date" type="row"/>
+                    <field name="value" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="extend_account_asset_tree_view" model="ir.ui.view">
+            <field name="name">extend.account.asset.tree.view</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_asset_purchase_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='value']" position="replace">
+                    <field name="value_adjusted"/>
+                </xpath>
+                <xpath expr="//field[@name='value_residual']" position="replace">
+                    <field name="current_value" widget="monetary"/>
+                    <field name="residual_quantity"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="code"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="extend_account_asset_search_view" model="ir.ui.view">
+            <field name="name">extend.account.asset.search.view</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="inside">
+                    <field name="code"/>
+                    <filter name="group_responsible" string="Responsible"
+                            context="{'group_by': 'responsible_employee_id',
+                                      'pivot_column_groupby': ['responsible_date:month', 'name'],
+                                      }"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="tree_account_asset_asset_front" model="ir.ui.view">
+            <field name="name">tree.account.asset.asset.front</field>
+            <field name="model">account.asset.asset</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0" create="0" string="Ilgalaikis turtas"
+                      decoration-info="state == 'draft'"
+                      decoration-muted="state == 'close'">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="category_id"/>
+                    <field name="date"/>
+                    <field name="partner_id" string="Vendor"/>
+                    <field name="value"/>
+                    <field name="current_value" widget="monetary"/>
+                    <field name="residual_quantity"/>
+                    <field name="currency_id" groups="base.group_multi_currency"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="form_account_asset_asset_front" model="ir.ui.view">
+            <field name="name">form.account.asset.asset.front</field>
+            <field name="model">account.asset.asset</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Ilgalaikis turtas" create="0" edit="0" delete="0">
+                    <header>
+                        <button name="action_self_production" string="Ilgalaikio turto pasigaminimas" type="object"
+                                attrs="{'invisible': ['|',('invoice_id','!=',False),('state','!=','draft')]}"/>
+                        <field name="written_off_or_sold" invisible="1"/>
+                        <button name="action_set_to_close" type="object" string="Nurašyti"
+                                attrs="{'invisible':[('written_off_or_sold', '=', True)]}"/>
+                        <button name="%(account_asset.action_asset_modify)d" string="Perkainuoti turtą"
+                                states="open" type="action" attrs="{'invisible':['|', ('method','!=','linear')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,open"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="e.g. Laptop iBook"/>
+                            </h1>
+                        </div>
+                        <field name="type" invisible="1"/>
+                        <field name="currency_id" groups="base.group_multi_currency" invisible="1"/>
+                        <field name="company_id" options="{'no_create': True}"
+                               groups="base.group_multi_company"/>
+                        <group colspan="4" col="4">
+                            <group colspan="4" col="4" string="Pagrindinė informacija">
+                                <field name="pirkimo_data"/>
+                                <field name="date_close" states="close"/>
+                                <field name="date"/>
+                                <field name="date_first_depreciation"/>
+                                <field name="category_id" domain="[('type', '=', 'purchase')]"
+                                       context="{'default_type': 'purchase'}"/>
+                                <field name="code"/>
+                                <field name="invoice_id" string="Sąskaita" options="{'no_create': True}"/>
+                                <field name="partner_id" string="Tiekėjas" domain="[('supplier', '=', True)]"/>
+                                <field name="account_analytic_id"
+                                       string="Analitinė sąskaita"
+                                       groups="analytic.group_analytic_accounting"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                <field name="asset_department_id"/>
+                            </group>
+                            <group colspan="4" col="3" string="Materialinė informacija">
+                                <group colspan="3" col="4">
+                                    <field name="salvage_value" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"
+                                       attrs="{'invisible': [('type','=','sale')]}"/>
+                                    <field name="historical_change_amount" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                </group>
+                                <group colspan="1" col="2" string="Originalios reikšmės">
+                                    <field name="original_quantity"/>
+                                    <field name="original_value" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                    <field name="original_price_unit" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                </group>
+                                <group colspan="1" col="2" string="Pradinės reikšmės">
+                                    <field name="quantity"/>
+                                    <field name="value" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="price_unit" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                </group>
+                                <group colspan="1" col="2" string="Likutinės reikšmės">
+                                    <field name="residual_quantity"/>
+                                    <field name="value_residual_effective" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                    <field name="residual_price_unit" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                    <field name="current_value" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                </group>
+                            </group>
+                            <group colspan="4" col="3" style="margin-top: 0">
+                                <group colspan="1" col="2" style="margin-top: 0">
+                                    <span style="color: gray; text-align: justify" col="1" colspan="2">
+                                        Pradinės įsigijimo reikšmės. Naudojamos pradinei informacijai pateikti,
+                                        nenaudojamos skaičiavimuose.
+                                    </span>
+                                </group>
+                                <group colspan="1" col="2" style="margin-top: 0">
+                                    <span style="color: gray; text-align: justify" col="1" colspan="2">
+                                        Reikšmės, nuo kurių atliekami skaičiavimai, perkainavimai ir kita.
+                                        Dažniausiai sutampa su originaliomis reikšmėmis, nebent ilgalaikio turto
+                                        įrašas buvo perimtas iš kitos buhalterijos (trūksta nusidėvėjimo
+                                        informacijos ar panašiai).
+                                    </span>
+                                </group>
+                                <group colspan="1" col="2" style="margin-top: 0">
+                                    <span style="color: gray; text-align: justify" col="1" colspan="2">
+                                        Reikšmės, galiojančios šiuo metu, po visų nudėvėjimų, perkainavimų ir kitų
+                                        vertės pokyčių.
+                                    </span>
+                                </group>
+                            </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Nusidėvėjimo informacija">
+                                <group>
+                                    <field name="method" widget="radio"
+                                           attrs="{'invisible': [('type','=','sale')]}"/>
+                                    <field name="method_progress_factor"
+                                           attrs="{'invisible':[('method','in',['linear', 'cant_be_depreciated'])],
+                                           'required':[('method','=','degressive')]}"/>
+                                    <field name="method_time" string="Laiko skaičiavimo metodas" widget="radio"
+                                           attrs="{'invisible': ['|', ('type','!=','purchase'),
+                                           ('method', '=', 'cant_be_depreciated')]}"/>
+                                    <field name="account_depreciation_id"/>
+                                    <field name="account_asset_id"/>
+                                </group>
+                                <group>
+                                    <field name="next_forced_depreciation_date"/>
+                                    <field name="method_number" string="Mėnesių skaičius"
+                                           attrs="{'invisible':['|', ('method_time','=','end'),
+                                           ('method', '=', 'cant_be_depreciated')], 'required':[
+                                           ('method_time','=','number'), ('method', '!=', 'cant_be_depreciated')]}"/>
+                                    <field name="method_end"
+                                           attrs="{'required': [('method_time','=','end'),
+                                           ('method', '!=', 'cant_be_depreciated')],
+                                           'invisible':['|', ('method_time','=','number'),
+                                           ('method', '=', 'cant_be_depreciated')]}"/>
+                                        <field name="is_depreciated_not_by_norm"/>
+                                        <field name="method_number_not_by_norm"
+                                               attrs="{'invisible': [('is_depreciated_not_by_norm', '=', False)]}"/>
+                                </group>
+                            </page>
+                            <page string="Materialiai atsakingi" name="page_responsible">
+                                <group>
+                                    <group>
+                                        <button name="action_add_responsible" string="Priskirti naują darbuotoją"
+                                                type="object"/>
+                                    </group>
+                                    <group colspan="4" col="4">
+                                        <field name="responsible_employee_id"/>
+                                        <field name="responsible_date"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <field name="responsible_history" nolabel="1">
+                                        <tree>
+                                            <field name="employee_id"/>
+                                            <field name="date"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page name="revaluation_history" string="Perkainavimo istorija"
+                                  attrs="{'invisible': [('revaluation_history_ids', '=', [])]}">
+                                <field name="revaluation_history_ids">
+                                    <tree open="false">
+                                        <field name="date" readonly="1"/>
+                                        <field name="name" readonly="1"/>
+                                        <field name="old_value" readonly="1"/>
+                                        <field name="new_value" readonly="1"/>
+                                        <field name="value_difference" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="change" string="Pagerinimai">
+                                <group>
+                                    <button name="action_change_value" string="Pakeisti vertę" type="object"
+                                            states="open"/>
+                                </group>
+                                <group>
+                                    <field name="change_line_ids" nolabel="1">
+                                        <tree editable="bottom">
+                                            <field name="date"/>
+                                            <field name="change_amount"/>
+                                            <field name="method_number"/>
+                                            <field name="comment"/>
+                                        </tree>
+                                        <form>
+                                            <group>
+                                                <field name="date"/>
+                                                <field name="change_amount"/>
+                                                <field name="invoice_ids" create="False"
+                                                       attrs="{'invisible': [('invoice_ids', '=', [])]}"/>
+                                                <field name="invoice_line_ids" create="False"
+                                                       attrs="{'invisible': [('invoice_line_ids', '=', [])]}"/>
+                                                <field name="method_number"/>
+                                                <field name="comment"/>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </group>
+                            </page>
+                            <page name="sales" string="Pardavimai">
+                                <group>
+                                    <button name="action_sell" string="Parduoti" type="object" states="open"/>
+                                </group>
+                                <group>
+                                    <field name="sale_line_ids" nolabel="1" readonly="1">
+                                        <tree create="0" editable="0" edit="0" delete="0">
+                                            <field name="date_invoice"/>
+                                            <field name="invoice_id"/>
+                                            <field name="quantity" sum="quantity"/>
+                                            <field name="price_unit"/>
+                                            <field name="price_subtotal" sum="price_subtotal"/>
+                                            <field name="state"/>
+                                        </tree>
+                                        <form create="0" edit="0">
+                                            <sheet>
+                                                <group>
+                                                    <field name="invoice_id"
+                                                           context="{'form_view_ref': 'account.invoice_form'}"/>
+                                                    <field name="quantity"/>
+                                                    <field name="price_unit"/>
+                                                    <field name="price_subtotal"/>
+                                                    <field name="state"/>
+                                                </group>
+                                            </sheet>
+                                        </form>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="search_account_asset_asset" model="ir.ui.view">
+            <field name="name">search.account.asset.asset</field>
+            <field name="model">account.asset.asset</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Ilgalaikis turtas"/>
+                    <field name="code"/>
+                    <field name="date"/>
+                    <field name="partner_id" filter_domain="[('partner_id', 'child_of', self)]"/>
+                    <field name="responsible_employee_id"/>
+                    <field name="category_id"/>
+                    <filter string="Naudojama" domain="[('state','in', ('draft','open'))]"/>
+                    <filter string="Uždaryta" domain="[('state', '=', 'close')]"/>
+                    <group>
+                        <filter string="Mėnuo" domain="[]" context="{'group_by':'date'}"/>
+                        <filter string="Kategorija" domain="[]" context="{'group_by':'category_id'}"/>
+                        <filter string="Atsakingas asmuo" domain="[]" context="{'group_by': 'responsible_employee_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_open_account_asset_asset" model="ir.actions.act_window">
+            <field name="name">Ilgalaikis turtas</field>
+            <field name="res_model">account.asset.asset</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="search_view_id" ref="search_account_asset_asset"/>
+            <field name="header" ref="robo.robo_front_header_no_content"/>
+            <field name="with_settings">True</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_account_asset_asset_front')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_account_asset_asset_front')})]"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_account_asset_asset"
+                  name="Ilgalaikis turtas"
+                  parent="robo.menu_kita"
+                  force_web_icon="icon-car,none,none"
+                  groups="ilgalaikis_turtas.group_asset_manager"
+                  action="action_open_account_asset_asset"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="ilgalaikis,turtas"
+        />
+
+        <record model="ir.actions.server" id="multiple_material_responsibility">
+            <field name="name">Assign materially responsible</field>
+            <field name="model_id" ref="account_asset.model_account_asset_asset"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).action_add_responsible()
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="check_advanced_report">
+            <field name="name">Ilgalaikio turto kortelės</field>
+            <field name="model_id" ref="account_asset.model_account_asset_asset"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).export_excel()
+            </field>
+            <field name="robo_front" eval="True"/>
+        </record>
+
+        <function name="create_excel_export_action" model="account.asset.asset"/>
+
+        <record model="ir.actions.server" id="sell_assets_server_action">
+            <field name="name">Parduoti ilgalaikį turtą</field>
+            <field name="model_id" ref="account_asset.model_account_asset_asset"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).action_sell()
+            </field>
+            <field name="robo_front" eval="True"/>
+        </record>
+    </data>
+</odoo>

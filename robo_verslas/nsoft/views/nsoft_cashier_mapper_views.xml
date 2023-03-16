@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="nsoft_cashier_mapper_view_tree" model="ir.ui.view">
+            <field name="name">nsoft.cashier.mapper.view.tree</field>
+            <field name="model">nsoft.cashier.mapper</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree string="nSoft cashier mappers"
+                      decoration-success="employee_id"
+                      decoration-danger="not employee_id"
+                      create="1" edit="1" delete="1">
+                    <field name="employee_id"/>
+                    <field name="ext_cashier_id"/>
+                    <field name="default_mapper"/>
+                    <field name="created_automatically"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="nsoft_cashier_mapper_view_form" model="ir.ui.view">
+            <field name="name">nsoft.cashier.mapper.view.form</field>
+            <field name="model">nsoft.cashier.mapper</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="nSoft cashier mapper" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Unlink"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="External cashier ID"/>
+                            <h1 class="mt0">
+                                <field name="ext_cashier_id" class="oe_inline"
+                                       attrs="{'readonly': [('created_automatically', '=', True)]}"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="employee_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="default_mapper"/>
+                            <field name="created_automatically" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Search-->
+        <record id="nsoft_cashier_mapper_view_search" model="ir.ui.view">
+            <field name="name">nsoft.cashier.mapper.view.search</field>
+            <field name="model">nsoft.cashier.mapper</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="created_automatically"
+                            string="Created automatically"
+                            domain="[('created_automatically', '=', True)]"/>
+                    <filter name="created_manually"
+                            string="Created manually"
+                            domain="[('created_automatically', '=', False)]"/>
+                    <separator/>
+                    <field name="employee_id"/>
+                    <field name="ext_cashier_id"/>
+                </search>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="nsoft_action_open_cashier_mapper" model="ir.actions.act_window">
+            <field name="name">Cashier mappers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.cashier.mapper</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="nsoft_cashier_mapper_view_tree"/>
+        </record>
+        <record id="nsoft_action_open_cashier_mapper_front" model="ir.actions.act_window">
+            <field name="name">Cashier mappers</field>
+            <field name="res_model">nsoft.cashier.mapper</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree_robo</field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="header_nsoft_front_end_base"/>
+            <field name="search_view_id" ref="nsoft_cashier_mapper_view_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('nsoft_cashier_mapper_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('nsoft_cashier_mapper_view_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    This request has not returned any results
+                </p>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Cashier mappers"
+                id="menu_nsoft_cashier_mapper"
+                sequence="45"
+                action="nsoft_action_open_cashier_mapper"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nsoft_data_menu"
+        />
+        <menuitem id="menu_nsoft_cashier_mapper_front"
+                  name="Cashier mappers"
+                  parent="nsoft.nsoft_root_front"
+                  sequence="2"
+                  robo_front="True"
+                  action="nsoft_action_open_cashier_mapper_front"
+                  groups="nsoft.group_nsoft_front_end_management"
+                  force_web_icon="icon-man,none,none"
+                  searchable="True"
+                  tags="nsoft,point,of,sale"
+        />
+    </data>
+</odoo>

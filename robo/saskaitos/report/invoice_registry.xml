@@ -1,0 +1,866 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="account_invoice_registry_report"
+                model="account.invoice"
+                string="Registras"
+                report_type="qweb-pdf"
+                paperformat="report.paperformat_a4_landscape"
+                name="saskaitos.report_invoice_registry"
+                file="saskaitos.report_invoice_registry"
+        />
+        <record id="account_invoice_registry_report" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="report.paperformat_a4_landscape"/>
+            <field name="print_report_name">'registras-'+time.strftime('%Y-%m-%d')+'.pdf'</field>
+        </record>
+        <template id="report_invoice_registry_document">
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id"/>
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+            <div class="header">
+                <div class="row">
+                    <div class="col-xs-2">
+                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                    </div>
+                    <div class="col-xs-2 col-xs-offset-1">
+                        <span t-field="company.partner_id"
+                              t-field-options='{"widget": "contact", "fields": ["name", "address"], "no_marker": true}'/>
+                    </div>
+                    <div class="col-xs-2 col-xs-offset-2">
+                        <t t-if="company.company_registry">Įm. kodas:
+                            <span t-field="company.company_registry"/>
+                        </t>
+                        <br/>
+                        <t t-if="company.vat">
+                            <span style="white-space: no-wrap">PVM mok. kodas:
+                                <t t-esc="company.vat"/>
+                            </span>
+                        </t>
+                    </div>
+                    <div class="col-xs-2 col-xs-offset-1 text-right">
+                        <ul class="list-inline">
+                            <li>
+                                <span class="page"/>
+                            </li>
+                            <li>/</li>
+                            <li>
+                                <span class="topage"/>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="page robo_financial_report xls_front xls_include_contacts" id="main">
+                <div class="xls_company_details_to_include" style="display: none; visibility: hidden;">
+                    <span style="display: none; visibility: hidden;" t-esc="company_id[1]"/>
+                    <span style="display: none; visibility: hidden;" t-esc="company_address"/>
+                </div>
+                <div>
+                    <table class="centered" style="margin-left:auto; margin-right:auto; border-style:none;" width="50%">
+                        <tr style="border-style:none">
+                            <td style="border-style:none">
+                                <h4 class="text_centered" t-esc="company_id[1]"/>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                            <td style="border-style:none">
+                                <p class="text_centered reduced_text_size">(įmonės teisinė forma, pavadinimas, kodas)
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <table class="centered" style="margin-left:auto; margin-right:auto; border-style:none" width="50%">
+                        <tr style="border-style:none">
+                            <td style="border-style:none">
+                                <h4 class="text_centered" t-esc="company_address"/>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                            <td style="border-style:none">
+                                <p class="text_centered reduced_text_size">(buveinė (adresas), registras, kuriame
+                                    kaupiami ir saugomi duomenys)
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <t t-if="date_from and date_end">
+                    <br/>
+                    <div class="row">
+                        Periodas:
+                        <t t-if="date_from">
+                            <span t-esc="date_from"/>
+                        </t>
+                        -
+                        <t t-if="date_end">
+                            <span t-esc="date_end"/>
+                        </t>
+                    </div>
+                </t>
+                <div class="row">
+                    <div class="col-xs-4 col-xs-offset-4 text-center" style="white-space: nowrap">
+                        <t t-if="type == 'in'">
+                            <h4>
+                                <strong>GAUNAMŲ SĄSKAITŲ FAKTŪRŲ REGISTRO DUOMENYS</strong>
+                            </h4>
+                        </t>
+                        <t t-if="type == 'out'">
+                            <h4>
+                                <strong>IŠRAŠOMŲ SĄSKAITŲ FAKTŪRŲ REGISTRO DUOMENYS</strong>
+                            </h4>
+                        </t>
+                        <t t-if="type == 'all'">
+                            <h4>
+                                <strong>IŠRAŠOMŲ IR GAUNAMŲ SĄSKAITŲ FAKTŪRŲ REGISTRO DUOMENYS</strong>
+                            </h4>
+                        </t>
+
+                    </div>
+                </div>
+                <div>
+                    <br/>
+                    <t t-if="report_group_by in ['tax_group_by', 'tax_account_group_by']">
+                        <t t-foreach="vat_partial_invoices.keys()" t-as="kodas">
+                            <t t-set="docs_non_c" t-value="docs.filtered(lambda c: c.state not in ['cancel'])"/>
+                            <div class="row">
+                                <div class="col-xs-4 col-xs-offset-4 text-center" style="white-space: nowrap">
+                                    <h4>
+                                        <t t-if="report_group_by == 'tax_group_by'">
+                                            <strong>PVM KODAS: </strong><span t-esc="kodas"/>
+                                        </t>
+                                        <t t-else="">
+                                            <strong>SĄSKAITA: </strong><span t-esc="kodas"/>
+                                        </t>
+                                    </h4>
+                                </div>
+                            </div>
+                            <table class="table table-condensed main_table">
+                                <thead>
+                                    <th width="80px">Data</th>
+                                    <th width="80px">Gavimo data</th>
+                                    <th>Numeris</th>
+                                    <t t-if="type == 'in'">
+                                        <th>Tiekėjas</th>
+                                    </t>
+                                    <t t-if="type == 'out'">
+                                        <th>Klientas</th>
+                                    </t>
+                                    <t t-if="type == 'all'">
+                                        <th>Partneris</th>
+                                    </t>
+                                    <t t-if="include_contact_info">
+                                        <th>El. paštas</th>
+                                        <th>Tel. numeris</th>
+                                    </t>
+                                    <th>Įm.kodas</th>
+                                    <th>PVM mok. kodas</th>
+                                    <th>Suma be PVM</th>
+                                    <th>PVM suma</th>
+                                    <th>Suma su PVM</th>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="vat_partial_invoices[kodas]['invoices'].keys()" t-as="part_invoice">
+                                        <t t-if="docs_non_c.filtered(lambda c: c.id == part_invoice)">
+                                            <t t-set="o" t-value="docs_non_c.filtered(lambda c: c.id == part_invoice)"/>
+                                            <tr>
+                                                <td>
+                                                    <span t-field="o.date_invoice" style="white-space: nowrap"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="o.registration_date" style="white-space: nowrap"/>
+                                                </td>
+                                                <td>
+                                                    <t t-if="o.reference">
+                                                        <span t-field="o.reference"/>
+                                                    </t>
+                                                    <t t-if="not o.reference">
+                                                        <span t-field="o.number"/>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <t t-if="o.partner_id.parent_id">
+                                                        <span t-field="o.partner_id.parent_id.name"/>
+                                                    </t>
+                                                    <t t-if="not o.partner_id.parent_id">
+                                                        <span t-field="o.partner_id.name"/>
+                                                    </t>
+                                                </td>
+                                                <t t-if="include_contact_info">
+                                                    <td>
+                                                        <t t-if="o.partner_id.email">
+                                                            <span t-field="o.partner_id.email"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="o.partner_id.phone">
+                                                            <span t-field="o.partner_id.phone"/>
+                                                        </t>
+                                                    </td>
+                                                </t>
+                                                <td>
+                                                    <t t-if="o.partner_id.parent_id">
+                                                        <span t-field="o.partner_id.parent_id.kodas"/>
+                                                    </t>
+                                                    <t t-if="not o.partner_id.parent_id">
+                                                        <span t-field="o.partner_id.kodas"/>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <t t-if="o.partner_id.parent_id">
+                                                        <span t-field="o.partner_id.parent_id.vat"/>
+                                                    </t>
+                                                    <t t-if="not o.partner_id.parent_id">
+                                                        <span t-field="o.partner_id.vat"/>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <t t-if="print_in_company_currency">
+                                                        <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['sum_wo']"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['sum_wo']"/>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <t t-if="print_in_company_currency">
+                                                        <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['vat_sum']"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['vat_sum']"/>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <t t-if="print_in_company_currency">
+                                                        <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['sum_w']"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['sum_w']"/>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <th/>
+                                    <th/>
+                                    <th/>
+                                    <th/>
+                                    <th/>
+                                    <th/>
+                                    <th>
+                                        <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                              t-esc="vat_partial_invoices[kodas]['total_wo']"/>
+                                    </th>
+                                    <th>
+                                        <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                              t-esc="vat_partial_invoices[kodas]['total_vat']"/>
+                                    </th>
+                                    <th>
+                                        <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                              t-esc="vat_partial_invoices[kodas]['total_w']"/>
+                                    </th>
+                                </tfoot>
+                            </table>
+
+                        </t>
+                        <br/>
+                        <t t-set="docs_canceled" t-value="docs.filtered(lambda c: c.state in ['cancel'])"/>
+                        <t t-if="docs_canceled">
+                            <div class="row xls_include">
+                                <div class="col-xs-4 col-xs-offset-4 text-center" style="white-space: nowrap">
+                                    <t t-if="type == 'out' or type == 'all'">
+                                        <h4>
+                                            <strong>ANULIUOTŲ IŠRAŠOMŲ SĄSKAITŲ FAKTŪRŲ REGISTRO DUOMENYS</strong>
+                                        </h4>
+                                    </t>
+                                </div>
+                            </div>
+                            <t t-foreach="vat_partial_invoices.keys()" t-as="kodas">
+                                <div class="row">
+                                    <div class="col-xs-4 col-xs-offset-4 text-center" style="white-space: nowrap">
+                                        <h4>
+                                            <t t-if="report_group_by == 'tax_group_by'">
+                                                <strong>PVM KODAS: </strong><span t-esc="kodas"/>
+                                            </t>
+                                            <t t-else="">
+                                                <strong>SĄSKAITA: </strong><span t-esc="kodas"/>
+                                            </t>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <table class="table table-condensed main_table">
+                                    <thead>
+                                        <th width="80px">Data</th>
+                                        <th width="80px">Gavimo data</th>
+                                        <th>Numeris</th>
+                                        <t t-if="type == 'in'">
+                                            <th>Tiekėjas</th>
+                                        </t>
+                                        <t t-if="type == 'out'">
+                                            <th>Klientas</th>
+                                        </t>
+                                        <t t-if="type == 'all'">
+                                            <th>Partneris</th>
+                                        </t>
+                                        <t t-if="include_contact_info">
+                                            <th>El. paštas</th>
+                                            <th>Tel. numeris</th>
+                                        </t>
+                                        <th>Įm.kodas</th>
+                                        <th>PVM mok. kodas</th>
+                                        <th>Suma be PVM</th>
+                                        <th>PVM suma</th>
+                                        <th>Suma su PVM</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="vat_partial_invoices[kodas]['invoices'].keys()"
+                                           t-as="part_invoice">
+                                            <t t-if="docs_canceled.filtered(lambda c: c.id == part_invoice)">
+                                                <t t-set="o"
+                                                   t-value="docs_canceled.filtered(lambda c: c.id == part_invoice)"/>
+                                                <tr>
+                                                    <td>
+                                                        <span t-field="o.date_invoice" style="white-space: nowrap"/>
+                                                    </td>
+                                                    <td>
+                                                        <span t-field="o.registration_date"
+                                                              style="white-space: nowrap"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="o.reference">
+                                                            <span t-field="o.reference"/>
+                                                        </t>
+                                                        <t t-if="not o.reference">
+                                                            <span t-field="o.number"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.parent_id.name"/>
+                                                        </t>
+                                                        <t t-if="not o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.name"/>
+                                                        </t>
+                                                    </td>
+                                                    <t t-if="include_contact_info">
+                                                        <td>
+                                                            <t t-if="o.partner_id.email">
+                                                                <span t-field="o.partner_id.email"/>
+                                                            </t>
+                                                        </td>
+                                                        <td>
+                                                            <t t-if="o.partner_id.phone">
+                                                                <span t-field="o.partner_id.phone"/>
+                                                            </t>
+                                                        </td>
+                                                    </t>
+                                                    <td>
+                                                        <t t-if="o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.parent_id.kodas"/>
+                                                        </t>
+                                                        <t t-if="not o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.kodas"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.parent_id.vat"/>
+                                                        </t>
+                                                        <t t-if="not o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.vat"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="print_in_company_currency">
+                                                            <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['sum_wo']"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['sum_wo']"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="print_in_company_currency">
+                                                            <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['vat_sum']"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['vat_sum']"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="print_in_company_currency">
+                                                            <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['sum_w']"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-esc="vat_partial_invoices[kodas]['invoices'][part_invoice]['sum_w']"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                    <tfoot>
+                                        <th/>
+                                        <th/>
+                                        <th/>
+                                        <th/>
+                                        <th/>
+                                        <th/>
+                                        <th>
+                                            <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                  t-esc="vat_partial_invoices[kodas]['total_wo']"/>
+                                        </th>
+                                        <th>
+                                            <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                  t-esc="vat_partial_invoices[kodas]['total_vat']"/>
+                                        </th>
+                                        <th>
+                                            <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                  t-esc="vat_partial_invoices[kodas]['total_w']"/>
+                                        </th>
+                                    </tfoot>
+                                </table>
+
+                            </t>
+                        </t>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <table class="table table-condensed main_table">
+                                    <thead>
+                                        <th>Valiuta</th>
+                                        <th>PVM suma</th>
+                                        <th>Suma be PVM</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="valiutos.keys()" t-as="valiuta">
+                                            <tr>
+                                                <td>
+                                                    <span t-esc="valiuta"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: valiutos[valiuta]['currency_id']}"
+                                                          t-esc="valiutos[valiuta]['pvm_suma']"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: valiutos[valiuta]['currency_id']}"
+                                                          t-esc="valiutos[valiuta]['suma']"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-4">
+                                <table class="table table-condensed main_table">
+                                    <thead>
+                                        <th>PVM kodas</th>
+                                        <th>Suma be PVM</th>
+                                        <th>PVM suma</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="pvm_kodai.keys()" t-as="pvm_kodas">
+                                            <tr>
+                                                <td>
+                                                    <span t-esc="pvm_kodas"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                          t-esc="pvm_kodai[pvm_kodas]['suma']"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                          t-esc="pvm_kodai[pvm_kodas]['pvm_suma']"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <t t-if="report_group_by == 'tax_account_group_by'">
+                                <div class="col-xs-4">
+                                    <table class="table table-condensed main_table">
+                                        <thead>
+                                            <th>Mokesčio sąskaita</th>
+                                            <th>Suma be PVM</th>
+                                            <th>PVM suma</th>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="tax_accounts.keys()" t-as="tax_account">
+                                                <tr>
+                                                    <td>
+                                                        <span t-esc="tax_account"/>
+                                                    </td>
+                                                    <td>
+                                                        <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                              t-esc="tax_accounts[tax_account]['suma']"/>
+                                                    </td>
+                                                    <td>
+                                                        <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                              t-esc="tax_accounts[tax_account]['pvm_suma']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                    <t t-if="not report_group_by or report_group_by == 'no_group_by'">
+                        <table class="table table-condensed main_table">
+                            <thead>
+                                <th width="80px">Data</th>
+                                <th width="80px">Gavimo data</th>
+                                <th>Numeris</th>
+                                <t t-if="type == 'in'">
+                                    <th>Tiekėjas</th>
+                                </t>
+                                <t t-if="type == 'out'">
+                                    <th>Klientas</th>
+                                </t>
+                                <t t-if="type == 'all'">
+                                    <th>Partneris</th>
+                                </t>
+                                <t t-if="include_contact_info">
+                                    <th>El. paštas</th>
+                                    <th>Tel. numeris</th>
+                                </t>
+                                <th>Įm.kodas</th>
+                                <th>PVM mok. kodas</th>
+                                <th>Suma be PVM</th>
+                                <th>PVM suma</th>
+                                <th>Suma su PVM</th>
+                                <th>Neapmokėta suma</th>
+                            </thead>
+                            <tbody>
+                                <t t-set="docs_non_c" t-value="docs.filtered(lambda c: c.state not in ['cancel'])"/>
+                                <t t-foreach="docs_non_c" t-as="o">
+                                    <tr>
+                                        <td>
+                                            <span t-field="o.date_invoice" style="white-space: nowrap"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.registration_date" style="white-space: nowrap"/>
+                                        </td>
+                                        <td>
+                                            <t t-if="o.reference">
+                                                <span t-field="o.reference"/>
+                                            </t>
+                                            <t t-if="not o.reference">
+                                                <span t-field="o.number"/>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="o.partner_id.parent_id">
+                                                <span t-field="o.partner_id.parent_id.name"/>
+                                            </t>
+                                            <t t-if="not o.partner_id.parent_id">
+                                                <span t-field="o.partner_id.name"/>
+                                            </t>
+                                        </td>
+                                        <t t-if="include_contact_info">
+                                            <td>
+                                                <t t-if="o.partner_id.email">
+                                                    <span t-field="o.partner_id.email"/>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <t t-if="o.partner_id.phone">
+                                                    <span t-field="o.partner_id.phone"/>
+                                                </t>
+                                            </td>
+                                        </t>
+                                        <td>
+                                            <t t-if="o.partner_id.parent_id">
+                                                <span t-field="o.partner_id.parent_id.kodas"/>
+                                            </t>
+                                            <t t-if="not o.partner_id.parent_id">
+                                                <span t-field="o.partner_id.kodas"/>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="o.partner_id.parent_id">
+                                                <span t-field="o.partner_id.parent_id.vat"/>
+                                            </t>
+                                            <t t-if="not o.partner_id.parent_id">
+                                                <span t-field="o.partner_id.vat"/>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="print_in_company_currency">
+                                                <span t-field="o.amount_untaxed_signed"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-if="'refund' in o.type">-</t>
+                                                <span t-field="o.amount_untaxed"/>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="print_in_company_currency">
+                                                <span t-field="o.amount_tax_signed"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-if="'refund' in o.type">-</t>
+                                                <span t-field="o.amount_tax"/>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="print_in_company_currency">
+                                                <span t-field="o.amount_total_company_signed"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-if="'refund' in o.type">-</t>
+                                                <span t-field="o.amount_total"/>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="print_in_company_currency">
+                                                <span t-field="o.residual_company_signed"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-if="'refund' in o.type">-</t>
+                                                <span t-field="o.residual"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <th/>
+                                <th/>
+                                <th/>
+                                <th/>
+                                <th/>
+                                <th/>
+                                <th>
+                                    <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                          t-esc="sum(docs_non_c.mapped('amount_untaxed_signed'))"/>
+                                </th>
+                                <th>
+                                    <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                          t-esc="sum(docs_non_c.mapped('amount_tax_signed'))"/>
+                                </th>
+                                <th>
+                                    <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                          t-esc="sum(docs_non_c.mapped('amount_total_company_signed'))"/>
+                                </th>
+                                <th>
+                                    <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                          t-esc="sum(docs_non_c.mapped('residual_company_signed'))"/>
+                                </th>
+                            </tfoot>
+                        </table>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <table class="table table-condensed main_table">
+                                    <thead>
+                                        <th>Valiuta</th>
+                                        <th>PVM suma</th>
+                                        <th>Suma be PVM</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="valiutos.keys()" t-as="valiuta">
+                                            <tr>
+                                                <td>
+                                                    <span t-esc="valiuta"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: valiutos[valiuta]['currency_id']}"
+                                                          t-esc="valiutos[valiuta]['pvm_suma']"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: valiutos[valiuta]['currency_id']}"
+                                                          t-esc="valiutos[valiuta]['suma']"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-4 col-xs-offset-1">
+                                <table class="table table-condensed main_table">
+                                    <thead>
+                                        <th>PVM kodas</th>
+                                        <th>Suma be PVM</th>
+                                        <th>PVM suma</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="pvm_kodai.keys()" t-as="pvm_kodas">
+                                            <tr>
+                                                <td>
+                                                    <span t-esc="pvm_kodas"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                          t-esc="pvm_kodai[pvm_kodas]['suma']"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                          t-esc="pvm_kodai[pvm_kodas]['pvm_suma']"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <t t-if="type == 'all'">
+                                <div class="col-xs-2 col-xs-offset-1">
+                                    <table class="table table-condensed main_table">
+                                        <thead>
+                                            <th>Mokėtinas PVM</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <span t-esc-options='{"widget": "monetary", "display_currency": res_company.currency_id}'
+                                                          t-esc="payable_taxes"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+                            <t t-set="docs_canceled" t-value="docs.filtered(lambda c: c.state in ['cancel'])"/>
+                            <t t-if="docs_canceled">
+                                <div class="row">
+                                    <div class="col-xs-4 col-xs-offset-4 text-center" style="white-space: nowrap">
+                                        <t t-if="type == 'out' or type == 'all'">
+                                            <h4>
+                                                <strong>ANULIUOTŲ IŠRAŠOMŲ SĄSKAITŲ FAKTŪRŲ REGISTRO DUOMENYS</strong>
+                                            </h4>
+                                        </t>
+                                    </div>
+                                </div>
+                                <div>
+                                    <br/>
+                                    <table class="table table-condensed main_table">
+                                        <thead>
+                                            <th width="80px">Data</th>
+                                            <th width="80px">Gavimo data</th>
+                                            <th>Numeris</th>
+                                            <t t-if="type == 'out'">
+                                                <th>Klientas</th>
+                                            </t>
+                                            <t t-if="type == 'all'">
+                                                <th>Partneris</th>
+                                            </t>
+                                            <t t-if="include_contact_info">
+                                                <th>El. paštas</th>
+                                                <th>Tel. numeris</th>
+                                            </t>
+                                            <th>Įm.kodas</th>
+                                            <th>PVM mok. kodas</th>
+                                            <th>Suma be PVM</th>
+                                            <th>PVM suma</th>
+                                            <th>Suma su PVM</th>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="docs_canceled" t-as="o">
+                                                <tr>
+                                                    <td>
+                                                        <span t-field="o.date_invoice" style="white-space: nowrap"/>
+                                                    </td>
+                                                    <td>
+                                                        <span t-field="o.registration_date"
+                                                              style="white-space: nowrap"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="o.reference">
+                                                            <span t-field="o.reference"/>
+                                                        </t>
+                                                        <t t-if="not o.reference">
+                                                            <span t-field="o.move_name"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.parent_id.name"/>
+                                                        </t>
+                                                        <t t-if="not o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.name"/>
+                                                        </t>
+                                                    </td>
+                                                    <t t-if="include_contact_info">
+                                                        <td>
+                                                            <t t-if="o.partner_id.email">
+                                                                <span t-field="o.partner_id.email"/>
+                                                            </t>
+                                                        </td>
+                                                        <td>
+                                                            <t t-if="o.partner_id.phone">
+                                                                <span t-field="o.partner_id.phone"/>
+                                                            </t>
+                                                        </td>
+                                                    </t>
+                                                    <td>
+                                                        <t t-if="o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.parent_id.kodas"/>
+                                                        </t>
+                                                        <t t-if="not o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.kodas"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.parent_id.vat"/>
+                                                        </t>
+                                                        <t t-if="not o.partner_id.parent_id">
+                                                            <span t-field="o.partner_id.vat"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="print_in_company_currency">
+                                                            <span t-field="o.amount_untaxed_signed"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <t t-if="'refund' in o.type">-</t>
+                                                            <span t-field="o.amount_untaxed"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="print_in_company_currency">
+                                                            <span t-field="o.amount_tax_signed"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <t t-if="'refund' in o.type">-</t>
+                                                            <span t-field="o.amount_tax"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="print_in_company_currency">
+                                                            <span t-field="o.amount_total_signed"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <t t-if="'refund' in o.type">-</t>
+                                                            <span t-field="o.amount_total"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                </div>
+                            </t>
+
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </template>
+        <template id="report_invoice_registry">
+            <t t-call="report.html_container">
+                <t t-call="saskaitos.report_invoice_registry_document"
+                   t-lang="docs and docs[0].company_id.partner_id.lang or docs.env.user.company_id.partner_id.lang"/>
+            </t>
+        </template>
+        <function name="remove_invoice_registry_button" model="account.invoice"/>
+    </data>
+</odoo>

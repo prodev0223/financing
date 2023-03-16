@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="mass_change_2fa_for_users" model="res.groups">
+            <field name="name">Mass Change 2FA Configuration for Users</field>
+            <field name="category_id" ref="base.module_category_usability"/>
+        </record>
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('mass_change_2fa_for_users'))]"/>
+        </record>
+    </data>
+</odoo>

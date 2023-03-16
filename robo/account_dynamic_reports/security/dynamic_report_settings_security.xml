@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="own_dynamic_report_settings" model="ir.rule">
+            <field name="name">Access Own Dynamic Report Settings</field>
+            <field ref="model_dynamic_report_settings" name="model_id"/>
+            <field name="domain_force">[('settings_id.user_id', '=', user.id)]</field>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+    </data>
+</odoo>

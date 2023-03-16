@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_invoice_add_commercial_offer">
+            <field name="name">account.invoice.add.commercial.offer</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_id']" position="before">
+                    <field name="commercial_offer" attrs="{'invisible': ['|',('state', 'not in', ['proforma', 'proforma2']), ('type', '!=', 'out_invoice')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='price_unit']" position="after">
+                    <field name="price_unit_wo_vat"/>
+                </xpath>
+            </field>
+        </record>
+        <template id="report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//div[contains(@class, 'report_invoice_page')]/h2" position="replace">
+                <h2>
+                    <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid') and not o.company_id.vat">
+                        Invoice
+                    </span>
+                    <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid') and o.company_id.vat">
+                        VAT Invoice
+                    </span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'proforma2' and o.commercial_offer == 'ne'">
+                        PRO-FORMA
+                    </span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'proforma2' and o.commercial_offer == 'taip'">
+                        Komercinis pasiūlymas
+                    </span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                    <span t-if="o.type == 'out_refund'">Refund</span>
+                    <span t-if="o.type == 'in_refund'">Supplier Refund</span>
+                    <span t-if="o.type == 'in_invoice'">Supplier Invoice</span>
+                </h2>
+            </xpath>
+            <xpath expr="//div[contains(@class, 'invoice_dates')]" position="replace">
+                <div class="invoice_dates row mt32">
+                        <div class="col-xs-offset-8 col-xs-4 text-left">
+                            <p t-if="o.date_invoice">
+                                Data:
+                                <span t-field="o.date_invoice"/>
+                            </p>
+                            <p t-if="o.date_invoice and datetime.datetime.strptime(o.operacijos_data, '%Y-%m-%d') &lt; datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d') and o.type in ['in_refund', 'in_invoice']">
+                                Išrašymo data:
+                                <span t-field="o.operacijos_data"/>
+                            </p>
+                            <p t-if="o.date_due and o.type == 'out_invoice' and o.date_due > o.date_invoice">
+                                Apmokėti iki:
+                                <span t-field="o.date_due"/>
+                            </p>
+                        </div>
+                    </div>
+            </xpath>
+            <!--<xpath expr="//div[contains(@class, 'invoice_additional')]" position="replace">-->
+                <!--<div class="row invoice_additional">-->
+                    <!--<t t-if="o.sudo().company_id.vat">-->
+                        <!--<t t-if="o.invoice_type == 'imt'">-->
+                            <!--<div class="col-xs-6 pull-right invoice_imt">-->
+                                <!--<table class="table table-condensed"-->
+                                       <!--style="margin-top:15px; white-space: nowrap;page-break-inside: avoid">-->
+                                    <!--<tr class="border-robo-invoice">-->
+                                        <!--<td>-->
+                                            <!--<strong>Apmokestinamoji vertė:</strong>-->
+                                        <!--</td>-->
+                                        <!--<td class="text-right">-->
+                                            <!--<span t-field="o.amount_untaxed"/>-->
+                                        <!--</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td style="white-space: normal">-->
+                                            <!--<span>PVM tarifas</span>-->
+                                        <!--</td>-->
+                                        <!--<td class="text-right">-->
+                                            <!--<span t-field="o.imt_tax_rate"/>-->
+                                            <!--%-->
+                                        <!--</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr class="border-robo-invoice">-->
+                                        <!--<td>-->
+                                            <!--<strong>PVM:</strong>-->
+                                        <!--</td>-->
+                                        <!--<td class="text-right">-->
+                                            <!--<span t-field="o.imt_tax_amount"/>-->
+                                        <!--</td>-->
+                                    <!--</tr>-->
+                                <!--</table>-->
+                            <!--</div>-->
+                        <!--</t>-->
+                        <!--<t t-if="o.invoice_type == 'invoice'">-->
+                            <!--<div class="col-xs-6 pull-left" style="max-width:50%">-->
+                                <!--<p class="invoice_comment" t-if="o.comment">-->
+                                    <!--<span>-->
+                                        <!--<strong>PASTABA:</strong>-->
+                                    <!--</span>-->
+                                    <!--<span t-field="o.comment"/>-->
+                                <!--</p>-->
+                            <!--</div>-->
+                            <!--<div class="col-xs-6 pull-right invoice_pvm">-->
+                                <!--<table class="table table-condensed mt16"-->
+                                       <!--style="white-space: nowrap;page-break-inside: avoid">-->
+                                    <!--<tr class="border-robo-invoice">-->
+                                        <!--<td>-->
+                                            <!--<span t-attf-class="invoice_{{o.state}}">Suma be PVM:</span>-->
+                                        <!--</td>-->
+                                        <!--<td class="text-right">-->
+                                            <!--<span t-field="o.reporting_amount_untaxed"/>-->
+                                        <!--</td>-->
+                                    <!--</tr>-->
+                                    <!--<t t-if="o.tax_line_ids">-->
+                                        <!--<tr>-->
+                                            <!--<td style="white-space: normal" t-if="len(o.tax_line_ids) == 1">-->
+                                                <!--PVM-->
+                                                <!--<span t-esc="', '.join([ lt.tax_id.description if lt.tax_id and lt.tax_id.description else lt.name or '' for lt in o.tax_line_ids ])"/>-->
+                                            <!--</td>-->
+                                            <!--<td style="white-space: normal" t-if="len(o.tax_line_ids) &gt; 1">-->
+                                                <!--PVM-->
+                                            <!--</td>-->
+                                            <!--<td class="text-right">-->
+                                                <!--<span t-field="o.reporting_amount_tax"/>-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+                                    <!--</t>-->
+                                    <!--<t t-if="not o.tax_line_ids">-->
+                                        <!--<tr>-->
+                                            <!--<td>-->
+                                                <!--<span>PVM 0%:</span>-->
+                                            <!--</td>-->
+                                            <!--<td class="text-right">-->
+                                                <!--<span t-field="o.reporting_amount_tax"/>-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+                                    <!--</t>-->
+                                    <!--<tr class="border-robo-invoice">-->
+                                        <!--<td>-->
+                                            <!--<span t-attf-class="invoice_{{o.state}}">Suma su PVM:</span>-->
+                                        <!--</td>-->
+                                        <!--<td class="text-right">-->
+                                            <!--<span t-field="o.reporting_amount_total"/>-->
+                                        <!--</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr class="border-robo-invoice">-->
+                                        <!--<td>-->
+                                            <!--<span t-attf-class="invoice_{{o.state}}">Viso mokėti:</span>-->
+                                        <!--</td>-->
+                                        <!--<td class="text-right">-->
+                                            <!--<span t-field="o.amount_total"/>-->
+                                        <!--</td>-->
+                                    <!--</tr>-->
+                                <!--</table>-->
+                            <!--</div>-->
+                        <!--</t>-->
+                        <!--<t t-if="o.print_detailed_taxes">-->
+                            <!--<div class="col-xs-6 invoice_detail_taxes">-->
+                                <!--<table class="table table-condensed">-->
+                                    <!--<thead>-->
+                                        <!--<tr>-->
+                                            <!--<th>Tax</th>-->
+                                            <!--<th class="text-right">Amount</th>-->
+                                        <!--</tr>-->
+                                    <!--</thead>-->
+                                    <!--<tbody>-->
+                                        <!--<tr t-foreach="o.tax_line_ids" t-as="t">-->
+                                            <!--<td>-->
+                                                <!--<span t-field="t.name"/>-->
+                                            <!--</td>-->
+                                            <!--<td class="text-right">-->
+                                                <!--<span t-field="t.amount"/>-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+                                    <!--</tbody>-->
+                                <!--</table>-->
+                            <!--</div>-->
+                        <!--</t>-->
+                    <!--</t>-->
+                    <!--<t t-if="not o.sudo().company_id.vat">-->
+                        <!--<div class="col-xs-6 pull-right invoice_proforma_total">-->
+                            <!--<table class="table table-condensed">-->
+                                <!--<tr class="border-black">-->
+                                    <!--<td>-->
+                                        <!--<strong>Suma:</strong>-->
+                                    <!--</td>-->
+                                    <!--<td class="text-right">-->
+                                        <!--<span t-field="o.reporting_amount_total"/>-->
+                                    <!--</td>-->
+                                <!--</tr>-->
+                            <!--</table>-->
+                        <!--</div>-->
+                    <!--</t>-->
+                <!--</div>-->
+            <!--</xpath>-->
+            <!--<xpath expr="//t[contains(@t-if, 'o.company_id.proforma_show_price_vat_incl')]" position="replace">-->
+                <!--<t t-if="o.company_id.proforma_show_price_vat_incl">-->
+                    <!--<t t-set="incl_vat" t-value="True"/>-->
+                <!--</t>-->
+            <!--</xpath>-->
+            <!--<xpath expr="//th[@t-if='not incl_vat']" position="before">-->
+                <!--<th class="text-right">Kaina</th>-->
+            <!--</xpath>-->
+            <!--<xpath expr="//span[@t-field='l.price_unit_tax_excluded']/../.." position="before">-->
+                <!--<td class="text-right">-->
+                    <!--<span t-esc="l.price_unit_tax_included / (1 - l.discount/100.0)" t-esc-options="{'widget':'monetary','display_currency':o.currency_id}"/>-->
+                <!--</td>-->
+            <!--</xpath>-->
+        </template>
+        <!--<record id="account.email_template_edi_invoice" model="mail.template">-->
+            <!--<field name="body_html"><![CDATA[-->
+    <!--<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px;">-->
+        <!--<p>Sveiki, ${object.partner_id.name},</p>-->
+        <!--% if object.state in ['proforma','proforma2']:-->
+            <!--<p>laiške rasite prisegtą išankstinę sąskaitą faktūrą, kurios bendra suma <b>${object.amount_total|safe} ${object.currency_id.name|safe}</b>.</p>-->
+        <!--% else:-->
+            <!--<p>laiške rasite prisegtą sąskaitą faktūrą <b>${object.number or ''|safe}</b>, kurios bendra suma <b>${object.amount_total|safe} ${object.currency_id.name|safe}</b>.</p>-->
+        <!--% endif-->
+        <!--<p>-->
+        <!--% if object.state == 'paid':-->
+            <!--<span>Informuojame, kad ši sąskaita jau apmokėta.</span>-->
+        <!--% endif-->
+        <!--</p>-->
+        <!--<p>Dėkui,</p>-->
+        <!--<p>${object.company_id.name|safe}</p>-->
+        <!--<div style="padding-top:20px;color:rgba(150,150,150,0.7);font-size:10px">Buhalterija šiuolaikiškai - www.robolabs.lt<div>-->
+    <!--</div>-->
+        <!--]]></field>-->
+        <!--</record>-->
+    </data>
+</odoo>

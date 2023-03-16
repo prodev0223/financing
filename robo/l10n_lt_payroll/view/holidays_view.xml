@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="remove_report_in_payslip" model="ir.ui.view">
+            <field name="name">hr.holidays.report_employee_tree</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.view_holiday_employee"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='toggle_payslip_status']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <delete id="hr_holidays.menu_hr_holidays_my_leaves" model="ir.ui.menu"/>
+        <delete id="hr_holidays.menu_hr_holidays_approvals" model="ir.ui.menu"/>
+
+        <delete id="hr_holidays.menu_open_ask_holidays_new" model="ir.ui.menu"/>
+        <delete id="hr_holidays.menu_open_allocation_holidays" model="ir.ui.menu"/>
+        <delete id="hr_holidays.menu_open_company_allocation" model="ir.ui.menu"/>
+        <delete id="hr_holidays.menu_open_department_leave_allocation_approve" model="ir.ui.menu"/>
+        <menuitem
+            id="hr_holidays.menu_open_department_leave_approve"
+            name="Neatvykimai"
+            parent="hr_holidays.menu_hr_holidays_root"
+            groups="hr_holidays.group_hr_holidays_manager,hr_holidays.group_hr_holidays_user"
+            action="hr_holidays.open_department_holidays_approve"
+            sequence="1"/>
+         <record id="hr_holidays.open_department_holidays_approve" model="ir.actions.act_window">
+            <field name="name">Neatvykimai</field>
+            <field name="res_model">hr.holidays</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="context">{'search_default_department':0, 'search_default_approve':0}</field>
+            <field name="domain">[('type','=','remove')]</field>
+            <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
+        </record>
+
+        <record id="view_hr_holidays_filter_extend" model="ir.ui.view">
+            <field name="inherit_id" ref="hr_holidays.view_hr_holidays_filter"/>
+            <field name="name">Hr Holidays Tree View Extra Filters</field>
+            <field name="model">hr.holidays</field>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='my_team_leaves']" position="after">
+                    <separator/>
+                    <filter string="Išmokėjimas prieš atostogas" name="payment_before_hand"
+                            domain="[('ismokejimas', '=', 'before_hand')]"
+                            help="Atostogos, kurių atostoginių išmokėjimas prieš atostogas"/>
+                    <filter string="Išmokėjimas prieš atostogas ir GPM nesumokėtas" name="gpm_not_paid"
+                            domain="[('gpm_paid', '=', False), ('ismokejimas', '=', 'before_hand')]"
+                            help="Atostogos, kurių GPM dar nesumokėtas, o išmokėjimas - prieš atostogas"/>
+                    <filter string="Egzistuoja išmokėjimas kurio data iki 15d." name="payment_before_15th"
+                            domain="[('payment_before_15th', '=', True)]"/>
+                    <filter string="Egzistuoja išmokėjimas kurio data po 15d." name="payment_after_15th"
+                            domain="[('payment_before_15th', '=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="export_holiday_gpm">
+            <field name="name">Sukurti GPM mokėjimą</field>
+            <field name="model_id" ref="hr_holidays.model_hr_holidays"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).export_gpm_payment()
+            </field>
+        </record>
+        <record id="ir_export_holiday_gpm" model="ir.values">
+            <field name="name">export_holiday_gpm_val</field>
+            <field name="key2">client_action_multi</field>
+            <field eval="'ir.actions.server,%d'%export_holiday_gpm" name="value"/>
+            <field name="key">action</field>
+            <field name="model">hr.holidays</field>
+        </record>
+
+        <record id="approve_holidays" model="ir.actions.server">
+            <field name="name">Patvirtinti neatvykimus</field>
+            <field name="model_id" ref="hr_holidays.model_hr_holidays"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).action_approve()
+            </field>
+        </record>
+        <record id="ir_approve_holidays" model="ir.values">
+            <field name="name">approve_holidays_val</field>
+            <field name="key2">client_action_multi</field>
+            <field eval="'ir.actions.server,%d'%approve_holidays" name="value"/>
+            <field name="key">action</field>
+            <field name="model">hr.holidays</field>
+        </record>
+
+        <menuitem id="menu_holiday_specific_entries"
+                  name="Papildomi įrašai"
+                  parent="hr_holidays.menu_hr_holidays_root"
+                  sequence="150"
+                  groups="robo_basic.group_robo_premium_accountant"/>
+    </data>
+</odoo>
+

@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <!--main views-->
+        <record model="ir.ui.view" id="employees_tree">
+            <field name="name">Employees tree</field>
+            <field name="model">hr.employee</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Darbuotojai" decoration-bf="message_needaction==True" create="0" import="0">
+                    <field name="name" string="Vardas/Pavardė" widget="roboFieldBelowAtostogos"
+                           field-below="leave_text"/>
+                    <field name="leave_text" string="Statusas" invisible="1"/>
+                    <field name="leave_date_from" string="Statusas" invisible="1"/>
+                    <field name="leave_date_to" string="Statusas" invisible="1"/>
+
+                    <field name="job_id" string="Pareigos"/>
+                    <field name="tabelio_numeris" string="Tabelio numeris" groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager,robo_basic.group_robo_hr_manager"/>
+                    <field name="work_phone" string="Telefonas"/>
+                    <field name="work_email" string="El. Paštas"/>
+                    <field name="company_id" groups="base.group_multi_company" string="kompanija"/>
+                    <!--<field name="department_id"/>-->
+                    <!--<field name="parent_id"/>-->
+                    <field name="coach_id" invisible="1"/>
+                    <field name="message_needaction" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="open_employees_action_new_form">
+            <field name="name">Naujas darbuotojas</field>
+            <field name="model">hr.employee</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Darbuotojas" class="employee_new_form robo_main_employee_form">
+                    <header>
+                        <button name="contract_wizard" type="object" string="Spausdinti darbo sutartį" groups="robo_basic.group_robo_premium_manager, robo_basic.group_robo_hr_manager"/>
+                        <button name="open_change_user_partner_wizard" type="object" string="Pakeisti vartotoją ir partnerį" groups="base.group_system"/>
+                        <button name="open_cash_balance" type="object" string="Avansinė apyskaita"
+                                attrs="{'invisible': [('show_advance_payment', '=', False)]}"/>
+                        <button name="open_leaves_summary_wizard" type="object" string="Atostogų suvestinė"
+                                attrs="{'invisible': [('display_leaves_summary', '=', False)]}"/>
+                        <button name="print_vdu_report" type="object" string="VDU Ataskaita"
+                                attrs="{'invisible': [('show_advance_payment', '=', False)]}"/>
+                        <field name="display_leaves_summary" invisible="1"/>
+                    </header>
+                    <field name="show_employment_banner" invisible="1"/>
+                    <field name="show_advance_payment" invisible="1"/>
+                    <field name="attachment_drop_lock" invisible="1"/>
+                    <field name="contracts_count" invisible="1"/>
+                    <field name="attach_board" invisible="1"/>
+                    <field name="show_remaining_leaves" invisible="1"/>
+                    <field name="show_personal_info" invisible="1"/>
+                    <field name="show_personal_info_tab" invisible="1"/>
+                    <field name="is_underage"
+                           groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                           invisible="1"/>
+                    <div attrs="{'invisible': [('attach_board', '!=', True)]}">
+                        <field name="unique_wizard_id" invisible="1"/>
+                        <widget type="robo_attach_files"/>
+                        <field name="user_attachment_ids" invisible="1"/>
+                    </div>
+                    <sheet>
+                        <field name="contract_id" invisible="1" groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"/>
+                        <field name="type" invisible="1" groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"/>
+                        <div class="alert alert-info" role="alert"
+                             style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': [('show_employment_banner', '=', False)]}">
+                            Darbuotojas dar nepriimtas į darbą. Spauskite čia norėdami priimti šį darbuotoją.
+                            <button class="oe_highlight" name="new_employee_contract" string="Priimti į darbą"
+                                    type="object"
+                                    context="{'default_employee_id2': active_id}"/>
+                            <button class="oe_highlight" style="margin-left: 5px;"
+                                    name="open_new_employee_internship_start_wizard" string="Priimti praktikai"
+                                    groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_edocument_manager"
+                                    type="object"/>
+                        </div>
+                        <field name="signup_valid" invisible="1"/>
+                        <div class="alert alert-success text-center o_form_header" name="alert_signup_valid"
+                             attrs="{'invisible': [('signup_valid', '!=', True)]}"
+                             groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager">
+                            <a class="close" data-dismiss="alert" href="#" aria-hidden="true">x</a>
+                                <strong>Either an invitation to the system or a link to reset the password that is still active has been sent to this employee</strong>
+                        </div>
+                        <field name="show_password_reset_button_sign_up_invalid" invisible="1"/>
+                        <field name="show_password_reset_button_sign_up_valid" invisible="1"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_reset_password" type="object" class="oe_stat_button"
+                                    style="width: auto !important;" icon="fa-envelope"
+                                    attrs="{'invisible': [('show_password_reset_button_sign_up_valid', '=', False)]}"
+                                    groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                                    string="Siųsti&#160;prisijungimą" confirm="There is already an active password change link sent. Are you sure you want to send another one?"/>
+                            <button name="action_reset_password" type="object" class="oe_stat_button"
+                                    style="width: auto !important;" icon="fa-envelope"
+                                    attrs="{'invisible': [('show_password_reset_button_sign_up_invalid', '=', False)]}"
+                                    groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                                    string="Siųsti&#160;prisijungimą"/>
+                            <button name="toggle_active" type="object"
+                                    groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                                    class="oe_stat_button"
+                                    icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                        </div>
+                        <div class="employee_card_title">
+                            <field name="image" widget="image" class="oe_avatar" nolabel="1" options="{&quot;preview_image&quot;:&quot;image_medium&quot;}"/>
+                            <h1>
+                                <field name="name" placeholder="Vardenis Pavardenis"/>
+                            </h1>
+                        </div>
+                        <group col="6">
+                            <group colspan="2" col="2">
+                                <field name="robo_access" groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager" class="robo_access_checkbox" string="Prisijungimas prie Robo"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="robo_group" string="Teisių grupė" attrs="{'required': [('robo_access','=',True)], 'invisible': [('robo_access','=',False)]}"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="remaining_leaves_label" string="Sukauptų atostogų likutis" attrs="{'invisible': [('show_remaining_leaves','=',False)], 'readonly':1}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="public" string="Bendra informacija">
+                                <group>
+                                    <group>
+                                        <field name="robo_access_check" invisible="1"/>
+                                        <field name="address_id" context="{'show_address': 1}"
+                                               options="{&quot;always_reload&quot;: True, &quot;highlight_first_line&quot;: True}"
+                                               invisible="1"/>
+                                        <field name="mobile_phone" string="Darbo mob. telefonas"/>
+                                        <field name="work_location" string="Darbo vieta (miestas)" invisible="1"/>
+                                        <field name="work_email" widget="email" string="Darbo el. paštas"
+                                               attrs="{'required': [('robo_access_check','=',True)]}"/>
+                                        <field name="work_phone" string="Darbo telefonas"/>
+                                    </group>
+                                    <group>
+
+                                        <field name="department_id" options="{'no_quick_create': True}"
+                                               context="{'form_view_ref': 'robo.new_department_form'}"/>
+                                        <field name="job_id" required="1" options="{'no_quick_create': True}"
+                                               context="{'form_view_ref': 'robo.new_job_form'}"
+                                               readonly="0"
+                                               attrs="{'readonly': [('contracts_count', '&gt;', 0)]}"/>
+                                        <field name="team_id" options="{'no_quick_create': True}" context="{'form_view_ref': 'robo.crm_team_form_view'}"/>
+                                        <field name="parent_id" invisible="1"/>
+                                        <field name="coach_id" invisible="1"/>
+                                        <field name="calendar_id" invisible="1"/>
+                                    </group>
+                                </group>
+                                <field name="notes" placeholder="Kita informacija" colspan="4"/>
+                            </page>
+                            <page name="personal_information" string="Asmeninė informacija"
+                                  groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager">
+                                <group>
+                                    <group>
+                                        <field name="nationality_id"
+                                               options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"
+                                               string="Pilietybė"
+                                               groups="robo_basic.group_robo_premium_manager,
+                                                       robo_basic.group_robo_hr_manager"/>
+                                        <field name="identification_id" string="Asmens kodas"/>
+                                        <field name="is_non_resident"/>
+                                        <field name="pension_fund_id" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="skip_monthly_income_tax_report"/>
+                                        <field name="sodra_id" attrs="{'invisible': [('is_non_resident','=',False)]}"/>
+                                        <field name="show_bank_account_id" invisible="1"/>
+                                        <field name="bank_account_number"
+                                               groups="robo_basic.group_robo_free_manager,
+                                                       robo_basic.group_robo_premium_manager,
+                                                       robo_basic.group_robo_hr_manager,
+                                                       robo_basic.group_robo_manage_partners"
+                                               attrs="{'invisible': [('show_bank_account_id', '=', True)]}"/>
+                                        <field name="bank_account_id" options="{'no_quick_create': True}"
+                                               context="{'default_partner_id': address_home_id}"
+                                               string="Banko sąskaita"
+                                               groups="robo_basic.group_robo_free_manager,
+                                                       robo_basic.group_robo_premium_manager,
+                                                       robo_basic.group_robo_hr_manager,
+                                                       robo_basic.group_robo_manage_partners"
+                                               attrs="{'invisible': [('show_bank_account_id', '=', False)]}"/>
+                                        <field name="personal_phone_number"/>
+                                        <label string="Gyvenamasis adresas"/>
+                                        <div class="o_address_format">
+                                            <field name="street" placeholder="Gatvė..." class="o_address_street"/>
+                                            <field name="street2" class="o_address_street"/>
+                                            <field name="city" placeholder="Miestas" class="o_address_city"/>
+                                            <field name="state_id" class="o_address_state" placeholder="Valstija" options="{&quot;no_open&quot;: True}"  context="{'country_id': country_id, 'zip': zip}" domain="[('country_id', '=', country_id')]"/>
+                                            <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                                            <field name="country_id" placeholder="Valstybė" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                        </div>
+                                        <field name="last_medical_certificate_date"/>
+                                        <field name="next_medical_certificate_date"/>
+                                    </group>
+                                    <group>
+                                        <field name="gender" attrs="{'required': True}"/>
+                                        <field name="marital"/>
+                                        <field name="birthday"/>
+                                        <field name="savivaldybe" string="Deklaruota gyvenamoji vieta (savivaldybė)"
+                                               attrs="{'required': [('is_non_resident', '=', False)]}"
+                                               groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"/>
+                                        <field name="address_home_id" context="{'show_address': 1}" invisible="1"
+                                               options="{&quot;always_reload&quot;: True, &quot;highlight_first_line&quot;: True}" groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager,robo_basic.group_robo_manage_all_partners"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="Personal_info" string="Asmeninė informacija"
+                                  attrs="{'invisible': [('show_personal_info_tab', '=', False)]}">
+                                <group>
+                                    <group>
+                                        <field name="personal_nationality_id" string="Pilietybė"
+                                               options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                        <field name="personal_identification_id" string="Asmens kodas"/>
+                                        <field name="personal_bank_account_id" string="Banko sąskaita"/>
+                                        <label string="Gyvenamasis adresas"/>
+                                        <div class="o_address_format">
+                                            <field name="personal_street" class="o_address_street"/>
+                                            <field name="personal_street2" class="o_address_street"/>
+                                            <field name="personal_city" class="o_address_city"/>
+                                            <field name="personal_state_id" class="o_address_state"
+                                                   options="{&quot;no_open&quot;: True}"
+                                                   context="{'country_id': country_id, 'zip': zip}"
+                                                   domain="[('country_id', '=', country_id)]"/>
+                                            <field name="personal_zip" class="o_address_zip"/>
+                                            <field name="personal_country_id" class="o_address_country"
+                                                   options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                        </div>
+                                        <field name="personal_last_medical_certificate_date"
+                                               string="Date of last medical examination"/>
+                                        <field name="personal_next_medical_certificate_date"
+                                               string="Date of next medical examination"/>
+                                    </group>
+                                    <group>
+                                        <field name="personal_gender" string="Lytis"/>
+                                        <field name="personal_birthday" string="Gimimo diena"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="education_information" string="Mokslo metų informacija"
+                                  groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                                  attrs="{'invisible': [('is_underage', '=', False)]}">
+                                <field name="education_year_ids" nolabel="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                    </tree>
+
+                                    <form>
+                                        <sheet>
+                                            <group col="4" colspan="4">
+                                                <field name="date_from"/>
+                                                <field name="date_to"/>
+                                                <field name="name"/>
+                                            </group>
+                                            <group col="4" colspan="4">
+                                                <field name="education_schedule_ids" nolabel="1">
+                                                    <tree>
+                                                        <field name="name"/>
+                                                        <field name="date_from"/>
+                                                        <field name="date_to"/>
+                                                    </tree>
+
+                                                    <form>
+                                                        <group col="4" colspan="4">
+                                                            <field name="date_from"/>
+                                                            <field name="date_to"/>
+                                                            <field name="name"/>
+                                                        </group>
+                                                        <group col="4" colspan="4">
+                                                            <field name="education_day_ids" nolabel="1">
+                                                                <tree options="{'no_open':True'}" editable="bottom">
+                                                                    <field name="dayofweek"/>
+                                                                    <field name="time_from" widget="float_time"/>
+                                                                    <field name="time_to" widget="float_time"/>
+                                                                    <field name="time_total" widget="float_time"/>
+                                                                </tree>
+
+                                                                <form>
+                                                                    <field name="dayofweek"/>
+                                                                    <field name="time_from" widget="float_time"/>
+                                                                    <field name="time_to" widget="float_time"/>
+                                                                </form>
+                                                            </field>
+                                                        </group>
+                                                    </form>
+                                                </field>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </page>
+                            <page name="contract_info" string="Sutartys" groups="robo_basic.group_robo_premium_manager">
+                                <field name="appointment_ids" nolabel="1" readonly="1"
+                                       context="{'form_view_ref': 'robo.contract_appointment_form'}">
+                                    <tree class="robo_tree_in_form">
+                                        <field name="contract_id" string="Darbo sutarties nr."
+                                               options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="name" string="Priedo nr."/>
+                                        <field name="job_id" string="Pareigos"
+                                               options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="struct_id" string="Metodika"
+                                               options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="schedule_template_id" string="Darbo grafikas"/>
+                                        <field name="date_start" string="Nuo"/>
+                                        <field name="date_end" string="Iki"/>
+                                        <field name="wage" string="Atlyginimas (bruto)"/>
+                                        <field name="hide_neto" invisible="1"/>
+                                        <field name="neto_compute" string="Atlyginimas (neto)"
+                                               attrs="{'invisible': ['|', ('neto_compute', '=', 0.0), ('hide_neto', '=', True)]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="payment_info" string="Atlyginimų istorija"
+                                  groups="robo_basic.group_robo_premium_manager">
+                                <field name="front_slip_ids" nolabel="1" readonly="1"
+                                       context="{'form_view_ref': 'robo.payslip_form'}">
+                                    <tree class="robo_tree_in_form">
+                                        <field name="number" string="Numeris" attrs="{'readonly': 1}"/>
+                                        <field name="date_from" string="Nuo" attrs="{'readonly': 1}"/>
+                                        <field name="date_to" string="Iki" attrs="{'readonly': 1}"/>
+                                        <!--<field name="atostogu_likutis" string="Atostogų likutis"-->
+                                               <!--attrs="{'readonly': 1}"/>-->
+                                        <field name="atostogu_likutis_based_on_contract_end" string="Atostogų likutis"/>
+                                        <field name="bruto" string="Atlyginimas (bruto)" attrs="{'readonly': 1}"/>
+                                        <!--<field name="neto" string="Atlyginimas (neto)" attrs="{'readonly': 1}"/>-->
+                                        <field name="moketinas" string="Mokėtinas atlyginimas" attrs="{'readonly': 1}"/>
+                                        <button name="print_payslip" type="object" string="Atsisiųsti algalapį"
+                                                icon="icon-folder-download one_and_half_size"/>
+                                        <button name="print_payslip_note" type="object"
+                                                string="Atsisiųsti atsiskaitymo lapelį"
+                                                icon="icon-arrow-down-circle one_and_half_size"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="contract_info_employee" string="Sutartys"
+                                  attrs="{'invisible': [('show_personal_info', '=', False)]}">
+                                <field name="personal_appointment_ids" nolabel="1"/>
+                            </page>
+                            <page name="payment_info_employee" string="Atlyginimų istorija"
+                                  attrs="{'invisible': [('show_personal_info', '=', False)]}">
+                                <field name="personal_slip_ids" widget="payslip_note" nolabel="1" model="hr.payslip"/>
+                            </page>
+                            <page name="pdf_files" string="PDF" groups="robo_basic.group_robo_premium_accountant"
+                                  attrs="{'invisible': [('show_pdf', '=', False)]}">
+                                <group>
+                                    <field name="show_pdf" invisible="1"/>
+                                    <div>
+                                        <button name="previous_page" alt="previous" class="lnr lnr-arrow-left oe_highlight" type="object"/>
+                                        <button name="next_page" alt="next" class="lnr lnr-arrow-right oe_highlight" type="object"/>
+                                    </div>
+                                </group>
+                                <group>
+                                    <field name="pdf" widget="pdf_viewer" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="other_info" string="Other info" groups="robo_basic.group_robo_premium_accountant">
+                                <group>
+                                    <field name="holiday_accumulation_usage_policy"/>
+                                    <field name="holiday_coefficient"/>
+                                </group>
+                            </page>
+                            <page name="children" string="Children" groups="robo_basic.group_robo_premium_accountant">
+                                <group>
+                                    <field name="employee_child_ids" context="{'default_employee_id': active_id, 'form_view_ref': 'robo.hr_employee_child_view_form'}">
+                                        <tree>
+                                            <field name="birthdate"/>
+                                            <field name="has_disability"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <!--<page name="contract_info_employee" string="Sutartys"-->
+                                  <!--attrs="{'invisible': [('show_personal_info', '=', False)]}">-->
+                                <!--<field name="personal_appointment_ids" nolabel="1" readonly="1"-->
+                                       <!--options="{'no_open': True}">-->
+                                    <!--<tree>-->
+                                        <!--<field name="contract_name" string="Darbo sutarties nr."/>-->
+                                        <!--<field name="name" string="Priedo nr."/>-->
+                                        <!--<field name="job" string="Pareigos"/>-->
+                                        <!--<field name="struct" string="Metodika"/>-->
+                                        <!--<field name="date_start" string="Nuo"/>-->
+                                        <!--<field name="date_end" string="Iki"/>-->
+                                        <!--<field name="wage" string="Atlyginimas (bruto)"/>-->
+                                    <!--</tree>-->
+                                <!--</field>-->
+                            <!--</page>-->
+                            <!--<page name="payment_info_employee" string="Atlyginimų istorija"-->
+                                  <!--attrs="{'invisible': [('show_personal_info', '=', False)]}">-->
+                                <!--<field name="personal_slip_ids" nolabel="1" readonly="1" options="{'no_open': True}">-->
+                                    <!--<tree>-->
+                                        <!--<field name="number" string="Numeris"/>-->
+                                        <!--<field name="date_from" string="Nuo"/>-->
+                                        <!--<field name="date_to" string="Iki"/>-->
+                                        <!--<field name="atostogu_likutis" string="Atostogų likutis"/>-->
+                                        <!--<field name="bruto" string="Atlyginimas (bruto)"/>-->
+                                        <!--&lt;!&ndash;<field name="neto" string="Atlyginimas (neto)" attrs="{'readonly': 1}"/>&ndash;&gt;-->
+                                        <!--<field name="moketinas" string="Mokėtinas atlyginimas"/>-->
+                                        <!--<button name="print_payslip" type="object" string="Atsisiųsti algalapį"-->
+                                                <!--icon="icon-folder-download one_and_half_size"/>-->
+                                        <!--<button name="print_payslip_note" type="object"-->
+                                                <!--string="Atsisiųsti atsiskaitymo lapelį"-->
+                                                <!--icon="icon-arrow-down-circle one_and_half_size"/>-->
+                                    <!--</tree>-->
+                                <!--</field>-->
+                            <!--</page>-->
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="show_messaging_footer" invisible="1"/>
+                        <field name="message_ids" widget="robo_mail_thread" context="{}"
+                               attrs="{'invisible': [('show_messaging_footer', '=', False)]}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="robo_employees_kanban" model="ir.ui.view">
+            <field name="name">Darbuotojai kanban</field>
+            <field name="model">hr.employee</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false" create="false">
+                    <field name="name" string="Vardas/Pavardė"/>
+                    <field name="job_id" string="Pareigos"/>
+                    <field name="work_phone" string="Telefonas"/>
+                    <field name="work_email" string="El. Paštas"/>
+                    <field name="company_id" groups="base.group_multi_company" string="kompanija"/>
+                    <field name="coach_id" invisible="1"/>
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="current_leave_state" invisible="1"/>
+                    <field name="leave_text" invisible="1"/>
+                    <field name="leave_date_from" invisible="1"/>
+                    <field name="leave_date_to" invisible="1"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.name.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                    <div class="col-xs-6 pull-right text-right openClass">
+                                        <strong>
+                                            <field name="job_id"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <t t-esc="record.work_email.value"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span class="pull-right text-right">
+                                            <t t-esc="record.work_phone.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row text-center"
+                                     t-if="record.leave_text.raw_value and record.current_leave_state.raw_value=='validate'">
+                                    <span class="col-xs-8 col-xs-offset-2 oe_robo_atostogos_kanban">
+                                        <field name="leave_text"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+
+        </record>
+        <!--end main views-->
+
+        <record model="ir.ui.view" id="hr_employee_job_id_view">
+            <field name="name">hr.employee.job.id.view</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='job_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('contracts_count', '&gt;', 0)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="server_action_emp">
+            <field name="name">Employee Domain</field>
+            <field name="model_id" ref="robo.model_hr_employee"/>
+            <field name="robo_front">True</field>
+            <field name="code">
+                action = model.employee_action_domain()
+            </field>
+        </record>
+
+        <record id="multi_toggle_active_employee_action" model="ir.actions.server">
+            <field name="name">Archyvuoti/Išarchyvuoti</field>
+            <field name="model_id" ref="robo.model_hr_employee"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.employees_tree')])]"/>
+            <field name="code">action = object.browse(context.get('active_ids', False)).toggle_active()</field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_multi_toggle_active_employee_action" model="hr.employee"/>
+
+        <record id="hr_employee_view_search_ext" model="ir.ui.view">
+            <field name="name">hr.employee.view.search.ext</field>
+            <field name="model">hr.employee</field>
+            <field name = "type">form</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="replace">
+                    <group expand="0" string="Grupuoti pagal">
+                        <filter string="Padalinys" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Pareigybė" domain="[]" context="{'group_by':'job_id'}"/>
+                        <filter string="Vadovas" domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Įmonė" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!--menu-->
+        <menuitem id="menu_employees" parent="menu_start" name="Darbuotojai" sequence="50"
+                  action="server_action_emp" force_web_icon="icon-man,none,none" robo_front="True"
+                  searchable="True"
+                  tags="darbuotojai"
+        />
+
+        <!--A menu for all searchable sub-menus-->
+        <menuitem id="menu_employees_search"
+                  name="Darbuotojai"
+                  parent="menu_search_root"
+                  sequence="100"
+                  robo_front="True"
+        />
+
+        <record model="ir.actions.act_window" id="open_employees_action_new">
+            <field name="name">Darbuotojai</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="robo.menu_employees"/>
+            <field name="view_id" ref="robo.open_employees_action_new_form"/>
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="domain">[('main_accountant','=',False)]</field>
+            <field name="help"></field>
+        </record>
+        <!--end menu-->
+
+        <!--other-->
+        <template id="robo_employee_contracts_table">
+            <div class="table-responsive">
+                <table class="o_list_view table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>Darbo sutarties nr.</th>
+                            <th>Priedo nr.</th>
+                            <th>Pareigos</th>
+                            <th>Metodika</th>
+                            <th>Nuo</th>
+                            <th>Iki</th>
+                            <th>Atlyginimas (bruto)</th>
+                            <th>Atlyginimas (neto)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-raw='table_body'/>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+        <template id="robo_employee_contracts_table_line">
+            <tr>
+                <td>
+                    <t t-esc='contract_name'/>
+                </td>
+                <td>
+                    <t t-esc='name'/>
+                </td>
+                <td>
+                    <t t-esc='job'/>
+                </td>
+                <td>
+                    <t t-esc='struct'/>
+                </td>
+                <td>
+                    <t t-esc='date_start'/>
+                </td>
+                <td>
+                    <t t-esc='date_end'/>
+                </td>
+                <td class="o_list_number">
+                    <t t-esc='wage'/>
+                </td>
+                <td class="o_list_number">
+                    <t t-esc='wage_neto'/>
+                </td>
+            </tr>
+        </template>
+        <template id="robo_employee_payslip_table">
+            <div class="table-responsive">
+                <table class="o_list_view table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>Numeris</th>
+                            <th>Nuo</th>
+                            <th>Iki</th>
+                            <th>Atostogų likutis</th>
+                            <th>Atlyginimas (bruto)</th>
+                            <th>Mokėtinas atlyginimas</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-raw='table_body'/>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+        <template id="robo_employee_payslip_table_line">
+            <tr t-attf-data-id="{{id}}">
+                <td>
+                    <t t-esc='number'/>
+                </td>
+                <td>
+                    <t t-esc='date_from'/>
+                </td>
+                <td>
+                    <t t-esc='date_to'/>
+                </td>
+                <td class="o_list_number">
+                    <t t-esc="atostogu_likutis"/>
+                </td>
+                <td class="o_list_number">
+                    <t t-esc="bruto"/>
+                </td>
+                <td class="o_list_number">
+                    <t t-esc="moketinas"/>
+                </td>
+                <t t-if="print_payslip">
+                    <td>
+                        <a t-attf-data-id="{{print_payslip}}" type="button" title="Atsisiųsti algalapį"
+                           class="o_icon_button btn o_payslip">
+                            <i title="Atsisiųsti algalapį"
+                               class="fa icon-folder-download one_and_half_size"></i>
+                        </a>
+                    </td>
+                </t>
+                <t t-if="print_payslip_note">
+                    <td>
+                        <a t-attf-data-id="{{print_payslip_note}}" type="button" title="Atsisiųsti atsiskaitymo lapelį"
+                           class="o_icon_button btn o_payslip_note">
+                            <i title="Atsisiųsti atsiskaitymo lapelį"
+                               class="fa icon-arrow-down-circle one_and_half_size"></i>
+                        </a>
+                    </td>
+                </t>
+                <t t-else="">
+                    <td/>
+                </t>
+            </tr>
+        </template>
+        <!--end other-->
+    </data>
+    <!--Move action to no-update because it's overridden in some live DB's-->
+    <data noupdate="1">
+        <record model="ir.actions.act_window" id="robo.open_employees_action">
+            <field name="name">Darbuotojai</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_employees,form,kanban</field>
+            <field name="robo_menu" ref="robo.menu_employees"/>
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="context" eval="{'search_add_custom': False,}"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_employees', 'view_id': ref('robo.employees_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo.open_employees_action_new_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('robo.robo_employees_kanban')})]"/>
+            <field name="domain">[('main_accountant','=',False)]</field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="server_action_print_contract">
+            <field name="name">Spausdinti darbo sutartį</field>
+            <field name="model_id" ref="robo.model_hr_employee"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).with_context(validate=True).contract_wizard()
+            </field>
+        </record>
+        <function name="server_action_print_contract_f" model="hr.employee"/>
+
+        <report
+                id="report_employee_contract_q"
+                model="hr.employee"
+                string="Darbo sutartis"
+                report_type="qweb-pdf"
+                name="robo.report_employee_contract"
+                file="robo.report_employee_contract"
+                attachment_use="False"
+                menu="0"
+                attachment=""/>
+
+        <record id="report_employee_contract_q" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="saskaitos.paperformat_a4_narrow_invoice"/>
+        </record>
+
+        <report
+                id="report_contract_termination_attachment_q"
+                model="hr.employee"
+                string="Contract termination attachment"
+                report_type="qweb-pdf"
+                name="robo.report_contract_termination_attachment"
+                file="robo.report_contract_termination_attachment"
+                attachment_use="False"
+                menu="0"
+                attachment=""/>
+
+        <record id="report_contract_termination_attachment_q" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="saskaitos.paperformat_a4_narrow_invoice"/>
+        </record>
+    </data>
+</odoo>

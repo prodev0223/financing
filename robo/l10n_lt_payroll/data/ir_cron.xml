@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_update_ongoing_holiday_accumulations_and_usages" model="ir.cron">
+            <field name="name">Update ongoing holiday accumulations and usages</field>
+            <field eval="True" name="active" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=23, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field eval="False" name="doall" />
+            <field name="model">hr.employee.holiday.usage</field>
+            <field name="function">_update_holiday_accumulations_and_usages</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="ir_cron_check_for_employment_contracts_with_one_day_left" model="ir.cron">
+            <field name="name">Check for employment contracts with one day left</field>
+            <field eval="True" name="active" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=23, minute=58, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field eval="False" name="doall" />
+            <field name="model">hr.contract</field>
+            <field name="function">cron_check_for_employment_contracts_ending_tomorrow</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="ir_cron_reserve_holiday_ticket" model="ir.cron">
+            <field name="name">reserve holiday ticket</field>
+            <field eval="True" name="active" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=23, minute=58, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field eval="False" name="doall" />
+            <field name="model">hr.payslip.run</field>
+            <field name="function">cron_reserve_holiday_ticket</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+    </data>
+</odoo>

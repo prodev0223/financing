@@ -1,0 +1,62 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record model="ir.ui.view" id="vmi_FR0438">
+            <field name="name">vmi.fr0438.form</field>
+            <field name="model">e.vmi.fr0438</field>
+            <field name="arch" type="xml">
+                <form string="FR0438" version="7.0">
+                    <sheet>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="shareholder_line_ids" widget="one2many_list" nolabel="1">
+                                 <tree delete="0" create="0" edit="1"
+                                       options="{'reload_on_button': True}" editable="bottom"
+                                       class="robo_tree_in_form">
+                                     <field name="shareholder_id" readonly="1"/>
+                                     <field name="shareholder_address"/>
+                                     <field name="share_percentage" readonly="1"/>
+                                 </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="generate_report" type="object" string="Generuoti"/>
+                        <button name="generate_report" type="object"
+                                context="{'upload_vmi': True}"
+                                string="Siųsti į VMI"/>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_FR0438_download">
+            <field name="name">vmi.fr0438.download.form</field>
+            <field name="model">e.vmi.fr0438</field>
+            <field name="arch" type="xml">
+                <form string="FR0438">
+                    <sheet>
+                        <group string="Atsisiųsti FR0438">
+                            <field name="generated_file" nolabel="1" filename="file_name"/>
+                            <field name="file_name" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record model="ir.actions.server" id="create_fr0438_wizard_action">
+            <field name="name">FR0438</field>
+            <field name="model_id" ref="e_ataskaitos.model_e_vmi_fr0438"/>
+            <field name="code">
+                    action = env.get('e.vmi.fr0438').action_create_wizard()
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="recompute_analytics_employee_card_wizard_view_form" model="ir.ui.view">
+            <field name="name">recompute.analytics.employee.card.wizard.view.form</field>
+            <field name="model">recompute.analytics.employee.card.wizard</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <group col="2">
+                        <div class="alert alert-info" role="alert" style="margin-bottom: 2px; text-align: center;">
+                            <h4 style="font-weight: bold; color: black;">Employee: <field name="employee_id" readonly="1"/></h4>
+                            <span>Select period for analytics to be recomputed for the chosen employee:</span>
+                        </div>
+                    </group>
+                    <group>
+                        <group colspan="2">
+                            <field name="date_from" required="1"/>
+                            <field name="date_to" required="1"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="recompute_analytic_entries" string="Recompute"
+                                type="object" class="btn-primary"/>
+                        <button name="recompute_analytic_entries"
+                                context="{'set_default_analytics': True}"
+                                string="Set Default Analytics and Recompute"
+                                type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="recompute_analytics_employee_card_wizard_action" model="ir.actions.act_window">
+            <field name="name">Recompute analytics</field>
+            <field name="res_model">recompute.analytics.employee.card.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="recompute_analytics_employee_card_wizard_view_form"/>
+        </record>
+    </data>
+</odoo>

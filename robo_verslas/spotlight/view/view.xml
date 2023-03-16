@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_assets_common" name="saskaitos reports" inherit_id="report.assets_common">
+            <xpath expr="." position="inside">
+                    <link rel="stylesheet" type="text/less" href="/spotlight/report_robo.less"/>
+            </xpath>
+        </template>
+        <template id="vk_report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//t[@t-if='show_description == 1']" position="after">
+                <br></br>
+                <br></br>
+                <br></br>
+                <table style="width:100%; margin-top:50px">
+                    <tr>
+                        <td>
+                            <table width="80%">
+                                <tr style="border-style:none;page-break-inside: avoid">
+                                    <td style="text-align:left; border-style:none;">
+                                        <span style="text-align:left;">Pardavėjas:</span>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align:center">
+                                        <span t-esc="user.name"/>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none;page-break-inside: avoid">
+                                    <td style="border-style:none; border-top-style:none; border-top-width:none"/>
+                                    <td style="border-style:none; border-top-style:solid; border-top-width:thin; text-align:center"
+                                        align="center">
+                                        <span>(vardas, pavardė, parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table width="80%">
+                                <tr style="border-style:none">
+                                    <td style="text-align:left; border-style:none;">
+                                        <span style="text-align:left;">Pirkėjas:</span>
+                                    </td>
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align:center">
+                                        <span></span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none;">
+                                    <td style="border-style:none; border-top-style:none; border-top-width:none"/>
+                                    <td style="border-style:none;text-align:center; border-top-style:solid; border-top-width:thin"
+                                        align="center">
+                                        <span>(vardas, pavardė, parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <br/>
+            </xpath>
+        </template>
+        <template id="external_layout_footer_remove_pages" inherit_id="saskaitos.external_layout_footer">
+            <xpath expr="//span[@class='topage']/../.." position="replace"/>
+        </template>
+    </data>
+</odoo>

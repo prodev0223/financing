@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_approval_settings_view_form" model="ir.ui.view">
+            <field name="name">invoice.approval.settings.view.form</field>
+            <field name="model">invoice.approval.settings</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Invoice approval settings">
+                    <sheet>
+                        <group string="Safety net">
+                            <group colspan="4">
+                                <h3 style="font-size: medium; padding-left: 20px; padding-right: 20px;">
+                                    A safety net defines what happens when an invoice does not match any approval rules
+                                    and there are no default approvers set for an approval step.
+                                </h3>
+                            </group>
+                            <group colspan="4" col="4">
+                                <group colspan="4">
+                                    <field name="safety_net_action" attrs="{'required': True}"/>
+                                </group>
+                                <group colspan="4" col="4" string="Approvers"
+                                       attrs="{'invisible': [('safety_net_action', '!=', 'send_for_approval')]}">
+                                    <group colspan="4" col="2">
+                                        <field name="sn_approvers"
+                                       attrs="{
+                                       'invisible': [('safety_net_action', '!=', 'send_for_approval')],
+                                       'required': [('safety_net_action', '=', 'send_for_approval')]}"
+                                       widget="many2many_tags"/>
+                                        <field name="apply_safety_net_conditions"
+                                               attrs="{'invisible': [('safety_net_action', '!=', 'send_for_approval')]}"/>
+                                    </group>
+                                    <group colspan="4" col="1">
+                                        <field name="safety_net_conditions" nolabel="1"
+                                               context="{'form_view_ref': 'invoice_approval_workflow.safety_net_approval_condition_view_form'}"
+                                               attrs="{
+                                               'invisible': [
+                                                    '|',
+                                                    ('safety_net_action', '!=', 'send_for_approval'),
+                                                    ('apply_safety_net_conditions', '=', False)
+                                                ],
+                                               'required': [
+                                                    ('safety_net_action', '=', 'send_for_approval'),
+                                                    ('apply_safety_net_conditions', '=', True)
+                                               ]}">
+                                            <tree create="1" edit="1" delete="1">
+                                                <field name="analytic_account_display"/>
+                                                <field name="account_display"/>
+                                                <field name="supplier_display"/>
+                                                <field name="requester_display"/>
+                                                <field name="amount_display"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                    <group colspan="4" col="2">
+                                        <field name="action_not_matching_conditions" attrs="{'invisible': [
+                                            '|',
+                                            '|',
+                                            ('safety_net_action', '!=', 'send_for_approval'),
+                                            ('safety_net_conditions', '=', []),
+                                            ('apply_safety_net_conditions', '=', False)
+                                        ]}"/>
+                                    </group>
+                                </group>
+                                <group colspan="4" col="4" string="Deadline"
+                                       attrs="{'invisible': [('safety_net_action', '!=', 'send_for_approval')]}">
+                                    <group colspan="4" col="4">
+                                        <field name="safety_net_approval_deadline_days"
+                                           attrs="{
+                                           'invisible': [('safety_net_action', '!=', 'send_for_approval')],
+                                           'required': [('safety_net_action', '=', 'send_for_approval')]}"/>
+                                        <field name="safety_net_approval_deadline_hours"
+                                               attrs="{
+                                               'invisible': [('safety_net_action', '!=', 'send_for_approval')],
+                                               'required': [('safety_net_action', '=', 'send_for_approval')]}"/>
+                                    </group>
+                                    <group colspan="4" col="2">
+                                        <field name="safety_net_deadline_reached_action"
+                                               attrs="{
+                                               'invisible': [('safety_net_action', '!=', 'send_for_approval')],
+                                               'required': [('safety_net_action', '=', 'send_for_approval')]}"/>
+                                        </group>
+                                </group>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="save_invoice_approval_settings" type="object" string="Save"
+                                    class="oe_highlight"/>
+                            <button string="Cancel" class="btn-default" type="object" name="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="invoice_approval_settings_action" model="ir.actions.act_window">
+            <field name="name">Invoice approval settings</field>
+            <field name="res_model">invoice.approval.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="context">{}</field>
+            <field name="target">inline</field>
+            <field name="view_id" ref="invoice_approval_settings_view_form"/>
+        </record>
+
+        <menuitem
+                id="invoice_approval_settings_menu_action"
+                name="Approval settings"
+                groups="invoice_approval_workflow.invoice_approval_administrator"
+                action="invoice_approval_settings_action"
+                parent="invoice_approval_workflow.invoice_approval_front_end_menu_container"
+                sequence="1"
+                force_web_icon="icon-cog,none,none"
+                robo_front="True"
+                searchable="True"
+                tags="invoice,approval,settings"
+        />
+    </data>
+</odoo>

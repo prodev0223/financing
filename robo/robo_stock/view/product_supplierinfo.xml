@@ -1,0 +1,56 @@
+<odoo>
+    <data>
+        <record id="tree_product_supplierinfo_front" model="ir.ui.view">
+            <field name="name">tree.product.supplierinfo.front</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Tiekėjų produktų kodai" editable="top" import="0">
+                    <field name="name" required="1"/>
+                    <field name="product_tmpl_id" string="Produktas" required="1" context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"/>
+                    <field name="product_code" string="Tiekėjo produkto kodas" required="1"/>
+                    <field name="product_name" string="Tiekėjo produkto pavadinimas"/>
+                </tree>
+            </field>
+        </record>
+        <record id="search_product_supplierinfo" model="ir.ui.view">
+            <field name="name">search.product.supplierinfo.front</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="inherit_id" ref="product.product_supplierinfo_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_tmpl_id']" position="after">
+                    <field name="product_code" string="Tiekėjo produkto kodas"/>
+                    <field name="product_name" string="Tiekėjo produkto pavadinimas"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="action_open_product_supplierinfo_action" model="ir.actions.act_window">
+            <field name="name">Tiekėjų produktų kodai</field>
+            <field name="res_model">product.supplierinfo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="tree_product_supplierinfo_front"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_product_supplierinfo_front')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+            <field name="context" eval="{'robo_header': {'fit': True}}"/>
+        </record>
+        <menuitem id="menu_product_supplierinfo"
+                  parent="menu_robo_stock"
+                  name="Tiekėjų produktų kodai"
+                  sequence="30"
+                  action="action_open_product_supplierinfo_action"
+                  groups="robo_basic.group_robo_supplier_info"
+                  robo_front="True"
+                  force_web_icon="icon-intersect,none,none"
+                  searchable="True"
+                  tags="tiekėjų,produktų,kodai"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,116 @@
+@doarch_left: 40%;
+@doarch_right: 60%;
+@robo-invoice-open-print-color: black;
+
+.doarch.report_invoice_page{
+  //margin-top: 45px !important;
+  h2 {
+    //margin-top: 56px !important;
+    margin-top: 0px !important;
+    text-align: left;
+    //font-weight: bold;
+  }
+  border-top: 1px solid white; //ROBO: important, without this line, margin-top collapses.
+
+  .report_invoice_reference {
+    text-align: left;
+  }
+  .companies{
+    padding-top: 28px;
+    .left, .right{
+      p{
+        margin-bottom: 0;
+      }
+      h3.company_type{
+        margin-top: 0px !important;
+        padding-bottom: 0;
+        border-bottom: none;
+        font-weight: 500;
+        font-size: 24px;
+        color: black;
+      }
+    }
+    .right{
+      width: @doarch_left;
+      .comp_{
+        &pvm,&code,&bank,&bic{
+          font-weight: bold;
+        }
+      }
+    }
+    .left{
+      width: 50%;
+      .comp_{
+        &pvm,&code,&bank,&bic{
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  table.invoice_lines{
+    thead{
+      tr > th:first-child{
+        width: @doarch_right;
+      }
+    }
+  }
+  .invoice_additional{
+    margin-left: 0;
+    margin-right: 0;
+    .invoice_imt, .invoice_pvm,.invoice_proforma_total{
+      width: @doarch_left;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  .border-black > td{
+      border-top: 2px solid rgb(169,169,169) !important;
+  }
+
+  .invoice_amount_words{
+    width: @doarch_left;
+    float: right;
+    .amount_words{
+      text-align: left;
+    }
+
+  }
+
+  table{
+    tr.border-robo-invoice, .invoice_tbody{
+      border-top: 2px solid rgb(169,169,169) !important;
+    }
+    thead, tr.border-robo-invoice strong{
+      &.invoice_{
+        &open{
+          color: black !important;
+        }
+        &draft{
+          color: black !important;
+        }
+        &paid{
+          color: black !important;
+        }
+        &cancel{
+          color: black !important;
+        }
+      }
+    }
+  }
+  .table-condensed > thead > tr > th{
+    border-bottom: 2px solid rgb(169,169,169) !important;
+  }
+}
+.footer{
+  font-size: 11px;
+   //border-top: 1px solid white; //ROBO: important, without this line, margin-top collapses.
+   padding-top: 37px;
+   ul,p{
+     margin-bottom: 0;
+   }
+  .robolabs_marketing_doarch{
+    font-size: 10px;
+    color: rgba(150,150,150,0.7);
+  }
+}

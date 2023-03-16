@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--TREE-->
+        <record id="tree_enable_banking_connector" model="ir.ui.view">
+            <field name="name">enable.banking.connector.tree</field>
+            <field name="model">enable.banking.connector</field>
+            <field name="arch" type="xml">
+                <tree create="0" edit="1" delete="0" import="0"
+                      decoration-warning="api_state == 'expired'"
+                      decoration-danger="api_state == 'failed'"
+                      decoration-info="api_state == 'not_initiated'"
+                      decoration-success="api_state == 'working'">
+                    <field name="display_name"/>
+                    <field name="bank_id"/>
+                    <field name="country_id"/>
+                    <field name="valid_to"/>
+                    <field name="psu_type"/>
+                    <field name="api_state"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORM-->
+        <record id="form_enable_banking_connector" model="ir.ui.view">
+            <field name="name">enable.banking.connector.form</field>
+            <field name="model">enable.banking.connector</field>
+            <field name="arch" type="xml">
+                <form string="Enable banking connector" create="0" edit="1" delete="0">
+                    <header>
+                        <field name="api_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'working')]}">
+                            <div class="alert alert-success" role="alert" style="margin-bottom: 2px;">
+                                Connector is configured and authenticated
+                            </div>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'expired')]}">
+                            <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;">
+                                Connector authentication is expired
+                            </div>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'failed')]}">
+                            <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;">
+                                Connector configuration failed
+                            </div>
+                        </group>
+                        <div>
+                            <label string="Pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="display_name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="bank_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="country_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="valid_to" readonly="1" attrs="{'invisible': [('valid_to', '=', False)]}"/>
+                            <field name="psu_type" invisible="1"/>
+                            <field name="has_accounts_to_configure" invisible="1"/>
+                            <field name="session_id" invisible="1" readonly="1"/>
+                        </group>
+                        <group string="Related accounts">
+                            <field name="banking_account_ids" nolabel="1" widget="one2many_list"
+                                   context="{'active_test': False}" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree class="robo_tree_in_form" create="0" delete="1" edit="0" editable="bottom"
+                                      decoration-warning="not journal_id"
+                                      decoration-muted="not active"
+                                      decoration-success="active and journal_id">
+                                    <field name="journal_id"/>
+                                    <field name="account_iban"/>
+                                    <field name="api_end_balance"/>
+                                    <field name="currency_id"/>
+                                    <field name="api_balance_update_date"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'working')]}">
+                            <div class="alert alert-success" role="alert" style="margin-bottom: 2px;">
+                                If you want to update bank accounts you have to re-authenticate the bank
+                                connector. All of the new (if any) bank accounts will be fetched automatically.
+                            </div>
+                        </group>
+                        <group colspan="4" col="1" string="API error message"
+                               attrs="{'invisible': [('api_state', '!=', 'failed')]}">
+                            <field name="last_api_error_message" readonly="1" nolabel="1"/>
+                        </group>
+                        <footer style="text-align: center;">
+                            <button name="button_fetch_accounts_balances" class="oe_highlight" type="object"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    style="background-color: rgb(70,136,71) !important;"
+                                    string="Fetch account balances" default_focus="1"
+                                    attrs="{'invisible': ['|', ('banking_account_ids', '=', False),
+                                                               ('session_id', '=', False)]}"
+                            />
+                            <button name="button_relate_account_journals" class="oe_highlight" type="object"
+                                    style="background-color: rgb(70,136,71) !important;"
+                                    string="Relate account journals" default_focus="1"
+                                    attrs="{'invisible': [('has_accounts_to_configure', '=', False)]}"
+                            />
+                            <button name="authenticate_bank_connector" class="oe_highlight" type="object"
+                                    style="background-color: rgb(70,136,71) !important;"
+                                    string="Authenticate connector" default_focus="1"/>
+                            <button name="button_terminate_connector_session" class="oe_highlight" type="object"
+                                    string="Terminate connector session" default_focus="1"
+                                    confirm="Are you sure you want to proceed?"
+                                    attrs="{'invisible': [('session_id', '=', False)]}"
+                            />
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCH-->
+        <record id="search_enable_banking_connector" model="ir.ui.view">
+            <field name="name">enable.banking.connector.search</field>
+            <field name="model">enable.banking.connector</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="configured" string="Configured"
+                            domain="[('api_state', '=', 'working')]"/>
+                    <filter name="n_configured" string="Non-configured"
+                            domain="[('api_state', 'in', ['failed', 'not_initiated'])]"/>
+                    <filter name="expired" string="Expired"
+                            domain="[('api_state', '=', 'expired')]"/>
+                    <separator/>
+                    <field name="country_id"/>
+                    <field name="bank_id"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTION-->
+        <record id="action_open_enable_banking_connector" model="ir.actions.act_window">
+            <field name="name">Enable banking connectors</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">enable.banking.connector</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_enable_banking_connector"/>
+        </record>
+        <record id="action_open_enable_banking_connector_manager" model="ir.actions.act_window">
+            <field name="name">Enable banking connectors</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">enable.banking.connector</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('active', '=', True)]</field>
+            <field name="view_id" ref="tree_enable_banking_connector"/>
+        </record>
+    </data>
+</odoo>

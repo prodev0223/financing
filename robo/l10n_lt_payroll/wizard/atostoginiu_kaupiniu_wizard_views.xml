@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="atostoginiu_kaupiniu_wizard_form" model="ir.ui.view">
+            <field name="name">Atostogų kaupinių apskaitymas</field>
+            <field name="model">atostoginiu.kaupiniu.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Atostogų kaupinių apskaitymas">
+                    <header>
+                        <field name="threaded" invisible="1"/>
+                    </header>
+                    <group>
+                        <field name="date"/>
+                    </group>
+                    <footer>
+                        <button name="open_report" string="View" type="object" class="oe_highlight"
+                                context="{'force_html': True}" attrs="{'invisible': [('threaded', '=', True)]}"/>
+                        <button name="open_report" string="PDF" type="object" class="oe_highlight"
+                                context="{'force_pdf': True}"/>
+                        <!--<button name="generate" string="Patvirtinti" type="object" class="oe_highlight"/>-->
+                        <button name="export_excel" string="Eksportuoti Excel" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_kaupiniu_wizard" model="ir.actions.act_window">
+            <field name="name">Atostogų kaupinių apskaitymas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">atostoginiu.kaupiniu.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="atostoginiu_kaupiniu_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_kaupiniu_wizard"
+                  action="action_kaupiniu_wizard"
+                  parent="account.menu_finance_entries"
+                  sequence="51"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <report
+                id="unreconciled_payments_report"
+                model="advance.payment.wizard"
+                string="Unreconciled documents report"
+                report_type="qweb-pdf"
+                name="robo_reminders.unreconciled_payments_report_template"
+                file="Nesudengti mokėjimai"
+                paperformat="report.paperformat_a4_landscape_narrow"
+        />
+
+        <template id="unreconciled_payments_report_template">
+            <t t-call="report.html_container">
+                <div class="page">
+                    <t t-set="o" t-value="docs"/>
+                    <t t-if="o">
+                    <div class="centras mb64">
+                        <table class="centras" style="margin:0 auto; border-style:none" width="50%">
+                            <tr style="border-style:none" class="text-center">
+                                <td style="border-style:none">
+                                    <t t-if="o.type == 'customer'">
+                                        <h3>
+                                            <span>Klientų mokėjimai be sąskaitų faktūrų</span>
+                                        </h3>
+                                    </t>
+                                    <t t-else="">
+                                        <h3>
+                                            <span>Mokėjimai tiekėjams be sąskaitų faktūrų</span>
+                                        </h3>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none" class="text-center">
+                                <td style="border-style:none">
+                                    <span t-esc="o.date"/>
+                                </td>
+                                <tr>
+                                    <span t-esc="o.env.user.company_id.name"/>
+                                    <br/>
+                                    <span>Spausdinimo data:
+                                        <span t-esc="datetime.datetime.now().strftime('%%Y-%%m-%%d')"/>
+                                    </span>
+                                </tr>
+
+                            </tr>
+                        </table>
+                        <table style="width:100%; word-wrap: break-word; overflow-wrap: break-word;" class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Partneris</th>
+                                    <th style="width: 60%">Dokumentas</th>
+                                    <th>Datos</th>
+                                    <th>Suma</th>
+                                    <th>Likutinė vertė</th>
+                                </tr>
+                            </thead>
+                            <tr t-foreach="o.line_ids.sorted(key=lambda x:(x.dates, x.partner_id.name) if x.wizard_id.extended_mode else x.partner_id.name)" t-as="l">
+                                <td>
+                                    <span t-field="l.partner_id"/>
+                                    <t t-if="l.reconcile_possible">*</t>
+                                </td>
+                                <td>
+                                    <span t-esc="l.description"/>
+                                </td>
+                                <td>
+                                    <span t-field="l.dates"/>
+                                </td>
+                                <td style="text-align:right">
+                                    <span t-field="l.amount"
+                                          t-options="{'widget': 'monetary', 'display_currency': l.currency_id}"/>
+                                </td>
+                                <td style="text-align:right">
+                                    <span t-field="l.amount_residual"
+                                          t-options="{'widget': 'monetary', 'display_currency': l.currency_id}"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <t t-if="any(l.reconcile_possible for l in o.line_ids)">
+                            <span>* Gali būti neatitikimų. Susisiekite su buhalteriu.</span>
+                        </t>
+                    </div>
+                    </t>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

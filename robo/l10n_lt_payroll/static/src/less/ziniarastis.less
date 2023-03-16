@@ -1,0 +1,290 @@
+
+.o_web_client .oe_timesheet_weekly {
+  overflow-x: auto;
+  > table {
+    width: 100%;
+
+    > tbody > tr {
+
+      > th {
+        text-align: center;
+        font-size: 10px;
+        background-color: @odoo-brand-lightsecondary;
+      }
+
+      > td {
+        text-align: right;
+
+        &.oe_timesheet_weekly_account {
+          white-space: nowrap;
+          text-align: left;
+        }
+        input.oe_timesheet_weekly_input {
+          display: inline-block;
+          width: 40px;
+          text-align: right;
+        }
+
+        .oe_timesheet_button_add {
+          margin-left: 8px;
+        }
+        .o_with_button + .oe_timesheet_button_add {
+          margin-left: 45px;
+        }
+      }
+
+      .oe_timesheet_weekly_today {
+        background-color: lighten(@odoo-brand-primary, 40%);
+      }
+      .oe_timesheet_total {
+        font-weight: bold;
+        background-color: @odoo-brand-lightsecondary;
+      }
+      .o_add_timesheet_line {
+        width: 1%;
+        background-color: @odoo-brand-lightsecondary;
+
+        > div {
+          .o-flex-display();
+          .o-align-items(center);
+
+          .o_form_field_many2one {
+            min-width: 200px;
+            margin: 0;
+          }
+          .o_external_button {
+            background-color: @odoo-brand-lightsecondary;
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+
+          .oe_timesheet_button_add {
+            .o-flex(0, 0, auto);
+            margin-left: 8px;
+          }
+          .o_with_button + .oe_timesheet_button_add {
+            margin-left: 45px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.openerp .oe_timesheet_weekly {
+  > table > tbody > tr {
+    > th {
+      color: #069;
+    }
+    .o_add_timesheet_line {
+      width: auto;
+    }
+  }
+}
+
+.oe_ziniarastis_day .oe_has_contract {
+  background-color: green;
+}
+
+//extention
+
+#MonthlyZiniarastis {
+
+  overflow: hidden;
+
+  .both_tables{
+    .o-flex-display;
+    .o-flex-flow(row, nowrap);
+    width: 95vw;
+    justify-content: flex-start;
+  }
+  .first_table{
+    .o-flex(0,0,0);
+  }
+  .second_talbe{
+    .o-flex(1,1,70%);
+  }
+
+  .o_row_header_font {
+    font-size: 1.2em;
+  }
+   .oe_timesheet_weekly_today {
+      background-color: lighten(@robo-red, 40%);
+    }
+
+  .top_header {
+    background: @robo-background-color !important;
+    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 0px;
+  }
+
+  .o_table_tab {
+    padding-left: 10px;
+    padding-right: 10px;
+    border-top: 1px solid @robo-border-color;
+    border-left: 1px solid @robo-border-color;
+    border-right: 1px solid @robo-border-color;
+    cursor: pointer;
+    &:hover {
+      .robo-menu-item-hover;
+    }
+    //font-size: 1.2em;
+  }
+
+  th {
+    background: @odoo-brand-lightsecondary;
+    background: rgba(13, 131, 221,0.2);
+  }
+  .oe_has_contract {
+    color: green;
+  }
+  .oe_holiday_mismatch {
+    background-color: #FFBD00 !important;
+  }
+  .oe_holiday_red {
+    background-color: #ffcaca !important;
+  }
+  .oe_before_holiday_red {
+    background-color: #f2c299 !important;
+  }
+  .oe_worked_less_than_agreed {
+    background-color: gold !important;
+  }
+  .oe_worked_less_than_agreed .worked_less_than_agreed_tooltip {
+      visibility: hidden;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      padding: 5px !important;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 999 !important;
+      width: auto !important;
+      margin-top: -38px !important;
+  }
+  .oe_worked_less_than_agreed:hover .worked_less_than_agreed_tooltip {
+      visibility: visible;
+  }
+  .oe_worked_less_than_agreed .worked_less_than_agreed_tooltip::after {
+      content: " ";
+      position: absolute;
+      top: 100%; /* At the bottom of the tooltip */
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: black transparent transparent transparent;
+  }
+  .oe_has_no_contract {
+    color: red;
+  }
+  .oe_mouse_over {
+    .robo-menu-item-hover;
+  }
+  .oe_mouse_target {
+    color: @robo-button-color;
+    font-weight: bold;
+  }
+  .oe_mousedown_selected {
+    background-color: #bdff00 !important;
+    color: black;
+  }
+  * {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+  }
+  .oe_no_select * {
+     user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+  }
+  .no_wrap {
+    white-space: nowrap;
+  }
+  table {
+
+  }
+  .giveMeEllipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 2;
+  }
+  .fade-container { /*two lines*/
+    overflow: hidden;
+    position: relative;
+    line-height: 18px;
+    /* height must be a multiple of line-height for how many rows you want to show (height = line-height x rows) */
+    height: 36px;
+    -ms-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    word-wrap: break-word;
+  }
+  .last-line {
+    height: 2.4em; /* exactly two lines */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.oe_fd_button_group td, .oe_vd_button_group td, .oe_absences_button_group td {
+    display: inline;
+    width: auto !important;
+    padding: 0 !important;
+    float: none !important;
+}
+.oe_fd_button_group, .oe_vd_button_group, .oe_absences_button_group {
+    margin-right: 30px !important;
+    width: auto !important;
+}
+.oe_fd_button_group button, .oe_vd_button_group button, .oe_absences_button_group button {
+    margin: 0 1px !important;
+}
+.oe_vd_button_group button {
+    background-color: #ffc100 !important;
+}
+.oe_vd_button {
+    background-color: #ffc100 !important;
+}
+.oe_background_green {
+    background-color: #2ECC40 !important;
+}
+.oe_background_yellow {
+    background-color: #FFDC00 !important;
+}
+.oe_background_red {
+    background-color: #FF4136 !important;
+}
+.oe_background_orange {
+    background-color: #FF851B !important;
+}
+.oe_background_teal {
+    background-color: #39CCCC !important;
+}
+.oe_background_blue {
+    background-color: #0074D9 !important;
+}
+.oe_background_aqua {
+    background-color: #7FDBFF !important;
+}
+.oe_background_silver {
+    background-color: #DDDDDD !important;
+}
+.oe_background_purple {
+    background-color: #F012BE !important;
+}
+.oe_button_danger {
+    background-color: red !important;
+    font-weight: bold !important;
+}
+

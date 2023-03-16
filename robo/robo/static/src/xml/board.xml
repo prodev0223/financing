@@ -1,0 +1,247 @@
+<template>
+<t t-name="DashBoard">
+    <div class="container">
+        <div class="oe_dashboard_links">
+            <!--<t t-call="ismanusis_pagalbininkas"/>-->
+            <!--<div class="btn-group">-->
+                <!--&lt;!&ndash;<button type="button" class="button oe_dashboard_link_change_layout" title="Change Layout..">&ndash;&gt;-->
+                <!--<button type="button" class="btn btn-info btn-sm oe_dashboard_link_change_layout" title="Change Layout..">-->
+                    <!--<img src="/robo/static/src/img/layout_1-1-1.png" width="16" height="16"/>-->
+                    <!--<span>Maketas</span>-->
+                <!--</button>-->
+            <!--</div>-->
+            <!--<div class="btn-group">-->
+                <!--<button type="button" class="btn btn-info btn-sm oe_add_graph_button" title="Add">-->
+                        <!--&lt;!&ndash;data-toggle="modal" data-target="#addGraph">&ndash;&gt;-->
+                     <!--<img src="/robo/static/src/img/line-graph-icon.png" width="16" height="16"/>-->
+
+                    <!--<span>Grafikas</span>-->
+                <!--</button>-->
+                <!--<div class="modal fade" id="addGraph" role="dialog">-->
+                    <!--<div class="modal-dialog modal-sm">-->
+                      <!--&lt;!&ndash; Modal content&ndash;&gt;-->
+                      <!--<div class="modal-content">-->
+                        <!--<div class="modal-header">-->
+                          <!--<button type="button" class="close" data-dismiss="modal">x</button>-->
+                          <!--<h4 class="modal-title">Pasirinkite grafiką</h4>-->
+                        <!--</div>-->
+                        <!--<div class="modal-body">-->
+                        <!--</div>-->
+                        <!--<div class="modal-footer">-->
+                          <!--<button type="button" class="btn btn-default" data-dismiss="modal">Uždaryti</button>-->
+                        <!--</div>-->
+                      <!--</div>-->
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+    </div>
+    <!--<div class="table-reponsive">-->
+        <!--<div class="container">-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-4" t-foreach="node.children" t-as="column">-->
+                    <!--<table t-att-data-layout="node.attrs.layout" t-attf-class="oe_dashboard oe_dashboard_layout_#{node.attrs.layout} table table-reflow" cellspacing="0" cellpadding="0" border="0">-->
+
+                    <!--&lt;!&ndash;<div class="row" t-att-data-layout="node.attrs.layout" t-attf-class="oe_dashboard oe_dashboard_layout_#{node.attrs.layout}" cellspacing="0" cellpadding="0" border="0">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="col-md-4">&ndash;&gt;-->
+                                <!--<tbody>-->
+                                <!--<tr>-->
+                                <!--&lt;!&ndash;<div class="col-md-4">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<td t-foreach="node.children" t-as="column" t-if="column.tag == 'column'"&ndash;&gt;-->
+                                    <!--<td t-if="column.tag == 'column'"-->
+                                        <!--t-att-id="view.element_id + '_column_' + column_index" t-attf-class="oe_dashboard_column index_#{column_index} col-xs">-->
+                                         <!--&lt;!&ndash;t-att-id="view.element_id + '_column_' + column_index" t-attf-class="oe_dashboard_column index_#{column_index} col-xs col-md-4">&ndash;&gt;-->
+                                            <!--<t t-foreach="column.children" t-as="action" t-if="action.tag == 'action'" t-call="DashBoard.action"/>-->
+                                            <!--<t t-foreach="column.children" t-as="robo" t-if="robo.tag == 'robo'" t-call="DashBoard.robo"/>-->
+                                    <!--</td>-->
+                                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--</tr>-->
+                                <!--</tbody>-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</table>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--</table>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+</t>
+<t t-name="ismanusis_pagalbininkas">
+    <div class="container " style="width: 100%">
+        <div class="row make-space-top">
+            <div class="col-md-6 text-left">
+                <h1><strong>Išmanusis pagalbinkas</strong></h1>
+            </div>
+            <div class="col-md-4 col-md-offset-2 btn-group">
+                <!--<div class="btn-group">-->
+                    <button type="button" class="btn btn-success btn-large btn-my-style dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Sukurti naują...
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="position:absolute;top:0;right:0;">
+                        <li><a href="#">Sąskaitą faktūrą</a></li>
+                        <li><a href="#">Klientą</a></li>
+                        <li><a href="#">Išlaidas</a></li>
+                    </ul>
+                <!--</div>-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12"><hr/>
+            </div>
+        </div>
+        <div class="row text-left">
+            <div class="col-md-12">
+                <h2><u>Greitoji pagalba</u></h2>
+            </div>
+        </div>
+        <div class="row">
+            <!--<div class="col-md-6 col-md-offset-3">-->
+                <!--<div class="o_menu_search_X" style="margin-bottom: 30px;">-->
+                    <!--<span class="fa fa-search fa-2x o_menu_search_icon"></span>-->
+                    <!--<input class="o_menu_search_input" onfocus="this.value = this.value;" placeholder="Surask atsakymą į rūpimą klausimą" type="text" style="width:80%"/>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="btn-group btn-group-justified">
+        <div class="row text-center make-space-top">
+            <div class="col-md-4">
+                <img class="img-responsive" src="https://placehold.it/300x200" style="margin: 0 auto;"/>
+                <h4 class="make-space-top">Dažniausiai <br/> uždadami klausimai</h4>
+                <p> Greitai surask įvairius dokumentus <br/> šablonus ir atsakymus į <br/> dažniausiai užduodamus <br/>klausimus</p>
+                    <button type="button" class="btn btn-success btn-large btn-my-style btn-primary" title="Change Layout.."><span>DUK</span></button>
+
+            </div>
+            <div class="col-md-4">
+                <img class="img-responsive" src="https://placehold.it/300x200" style="margin: 0 auto;"/>
+                 <h4 class="make-space-top">Dažniausiai <br/> uždadami klausimai</h4>
+                <p> Greitai surask įvairius dokumentus <br/> šablonus ir atsakymus į <br/> dažniausiai užduodamus <br/>klausimus</p>
+
+                <button type="button" class="btn btn-success btn-large btn-my-style btn-primary" title="Change Layout.."><span>Rašyti e.laišką</span></button>
+
+            </div>
+            <div class="col-md-4">
+                <img class="img-responsive" src="https://placehold.it/300x200" style="margin: 0 auto;"/>
+                <h4 class="make-space-top">Dažniausiai <br/> uždadami klausimai</h4>
+                <p> Greitai surask įvairius dokumentus <br/> šablonus ir atsakymus į <br/> dažniausiai užduodamus <br/>klausimus</p>
+                <button type="button" class="btn btn-success btn-large btn-my-style btn-primary" title="Change Layout.."><span>Konsultacija tel.</span></button>
+            </div>
+        </div>
+        </div>
+        <br/>
+        <div class="row text-left">
+            <div class="col-md-12">
+                <h2><u>Bendrosios tendencijos</u></h2>
+            </div>
+        </div>
+    </div>
+</t>
+<t t-name="DashBoard.action">
+    <div t-att-data-id="action.attrs.name" class="oe_action">
+        <h2 t-attf-class="oe_header #{action.attrs.string ? '' : 'oe_header_empty'}">
+            <span class="oe_header_txt"> <t t-esc="action.attrs.string"/> </span>
+            <input class = "oe_header_text" type="text"/>
+            <t t-if="!action.attrs.string">&amp;nbsp;</t>
+            <span class='oe_icon oe_close'></span>
+            <span class='oe_icon oe_minimize oe_fold' t-if="!action.attrs.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="action.attrs.fold"></span>
+        </h2>
+        
+        <div t-attf-id="#{view.element_id}_action_#{column_index}_#{action_index}" class="oe_content" t-att-style="action.attrs.fold ? 'display: none' : null"></div>
+    </div>
+</t>
+<t t-name="DashBoard.robo">
+    <div class="oe_action" t-attf-type="{{robo.attrs.type}}">
+        <h2 t-attf-class="oe_header #{robo.attrs.string ? '' : 'oe_header_empty'}">
+            <span class="oe_header_txt"> <t t-esc="robo.attrs.string"/> </span>
+            <input class = "oe_header_text" type="text"/>
+            <t t-if="!robo.attrs.string">&amp;nbsp;</t>
+            <span class='oe_icon oe_close'></span>
+            <span class='oe_icon oe_minimize oe_fold' t-if="!robo.attrs.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="robo.attrs.fold"></span>
+        </h2>
+        <div t-attf-id="robo_#{column_index}_#{robo.attrs.type}" class="oe_content robo_graph" t-att-style="robo.attrs.fold ? 'display: none' : null"></div>
+    </div>
+</t>
+<t t-name="DashBoard.layouts">
+    <div class="oe_dashboard_layout_selector">
+        <p>
+            <strong>Choose dashboard layout</strong>
+        </p>
+        <ul>
+            <li t-foreach="'1 1-1 1-1-1 1-2 2-1'.split(' ')" t-as="layout" t-att-data-layout="layout">
+                <img t-attf-src="/board/static/src/img/layout_#{layout}.png"/>
+                <img t-if="layout == current_layout"
+                    width="16" height="16" class="oe_dashboard_selected_layout"/>
+            </li>
+        </ul>
+    </div>
+</t>
+<t t-name="DashBoard.xml">
+    <form t-att-string="form_title">
+        <board t-att-style="style">
+                <!--<div class="row">-->
+                    <column t-foreach="columns" t-as="column">
+                            <action t-foreach="column" t-as="action" t-if="action.tag == undefined" t-att="action"/>
+                            <robo t-foreach="column" t-as="robo" t-if="robo.tag == 'robo'" t-att="robo"/>
+                    </column>
+                <!--</div>-->
+        </board>
+    </form>
+</t>
+<div t-name="HomeWidget" class="oe_dashboard_home_widget"/>
+<t t-name="HomeWidget.content">
+    <h3><t t-esc="widget.title"/></h3>
+    <iframe width="100%" frameborder="0" t-att-src="url"/>
+</t>
+
+<t t-name="SearchView.addtodashboard">
+    <li class="o_add_to_dashboard_link o_closed_menu">
+        <a href="#">Add to my Dashboard</a>
+    </li>
+    <li class="o_add_to_dashboard">
+        <input class="o_add_to_dashboard_input" type="text"/>
+    </li>
+    <li class="o_add_to_dashboard">
+        <button type="button" class="btn btn-primary btn-sm o_add_to_dashboard_button">Add</button>
+    </li>
+</t>
+<t t-name="DashBoard.graph">
+    <div class="list-group">
+
+
+        <t t-set="myGraphs" t-value="[1,2,3]"/>
+
+        <!--<t t-set="test" t-value="{}"/>-->
+        <!--<t t-set="test" t-value="test.add{'a':2}"/>-->
+        <!--<t t-set="test" t-value="test['b']=2"/>-->
+        <!--[Test <t t-esc="test['a']"/>]-->
+        <!--[Test value<t t-esc="test_value"/>]-->
+
+        <!--<t t-foreach="graph_ids" t-as="graph">-->
+            <!---->
+            <!--[<t t-esc="graph"/>]-->
+            <!--[<t t-esc="myGraphs"/>]-->
+            <!--<t t-set="myGraphs" t-value="(myGraphs)-graph)"/>-->
+            <!--[<t t-esc="myGraphs"/>]-->
+        <!--</t>-->
+
+        <t t-foreach="myGraphs" t-as="graph">
+            <t t-set="found" t-value="0"/>
+            <t t-foreach="graph_ids" t-as="exist_graph">
+                <t t-if="graph == exist_graph">
+                    <t t-set="found" t-value="1"/>
+                </t>
+            </t>
+            <t t-if="found == 0">
+                <a href="#" class="list-group-item" t-attf-graph="#{graph}">
+                    <h4 class="list-group-item-heading text-center"><t t-esc="graph"/></h4>
+                    <p class="list-group-item-text text-justify">Ataskaita labai svarbi nr. <t t-esc="graph"/></p>
+                </a>
+            </t>
+        </t>
+    </div>
+</t>
+
+</template>

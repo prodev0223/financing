@@ -1,0 +1,995 @@
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<odoo>-->
+<template>
+    <t t-name="Pagalbininkas">
+
+        <div>
+            <div class="robo-container pagalbininkas">
+
+                <div class="flex-container head-padding line-below">
+                    <div class="flex-item">
+                        <h1 class="heading-text say-hello-main">
+                            <t t-if="widget.say_hello"><t t-esc="widget.say_hello"/></t>
+                            <t t-else="">Robo Vadovas</t>
+                        </h1>
+                    </div>
+                    <div class="flex-item right-side">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success dropdown-toggle btn-my-style btn-header"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Sukurti naują...
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu menu-align menu">
+                                <li t-if="widget.is_salesman">
+                                    <a href="#" class="menu-item" data-xml-id="robo.new_client_invoice">
+                                        <span class="icon-register push-left"></span>
+                                        <span class="menu-text">Sąskaitą</span>
+                                    </a>
+                                </li>
+                                <li t-if="widget.is_salesman">
+                                    <a href="#" class="menu-item" data-xml-id="robo.new_client_customer">
+                                        <span class="icon-profile push-left"></span>
+                                        <span class="menu-text">Klientą</span>
+                                    </a>
+                                </li>
+<!--                                <li>-->
+<!--                                    <a href="#" class="menu-item" data-xml-id="robo.new_cheque_action">-->
+<!--                                        <span class="icon-receipt push-left"></span>-->
+<!--                                        <span class="menu-text">Čekį</span>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row robo-search">
+                    <div class="text-center col-xs-12 col-md-10 col-md-offset-1">
+                        <!--<h2 class="heading-text head-padding underline-text">Kaip galėčiau padėti?</h2>-->
+                        <t t-call="SearchField"/>
+                    </div>
+                </div>
+
+                <div class="charts" t-if='widget.robo_manager_rights or widget.is_salesman or widget.show_comparison_chart or widget.show_expense'>
+                    <div class="js-info-cashflow" t-if='widget.robo_manager_rights'>
+                        <h3 class="chart-heading head-padding item-inline">Pinigų likutis banke</h3>
+                        <div class="js-popover-inside item-inline margin-left-s2">
+                            <a href="javascript:void(0)" id="cashflow" tabindex="-1" data-toggle="popover">
+                                <i class="lnr lnr-chevron-down"/>
+                            </a>
+                        </div>
+                        <h4 class="cashflow-date-interval item-inline margin-left-s2"></h4>
+                        <div>
+
+                         <div class="btn-group" data-toggle="buttons" style="margin-right: 20px;">
+                             <label class="btn btn-robo-toggle non_accumulated" data-name="non_accumulated_cashflow" data-toggle="tooltip" title="Pamėnesinio pinigų likučio grafikas">
+                            <input type="radio" name="options" autocomplete="off"/>
+                                <h3><i class="icon-chart-bars"/></h3>
+                          </label>
+                          <label class="btn btn-robo-toggle accumulated" data-name="accumulated_cashflow" data-toggle="tooltip" title="Sukauptinio pinigų likučio grafikas">
+                            <input type="radio" name="options"  autocomplete="off"/>
+                                <h3><i class="icon-graph"/></h3>
+                          </label>
+                          <label id="cashflow_settings" class="btn btn-robo-toggle" data-name="cashflow_settings">
+                                <h3><i class="icon-cog"/></h3>
+                          </label>
+                        </div>
+
+                            <t t-call="year_toggle_button"/>
+                        </div>
+                    </div>
+                    <div id="chart-cashflow-bank-account-statement" t-if='widget.robo_manager_rights'>
+                        <div class="update-info front-tooltip-robo" t-if="widget.last_statement_closed_date"><i t-attf-class="icon-refresh {{widget.statement_old?'robo-warning':''}}"/><span class="update-date"><t t-esc="widget.last_statement_closed_date"/></span></div>
+                        <div t-attf-class="send-info">Banko išrašus <strong>XML</strong> formatu galite siųsti: <a t-attf-href="mailto:{{widget.robo_alias}}"><t t-esc="widget.robo_alias"/></a></div>
+                        <div t-attf-class="robo-envelope {{widget.last_statement_closed_date?'':'has-no-date'}}" title="Išrašus galite siųsti"><a class='icon-envelope' t-attf-href="mailto:{{widget.robo_alias}}"/></div>
+                    </div>
+                    <div id='chart-cashflow' t-if='widget.robo_manager_rights'>
+                        <div class="flex-display-chart">
+                            <div class="flex-item-chart">
+                                <div id="forecast-info-box" class="toggle-info-box-parent">
+                                    <div id="forecast-toggle-box" class="toggle-info-box"
+                                         data-toggle="tooltip" title="Prognozuojamas pinigų likutis.
+                                           Grafike atvaizduojamas prognozuojamas pinigų likutis po 4 mėn.
+                                           Prognozė sudaroma sumuojant gautinas ir mokėtinas sumas mokėjimo termino
+                                           data ir praeito mėnesio darbo užmokesčio išlaidas laikant pastoviomis.
+                                           Prognozė įtraukia tik į sistemą jau įvestus pirkimus ir pardavimus.">
+                                        <label class="switch">
+                                            <input type="checkbox" id="forecast-toggle" data-name="prev_month"/>
+                                            <span class="slider round"/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <svg>
+                                    <defs></defs>
+                                </svg>
+                            </div>
+                            <div class="flex-item-total">
+                                <div class="total-outstanding"></div>
+                                <div class="total-outstanding-info">Pinigų likutis</div>
+                                <div class="total-outstanding-forecast"></div>
+                                <div class="total-outstanding-info-forecast" title="Prognozuojamas pinigų likutis po 4 mėnesių">Prognozė</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="js-info-invoices" t-if='widget.robo_manager_rights or widget.is_salesman'>
+                        <h3 class="chart-heading head-padding item-inline invoice_income_header">Gautinos sumos <span style="white-space:nowrap;">(su PVM)</span></h3>
+                        <h3 class="chart-heading head-padding item-inline invoice_expense_header">Mokėtinos sumos <span style="white-space:nowrap;">(su PVM)</span></h3>
+                        <div class="item-inline margin-left-s2">
+                            <!--<a href="javascript:void(0)" id="invoices" tabindex="-1" data-toggle="popover">-->
+                            <!--<i class="lnr lnr-chevron-down"/>-->
+                            <!--</a>-->
+                            <div class="btn-group" data-toggle="buttons" style="margin-right: 20px;" t-if='widget.show_piechart_switch_buttons'>
+                                <label class="btn btn-robo-toggle inv_mode" data-name="income_invoices" data-toggle="tooltip" title="Gautinos sumos">
+                                    <input type="radio" name="options" autocomplete="off"/>
+                                    <h3><i class="icon-register"/></h3>
+                                </label>
+                                <label class="btn btn-robo-toggle inv_mode" data-name="expense_invoices" data-toggle="tooltip" title="Mokėtinos sumos">
+                                    <input type="radio" name="options"  autocomplete="off"/>
+                                    <h3><i class="icon-receipt"/></h3>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="chart-invoices" class="bullet-chart" t-if='widget.robo_manager_rights or widget.is_salesman'>
+                        <div class="flex-display-chart">
+                            <div class="flex-item-chart">
+                                <div id="income-info-box" class="toggle-info-box-parent">
+                                    <div id="invoices-mode-box" class="toggle-info-box"
+                                         data-toggle="tooltip" title="Rodyti tik asmenines sumas">
+                                        <label class="switch">
+                                            <input type="checkbox" id="invoices-mode-toggle"/>
+                                            <span class="slider round"/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <svg>
+                                    <defs>
+                                        <pattern id="pattern-stripe" width="16" height="4" patternUnits="userSpaceOnUse"
+                                                 patternTransform="rotate(45)">
+                                            <rect width="10" height="4" transform="translate(0,0)" fill="white"></rect>
+                                        </pattern>
+                                        <mask id="mask-stripe">
+                                            <rect x="0" y="0" width="100%" height="100%"
+                                                  fill="url(#pattern-stripe)"></rect>
+                                        </mask>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <div class="flex-item-total">
+                                <div style="display: inline-block !important;">
+                                    <div class="total-outstanding"></div>
+                                </div>
+                                <div style="display: inline-block !important; vertical-align:top;
+                                     margin-top: 3.5%; margin-left: 1%"
+                                     class="extra-expense-income-info front-tooltip-robo">
+                                        <span><i class="icon-notification-circle" style="font-size: 18px; color: #feb742;"/></span>
+                                </div>
+                                <div class="total-outstanding-info invoice_income_outstanding">
+                                    <span>Visos<br/>gautinos sumos
+                                    </span>
+                                </div>
+                                <div class="total-outstanding-info invoice_expense_outstanding">
+                                    <span>Visos<br/>mokėtinos sumos
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="chart-legend">
+                            <!--<li><span class="legend-color-overdue"></span></li>-->
+                            <li><span class="legend-color legend-color-overdue"></span>Pradelsti mokėjimai
+                            </li>
+                            <!--<li><span class="legend-color-overdue"></span></li>-->
+                            <li><span class="legend-color legend-color-outstanding"></span>Laukiantys mokėjimai
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="js-info-income"  t-if='widget.robo_manager_rights or widget.is_salesman'>
+                        <h3 class="chart-heading head-padding item-inline">Pajamos (be PVM)</h3>
+                        <div class="js-popover-inside item-inline margin-left-s2">
+                            <a href="javascript:void(0)" id="income" tabindex="-1" data-toggle="popover">
+                                <i class="lnr lnr-chevron-down"/>
+                            </a>
+                        </div>
+                        <h4 class="income-date-interval item-inline margin-left-s2"></h4>
+                         <div>
+
+                             <div class="btn-group" data-toggle="buttons" style="margin-right: 20px;">
+                             <label class="btn btn-robo-toggle non_accumulated" data-name="non_accumulated_income" data-toggle="tooltip" title="Pamėnesinių pajamų grafikas">
+                            <input type="radio" name="options" autocomplete="off"/>
+                                <h3><i class="icon-chart-bars"/></h3>
+                          </label>
+                          <label class="btn btn-robo-toggle accumulated" data-name="accumulated_income" data-toggle="tooltip" title="Sukauptinių pajamų grafikas">
+                            <input type="radio" name="options"  autocomplete="off"/>
+                                <h3><i class="icon-graph"/></h3>
+                          </label>
+                        </div>
+                            <t t-call="year_toggle_button"/>
+                        </div>
+                    </div>
+                    <div id='chart-income' t-if='widget.robo_manager_rights or widget.is_salesman'>
+                        <div class="flex-display-chart">
+                            <div class="flex-item-chart">
+                                <t t-if="widget.robo_manager_rights or widget.u_all_income or widget.u_analytics">
+                                    <div id="income-info-box" class="toggle-info-box-parent">
+                                        <div id="income-mode-box" class="toggle-info-box"
+                                             data-toggle="tooltip" title="Rodyti tik asmenines pajamas">
+                                            <label class="switch">
+                                                <input type="checkbox" id="income-mode-toggle" data-name="prev_month"/>
+                                                <span class="slider round"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </t>
+                                <svg>
+                                    <defs></defs>
+                                </svg>
+                            </div>
+                            <div class="flex-item-total">
+                                <div class="total-outstanding"></div>
+                                <div class="total-outstanding-info">Pajamos</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="js-info-incomeCompare" t-if='widget.show_comparison_chart'>
+                        <h3 class="chart-heading head-padding item-inline">Pajamos <span style="white-space:nowrap;">(be PVM)</span></h3>
+                        <div class="js-popover-inside item-inline margin-left-s2">
+                            <a href="javascript:void(0)" id="incomeCompare" tabindex="-1" data-toggle="popover">
+                                <i class="lnr lnr-chevron-down"/>
+                            </a>
+                        </div>
+                        <h4 class="incomeCompare-date-interval item-inline margin-left-s2"></h4>
+                         <div>
+                            <t t-call="year_toggle_button"/>
+                            <t t-call="month_toggle_button"/>
+                        </div>
+                    </div>
+                    <div id='chart-incomeCompare' t-if='widget.show_comparison_chart'>
+                        <div class="flex-display-chart">
+                            <div class="flex-item-chart">
+                                <div class="pieChart">
+                                    <svg></svg>
+                                </div>
+                                <div class="pieChart-legend-2">
+                                </div>
+                            </div>
+                            <div class="flex-item-total">
+                                <div class="total-outstanding"></div>
+                                <div class="total-outstanding-info">Visos pajamos</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="js-info-expenses" t-if='widget.robo_manager_rights or widget.is_salesman or widget.show_expense'>
+                        <h3 class="chart-heading head-padding item-inline">Išlaidos (be PVM)</h3>
+                        <div class="js-popover-inside item-inline margin-left-s2">
+                            <a href="javascript:void(0)" id="expenses" tabindex="-1" data-toggle="popover">
+                                <i class="lnr lnr-chevron-down"/>
+                            </a>
+                        </div>
+                        <h4 class="expenses-date-interval item-inline margin-left-s2"></h4>
+                         <div>
+                             <div class="btn-group" data-toggle="buttons" style="margin-right: 20px;" t-if='widget.robo_manager_rights'>
+                             <label class="btn btn-robo-toggle non_accumulated" data-name="non_accumulated_expenses" data-toggle="tooltip" title="Pamėnesinių išlaidų grafikas">
+                            <input type="radio" name="options" autocomplete="off"/>
+                                <h3><i class="icon-chart-bars"/></h3>
+                          </label>
+                          <label class="btn btn-robo-toggle accumulated" data-name="accumulated_expenses" data-toggle="tooltip" title="Sukauptinių išlaidų grafikas">
+                            <input type="radio" name="options"  autocomplete="off"/>
+                                <h3><i class="icon-graph"/></h3>
+                          </label>
+                          <label class="btn btn-robo-toggle active pie_mode" data-name="pie_mode_expenses" data-toggle="tooltip" title="Sukauptinių išlaidų kategorijų diagrama">
+                            <input type="radio" name="options" autocomplete="off" checked="'"/>
+                              <h3><i class="icon-pie-chart"/></h3>
+                          </label>
+                        </div>
+                            <t t-call="year_toggle_button"/>
+                            <t t-call="month_toggle_button"/>
+                        </div>
+                    </div>
+                    <div id='chart-expenses' t-if='widget.robo_manager_rights or widget.is_salesman or widget.show_expense'>
+                        <div class="flex-display-chart">
+                            <div class="flex-item-chart">
+                                <div class="pieChart">
+                                    <svg></svg>
+                                </div>
+                                <div class="pieChart-legend">
+                                </div>
+                            </div>
+                            <div class="flex-item-total">
+                                <div class="total-outstanding"></div>
+                                <div class="total-outstanding-info">Viso išlaidų</div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="js-info-profit" t-if='widget.robo_manager_rights'>
+                        <h3 class="chart-heading head-padding item-inline">Pelnas</h3>
+                        <div class=" js-popover-inside item-inline margin-left-s2">
+                            <a href="javascript:void(0)" id="profit" tabindex="-1" data-toggle="popover">
+                                <i class="lnr lnr-chevron-down"/>
+                            </a>
+                        </div>
+                        <h4 class="profit-date-interval item-inline margin-left-s2"></h4>
+                         <div>
+                             <div class="btn-group" data-toggle="buttons" style="margin-right: 20px;">
+                             <label class="btn btn-robo-toggle non_accumulated" data-name="non_accumulated_profit" data-toggle="tooltip" title="Pamėnesinio pelno grafikas">
+                            <input type="radio" name="options" autocomplete="off"/>
+                                <h3><i class="icon-chart-bars"/></h3>
+                          </label>
+                          <label class="btn btn-robo-toggle accumulated" data-name="accumulated_profit" data-toggle="tooltip" title="Sukauptinio pelno grafikas">
+                            <input type="radio" name="options"  autocomplete="off"/>
+                                <h3><i class="icon-graph"/></h3>
+                          </label>
+                        </div>
+                            <t t-call="year_toggle_button"/>
+                        </div>
+                    </div>
+                    <div id='chart-profit' t-if='widget.robo_manager_rights'>
+                        <div class="flex-display-chart">
+                            <div class="flex-item-chart">
+                                <svg>
+                                    <defs>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <div class="flex-item-total">
+                                <div class="total-outstanding"></div>
+                                <div class="total-outstanding-info">Pelnas</div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="js-info-tax-table future-taxes-header" t-if='widget.robo_manager_rights'>
+                        <h3 class="chart-heading head-padding item-inline">Mokesčiai</h3>
+                        <h4 class="tax-table-date-interval item-inline margin-left-s2"></h4>
+                        <div>
+                            <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-robo-toggle before_prev_month" data-name="before_prev_month">
+                                <input type="radio" name="options" autocomplete="off"/>
+                                <h3><t t-esc="widget.before_prev_month"/></h3>
+                            </label>
+                            <label class="btn btn-robo-toggle prev_month" data-name="prev_month">
+                                <input type="radio" name="options" autocomplete="off"/>
+                                <h3><t t-esc="widget.prev_month"/></h3>
+                            </label>
+                            <label class="btn btn-robo-toggle active curr_full_month" data-name="curr_full_month">
+                                <input type="radio" name="options" autocomplete="off" checked=""/>
+                                <h3><t t-esc="widget.curr_month"/></h3>
+                            </label>
+                        </div>
+                        </div>
+                    </div>
+                    <div id="future_taxes_table" t-if="widget.robo_manager_rights"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="pieChart.legend">
+        <t t-if="is_screen_big">
+            <div class="legend-item" t-foreach="expenses" t-as="item" t-attf-data-id="{{item.id}}">
+                <i t-attf-class="{{item.icon or 'icon-cart-full'}}" t-attf-style="color:{{item.color}}" t-attf-title="{{item.name}}"></i>
+                <span class="name">
+                    <t t-set="item_name" t-value="item.name"/>
+                    <t t-if="item_name.length > 37">
+                        <t t-esc="item_name.substring(0, 31) + '...'"/>
+                    </t>
+                    <t t-else="">
+                        <t t-esc="item_name"/>
+                    </t>
+                </span>
+                <wbr/>
+                <span class="sum">
+                    <t t-esc="format(item.value)"/>
+                    <t t-esc="currency"/>
+                </span>
+            </div>
+        </t>
+        <t t-else="">
+            <div class="legend-item robo-icon-bigger" t-foreach="expenses" t-as="item" t-attf-data-id="{{item.id}}">
+                <i t-attf-class="{{item.icon or 'icon-cart-full'}}" t-attf-style="color:{{item.color}}" t-attf-title="{{item.name}}"></i>
+                <wbr/>
+                <span class="sum">
+                    <t t-esc="format(item.value)"/>
+                    <t t-esc="currency"/>
+                </span>
+            </div>
+        </t>
+    </t>
+    <t t-name="pieChart.legend.2">
+        <t t-if="is_screen_big">
+            <div class="legend-item-2" t-foreach="expenses" t-as="item" t-attf-data-id="{{item.id}}">
+                <i t-attf-class="{{item.icon or 'icon-cart-full'}}" t-attf-style="color:{{item.color}}" t-attf-title="{{item.name}}"></i>
+                <span class="name">
+                    <t t-esc="item.name"/>
+                </span>
+                <wbr/>
+                <span class="sum">
+                    <t t-esc="format(item.value)"/>
+                    <t t-esc="currency"/>
+                </span>
+            </div>
+        </t>
+        <t t-else="">
+            <div class="legend-item-2 robo-icon-bigger" t-foreach="expenses" t-as="item" t-attf-data-id="{{item.id}}">
+                <i t-attf-class="{{item.icon or 'icon-cart-full'}}" t-attf-style="color:{{item.color}}" t-attf-title="{{item.name}}"></i>
+                <wbr/>
+                <span class="sum">
+                    <t t-esc="format(item.value)"/>
+                    <t t-esc="currency"/>
+                </span>
+            </div>
+        </t>
+    </t>
+
+    <t t-name="chart.total">
+        <t t-esc="total"/>
+        <t t-esc="currency"/>
+    </t>
+
+    <t t-name="chart-invoices.popup">
+        <div class="message_popup">
+            <!--style="pointer-events: auto !important;"-->
+            <table class=".table">
+                <thead class="head">
+                    <th class="first-column">
+                        <t t-esc="nbrOfInvoices"/>
+                        <t t-esc="name"/>
+                    </th>
+                    <th class="total">
+                        <t t-esc="format(total)"/>
+                        <t t-esc="currency"/>
+                    </th>
+                </thead>
+                <tbody>
+                    <tr t-foreach="invoices" t-as="item">
+                        <td class="first-column">
+                            <t t-esc="item.company"/>
+                        </td>
+                        <td class="total">
+                            <t t-esc="format(item.sum)"/>
+                            <t t-esc="currency"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <t t-if="nbrOfInvoices >= 1">
+                <div class="text-center" href="#">
+                    <span t-attf-class="o_other_invoices {{type}}" style="cursor: pointer;">Visi...</span>
+                </div>
+            </t>
+        </div>
+    </t>
+    <div t-name="chart-invoices-extra.popup" class="table-responsive" style="border: none">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><b><t t-esc="nbrOfamls"/> <t t-esc="name"/></b></th>
+                        <th><b><t t-esc="format(total)"/><t t-esc="currency"/></b></th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="text-center" href="#">
+                <span style="cursor: pointer;">
+                    <a href="#" t-attf-class="o_other_aml {{type}}">Peržiūrėti...</a></span>
+            </div>
+        </div>
+    <t t-name="chart-profit.popup">
+        <t t-call="chart-income.popup"/>
+    </t>
+
+    <t t-name="chart-expenses.popup">
+        <div class="message_popup">
+            <div class="category_name">
+                <t t-esc="name"/>
+            </div>
+            <div class="category_info">
+                <span class="category_color" t-attf-style="background-color: {{color}};"/>
+                <span class="category_value">
+                    <wbr/>
+                    <t t-esc="format(value)"/>
+                    <t t-esc="currency"/>
+                </span>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="chart-incomeCompare.popup">
+        <div class="message_popup">
+            <div class="category_name">
+                <t t-esc="name"/>
+            </div>
+            <div class="category_info">
+                <span class="category_color" t-attf-style="background-color: {{color}};"/>
+                <span class="category_value">
+                    <wbr/>
+                    <t t-esc="format(value)"/>
+                    <t t-esc="currency"/>
+                </span>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="chart-cashflow.popup">
+        <div class="message_popup">
+            <table class=".table">
+                <thead class="head">
+                    <th class="first-column"></th>
+                    <th class="total info-important">
+                        <t t-esc="curr_date"/>
+                    </th>
+                    <t t-if="curr_date!=YTD_date and show_forecast == false">
+                        <th class="total info-important">
+                            <t t-esc="YTD_date"/>
+                            -
+                            <t t-esc="curr_date"/>
+                        </th>
+                    </t>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th class="first-column">Įplaukos</th>
+                        <td class="total">
+                            <t t-esc="format(income_curr)"/>
+                            <t t-esc="currency"/>
+                        </td>
+                        <t t-if="curr_date!=YTD_date and show_forecast == false">
+                            <td class="total">
+                                <t t-esc="format(income_YTD)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </t>
+                    </tr>
+                    <tr>
+                        <th class="first-column">Išlaidos</th>
+                        <td class="total">
+                            <t t-esc="format(expenses_curr)"/>
+                            <t t-esc="currency"/>
+                        </td>
+                        <t t-if="curr_date!=YTD_date and show_forecast == false">
+                            <td class="total">
+                                <t t-esc="format(expenses_YTD)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </t>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="cash-main-row">
+                        <th class="first-column">Likutis</th>
+                        <!--<td class="total">-->
+                            <!--<t t-esc="format(cashflow_curr)"/>-->
+                            <!--<t t-esc="currency"/>-->
+                        <!--</td>-->
+                        <t>
+                            <td class="total">
+                                <t t-esc="format(cashflow_YTD)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </t>
+                    </tr>
+                    <t t-if="payable_taxes">
+                        <tr>
+                            <th class="first-column">Mokėtinas PVM</th>
+                            <td class="total">
+                                <t t-esc="format(payable_taxes)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tfoot>
+                <tfoot t-if="show_forecast == false">
+                    <tr>
+                        <th class="first-column">Pokytis</th>
+                        <td class="total">
+                            <t t-esc="format(exp_inc_diff_curr)"/>
+                            <t t-esc="currency"/>
+                        </td>
+                        <t t-if="curr_date!=YTD_date">
+                            <td class="total">
+                                <t t-esc="format(exp_inc_diff_YTD)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </t>
+                    </tr>
+                </tfoot>
+                <tfoot>
+                    <t t-if="show_forecast == true">
+                        <t t-if="average_factual_taxes">
+                            <tr>
+                            <th class="first-column">Vidutinis mokėtinas PVM</th>
+                                <td class="total">
+                                    <t t-esc="format(average_factual_taxes)"/>
+                                    <t t-esc="currency"/>
+                                </td>
+                            </tr>
+                        </t>
+                        <t t-if="forecast_budget_sum">
+                            <tr>
+                            <th class="first-column">Planuojamos įplaukos / išlaidos</th>
+                                <td class="total">
+                                    <t t-esc="format(forecast_budget_sum)"/>
+                                    <t t-esc="currency"/>
+                                </td>
+                            </tr>
+                        </t>
+                    <tr>
+                    <th class="first-column">Darbo užmokestis</th>
+                        <td class="total">
+                            <t t-esc="format(expense_du)"/>
+                            <t t-esc="currency"/>
+                        </td>
+                    </tr>
+                    <tr>
+                    <th class="first-column">Kitos išlaidos</th>
+                        <td class="total">
+                            <t t-esc="format(expense_other)"/>
+                            <t t-esc="currency"/>
+                        </td>
+                    </tr>
+                    </t>
+                </tfoot>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="chart-cashflow.popup-non-accumulated">
+        <div class="message_popup">
+            <table class=".table">
+                <thead class="head">
+                    <th class="first-column"></th>
+                    <th class="total info-important">
+                        <t t-esc="curr_date"/>
+                    </th>
+                </thead>
+                <tfoot>
+                    <tr class="cash-main-row">
+                        <th class="first-column">Pinigai</th>
+                        <t>
+                            <td class="total">
+                                <t t-esc="format(cashflow_YTD)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </t>
+                    </tr>
+                    <t t-if="percentage">
+                    <tr class="cash-main-row">
+                        <th class="first-column">Pokytis</th>
+                        <t>
+                            <td class="total">
+                                <t t-esc="percentage"/>
+                                <span>%</span>
+                            </td>
+                        </t>
+                    </tr>
+                    </t>
+                </tfoot>
+            </table>
+        </div>
+    </t>
+
+        <t t-name="chart-income.popup-non-accumulated">
+        <div class="message_popup">
+            <table class=".table">
+                <thead class="head">
+                    <th class="first-column"></th>
+                    <th class="total info-important">
+                        <t t-esc="curr_date"/>
+                    </th>
+                </thead>
+                <tfoot>
+                    <tr class="cash-main-row">
+                        <th class="first-column">Pajamos</th>
+                        <t>
+                            <td class="total">
+                                <t t-esc="format(income_YTD)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </t>
+                    </tr>
+                    <t t-if="percentage">
+                    <tr class="cash-main-row">
+                        <th class="first-column">Pokytis</th>
+                        <t>
+                            <td class="total">
+                                <t t-esc="percentage"/>
+                                <span>%</span>
+                            </td>
+                        </t>
+                    </tr>
+                    </t>
+                </tfoot>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="chart-profit.popup-non-accumulated">
+        <div class="message_popup">
+            <table class=".table">
+                <thead class="head">
+                    <th class="first-column"></th>
+                    <th class="total info-important">
+                        <t t-esc="curr_date"/>
+                    </th>
+                </thead>
+                <tfoot>
+                    <tr class="cash-main-row">
+                        <th class="first-column">Pelnas</th>
+                        <t>
+                            <td class="total">
+                                <t t-esc="format(profit)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </t>
+                    </tr>
+                    <t t-if="percentage">
+                    <tr class="cash-main-row">
+                        <th class="first-column">Pokytis</th>
+                        <t>
+                            <td class="total">
+                                <t t-esc="percentage"/>
+                                <span>%</span>
+                            </td>
+                        </t>
+                    </tr>
+                    </t>
+                </tfoot>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="chart-expenses.popup-non-accumulated">
+        <div class="message_popup">
+            <table class=".table">
+                <thead class="head">
+                    <th class="first-column"></th>
+                    <th class="total info-important">
+                        <t t-esc="curr_date"/>
+                    </th>
+                </thead>
+                <tfoot>
+                    <tr class="cash-main-row">
+                        <th class="first-column">Išlaidos</th>
+                        <t>
+                            <td class="total">
+                                <t t-esc="format(expenses_YTD)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </t>
+                    </tr>
+                    <t t-if="percentage">
+                    <tr class="cash-main-row">
+                        <th class="first-column">Pokytis</th>
+                        <t>
+                            <td class="total">
+                                <t t-esc="percentage"/>
+                                <span>%</span>
+                            </td>
+                        </t>
+                    </tr>
+                    </t>
+                </tfoot>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="chart-expenses.popup-accumulated">
+        <div class="message_popup">
+            <table class=".table">
+                <thead class="head">
+                    <th class="first-column"></th>
+                    <th class="total info-important">
+                        <t t-esc="curr_date"/>
+                    </th>
+                    <t t-if="curr_date!=YTD_date">
+                        <th class="total info-important">
+                            <t t-esc="YTD_date"/>
+                            -
+                            <t t-esc="curr_date"/>
+                        </th>
+                    </t>
+                </thead>
+                <tbody>
+                        <tr>
+                            <th class="first-column">Išlaidos</th>
+                            <td class="total">
+                                <t t-esc="format(expenses_curr)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                            <t t-if="curr_date!=YTD_date">
+                                <td class="total">
+                                    <t t-esc="format(expenses_YTD)"/>
+                                    <t t-esc="currency"/>
+                                </td>
+                            </t>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="chart-income.popup">
+        <div class="message_popup">
+            <table class=".table">
+                <thead class="head">
+                    <th class="first-column"></th>
+                    <th class="total info-important">
+                        <t t-esc="curr_date"/>
+                    </th>
+                    <t t-if="curr_date!=YTD_date">
+                        <th class="total info-important">
+                            <t t-esc="YTD_date"/>
+                            -
+                            <t t-esc="curr_date"/>
+                        </th>
+                    </t>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th class="first-column">Pajamos</th>
+                        <td class="total">
+                            <t t-esc="format(income_curr)"/>
+                            <t t-esc="currency"/>
+                        </td>
+                        <t t-if="curr_date!=YTD_date">
+                            <td class="total">
+                                <t t-esc="format(income_YTD)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                        </t>
+                    </tr>
+                    <t t-if="show_profit">
+                        <tr>
+                            <th class="first-column">Išlaidos</th>
+                            <td class="total">
+                                <t t-esc="format(expenses_curr)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                            <t t-if="curr_date!=YTD_date">
+                                <td class="total">
+                                    <t t-esc="format(expenses_YTD)"/>
+                                    <t t-esc="currency"/>
+                                </td>
+                            </t>
+                        </tr>
+                    </t>
+                </tbody>
+                <t t-if="show_profit">
+                    <tfoot>
+                        <tr>
+                            <th class="first-column">Pelnas</th>
+                            <td class="total">
+                                <t t-esc="format(income_curr-expenses_curr)"/>
+                                <t t-esc="currency"/>
+                            </td>
+                            <t t-if="curr_date!=YTD_date">
+                                <td class="total">
+                                    <t t-esc="format(income_YTD-expenses_YTD)"/>
+                                    <t t-esc="currency"/>
+                                </td>
+                            </t>
+                        </tr>
+                    </tfoot>
+                </t>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="Chart.popover">
+        <div class="popover-section" t-if="popover.dates">
+            <div class="date-range" id="datepicker">
+                <div class="date-pick item-inline margin-right-s1">
+                    <input id='robo_datetimepicker1' type="text" class="date form-control" name="start"
+                           t-attf-value="{{popover.defaultDates.start}}"/>
+                    <!--<span class="icon-calendar-31 from add-on"/>-->
+                </div>
+
+                <div class="date-pick item-inline">
+                    <input id='robo_datetimepicker2' type="text" class="date form-control" name="end"
+                           t-attf-value="{{popover.defaultDates.end}}"/>
+                    <!--<span class="icon-calendar-31 to add-on"/>-->
+                </div>
+
+            </div>
+        </div>
+        <div class="inline-left" t-if="popover.group">
+            <div class="heading-text">Grupuoti</div>
+            <div class="radio-item">
+                <input t-if="popover.defaultRadio.monthly" type="radio" id="monthly" name="ritem"
+                       t-attf-value="{{popover.name}}" checked="checked"/>
+                <input t-else="" type="radio" id="monthly" name="ritem" t-attf-value="{{popover.name}}"/>
+                <label for="monthly">Mėnesiais</label>
+            </div>
+
+            <div class="radio-item">
+                <input t-if="popover.defaultRadio.quarterly" type="radio" id="quarterly" name="ritem"
+                       t-attf-value="{{popover.name}}" checked="checked"/>
+                <input t-else="" type="radio" id="quarterly" name="ritem" t-attf-value="{{popover.name}}"/>
+                <label for="quarterly">Ketvirčiais</label>
+            </div>
+        </div>
+    </t>
+    <t t-name="year_toggle_button">
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-robo-toggle prev_year" data-name="prev_year">
+            <input type="radio" name="options"  autocomplete="off"/>
+              <h3><t t-esc="widget.prev_year"/></h3>
+          </label>
+          <label class="btn btn-robo-toggle active curr_year" data-name="curr_year">
+            <input type="radio" name="options" autocomplete="off" checked="'"/>
+              <h3><t t-esc="widget.curr_year"/></h3>
+          </label>
+        </div>
+    </t>
+    <t t-name="month_toggle_button">
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-robo-toggle prev_month" data-name="prev_month">
+            <input type="radio" name="options" autocomplete="off"/>
+              <h3><t t-esc="widget.prev_month"/></h3>
+          </label>
+          <label class="btn btn-robo-toggle active curr_month" data-name="curr_month">
+            <input type="radio" name="options" autocomplete="off" checked=""/>
+              <h3><t t-esc="widget.curr_month"/></h3>
+          </label>
+        </div>
+    </t>
+    <div t-name="bank-account-update.popup" class="table-responsive" style="border: none">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Banko sąskaita</th>
+                    <th>Paskutinį kartą atnaujinta</th>
+                    <th>Faktinis likutis</th>
+                </tr>
+            </thead>
+                <tbody>
+                    <tr t-foreach="bank_accounts" t-as="item">
+                        <td>
+                            <span style="display:block;overflow:hidden;text-overflow: ellipsis;"> <t t-esc="item.account_name"/></span>
+                        </td>
+                        <td>
+                            <span style="display:block;overflow:hidden;text-overflow: ellipsis;"> <t t-esc="item.date"/></span>
+                        </td>
+                        <td>
+                            <span style="display:block;overflow:hidden;text-overflow: ellipsis;"> <t t-esc="item.balance_real"/></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    <t t-name="cashflow-forecast-settings-popup">
+        <table class=".table">
+            <tbody>
+                <tr>
+                    <td>
+                       Įjungti vidutines pajamas prognozės grafike
+                    </td>
+                    <td>
+                        <div id="forecast-toggle-box" data-toggle="tooltip">
+                            <label class="switch">
+                              <input type="checkbox" id="forecast-toggle-inc-mode" data-name="prev_month"/>
+                              <span class="slider round"/>
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       Įjungti vidutines išlaidas prognozės grafike
+                    </td>
+                    <td>
+                     <div id="forecast-toggle-box" data-toggle="tooltip">
+                        <label class="switch">
+                          <input type="checkbox" id="forecast-toggle-exp-mode" data-name="prev_month"/>
+                          <span class="slider round"/>
+                        </label>
+                    </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </t>
+</template>

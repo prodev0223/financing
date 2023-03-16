@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="atostoginiu_kaupiniu_wizard_form_front" model="ir.ui.view">
+            <field name="name">Atostogų kaupinių apskaitymas</field>
+            <field name="model">atostoginiu.kaupiniu.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Atostogų kaupinių apskaitymas">
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="date"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="open_report" string="View" type="object" class="oe_highlight"
+                                style="margin-right: 10px;" context="{'force_html': True}"/>
+                            <button name="open_report" string="PDF" type="object" class="oe_highlight"
+                                style="margin-right: 10px;" context="{'force_pdf': True}"/>
+                            <button name="button_generate_report" string="Excel" type="object"
+                                    class="oe_highlight" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" type="action" name="%(robo.open_reports_action)d"
+                                    class="oe_highlight" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_kaupiniu_wizard_front" model="ir.actions.act_window">
+            <field name="name">Atostogų kaupinių apskaitymas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">atostoginiu.kaupiniu.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="atostoginiu_kaupiniu_wizard_form_front"/>
+            <field name="target">inline</field>
+            <field name="header" ref="robo.front_wizard_default_header"/>
+        </record>
+
+        <menuitem id="menu_kaupiniu_wizard_search_report"
+                  name="Atostogų kaupinių apskaitymas"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="action_kaupiniu_wizard_front"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="atostogų,kaupinių,apskaitymas"
+        />
+    </data>
+</odoo>

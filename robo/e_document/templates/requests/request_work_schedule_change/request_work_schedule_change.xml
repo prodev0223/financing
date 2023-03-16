@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="request_work_schedule_change_form" model="ir.ui.view">
+            <field name="name">Prašymas dėl darbo grafiko pakeitimo</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_request_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='extra_text']" position="replace"/>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="date_3" string="Date from" required="1"/>
+                    </group>
+                    <group colspan="4">
+                        <field name="fixed_attendance_ids" nolabel="1" required="1" readonly="0">
+                            <tree string="Grafikas" editable="bottom" class="robo_tree_in_form">
+                                <field name="dayofweek"/>
+                                <field name="hour_from" widget="float_time"/>
+                                <field name="hour_to" widget="float_time"/>
+                                <field name="time_total" widget="float_time" sum="time_total"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="request_work_schedule_change_action" model="ir.actions.act_window">
+            <field name="name">Prašymas dėl darbo grafiko pakeitimo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'prasymas', u'rec_template_id':
+                u'request_work_schedule_change_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.request_work_schedule_change_form"/>
+        </record>
+
+        <record id="request_work_schedule_change_menu" model="ir.ui.menu">
+            <field name="name">Prašymas dėl darbo grafiko pakeitimo</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="prasymas"/>
+            <field name="action" ref="e_document.request_work_schedule_change_action"/>
+            <field name="sequence">1</field>
+            <field name="tags">darbo grafiko pakeitimas</field>
+        </record>
+
+        <record id="request_work_schedule_change_template" model="e.document.template">
+            <field name="body" type="html">
+                <style type="text/css">
+                    table.week_work_time_table {
+                    margin-left: 3%;
+                    }
+
+                    table.week_work_time_table * {
+                    border: 1px solid black;
+                    border-collapse: collapse;
+                    padding-left: 4px;
+                    padding-right: 4px;
+                    }
+
+                    table.week_work_time_table th {
+                    text-align: center;
+                    }
+
+                    ol.move-right {
+                    margin-left: 3%
+                    }
+                </style>
+                <div style="padding-left: 20px;" id="body">
+                    Prašau nuo {{ date_3 }} pakeisti mano darbo grafiką pagal apačioje pateiktą lentelę.
+                    <br/>
+                    <table class="week_work_time_table">
+                        <tr>
+                            <th>Savaitės diena</th>
+                            <th>Darbo pradžia</th>
+                            <th>Darbo pabaiga</th>
+                        </tr>
+                        {% for eilute in parse_schedule_lines_for_printing(fixed_attendance_ids) %}
+                        <tr>
+                            <td>{{ get_weekday_string(eilute.dayofweek) }}</td>
+                            <td>{{ format_float_to_hours(eilute.hour_from) }}</td>
+                            <td>{{ format_float_to_hours(eilute.hour_to) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </field>
+            <field name="name">Prašymas dėl darbo grafiko pakeitimo</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{ employee_id1 }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.isakymas_del_darbo_grafiko_pakeitimo_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras {
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded {
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{%endif%} {{ job_id1}}</span>
+                                            </p>
+                                            <span>{{ employee_id1 }}</span>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p>
+                                                <span>{% if manager_job_id %}{{kam(manager_job_id, 'Aa')}} {%
+                                                    else%}Direktoriui{% endif %} {{kam(manager_id, 'Aa')}}
+                                                </span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>PRAŠYMAS</span>
+                        </p>
+                        <span>PRAŠYMAS
+                            DĖL DARBO GRAFIKO PAKEITIMO
+                        </span>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded {
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p style="font-weight:bold">
+                                                    <span>{{ department_id }}{% if job_id1 %},{%endif%} {{ job_id1}}
+                                                    </span>
+                                                </p>
+                                                <span>{{ employee_id1 }}</span>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p>
+                                                    <span>{% if manager_job_id %}{{kam(manager_job_id, 'Aa')}} {%
+                                                        else%}Direktoriui{% endif %} {{kam(manager_id, 'Aa')}}
+                                                    </span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>PRAŠYMAS</span>
+                            </p>
+                            <span>PRAŠYMAS
+                                DĖL DARBO GRAFIKO PAKEITIMO
+                            </span>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ vieta }}</span>
+                            </p>
+                        </center>
+                    </div>
+                </div>
+
+                <div style="padding-left: 20px;" id="body">
+                    Prašau nuo {{ date_3 }} pakeisti mano darbo grafiką pagal apačioje pateiktą lentelę.
+                    <br/>
+                    <table class="week_work_time_table">
+                        <tr>
+                            <th>Savaitės diena</th>
+                            <th>Darbo pradžia</th>
+                            <th>Darbo pabaiga</th>
+                        </tr>
+                        {% for eilute in parse_schedule_lines_for_printing(fixed_attendance_ids) %}
+                        <tr>
+                            <td>{{ get_weekday_string(eilute.dayofweek) }}</td>
+                            <td>{{ format_float_to_hours(eilute.hour_from) }}</td>
+                            <td>{{ format_float_to_hours(eilute.hour_to) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="65%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{ employee_id1 }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.request_work_schedule_change_workflow()</field>
+            <field name="date_from_field_name">date_3</field>
+            <field name="date_to_field_name">date_3</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+        </record>
+    </data>
+</odoo>

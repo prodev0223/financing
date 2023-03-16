@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_hr_payroll_config_setting" model="ir.ui.view">
+            <field name="name">Configure Payroll</field>
+            <field name="model">hr.payroll.config.settings</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payroll_configuration"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="after">
+                    <group string="DU sąskaitų nustatymai" name="du_saskaitos">
+                        <field name="salary_journal_id"/>
+                        <field name="advance_journal_id"/>
+                        <field name="saskaita_debetas"/>
+                        <field name="saskaita_kreditas"/>
+                        <field name="saskaita_gpm"/>
+                        <field name="saskaita_sodra"/>
+                        <field name="saskaita_komandiruotes_credit"/>
+                        <field name="saskaita_komandiruotes"/>
+                        <!--<field name="darbdavio_sodra_credit"/>-->
+                        <field name="darbdavio_sodra_debit"/>
+                        <field name="atostoginiu_kaupiniai_account_id"/>
+                        <field name="kaupiniai_expense_account_id"/>
+                        <field name="kiti_atskaitymai_credit"/>
+                        <field name="employee_advance_account"/>
+                    </group>
+                    <group>
+                        <group name="mokesciai" string="Mokesčių dydžiai">
+                            <label for="gpm_proc"/>
+                            <div>
+                               <field name="gpm_proc" class="oe_inline"/>%
+                            </div>
+                            <label for="gpm_ligos_proc"/>
+                            <div>
+                               <field name="gpm_ligos_proc" class="oe_inline"/>%
+                            </div>
+                            <label for="darbuotojo_pensijos_proc"/>
+                            <div>
+                                <field name="darbuotojo_pensijos_proc" class="oe_inline"/>%
+                            </div>
+                            <label for="darbuotojo_sveikatos_proc"/>
+                            <div>
+                                <field name="darbuotojo_sveikatos_proc" class="oe_inline"/>%
+                            </div>
+                            <label for="sodra_papild_proc"/>
+                            <div>
+                                <field name="sodra_papild_proc" class="oe_inline"/>%
+                            </div>
+                            <label for="darbdavio_sodra_proc"/>
+                            <div>
+                                <field name="darbdavio_sodra_proc" class="oe_inline"/>%
+                            </div>
+                            <label for="term_contract_additional_sodra_proc"/>
+                            <div>
+                                <field name="term_contract_additional_sodra_proc" class="oe_inline"/>%
+                            </div>
+                            <field name="npd_max"/>
+                            <field name="mma"/>
+                            <field name="mma_first_day_of_year"/>
+                            <field name="min_hourly_rate"/>
+                            <field name="npd_koeficientas"/>
+                            <field name="ligos_koeficientas"/>
+                        </group>
+                        <group name="avansu_politika" string="Avansų politika">
+                            <field name="avansu_politika" col-span="2"/>
+                            <field name="avansu_politika_proc" attrs="{'invisible': [('avansu_politika','!=','percent')]}"/>
+                            <label for="max_advance_rate_proc"/>
+                            <div>
+                                <field name="max_advance_rate_proc" class="oe_inline"/>%
+                            </div>
+                            <label for="salary_payment_day"/>
+                            <div>
+                                <field name="salary_payment_day" class="oe_inline"/>
+                            </div>
+                            <label for="advance_payment_day"/>
+                            <div>
+                                <field name="advance_payment_day" class="oe_inline"/>
+                            </div>
+                        </group>
+                        <group name="Salary coefficients">
+                            <label for="dn_coefficient"/>
+                            <div>
+                                <field name="dn_coefficient" class="oe_inline"/>
+                            </div>
+                            <label for="dp_coefficient"/>
+                            <div>
+                                <field name="dp_coefficient" class="oe_inline"/>
+                            </div>
+                            <label for="vd_coefficient"/>
+                            <div>
+                                <field name="vd_coefficient" class="oe_inline"/>
+                            </div>
+                            <label for="vdn_coefficient"/>
+                            <div>
+                                <field name="vdn_coefficient" class="oe_inline"/>
+                            </div>
+                            <label for="vss_coefficient"/>
+                            <div>
+                                <field name="vss_coefficient" class="oe_inline"/>
+                            </div>
+                            <label for="snv_coefficient"/>
+                            <div>
+                                <field name="snv_coefficient" class="oe_inline"/>
+                            </div>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//group[1]" position="before">
+                    <field name="has_default_company" invisible="1"/>
+                    <group string="Company" groups="base.group_multi_company">
+                        <label for="id" string="Company"/>
+                        <div>
+                            <div attrs="{'invisible': [('has_default_company', '=', True)]}">
+                                <field name="company_id" options="{'no_create': True}" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="payroll_parameter_history_tree_view" model="ir.ui.view">
+            <field name="name">payroll.parameter.history.tree</field>
+            <field name="model">payroll.parameter.history</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="company_id" invisible="1"/>
+                    <field name="date_from"/>
+                    <field name="field_name"/>
+                    <field name="value"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_payroll_parameter_history_action">
+            <field name="name">Du parametrai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">payroll.parameter.history</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree, form</field>
+            <field name="view_id" eval="False"/>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem
+            id="payroll_parameter_history_menu"
+            name="Du parametrai"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="4"
+            groups="hr.group_hr_manager"
+            action="open_payroll_parameter_history_action"/>
+
+        <record id="hr_department_payroll_settings" model="ir.ui.view">
+            <field name="name">hr.department.payroll.settings</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="after">
+                    <group groups="hr.group_hr_manager">
+                        <field name="saskaita_debetas"/>
+                        <field name="saskaita_kreditas"/>
+                        <field name="saskaita_gpm"/>
+                        <field name="saskaita_sodra"/>
+                        <field name="saskaita_komandiruotes_credit"/>
+                        <field name="saskaita_komandiruotes"/>
+                        <!--<field name="darbdavio_sodra_credit"/>-->
+                        <field name="darbdavio_sodra_debit"/>
+                        <field name="atostoginiu_kaupiniai_account_id"/>
+                        <field name="kaupiniai_expense_account_id"/>
+                        <field name="kiti_atskaitymai_credit"/>
+                        <field name="employee_advance_account"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="payroll_parameter_history_search">
+            <field name="name">Du parametrų paieška</field>
+            <field name="model">payroll.parameter.history</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="field_name" filter_domain="[('field_name','ilike',self)]"/>
+                    <field name="value" filter_domain="[('value','ilike',self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_from', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_from', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_from', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_from', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_from', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_from', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_from', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_from', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <field name="date_from" string="Data nuo" filter_domain="['|',
+                                                                            ('date_from', '&gt;=', self),
+                                                                            ('date_from', '&gt;=', self)]"/>
+                    <field name="date_from" string="Data iki" filter_domain="['|',
+                                                                            ('date_from', '&lt;=', self),
+                                                                            ('date_from', '&lt;=', self)]"/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

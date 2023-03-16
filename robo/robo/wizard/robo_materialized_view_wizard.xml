@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="form_robo_materialized_view_wizard" model="ir.ui.view">
+            <field name="name">form.robo.materialized.view.wizard</field>
+            <field name="model">robo.materialized.view.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Atverti ataskaitą" edit="0" delete="0">
+                    <sheet>
+                        <group string="Atverti ataskaitą">
+                            <group col="2">
+                                <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                    Dėl didelio duomenų kiekio kompanijoje rekomendujame limituoti duomenis -
+                                    ataskaitą traukti ne didesniam nei mėnesio periodui.
+                                    Ataskaita pagal nutylėjimą nėra išplėčiama, taip pat
+                                    nėra perskaičiuojama automatiškai, tai galite padaryti rankiniu
+                                    būdu naudodami įrankį apačioje.
+                                </div>
+                            </group>
+                            <group col="2">
+                                <field name="name" readonly="1"/>
+                                <field name="period_start" required="True"/>
+                                <field name="period_end" required="True"/>
+                            </group>
+                        </group>
+                        <group colspan="4">
+                            <div style="text-align: center;">
+                                <button name="button_action_open_materialized_view" string="Atverti ataskaitą"
+                                type="object" default_focus="1" class="oe_highlight"/>
+                            </div>
+                        </group>
+                        <group string="Perskaičiuoti ataskaitą" colspan="4">
+                            <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                Šis veiksmas fone perkraus (perskaičiuos) ataskaitą ir žinute informuos jus
+                                kada veiksmas bus baigtas. Jeigu su ataskaita susiję duomenys pastaruoju metu nesikeitė,
+                                rekomenduojame praleisti šį veiksmą.
+                            </div>
+                        </group>
+                        <group colspan="4">
+                            <div style="text-align: center;">
+                                <button name="action_refresh_materialized_view" string="Perskaičiuoti ataskaitą"
+                                    type="object" default_focus="1" class="oe_highlight"/>
+                            </div>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Grįžti" type="object" class="btn-primary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cron_process_revolut_jobs" model="ir.cron">
+            <field name="name">Process Revolut import jobs</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="model">revolut.import.job</field>
+            <field name="function">cron_process_revolut_jobs</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(day=28, hour=6, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_inform_about_failed_jobs" model="ir.cron">
+            <field name="name">Inform about failed Revolut import jobs</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="model">revolut.import.job</field>
+            <field name="function">cron_inform_about_failed_jobs</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(day=28, hour=6, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_reconcile_api_invoice" model="ir.cron">
+            <field name="name">Reconcile API invoice with Stripe payments</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="model">account.invoice</field>
+            <field name="function">cron_reconcile_api_invoice</field>
+            <field name="nextcall" eval="DateTime.now().strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

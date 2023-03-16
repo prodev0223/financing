@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="prasymas_del_islaidu_kompensavimo_form" model="ir.ui.view">
+            <field name="name">Prašymas dėl išlaidų kompensavimo</field>
+            <field name="model">e.document</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header attrs="{'invisible': [('hide_view', '=', True)]}">
+                        <button name="confirm" type="object" string="Formuoti" states="draft"/>
+                        <button name="sign" type="object" class="oe_highlight" string="Pasirašyti" states="confirm" confirm="Patvirtinu, kad perskaičiau ir susipažinau."/>
+                        <field name="allow_approve" invisible="1"/>
+                        <field name="allow_reject" invisible="1"/>
+                        <field name="approve_status" invisible="1"/>
+                        <button name="action_approve" type="object" class="oe_highlight" string="Patvirtinti" confirm="Ar tikrai norite tvirtinti darbuotojo prašymą?" attrs="{'invisible': ['|', '|', ('approve_status', '!=', 'waiting_approval'), ('document_type', '=', 'isakymas'), ('allow_approve', '=', False)]}"/>
+                        <button name="action_reject" type="object" class="oe_highlight" string="Atmesti" confirm="Ar tikrai norite atmesti darbuotojo prašymą?" attrs="{'invisible': ['|', '|', ('approve_status', '!=', 'waiting_approval'), ('document_type', '=', 'isakymas'), ('allow_reject', '=', False)]}"/>
+                        <button name="set_draft" type="object" string="Atstatyti į juodraštį" states="confirm"/>
+                        <field name="show_cancel_request" invisible="1"/>
+                        <field name="expense_state_approval" widget="statusbar" states="e_signed"/>
+                        <field name="state" widget="statusbar"/>
+                        <field name="employee_is_validator" invisible="1"/>
+                        <button name="approve_expense_compensation" type="object" class="oe_highlight" string="Patvirtinti išlaidas ir pateikti buhalterijai" attrs="{'invisible': ['|', ('expense_state_approval','!=', 'waiting'), '|', ('employee_is_validator', '=', False), ('state', '!=', 'e_signed')]}"/>
+                        <button name="decline_expense_compensation" type="object" class="oe_highlight" string="Atmesti prašymą" attrs="{'invisible': ['|', ('expense_state_approval','!=', 'waiting'), '|', ('employee_is_validator', '=', False), ('state', '!=', 'e_signed')]}"/>
+                        <button name="cancel" type="object" string="Atšaukti" confirm="Ar tikrai norite atšaukti dokumentą?" states="draft,confirm"/>
+                        <button name="cancel_request" type="object" string="Atšaukti" confirm="Ar tikrai norite atšaukti dokumentą?" attrs="{'invisible': ['|', '|', ('show_cancel_request', '=', False), ('document_type', '=', 'isakymas'), ('state', '!=', 'e_signed')]}"/>
+                        <field name="cancelled_ids" invisible="1"/>
+                        <field name="cancel_id" invisible="1"/>
+                        <field name="nbr_of_attachments" invisible="1"/>
+                        <field name="user_attachment_ids" invisible="1"/>
+                        <field name="attachment_drop_lock" invisible="1"/>
+                        <field name="unique_wizard_id" invisible="1"/>
+                        <field name="show_attach_doc" invisible="1"/>
+                    </header>
+                    <widget type="robo_attach_files" attrs="{'invisible': [('show_attach_doc', '=', False)]}"/>
+                    <sheet>
+                        <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4" attrs="{'invisible': ['|',('state','!=','confirm'),('document_type','!=','prasymas')]}">
+                                Nepamirškite prisegti failų ir pasirašyti!
+                        </div>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4" attrs="{'invisible': ['|',('state','!=','confirm'),('document_type','!=','isakymas')]}">
+                                Nepamirškite pasirašyti!
+                        </div>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4" attrs="{'invisible': ['|',('state','!=','e_signed'),('expense_state_approval','!=', 'waiting')]}">
+                                Laukiama patvirtinimo.
+                        </div>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4" attrs="{'invisible': ['|',('state','!=','e_signed'), '|', ('expense_state_approval','!=', 'approved')]}">
+                                Patvirtinta! Jūsų sukelti dokumentai buvo pateikti buhalterijai!
+                        </div>
+                        <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4" attrs="{'invisible': ['|',('state','!=','e_signed'),('expense_state_approval','!=', 'declined')]}">
+                                Atmesta! Šis prašymas buvo peržiūrėtas ir atmestas!
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <div class=" oe_right oe_button_box">
+                            <field name="record_id" attrs="{'invisible':1}"/>
+                            <field name="record_model" attrs="{'invisible':1}"/>
+                            <field name="document_type" attrs="{'invisible':1}"/>
+                            <button name="toggle_active" type="object" groups="base.group_system" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                                    <button name="toggle_skip_constraints" type="object"
+                                            groups="robo_basic.group_robo_premium_accountant"
+                                            class="oe_stat_button"
+                                            icon="fa-check-circle">
+                                        <field name="skip_constraints" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: {
+                                       &quot;string_true&quot;: &quot;Netikrinama&quot;,
+                                       &quot;string_false&quot;: &quot;Tikrinama&quot;,
+                                       &quot;hover_true&quot;: &quot;Įjungti tikrinimą&quot;,
+                                       &quot;hover_false&quot;: &quot;Išjungti tikrinimą&quot;,
+                                       }}"/>
+                                    </button>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_related_document" string="Dokumentai" help="Nueiti į susijusius dokumentus" type="object" attrs="{'invisible':['&amp;',('document_type', '!=', 'isakymas'), '|', ('record_id','=',0), ('record_model', '!=', 'e.document')]}" icon="fa-link" widget="statinfo" groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_related_record" string="Įrašai" help="Nueiti į susijusius įrašus" type="object" attrs="{'invisible':['|',('record_id','=',0), ('record_model', '=', 'e.document')]}" icon="fa-link" widget="statinfo" groups="robo_basic.group_robo_premium_accountant"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_cancelled_ids" string="Atšaukiantis dokumentas" help="Nueiti į atšaukiantį įsakymą" type="object" attrs="{'invisible':[('cancelled_ids', '=', [])]}" icon="fa-link" widget="statinfo" groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_cancel_id" string="Atšaukiamas dokumentas" help="Nueiti į atšaukiamą įsakymą" type="object" attrs="{'invisible':[('cancel_id', '=', False)]}" icon="fa-link" widget="statinfo" groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"/>
+                        </div>
+                        <group attrs="{'invisible': [('hide_view', '=', True)]}">
+                            <group>
+                                <field name="locked" invisible="1"/>
+                                <field name="hide_view" invisible="1"/>
+                                <field name="template_id" invisible="1"/>
+                                <field name="show_user" invisible="1"/>
+                                <field name="cancel_uid" attrs="{'invisible': [('state', '!=', 'cancel')]}" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="company_id" options="{'no_create': True, 'no_open': True}" string="Įmonės pavadinimas" required="True" invisible="1"/>
+                                <field name="date_document" options="{'no_create': True, 'no_open': True}" string="Pildymo data" required="True" invisible="0"/>
+                                <field name="employee_id1" options="{'no_create': True, 'no_open': True}" string="Darbuotojo(-s) Vardas Pavardė" required="True" attrs="{'invisible': [('show_user', '!=', True)]}"/>
+                                <field name="document_number" options="{'no_create': True, 'no_open': True}" string="Dokumento numeris" required="True" invisible="1"/>
+                                <field name="extra_text" string="Prašau man kompensuoti " required="True" invisible="0"/>
+                            </group>
+                            <group>
+                                <field name="info_about_expense" string="Informacija apie kompensaciją"/>
+                                <field name="float_1" string="Dydis (EUR)" required="True" invisible="0"/>
+                            </group>
+                        </group>
+                        <field name="final_document" widget="html" states="draft" readonly="1"/>
+                        <field name="generated_document" widget="pdf_viewer" states="confirm,e_signed" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                        <label for="generated_document" string="Atsisiųsti" states="confirm,e_signed"/>
+                        <field name="generated_document_download" string="" states="confirm,e_signed" filename="file_name"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="prasymas_del_islaidu_kompensavimo_template" model="e.document.template">
+            <field name="name">Prašymas dėl išlaidų kompensavimo</field>
+            <field name="view_id" ref="prasymas_del_islaidu_kompensavimo_form"/>
+            <field name="model">e.document.template</field>
+            <field name="display_name">Prašymas dėl išlaidų kompensavimo</field>
+            <field name="send_manager">False</field>
+            <field name="header"><![CDATA[
+                <style type="text/css">
+                    .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine {
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                    }
+                    .img-rounded {
+                        width: 100px;
+                    }
+                </style>
+                <div style="padding-bottom:20px;">
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:8px;"/>
+                        </div>
+                    </center>
+                    <table width="50%"></table>
+                    <center>
+                        <p style="font-weight:bold">
+                          <span>PRAŠYMAS</span>
+                        </p>
+                        <p>
+                          <span>DĖL IŠLAIDŲ KOMPENSAVIMO</span>
+                        </p>
+                        <p class="centras">
+                          <span>{{ date_document }}</span>
+                        </p>
+                    </center>
+                </div>
+
+            ]]>
+            </field>
+            <field name="body"><![CDATA[
+                <div style="padding-left: 20px;">
+                    Prašau man kompensuoti {{ extra_text }} Išmokant {{ float_1 }} EUR dydžio sumą.
+                </div>
+            ]]>
+            </field>
+            <field name="footer"><![CDATA[
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="45%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            ]]>
+            </field>
+            <field name="python_code"><![CDATA[
+            ]]>
+            </field>
+        </record>
+
+        <record id="prasymas_del_islaidu_kompensavimo_action" model="ir.actions.act_window">
+            <field name="name">Prašymas dėl išlaidų kompensavimo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'prasymas', u'rec_template_id': u'walless.prasymas_del_islaidu_kompensavimo_template', u'e_document_view_type': u'rigid'}</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="prasymas_del_islaidu_kompensavimo_form"/>
+        </record>
+
+        <record id="prasymas_del_islaidu_kompensavimo" model="ir.ui.menu">
+            <field name="name">Prašymas dėl išlaidų kompensavimo</field>
+            <field name="robo_front">True</field>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="e_document.prasymas"/>
+            <field name="action" ref="prasymas_del_islaidu_kompensavimo_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">prašymas,išlaidos,kontora,kompensacija,kompensavimas,kompensuoti,sumokėta,prasymas,islaidos</field>
+        </record>
+
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">Kompanijos nustatymai</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_invoice_text']" position="after">
+                    <field name="employees_approving_compensation" string="Darbuotojai tvirtinantys kompensacijas" widget="many2many_tags" options="{'no_create': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
+

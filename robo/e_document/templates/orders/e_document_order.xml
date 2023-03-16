@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="e_document_order_base_view_form" model="ir.ui.view">
+            <field name="name">e.document.order.base.view.form</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <header attrs="{'invisible': [('hide_view', '=', True)]}">
+                        <field name="cancelled_ids" invisible="1"/>
+                        <field name="cancel_id" invisible="1"/>
+                        <field name="rejected" invisible="1"/>
+                        <field name="failed_workflow" invisible="1"/>
+                        <field name="record_id" invisible="1"/>
+                        <field name="record_model" invisible="1"/>
+                        <field name="document_type" invisible="1"/>
+                        <field name="hide_view" invisible="1"/>
+                        <field name="template_id" invisible="1"/>
+                        <field name="locked" invisible="1"/>
+                        <field name="show_cancel_request" invisible="1"/>
+                        <field name="allow_approve" invisible="1"/>
+                        <field name="allow_reject" invisible="1"/>
+                        <field name="approve_status" invisible="1"/>
+                        <field name="show_warning" invisible="1"/>
+                        <field name="negative_holiday_banner" invisible="1"/>
+                        <field name="show_reset_running_button" invisible="1"/>
+
+                        <button name="confirm" type="object" string="Formuoti" states="draft"/>
+                        <button name="sign" type="object" class="oe_highlight" string="Pasirašyti" states="confirm"
+                                confirm="Patvirtinu, kad perskaičiau ir susipažinau."/>
+                        <button name="simulate_signing" type="object" class="oe_highlight" string="Patikrinti"
+                                states="confirm" groups="robo_basic.group_robo_premium_accountant"/>
+                        <button name="set_draft" type="object" string="Atstatyti į juodraštį"
+                                states="confirm"/>
+                        <button name="cancel" type="object" string="Atšaukti"
+                                confirm="Ar tikrai norite atšaukti dokumentą?" states="draft,confirm"/>
+                        <button name="cancel_order" type="object" string="Panaikinti įsakymą"
+                                confirm="Ar tikrai norite panaikinti šį įsakymą?"
+                                attrs="{'invisible': ['|', ('state','!=','e_signed'), ('cancelled_ids', '!=', [])]}"/>
+
+                        <button name="action_download" type="object" string="Atsisiųsti"
+                                states="confirm,e_signed" class="download_main_button"/>
+                        <button name="action_download" context="{'force_no_mark': True}" type="object"
+                                string="Atsisiųsti be pasirašymo žymos"
+                                states="e_signed"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('running', '=', False)]}">
+                        Dokumentas šiuo metu yra pasirašinėjamas, prašome palaukti, jis turėtų būti paruoštas netrukus
+                    </div>
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('failed_workflow','=', False)]}"
+                         groups="robo_basic.group_robo_premium_accountant">
+                        Nepavyko įvykdyti dokumento darbo eigos
+                    </div>
+
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': ['|', ('state','!=','e_signed'), ('rejected', '!=', True)]}">
+                        ŠIS DOKUMENTAS BUVO ATMESTAS IR NEBEGALIOJA
+                    </div>
+
+                    <div class="alert alert-info-yellow" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('negative_holiday_banner','=', False)]}">
+                        Darbuotojo atostogų likutis mažesnis už nurodytą atostogų skyrimo periodą.
+                    </div>
+
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': [('state','!=','confirm')]}">
+                            Nepamirškite pasirašyti!
+                        </div>
+
+                        <div class="oe_right oe_button_box" style="width: 100% !important;">
+
+                            <button name="toggle_active" type="object" groups="base.group_system" class="oe_stat_button"
+                                    icon="fa-archive">
+                                <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
+                            </button>
+
+                            <button name="reset_running" type="object" groups="robo_basic.group_robo_premium_accountant"
+                                    class="oe_stat_button" icon="fa-history"
+                                    attrs="{'invisible': [('show_reset_running_button', '=', False)]}">
+                                <field name="running" widget="boolean_button" options="{
+                                    'terminology': {
+                                        'string_true': 'Pasirašoma',
+                                        'hover_true': 'Atstatyti',
+                                        }
+                                    }"/>
+                            </button>
+
+                            <button name="toggle_skip_constraints" type="object"
+                                    groups="robo_basic.group_robo_premium_accountant" class="oe_stat_button"
+                                    icon="fa-check-circle" attrs="{'invisible':[('state', 'in', ['draft', 'cancel'])]}">
+                                <field name="skip_constraints" widget="boolean_button" options="{
+                                    'terminology': {
+                                        'string_true': 'Netikrinama',
+                                        'string_false': 'Tikrinama',
+                                        'hover_true': 'Įjungti tikrinimą',
+                                        'hover_false': 'Išjungti tikrinimą'
+                                        }
+                                    }"/>
+                            </button>
+
+                            <button name="toggle_skip_constraints_confirm" type="object"
+                                    groups="robo_basic.group_robo_premium_accountant" class="oe_stat_button"
+                                    icon="fa-check-circle"
+                                    attrs="{'invisible':[('state', 'in', ['confirm', 'e_signed'])]}">
+                                <field name="skip_constraints_confirm" widget="boolean_button" options="{
+                                    'terminology': {
+                                        'string_true': 'Netikrinama',
+                                        'string_false': 'Tikrinama',
+                                        'hover_true': 'Įjungti tikrinimą',
+                                        'hover_false': 'Išjungti tikrinimą'
+                                        }
+                                    }"/>
+                            </button>
+
+                            <button class="oe_inline oe_stat_button oe_right" name="open_related_document"
+                                    string="Dokumentai" help="Nueiti į susijusius dokumentus" type="object"
+                                    attrs="{
+                                        'invisible': [
+                                            '|',
+                                            ('record_id', '=', 0),
+                                            ('record_model', '!=', 'e.document')
+                                        ]
+                                    }"
+                                    icon="fa-link" widget="statinfo"
+                                    groups="robo_basic.group_robo_free_manager, robo_basic.group_robo_premium_manager,
+                                    robo_basic.group_robo_edocument_manager"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_related_record"
+                                    string="Įrašai" help="Nueiti į susijusius įrašus"
+                                    type="object"
+                                    attrs="{
+                                        'invisible': [
+                                            '|',
+                                            ('record_id','=',0),
+                                            ('record_model', '=', 'e.document')
+                                        ]
+                                    }"
+                                    icon="fa-link" widget="statinfo" groups="robo_basic.group_robo_premium_accountant"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_cancelled_ids"
+                                    string="Atšaukiantis dokumentas"
+                                    help="Nueiti į atšaukiantį įsakymą" type="object"
+                                    attrs="{'invisible': [('cancelled_ids', '=', [])]}" icon="fa-link" widget="statinfo"
+                                    groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,
+                                    robo_basic.group_robo_edocument_manager"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_cancel_id"
+                                    string="Atšaukiamas dokumentas"
+                                    help="Nueiti į atšaukiamą įsakymą" type="object"
+                                    attrs="{'invisible':[('cancel_id', '=', False)]}" icon="fa-link" widget="statinfo"
+                                    groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,
+                                    robo_basic.group_robo_edocument_manager"/>
+                        </div>
+
+                        <div class="oe_title" style="margin: 0 auto; text-align: center; display: flex; flex-direction: column; width: 100%;">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                            <h3>
+                                Nr.
+                                <field name="document_number" nolabel="1" required="True"/>
+                            </h3>
+                        </div>
+
+                        <group attrs="{'invisible': [('hide_view', '=', True)]}">
+                            <group string="Dokumento informacija" colspan="4">
+                                <field name="cancel_uid" attrs="{'invisible': [('state', '!=', 'cancel')]}"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="company_id" options="{'no_create': True, 'no_open': True}"
+                                       required="True" invisible="1"/>
+                                <field name="date_document" string="Dokumento pildymo data" required="True"/>
+                                <field name="vieta" options="{'no_create': True, 'no_open': True}"
+                                       string="Dokumento pildymo vieta" required="True" invisible="0"/>
+                                <field name="extra_text"/>
+                            </group>
+                            <group name="main_document_info" string="Pagrindinė informacija" colspan="4"/>
+                        </group>
+                        <field name="final_document" widget="html" states="draft" readonly="1"/>
+                        <field name="generated_document" widget="pdf_viewer" states="confirm,e_signed"
+                               filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                        <label for="generated_document" string="Atsisiųsti" states="confirm,e_signed"/>
+                        <field name="generated_document_download" string="" states="confirm,e_signed"
+                               filename="file_name"/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

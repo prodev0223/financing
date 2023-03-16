@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_analytic_wizard_all_form" model="ir.ui.view">
+            <field name="name">invoice.analytic.wizard.all.invoice.approval.extension.form</field>
+            <field name="model">invoice.analytic.wizard.all</field>
+            <field name="inherit_id" ref="robo.line_analytic_wizard_all_form"/>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='locked_analytic_period']" position="before">
+                    <field name="any_invoice_in_approval" invisible="True"/>
+                </xpath>
+                <xpath expr="//button[@name='change_analytics']" position="before">
+                    <button name="change_analytics_while_in_approval" type="object" string="Change analytics"
+                            class="oe_highlight" context="{'check_move_validity': False}"
+                            attrs="{'invisible': [
+                                    '|',
+                                    ('default_action', '!=', 'change_accounts'),
+                                    ('any_invoice_in_approval', '=', False),
+                                ]}"
+                            confirm="Some invoices are in approval. This action will cancel the current approval
+                            workflow and start a new one. Do you want to continue?"/>
+                </xpath>
+                <xpath expr="//button[@name='change_analytics']" position="attributes">
+                    <attribute name="attrs">{
+                        'invisible': [
+                            '|',
+                            ('default_action', '!=', 'change_accounts'),
+                            ('any_invoice_in_approval', '=', True)
+                        ]
+                    }
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

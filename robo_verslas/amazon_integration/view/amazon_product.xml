@@ -1,0 +1,62 @@
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_amazon_product" model="ir.ui.view">
+            <field name="name">tree.amazon.product</field>
+            <field name="model">amazon.product</field>
+            <field name="arch" type="xml">
+                <tree string="Amazon produktai"
+                      decoration-info="state == 'working'"
+                      decoration-warning="state == 'warning'"
+                      create="1" edit="1" delete="1">
+                    <field name="asin_product_code"/>
+                    <field name="ext_product_code"/>
+                    <field name="product_name"/>
+                    <field name="product_group"/>
+                    <field name="product_id"/>
+                    <field name="amazon_category_id"/>
+                    <field name="spec_product"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Forms-->
+        <record id="form_amazon_product" model="ir.ui.view">
+            <field name="name">form.amazon.product</field>
+            <field name="model">amazon.product</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Produkto kodas"/>
+                            <h1 class="mt0">
+                                <field name="ext_product_code" class="oe_inline" readonly="True"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="asin_product_code"/>
+                            <field name="product_name"/>
+                            <field name="product_group"/>
+                            <field name="product_id"/>
+                            <field name="amazon_category_id"/>
+                            <field name="spec_product"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_amazon_product" model="ir.actions.act_window">
+            <field name="name">Amazon produktai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.product</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form, pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_amazon_product"/>
+        </record>
+    </data>
+</odoo>

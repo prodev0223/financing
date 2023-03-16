@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--ROBO: removed from manifest 2018 05 16 -->
+        <!--ACTION-->
+        <record id="hr_timesheet_sheet_form" model="ir.ui.view">
+            <field name="name">hr.timesheet.sheet.form.extend</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Laiko žiniaraštis">
+                <header>
+                    <button name="action_timesheet_confirm" states="draft" string="Pateikti vadovui" type="object" class="oe_highlight" attrs="{'invisible':['|',('is_holiday_filled','=',True)]}"/>
+                    <button name="action_timesheet_confirm_warn" states="draft" attrs="{'invisible':['|',('is_holiday_filled','!=',True)]}" string="Pateikti vadovui" type="object" class="oe_highlight" confirm="Yra padaryta įrašų savaitgalio ar valstybinių švenčių dienomis. Ar vis tiek norite tęsti?"/>
+                    <button name="action_timesheet_done" states="confirm" string="Patvirtinti" type="object" groups="project.group_project_manager" class="oe_highlight"/>
+                    <button name="action_timesheet_draft" states="done" string="Atstatyti į juodraštį" type="object" groups="project.group_project_manager"/>
+                    <button name="action_timesheet_draft" states="confirm" string="Atmesti" type="object" groups="project.group_project_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,confirm,done"/>
+                </header>
+                <sheet>
+                   <div class="oe_title">
+                        <label string='Naudotojas' for="user_id" class="oe_edit_only" />
+                        <h1><field name="user_id" class="oe_inline" placeholder="Darbuotojas" domain="[('id','in',user_domain and user_domain[0][2])]" options="{'no_create': 1, 'no_open': 1}"/></h1>
+                        <field name="user_domain" invisible="1"/>
+                        <field name="month_filter" invisible="1"/>
+                        <field name="is_holiday_filled" invisible="1"/>
+                        <field name="employee_id" invisible="1"/>
+                   </div>
+                     <group col="8">
+                        <group colspan="4">
+                            <field name="month" domain="[('id', 'in', month_filter and month_filter[0][2])]" widget="selection" string="Mėnuo"/> <!--  -->
+                        </group>
+                        <group colspan="4">
+                        </group>
+                    </group>
+                    <group>
+                        <group attrs="{'invisible': 1}">
+                            <label for="date_from" string="Timesheet Period"/>
+                            <div><field name="date_from" class="oe_inline"/> iki <field name="date_to" class="oe_inline"/></div>
+                            <field name="name" invisible="1"/>
+                            <field name="department_id" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Santrauka">
+                            <widget type="weekly_timesheet_robo" attrs="{'readonly': [['state', 'not in', ['new', 'draft']]]}"/>
+                        </page>
+                        <page string="Detaliau" class="o_hr_timesheet_sheet_details">
+                            <field context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to}" name="timesheet_ids" nolabel="1" mode="tree,kanban">
+                                <tree editable="bottom" string="Timesheet Activities">
+                                    <field name="date" string="Data"/>
+                                    <field name="name" string="Aprašymas"/>
+                                    <field name="project_id" required="1" string="Projektas"/>
+                                     <field name="task_id" domain="[('project_id','=',project_id)]" string="Užduotis"/>
+                                    <field name="unit_amount" widget="float_time" string="Valandos" sum="Hours"/>
+                                    <field name="user_id" invisible="1"/>
+                                </tree>
+                                <kanban class="o_kanban_mobile" quick_create="false" create="true" import="0">
+                                     <field name="date" string="Data"/>
+                                    <field name="name" string="Aprašymas"/>
+                                    <field name="project_id" required="1" string="Projektas"/>
+                                     <field name="task_id" domain="[('project_id','=',project_id)]" string="Užduotis"/>
+                                    <field name="unit_amount" widget="float_time" string="Valandos" sum="Hours"/>
+                                    <field name="user_id" invisible="1"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <span>
+                                                            Data: <t t-esc="record.date.value"/>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <span>
+                                                            Projektas: <strong><t t-esc="record.project_id.value"/></strong>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <span>
+                                                            Valandos: <strong><t t-esc="record.unit_amount.value"/></strong>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form string="Žiniaraštis">
+                                    <group>
+                                        <field name="date" string="Data"/>
+                                        <field name="name" string="Aprašymas"/>
+                                        <field name="project_id" string="Projektas"/>
+                                        <field name="unit_amount" widget="float_time" string="Valandos"/>
+                                        <field name="user_id" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+        <record id="hr_timesheet_sheet_tree_simplified" model="ir.ui.view">
+            <field name="name">hr_timesheet_sheet.tree</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'" decoration-muted="state == 'done'" decoration-bf="message_needaction == True" string="Laiko žiniaraščiai" import="0">
+                    <field name="user_id" domain="[('id','in',user_domain and user_domain[0][2])]"/>
+                    <field name="user_domain" invisible="1"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="department_id" invisible="1"/>
+                    <field name="state"/>
+                    <field name="message_needaction" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hr_timesheet_sheet_filter" model="ir.ui.view">
+            <field name="name">timesheet search extend</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="arch" type="xml">
+                <search string="Žiniaraščio paieška">
+                    <field name="date_from" string="Data nuo"/>
+                    <filter name="new" string="Juodraštis" domain="[('state','in',('draft', 'new'))]" help="Nepatvirtinti žiniaraščiai"/>
+                    <filter name="to_approve" string="Patvirtinti" domain="[('state','=','confirm')]" help="Patvirtinti žiniaraščiai"/>
+                    <!--<filter string="Neskaityti pranešimai" name="message_needaction" domain="[('message_needaction','=',True)]"/>-->
+                    <field name="user_id" />
+                    <!--<field name="project_id"/>-->
+                    <!--<field name="department_id"/>-->
+                    <filter name="my_timesheets" string="Mano laiko žiniaraščiai" domain="[('user_id','=',user.id)]"/>
+                    <filter name="my_projects" string="Mano projektai" domain="[('project_id','in',user.project_ids.id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Darbuotoją" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <!--<filter string="Projektą" domain="[]" context="{'group_by': 'project_id'}"/>-->
+                        <!--<filter string="Departamentą" domain="[]" context="{'group_by':'department_id'}"/>-->
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="hr_timesheet_sheet_kanban" model="ir.ui.view">
+            <field name="name">timesheet_kanban</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false" import="0">
+                    <field name="user_id" domain="[('id','in',user_domain and user_domain[0][2])]"/>
+                    <field name="user_domain" invisible="1"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="department_id" invisible="1"/>
+                    <field name="state"/>
+                    <field name="message_needaction" invisible="1"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <strong>
+                                            <span>
+                                                Darbuotojas: <t t-esc="record.user_id.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span>
+                                            Nuo <t t-esc="record.date_from.value"/> iki <t t-esc="record.date_to.value"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <span> Būsena:
+                                            <strong>
+                                                 <t t-esc="record.state.value"/>
+                                            </strong>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="act_hr_timesheet_sheet_my_timesheets" model="ir.actions.act_window">
+            <field name="name">Laiko žiniaraščiai</field>
+            <field name="res_model">hr_timesheet_sheet.sheet</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name='view_id' ref="hr_timesheet_sheet_tree_simplified"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('hr_timesheet_sheet_tree_simplified')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('hr_timesheet_sheet_kanban')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('hr_timesheet_sheet_form')})]"/>
+            <field name="domain">[]</field>
+            <field name="search_view_id" ref="view_hr_timesheet_sheet_filter"/>
+            <field name="context">{
+                'robo_header': {'fit' : True},
+                'showDuplicate': True,
+                }</field>
+           <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                </p>
+            </field>
+        </record>
+        <!--END ACTION-->
+
+        <!--MENU-->
+        <!--<menuitem id="menu_timesheets"-->
+                  <!--parent="robo_projects.menu_projects_parent"-->
+                  <!--name="Laiko žiniaraščiai"-->
+                  <!--sequence="52"-->
+                  <!--action="act_hr_timesheet_sheet_my_timesheets"-->
+                  <!--groups="project.group_project_user"-->
+        <!--/>-->
+         <!--<record id="menu_timesheets" model="ir.ui.menu">-->
+            <!--<field name="web_icon">icon-timer2,none,none</field>-->
+        <!--</record>-->
+        <!--END MENU-->
+    </data>
+</odoo>

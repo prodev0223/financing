@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="analytic_account_refresh_wizard_view">
+            <field name="name">analytic.account.refresh.wizard.view</field>
+            <field name="model">analytic.account.refresh.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <footer>
+                        <button name="refresh_analytic_accounts" type="object" string="Atnaujinti" class="oe_highlight"/>
+                        <button name="cancel" type="special" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_analytic_account_refresh_wizard_form">
+            <field name="name">Atnaujinti analitiką</field>
+            <field name="res_model">analytic.account.refresh.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="doarchitects.analytic_account_refresh_wizard_view"/>
+        </record>
+
+        <menuitem id="menu_analytic_account_refresh_wizard"
+                  parent="robo_projects.menu_projects_parent"
+                  name="Atnaujinti analitiką"
+                  sequence="54"
+                  action="action_analytic_account_refresh_wizard_form"
+                  groups="group_analytic_account_refresh"
+                  robo_front="True"
+                  force_web_icon="icon-refresh,none,none"
+                  searchable="True"
+                  tags="atnaujinti,analitiką"
+        />
+    </data>
+</odoo>

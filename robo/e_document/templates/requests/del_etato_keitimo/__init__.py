@@ -1,0 +1,1 @@
+import del_etato_keitimo

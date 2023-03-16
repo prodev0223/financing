@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_pajamos_view_search_ext" model="ir.ui.view">
+            <field name="name">robo.pajamos.view.search.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_pajamos_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='asset']" position="after">
+                    <separator/>
+                    <filter name="picking_not_done" string="Nenurašytos prekės"
+                            domain="[('picking_done', '=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">account.invoice.select</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='asset']" position="after">
+                    <separator/>
+                    <filter name="picking_not_done" string="Nenurašytos prekės"
+                            domain="[('picking_done', '=', False)]"/>
+                    <filter name="cost_mismatch" string="Produktų savikainos neatitikimai"
+                            domain="[('cost_mismatch', '=', True)]"/>
+                    <separator/>
+                    <filter name="picking_done" string="Nurašytos prekės"
+                            domain="[('picking_done', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="pajamos_tree" model="ir.ui.view">
+            <field name="name">Invoice Income Tree: Robo Stock</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_tree"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="picking_done" invisible="1"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-danger">state == 'cancel' or not picking_done</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

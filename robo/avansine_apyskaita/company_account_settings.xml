@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_config_cash_advance_view" model="ir.ui.view">
+            <field name="name">account.config.cash.advance</field>
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='accounting']//div[@name='account_config']" position="after">
+                    <label for="id" string="Cash Advance Account"/>
+                        <div name="cash_advance_account_id">
+                            <div>
+                                <!--<label for="cash_advance_account_id"/>-->
+                                <field name="cash_advance_account_id" class="oe_inline"/>
+                            </div>
+                        </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

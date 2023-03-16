@@ -1,0 +1,83 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="ebay_order_import_job_view_tree" model="ir.ui.view">
+            <field name="name">ebay.order.import.job.view.tree</field>
+            <field name="model">ebay.order.import.job</field>
+            <field name="arch" type="xml">
+                <tree string="Import jobs"
+                      create="0" delete="1" edit="0"
+                      decoration-info="execution_state == 'in_progress'"
+                      decoration-success="execution_state == 'finished'"
+                      decoration-danger="execution_state == 'failed'"
+                      decoration-warning="execution_state == 'warning'">
+                    <field name="file_name" readonly="1"/>
+                    <field name="execution_start_date" readonly="1"/>
+                    <field name="execution_end_date" readonly="1"/>
+                    <field name="execution_state"/>
+                    <field name="show_created_record_button" invisible="1"/>
+                    <field name="file_data" filename="file_name" readonly="1"/>
+                    <button name="action_open_orders"
+                            string="Open created orders"
+                            type="object" icon="fa-arrow-right"
+                            attrs="{'invisible': [('show_created_record_button', '=', False)]}"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="ebay_order_import_job_view_form" model="ir.ui.view">
+            <field name="name">ebay.order.import.job.view.form</field>
+            <field name="model">ebay.order.import.job</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="execution_state" widget="statusbar"/>
+                        <button name="button_reset_job_state"
+                                string="Reset state"
+                                type="object" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="File name"/>
+                            <h1 class="mt0">
+                                <field name="file_name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group readonly="1">
+                            <field name="execution_start_date" readonly="1"/>
+                            <field name="execution_end_date" readonly="1"/>
+                            <field name="file_data" filename="file_name" readonly="1"/>
+                        </group>
+                        <group string="Execution errors">
+                            <field name="execution_errors" readonly="1"/>
+                        </group>
+                        <footer style="text-align: center;">
+                            <field name="show_created_record_button" invisible="1"/>
+                            <button name="action_open_orders"
+                                    string="Open created orders"
+                                    type="object" class="oe_highlight"
+                                    attrs="{'invisible': [('show_created_record_button', '=', False)]}"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_ebay_order_import_job" model="ir.actions.act_window">
+            <field name="name">CSV Data import job</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ebay.order.import.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_ebay_csv_data_import_job"
+                name="CSV Data import jobs"
+                sequence="4"
+                parent="menu_ebay_management_root"
+                action="action_open_ebay_order_import_job"
+        />
+    </data>
+</odoo>

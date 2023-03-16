@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="visible_accounts_company_settings" model="ir.ui.view">
+            <field name="name">accounts.settings</field>
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='accounting']" position="inside">
+                    <label for="id" string="Currency exchange accounts"/>
+                    <div>
+                        <div>
+                            <label for="income_currency_exchange_account_id" string="Gain Exchange Rate Account"/>
+                            <field name="income_currency_exchange_account_id" class="oe_inline"/>
+                        </div>
+                        <div>
+                            <label for="expense_currency_exchange_account_id" string="Loss Exchange Rate Account"/>
+                            <field name="expense_currency_exchange_account_id" class="oe_inline"/>
+                        </div>
+                    </div>
+                </xpath>
+                <xpath expr="//group[@name='accounting']" position="after">
+                    <group string="Partnerių sąskaitos" name="partneriu_saskaitos">
+                        <field name="default_property_account_receivable_id"/>
+                        <field name="default_property_account_payable_id"/>
+                    </group>
+                </xpath>
+                <xpath expr="//group[@name='accounting']" position="after">
+                    <group>
+                        <field name="period_close_journal_id"/>
+                        <field name="cash_receipt_journal_id"/>
+                        <field name="vat_journal_id"/>
+                        <field name="vat_account_ids" widget="many2many_tags"/>
+                        <field name="import_vat_account_ids" widget="many2many_tags"/>
+                        <field name="vat_account_id"/>
+                        <field name="import_vat_account_id"/>
+                        <field name="bank_commission_account_id"/>
+                        <field name="cashier_id"/>
+                        <field name="cashier_manager_id" invisible="1"/>
+                        <field name="cashier_accountant_id"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='fiscalyear_lock_date']" position="after">
+                    <field name="accountant_lock_date"/>
+                    <div>
+                        <label for="auto_lock_day_non_advisers"/>
+                        <field name="auto_lock_day_non_advisers" class="oe_inline"/>
+                    </div>
+                    <div>
+                        <label for="auto_lock_day_advisers"/>
+                        <field name="auto_lock_day_advisers" class="oe_inline"/>
+                    </div>
+                    <div>
+                        <label for="auto_lock_day"/>
+                        <field name="auto_lock_day" class="oe_inline"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

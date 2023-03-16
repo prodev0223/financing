@@ -1,0 +1,44 @@
+<odoo>
+    <data>
+        <record id="raso_import_data_wizard" model="ir.ui.view">
+            <field name="name">raso.import.wizard</field>
+            <field name="model">raso.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Duomenų importas">
+                <div>
+                    <p>
+                        Paspaudę importuoti, galite susinchronizuoti ROBO duomenų bazę su RASO duomenimis<br/>
+                        Pasirinkite norimą importuoti duomenų tipą ir išsirinkite įrašus kuriuos norite importuoti<br/>
+                        PASTABA: Pažymėjus varnelę 'Pilnas Sinchronizavimas' visi duomenys RASO serveryje bus perrašyti
+                    </p>
+                </div>
+                <group>
+                    <field name="full_sync"/>
+                    <field name="data_type"/>
+                    <field name="import_shop_ids" widget="many2many_tags" attrs="{'invisible':[('data_type','!=','0')]}"/>
+                    <field name="import_partner_ids" widget="many2many_tags" attrs="{'invisible':[('data_type','!=','1')]}"/>
+                    <field name="import_category_ids" widget="many2many_tags" attrs="{'invisible':[('data_type','!=','2')]}"/>
+                    <field name="import_product_ids" widget="many2many_tags" attrs="{'invisible':[('data_type','!=','3')]}"/>
+                    <field name="import_price_ids" widget="many2many_tags" attrs="{'invisible':[('data_type','!=','4')]}"/>
+                    <field name="import_discount_ids" widget="many2many_tags" attrs="{'invisible':[('data_type','!=','5')]}"/>
+                    <field name="import_g_discount_ids" widget="many2many_tags" attrs="{'invisible':[('data_type','!=','6')]}"/>
+                </group>
+                <footer>
+                    <button string="Importuoti duomenis į RASO" name="push_data" type="object" class="btn-primary"/>
+                    <button string="Atsisiųsti XML" name="push_data" context="{'download':True}" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+            </field>
+        </record>
+        <record id="open_import_wizard_raso" model="ir.actions.act_window">
+            <field name="name">Duomenų Importavimas į Raso</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">raso.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>

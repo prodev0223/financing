@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="e_document_full_downtime_import_company_settings_button" model="ir.ui.view">
+            <field name="name">E-document full downtime document import</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='importas']" position="inside">
+                    <div class="import-element-container">
+                        <a href="e_document/static/src/import_templates/Prastovos_isakymas.xlsx"
+                           class="import-download-container">
+                            <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                            <span>Pilnos prastovos įsakymai</span>
+                        </a>
+                        <field style="border-radius: 4px !important;" name="import_full_downtime_orders"
+                               string="Importuoti"/>
+                    </div>
+                </xpath>
+                <xpath expr="//group[@name='politika']" position="inside">
+                    <field name="send_notifications_of_free_form_order"/>
+                </xpath>
+                <xpath expr="//group[@name='additional_settings']" position="inside">
+                    <field name="allow_delegate_to_sign_related_documents"/>
+                </xpath>
+                <xpath expr="//group[@name='activations']" position="inside">
+                    <field name="process_edoc_signing_as_job"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

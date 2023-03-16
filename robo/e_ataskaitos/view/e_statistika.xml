@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="stat_da01">
+            <field name="name">stat.da01.form</field>
+            <field name="model">e.stat.da01</field>
+            <field name="arch" type="xml">
+                <form string="DA-01">
+                    <group>
+                        <field name="data_nuo"/>
+                        <field name="data_iki"/>
+                        <field name="company_id"/>
+                        <field name="nuosavybes_kodas"/>
+                        <field name="end_of_quarter_number_of_vacancies_available"/>
+                        <field name="employees_change"/>
+                        <field name="teachers_and_medical_staff_job_ids" widget="many2many_tags"/>
+                    </group>
+                    <footer>
+                        <button name="da01" string="Generuoti" type="object" />
+                        <button string="Uždaryti" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+       </record>
+
+        <record model="ir.ui.view" id="stat_da01_download">
+            <field name="name">stat.da01.download.form</field>
+            <field name="model">e.stat.da01</field>
+            <field name="arch" type="xml">
+             <form string="DA-01">
+                 <group>
+             <field name="failas" nolabel="1" filename="failo_pavadinimas"/>
+             <field name="failo_pavadinimas" invisible="1"/>
+                 </group>
+                 <footer>
+                     <button string="Uždaryti" class="oe_link" special="cancel" />
+                 </footer>
+              </form>
+            </field>
+        </record>
+   
+    <record model="ir.actions.act_window" id="action_stat_da01_wizard">
+        <field name="name">VMI DA-01</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">e.stat.da01</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="stat_da01"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+        name="e.Statistika"
+        id="meniu_e_ataskaitos_stat_root"
+        parent="meniu_e_ataskaitos_root"
+        sequence="1"
+        groups="hr.group_hr_manager"
+    />
+
+    <menuitem
+              name="DA-01"
+              id="meniu_e_ataskaitos_VMI_DA_01"
+              parent="meniu_e_ataskaitos_stat_root"
+              sequence="1"
+              action="action_stat_da01_wizard"
+              />
+        
+    </data>
+</openerp>
+

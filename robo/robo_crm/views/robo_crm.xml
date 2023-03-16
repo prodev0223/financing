@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="crm_case_tree_view_oppor" model="ir.ui.view">
+            <field name="name">crm.lead.tree.opportunity</field>
+            <field name="model">crm.lead</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0" create="0" string="Užklausos" decoration-bf="message_needaction==True" decoration-muted="probability == 100" decoration-danger="date_action and (date_action &lt; current_date)">
+                    <field name="date_deadline" invisible="1"/>
+                    <field name="create_date"/>
+                    <field name="name" string="Užklausa"/>
+                    <field name="partner_id" string="Klientas"/>
+                    <!--<field name="country_id"/>-->
+                    <field name="date_action" string="Užklausos veiksmo data"/>
+                    <!--<field name="title_action"/>-->
+                    <field name="medium_id" invisible="1"/>
+                    <field name="campaign_id" invisible="1"/>
+                    <field name="source_id" invisible="1"/>
+                    <field name="stage_id"/>
+                    <field name="planned_revenue" string="Numatomos pajamos" sum="Numatomos pajamos"/>
+                    <field name="probability" string="Tikimybė" avg="Tikimybė"/>
+                    <field name="team_id" string="Pardavimų komanda"/>
+                    <field name="user_id" string="Pardavėjas"/>
+                    <field name="referred" invisible="1"/>
+                    <field name="priority" invisible="1"/>
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="probability" invisible="1"/>
+                    <field name="write_date" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record id="crm_case_form_view_oppor" model="ir.ui.view">
+            <field name="name">robo.crm.lead.form.opportunity</field>
+            <field name="model">crm.lead</field>
+            <field name="priority">20</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Užklausos" class="o_opportunity_form">
+                    <header>
+                        <button name="action_set_won" string="Pažymėti Susitarta"
+                                type="object" class="oe_highlight o_wow"
+                                attrs="{'invisible': ['|', ('active','=',False), ('probability', '=', 100)]}"/>
+                        <button name="%(crm.crm_lead_lost_action)d" string="Pažymėti Prarasta"
+                                type="action" class="oe_highlight"
+                                context="{'default_lead_id': active_id}"
+                                attrs="{'invisible': [('active', '=', False),('probability', '&lt;', 100)]}"/>
+                        <button name="%(robo_crm.crm_activity_log_action)d" string="Įvykdyti žingsnį" type="action" class="btn-link"
+                            attrs="{'invisible': [('active', '=', False)]}"/>
+                        <field name="stage_id" widget="statusbar" clickable="True"
+                            options="{'fold_field': 'fold'}"
+                            domain="['|', ('team_id', '=', team_id), ('team_id', '=', False)]"
+                            attrs="{'invisible': [('active', '=', False)]}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive"
+                                    attrs="{'invisible': [('active', '=', True), ('probability', '&lt;', 100)]}">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                            <button class="oe_stat_button" type="object" groups="robo_basic.group_robo_premium_accountant"
+                                context="{'partner_id': partner_id}"
+                                name="robo_action_schedule_meeting" icon="fa-calendar">
+                                <div class="o_stat_info">
+                                    <field name="meeting_count" class="o_stat_value"/>
+                                    <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&lt;', 2)]}"> Susitikimai(ų)</span>
+                                    <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&gt;', 1)]}"> Susitikimas</span>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="label label-danger pull-right" attrs="{'invisible': ['|', ('probability', '&gt;', 0), ('active', '=', True)]}">Prarastas</div>
+                        <div class="label label-success pull-right" attrs="{'invisible': [('probability', '&lt;', 100)]}">Susitarta</div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Užklausa"/>
+                            <h1><field name="name" placeholder="pvz. Nauja sutartis"/></h1>
+                            <h2 class="o_row">
+                                <div>
+                                    <label for="planned_revenue" class="oe_edit_only" />
+                                    <div class="o_row">
+                                        <field name="company_currency" invisible="1"/>
+                                        <field name="planned_revenue" widget='monetary' options="{'currency_field': 'company_currency'}"/>
+                                        <span class="oe_grey"> su </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="probability" class="oe_edit_only" string="Sėkmės tikimybė"/>
+                                    <div class="o_row">
+                                        <field name="probability" widget="integer"/>
+                                        <span>%%</span>
+                                    </div>
+                                </div>
+                            </h2>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id"
+                                    string="Klientas" domain="[('customer', '=', True)]"
+                                    context="{'search_default_customer': 1,
+                                        'default_name': partner_name, 'default_street': street,
+                                        'default_city': city,
+                                        'default_zip': zip,
+                                        'default_country_id': country_id, 'default_function': function,
+                                        'default_phone': phone, 'default_mobile': mobile,
+                                        'default_fax': fax, 'default_email': email_from,
+                                        'default_user_id': user_id, 'default_team_id': team_id}"
+                                         options="{'no_create': True, 'no_open': True}"
+                                />
+                                <field name="email_from" string="El. paštas" widget="email"/>
+                                <field name="phone" widget="phone" string="Telefonas"/>
+                            </group>
+
+                            <group>
+                                <label for="next_activity_id" string="Kitas žingsnis"/>
+                                <div>
+                                    <div class="o_row mr16">
+                                        <field name="next_activity_id"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               domain="['|',('team_id','=',False),('team_id','=',team_id)]"/>
+                                        <span class="oe_form_field"
+                                              attrs="{'invisible': ['|', ('next_activity_id', '=', False), ('date_action', '=', False)]}">&#160; &#160;</span>
+                                        <field name="date_action" attrs="{'invisible': [('next_activity_id', '=', False)]}" placeholder="Data..."/>
+                                    </div>
+                                    <div>
+                                        <field name="title_action" placeholder="Žingsnio aprašymas"
+                                           attrs="{'invisible': [('next_activity_id', '=', False)]}"/>
+                                    </div>
+                                </div>
+                                <field name="date_deadline" string="Užklausos terminas"/>
+                            </group>
+
+                            <group>
+                                <field string="Pardavėjas" name="user_id" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'sales_team.group_sale_salesman_all_leads'], 'team_id': team_id}" domain="[('share', '=', False)]"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field string="Pardavimo komanda" name="team_id" widget="selection"/>
+                            </group>
+                            <group>
+                                <field name="priority" widget="priority" string="Reitingas"/>
+                                <field name="tag_ids" widget="many2many_tags" options="{'no_create_edit': True}" string="Žymės"/>
+                                <field name="lost_reason" attrs="{'invisible': [('active', '=', True)]}"/>
+                                <field name="date_conversion" invisible="1"/>
+                            </group>
+                        </group>
+
+                        <notebook colspan="4">
+                        <page string="Vidinės pastabos">
+                            <field name="description"/>
+                        </page>
+                        <page name="lead" string="Kontaktai">
+                            <group>
+                                <group>
+                                    <field name="partner_name" string="Klientas"/>
+                                    <label for="street" string="Adresas"/>
+                                    <div class="o_address_format">
+                                        <field name="street" placeholder="Gatvė..." class="o_address_street"/>
+                                        <!--<field name="street2" placeholder="Street 2..." class="o_address_street"/>-->
+                                        <field name="city" placeholder="Miestas" class="o_address_city"/>
+                                        <!--<field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}'/>-->
+                                        <field name="zip" placeholder="LT-00058" class="o_address_zip"/>
+                                        <field name="country_id" placeholder="Šalis" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <label for="contact_name" string="Kontaktinis asmuo"/>
+                                    <div class="o_row">
+                                        <field name="contact_name"/>
+                                        <field name="title" placeholder="Kreipinys" domain="[]" options='{"no_open": True}'/>
+                                    </div>
+                                    <field name="function" string="Pozicija"/>
+                                    <field name="mobile" string="Mobilus telefonas"/>
+                                    <field name="fax" string="Faksas"/>
+                                    <field name="opt_out" string="Nedalyvauja reklamoje"/>
+                                </group>
+                                <group string="Reklama">
+                                    <field name="campaign_id" string="Kampanija" options="{'no_open': True, 'no_create': True}"/>
+                                    <field name="medium_id" string="Media" options="{'no_open': True, 'no_create': True}"/>
+                                    <field name="source_id" string="Šaltinis" options="{'no_open': True, 'no_create': True}"/>
+                                </group>
+                                <!--<group string="Kita" name="Misc">-->
+                                    <!--<field name="day_open" groups="base.group_no_one"/>-->
+                                    <!--<field name="day_close" groups="base.group_no_one"/>-->
+                                    <!--<field name="referred"/>-->
+                                    <!--<field name="type" invisible="1"/>-->
+                                <!--</group>-->
+                            </group>
+                        </page>
+                        </notebook>
+                    </sheet>
+                     <div class="oe_chatter">
+                            <!--<field name="message_follower_ids" widget="mail_followers"/>-->
+                            <field name="message_ids" widget="robo_mail_thread" options="{'only_internal_log': True}"/>
+                    </div>
+                    <!--<div class="oe_chatter">-->
+                        <!--<field name="message_follower_ids" widget="mail_followers"/>-->
+                        <!--<field name="message_ids" widget="mail_thread"/>-->
+                    <!--</div>-->
+                </form>
+            </field>
+        </record>
+
+        <!--TODO: on_create tries to open "back" view_create_opportunity_simplified view. Create front action +  simplified view!!-->
+        <record id="crm_case_kanban_view_leads" model="ir.ui.view">
+            <field name="name">crm.lead.kanban.lead</field>
+            <field name="model">crm.lead</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="stage_id" class="o_kanban_small_column o_opportunity_kanban" on_create="crm.create_opportunity_simplified">
+                    <field name="stage_id" options='{"group_by_tooltip": {"requirements": "Description", "legend_priority": "Use of stars"}}'/>
+                    <field name="color"/>
+                    <field name="priority"/>
+                    <field name="planned_revenue"/>
+                    <field name="kanban_state"/>
+                    <field name="date_action"/>
+                    <field name="user_email"/>
+                    <field name="user_id"/>
+                    <field name="partner_address_email"/>
+                    <field name="message_needaction_counter"/>
+                    <field name="tag_ids"/>
+                    <field name="partner_id"/>
+                    <field name="title_action"/>
+                    <field name="active"/>
+                    <field name="company_currency"/>
+                    <templates>
+                        <field name="date_deadline"/>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
+                                <div class="o_dropdown_kanban dropdown">
+
+                                    <a class="dropdown-toggle btn" data-toggle="dropdown" href="#" >
+                                        <span class="fa fa-bars fa-lg"/>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                        <t t-if="widget.editable"><li><a type="edit">Edit</a></li></t>
+                                        <t t-if="widget.deletable"><li><a type="delete">Delete</a></li></t>
+                                        <li t-if="! record.active.value"><a name="action_set_active" type="object">Unarchive</a></li>
+                                        <li t-if="record.active.value"><a name="action_set_unactive" type="object">Archive</a></li>
+                                        <li><ul class="oe_kanban_colorpicker" data-field="color"/></li>
+                                    </ul>
+                                </div>
+                                <div class="oe_kanban_content">
+                                    <div>
+                                        <field name="tag_ids"/>
+                                    </div>
+                                    <div>
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                    <div class="text-muted">
+                                        <t t-if="record.planned_revenue.raw_value"><field name="planned_revenue" widget="monetary" options="{'currency_field': 'company_currency'}"/><span t-if="record.partner_id.value">,</span></t> <span t-if="record.partner_id.value"> <t t-esc="record.partner_id.value"/></span>
+                                    </div>
+
+                                    <div class="o_kanban_footer">
+                                        <field name="priority" widget="priority" groups="base.group_user"/>
+                                        <t t-if="record.message_needaction_counter.raw_value">
+                                            <span class='oe_kanban_mail_new' title='Unread Messages'><i class='fa fa-comments'/><t t-raw="record.message_needaction_counter.raw_value"/></span>
+                                        </t>
+                                        <div>
+                                            <a name="%(crm.crm_activity_log_action)d" type="action" t-if="record.kanban_state.raw_value!='grey'">
+                                              <span
+                                                t-att-title="record.date_action.value + ': '+ record.title_action.value"
+                                                t-attf-class="oe_kanban_status oe_kanban_status_#{record.kanban_state.raw_value}"/>
+                                            </a>
+                                            <a name="%(robo_crm.crm_activity_schedule_action)d" type="action" t-if="record.kanban_state.raw_value=='grey'">
+                                              <span
+                                                class="oe_kanban_status oe_kanban_status_grey"/>
+                                            </a>
+                                            <img t-att-src="kanban_image('res.users', 'image_small', record.user_id.raw_value)" t-att-title="record.user_id.value" width="24" height="24" class="oe_kanban_avatar pull-right"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="oe_clear"></div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="crm_lead_opportunities">
+            <field name="name">Opportunities</field>
+            <field name="res_model">crm.lead</field>
+            <field name="view_mode">kanban,tree_robo,form</field>
+            <field name="domain">[('type','=','opportunity')]</field>
+            <field name="context">{
+                    'default_type': 'opportunity',
+                    'default_user_id': uid
+                }
+            </field>
+            <field name="robo_menu" ref="menu_robo_crm"/>
+            <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_crm_tag_kanban_view_oppor11">
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="crm_case_kanban_view_leads"/>
+            <field name="act_window_id" ref="crm_lead_opportunities"/>
+          </record>
+        <record model="ir.actions.act_window.view" id="action_crm_tag_tree_view_oppor11">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree_robo</field>
+            <field name="view_id" ref="crm_case_tree_view_oppor"/>
+            <field name="act_window_id" ref="crm_lead_opportunities"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_crm_tag_form_view_oppor11">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="crm_case_form_view_oppor"/>
+            <field name="act_window_id" ref="crm_lead_opportunities"/>
+        </record>
+
+
+        <record id="robo_view_crm_case_opportunities_filter" model="ir.ui.view">
+            <field name="name">robo.crm.lead.search.opportunity</field>
+            <field name="model">crm.lead</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Ieškoti">
+                    <field name="name" string="Užklausa" filter_domain="['|','|','|',('partner_id','ilike',self),('partner_name','ilike',self),('email_from','ilike',self),('name', 'ilike', self)]"/>
+                    <field name="tag_ids" string="Žymė" filter_domain="[('tag_ids', 'ilike', self)]"/>
+                    <field name="team_id" string="Pardavimų komanda"/>
+                    <field name="user_id" string="Pardavėjas"/>
+                    <field name="partner_id" operator="child_of" string="Klientas"/>
+                    <field name="stage_id" domain="[]" string="Etapas"/>
+                    <field name="next_activity_id" string="Kitas žingsnis"/>
+                    <field name="title_action" string="Žingsnio aprašymas"/>
+                    <field name="probability" string="Tikimybė"/>
+                    <field name="lost_reason" string="Praradimo priežastis"/>
+                    <separator/>
+                    <filter string="Susitarta" name="won"
+                            domain="['&amp;', ('stage_id.probability', '=', 100), ('stage_id.fold', '=', True)]"/>
+                    <separator/>
+                    <filter string="Mano užklausos" name="assigned_to_me"
+                            domain="[('user_id', '=', uid)]"
+                            help="Užklausos priskirtos man"/>
+                    <filter string="Nepriskirtos" name="unassigned"
+                            domain="[('user_id','=', False)]" help="Nėra pardavėjo"/>
+                    <separator/>
+                    <filter string="Šiandienos veikla" name="today"
+                            domain="[('date_action', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter string="Šios savaitės veikla" name="this_week"
+                            domain="['&amp;', ('date_action', '&gt;=', context_today().strftime('%Y-%m-%d')),
+                                     ('date_action', '&lt;=', (context_today()+datetime.timedelta(days=7)).strftime('%Y-%m-%d'))
+                            ]"/>
+                    <filter string="Pavėluoti užklausų žingsniai" name="overdue"
+                            domain="[('date_action', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                            help="Rodyti visas užklausas, kurių kito žingsnio data praleista"/>
+                    <filter string="Užklausos su paraleistu terminu" name="overdue_opp"
+                            domain="[('date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                            help="Rodyti visas užklausas, kurių terminas praėjo"/>
+                    <separator/>
+                    <filter string="Neperskaitytos žinutės" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                    <filter string="Neaktyvios" domain="[('active', '=', False)]"/>
+                    <group expand="0" string="Group By" colspan="16">
+                        <filter string="Pardavėjas" context="{'group_by':'user_id'}"/>
+                        <filter string="Pardavimo komanda" context="{'group_by':'team_id'}"/>
+                        <filter string="Šalis" context="{'group_by':'country_id'}" />
+                        <filter string="Kompanija" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                        <filter name="stage" string="Etapas" context="{'group_by':'stage_id'}"/>
+                        <filter string="Kampanija" domain="[]" context="{'group_by':'campaign_id'}"/>
+                        <filter string="Media" domain="[]" context="{'group_by':'medium_id'}"/>
+                        <filter string="Šaltinis" domain="[]" context="{'group_by':'source_id'}"/>
+                        <separator orientation="vertical" />
+                        <filter string="Sukūrimo mėnesis" context="{'group_by':'create_date:month'}" name="month"/>
+                        <filter string="Tikėtina pabaigos diena" context="{'group_by':'date_deadline'}"/>
+                        <filter string="Praradimo priežastis" context="{'group_by':'lost_reason'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="crm_lead_opportunities_tree_view">
+            <field name="name">Apžvalga</field>
+            <field name="res_model">crm.lead</field>
+            <field name="view_mode">kanban,tree_robo,form</field>
+            <field name="domain">[('type','=','opportunity')]</field>
+            <field name="context">{
+                    'robo_header': {'fit':True, 'show_swith_buttons': True,},
+                    'default_type': 'opportunity',
+                    'default_user_id': uid,
+                    'search_default_assigned_to_me': 1,
+                    'search_add_custom': False,
+            }</field>
+            <field name="robo_menu" ref="menu_robo_crm"/>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('crm_case_kanban_view_leads')}),
+                          (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_crm.crm_case_tree_view_oppor')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('crm_case_form_view_oppor')})]"/>
+            <field name="search_view_id" ref="robo_view_crm_case_opportunities_filter"/>
+            <!--<field name="help" type="html"/>-->
+             <field name="help"></field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+
+        <!--Next activities-->
+
+        <record id="crm_lead_view_tree_activity" model="ir.ui.view">
+            <field name="name">robo.crm.lead.tree.opportunity.next.activity</field>
+            <field name="model">crm.lead</field>
+             <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0" string="Laukiantys veiksmai" decoration-danger="date_action and (date_action &lt; current_date)" default_order="date_action">
+                    <field name="name" string="Užklausa"/>
+                    <field name="partner_id" string="Klientas"/>
+                    <field name="date_action" string="Kito žingsnio data"/>
+                    <field name="next_activity_id" string="Žingsnis"/>
+                    <field name="title_action" string="Žingsnio aprašymas"/>
+                    <field name="stage_id" string="Etapas"/>
+                    <field name="planned_revenue" string="Planuojamos pajamos"/>
+                    <field name="date_deadline" string="Terminas"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="crm_lead_view_kanban_activity">
+            <field name="name">robo.crm.lead.kanban.opportunity.next.activity</field>
+            <field name="model">crm.lead</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="name" string="Užklausa"/>
+                    <field name="partner_id" string="Klientas"/>
+                    <field name="date_action" string="Kito žingsnio data"/>
+                    <field name="next_activity_id" string="Žingsnis"/>
+                    <field name="title_action" string="Žingsnio aprašymas"/>
+                    <field name="stage_id" string="Etapas"/>
+                    <field name="planned_revenue" string="Planuojamos pajamos"/>
+                    <field name="date_deadline" string="Terminas"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                     <div class="col-xs-4"><span class="pull-left">Užklausa</span> </div>
+                                    <div class="col-xs-8">
+                                        <strong><span class="pull-right"><t t-esc="record.name.value"/></span></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <span class="pull-left">Žingnis</span>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <strong><span class="pull-right"><t t-esc="record.next_activity_id.value"/></span></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span class="pull-left"><t t-esc="record.title_action.value"/></span>
+                                    </div>
+                                </div>
+                                <div class="row text-muted">
+                                    <div class="col-xs-12">
+                                        <strong><span class="pull-right"><t t-esc="record.stage_id.value"/></span></strong>
+                                    </div>
+                                </div>
+                                <div class="row text-muted">
+                                    <div class="col-xs-6">
+                                        <strong><span class="pull-left">Terminas</span></strong>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <strong><span class="pull-right"><t t-esc="record.date_deadline.value"/></span></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="crm_lead_action_activities" model="ir.actions.act_window">
+            <field name="name">Laukiantys žingsniai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">crm.lead</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="search_view_id" ref="robo_view_crm_case_opportunities_filter"/>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('crm_lead_view_tree_activity')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('crm_lead_view_kanban_activity')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('crm_case_form_view_oppor')})]"/>
+            <field name="domain">[('type','=','opportunity'), ('date_action', '!=', False)]</field>
+            <field name="context">{
+                    'default_type': 'opportunity',
+                    'default_user_id': uid,
+                    'search_default_assigned_to_me': 1,
+                    'robo_header' : {},
+                    'search_add_custom': False,
+                }
+            </field>
+            <field name="robo_menu" ref="menu_robo_crm"/>
+            <field name="help"></field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+
+        </record>
+        <!--End Next activities-->
+
+        <!--Menu items-->
+
+        <record id="action_your_pipeline" model="ir.actions.server">
+            <field name="name">Apžvalga</field>
+            <field name="model_id" ref="crm.model_crm_team"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_your_pipeline()</field>
+            <field eval="True" name="condition"/>
+            <field name="robo_front">True</field>
+        </record>
+
+        <menuitem id="menu_robo_crm_pipline"
+                  parent="robo_crm.menu_robo_crm"
+                  name="Apžvalga"
+                  sequence="1"
+                  groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"
+                  action="action_your_pipeline"
+                  robo_front="True"
+                  force_web_icon="icon-reading,none,none"
+                  searchable="True"
+                  tags="CRM,apžvalga"
+        />
+        <menuitem id="menu_robo_crm_next_action"
+                  parent="robo_crm.menu_robo_crm"
+                  name="Laukiantys veiksmai"
+                  action="crm_lead_action_activities"
+                  sequence="2"
+                  groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"
+                  robo_front="True"
+                  force_web_icon="icon-sort-time-asc,none,none"
+                  searchable="True"
+                  tags="CRM,laukiantys,veiksmai"
+        />
+
+
+        <!--End Menu items-->
+
+    </data>
+</odoo>

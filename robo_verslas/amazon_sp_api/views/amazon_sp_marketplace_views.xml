@@ -1,0 +1,134 @@
+<odoo>
+    <data>
+        <!--TREE-->
+        <record id="amazon_sp_marketplace_view_tree" model="ir.ui.view">
+            <field name="name">amazon.sp.marketplace.view.tree</field>
+            <field name="model">amazon.sp.marketplace</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="1" delete="0" import="0"
+                      decoration-muted="not activated"
+                      decoration-success="activated">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="country_id"/>
+                    <field name="region_id"/>
+                    <field name="journal_id"/>
+                    <field name="state"/>
+                    <field name="activated"/>
+                </tree>
+            </field>
+        </record>
+        <!--Forms-->
+        <record id="amazon_sp_marketplace_view_form" model="ir.ui.view">
+            <field name="name">amazon.sp.marketplace.view.form</field>
+            <field name="model">amazon.sp.marketplace</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Amazon SP-API marketplace" create="0" delete="0">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Marketplace"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group string="Identifier fields" colspan="1" col="2">
+                            <field name="code" readonly="1"/>
+                            <field name="country_code" readonly="1"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Relational fields" colspan="1" col="2">
+                                <field name="partner_id" readonly="1" options="{'no_open': True}"/>
+                                <field name="country_id" readonly="1" options="{'no_open': True}"/>
+                                <field name="region_id" readonly="1"/>
+                                <field name="journal_id" options="{'no_open': True, 'no_create': True}"/>
+                            </group>
+                            <group string="Misc fields" colspan="1" col="2">
+                                <field name="activated"/>
+                                <field name="order_api_sync_date" readonly="1"/>
+                                <field name="inventory_api_sync_date" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Accounting analytics"
+                               attrs="{'invisible': [('show_analytic_account_id_selection', '=', False)]}">
+                            <field name="show_analytic_account_id_selection" invisible="1"/>
+                            <field name="analytic_account_id" options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                        <group string="Stock location for orders"
+                               attrs="{'invisible': [('show_location_id_selection', '=', False)]}">
+                            <field name="show_location_id_selection" invisible="1"/>
+                            <field name="location_id" options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                        <footer style="text-align: center;">
+                            <button name="action_open_tax_rules" class="oe_highlight" type="object"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    string="Open marketplace tax rules" default_focus="1"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="amazon_sp_marketplace_view_search" model="ir.ui.view">
+            <field name="name">amazon.sp.marketplace.view.search</field>
+            <field name="model">amazon.sp.marketplace</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="country_id"/>
+                    <field name="partner_id"/>
+                    <field name="region_id"/>
+                    <field name="journal_id"/>
+                    <separator/>
+                    <filter name="activated" string="Activated"
+                            domain="[('activated','=', True)]"/>
+                    <filter name="non_activated" string="Not activated"
+                            domain="[('activated','=', False)]"/>
+                    <separator/>
+                    <field name="order_api_sync_date"/>
+                    <field name="inventory_api_sync_date"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_amazon_sp_marketplace" model="ir.actions.act_window">
+            <field name="name">Amazon SP-API marketplaces</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.marketplace</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="amazon_sp_marketplace_view_tree"/>
+            <field name="robo_front" eval="1"/>
+            <field name="context">{'robo_header':{}, 'active_test': False}</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('amazon_sp_api.amazon_sp_marketplace_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('amazon_sp_api.amazon_sp_marketplace_view_form')})]"
+            />
+        </record>
+        <record id="action_open_amazon_sp_marketplace_back" model="ir.actions.act_window">
+            <field name="name">Amazon SP-API marketplaces</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.marketplace</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="amazon_sp_marketplace_view_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_amazon_sp_marketplaces"
+                name="Marketplaces"
+                sequence="1"
+                parent="menu_amazon_sp_management_root"
+                action="action_open_amazon_sp_marketplace_back"
+        />
+    </data>
+</odoo>

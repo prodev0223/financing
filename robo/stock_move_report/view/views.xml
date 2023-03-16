@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="add_products_inside_stock_picking_view" model="ir.ui.view">
+            <field name="name">products.inside.tree.view</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="supplier_note"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_picking_form_extend" model="ir.ui.view">
+            <field name="name">view.picking.form.extend</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="supplier_note"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

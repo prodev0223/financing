@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sales_order_secondary_uom" model="ir.ui.view">
+            <field name="name">sale.order.secondary.uom</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='product_uom_qty']" position="after">
+                    <field name="secondary_uom_qty"/>
+                    <field name="secondary_uom_id" options="{'no_open': True, 'no_create': True}" domain="[('id', 'in', secondary_uom_domain and secondary_uom_domain[0][2])]"/>
+                    <field name="secondary_uom_domain" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <!--<xpath expr="//field[@name='order_line']//tree[1]//field[@name='product_uom']" position="attributes">-->
+                    <!--<attribute name="readonly">1</attribute>-->
+                <!--</xpath>-->
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='price_unit']" position="after">
+                    <field name="secondary_uom_price_unit"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='price_unit']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="robo_sales_order_secondary_uom" model="ir.ui.view">
+            <field name="name">robo.sale.order.secondary.uom</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="robo_stock.robo_sale_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='product_uom_qty']" position="after">
+                    <field name="secondary_uom_qty"/>
+                    <field name="secondary_uom_id" options="{'no_open': True, 'no_create': True}" domain="[('id', 'in', secondary_uom_domain and secondary_uom_domain[0][2])]"/>
+                    <field name="secondary_uom_domain" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='product_uom']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='price_unit']" position="after">
+                    <field name="secondary_uom_price_unit"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='price_unit']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

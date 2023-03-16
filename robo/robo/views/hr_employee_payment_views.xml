@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_employee_other_payments_front_search" model="ir.ui.view">
+            <field name="name">hr.employee.other.payments.front.search</field>
+            <field name="model">hr.employee.payment</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <search string="Accounting Analysis">
+                    <field name="date"/>
+                    <field name="partner_id" operator="child_of"/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="['&amp;',('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')), ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['&amp;',('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šiais metais"
+                            domain="['&amp;',('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')), ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter name="rent" string="Nuoma" domain="[('type', '=', 'rent')]"/>
+                    <filter name="other" string="Kita" domain="[('type', '=', 'other')]"/>
+
+                </search>
+            </field>
+        </record>
+        <record id="hr_employee_other_payments_front_tree_view" model="ir.ui.view">
+            <field name="name">hr.employee.other.payments.front.tree</field>
+            <field name="model">hr.employee.payment</field>
+            <field eval="2" name="priority"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Other payments" create="false">
+                    <field name="partner_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="amount_bruto"/>
+                    <field name="type"/>
+                    <field name="a_klase_kodas_id"/>
+                    <field name="b_klase_kodas_id"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_open_other_payments">
+            <field name="name">Kiti mokėjimai</field>
+            <field name="res_model">hr.employee.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,tree</field>
+            <field name="target">current</field>
+            <field name="robo_front">True</field>
+            <field name="domain">[('type', 'in', ['rent', 'other']), ('state', '=', 'done')]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('hr_employee_other_payments_front_tree_view')})]"/>
+            <field name="search_view_id" ref="hr_employee_other_payments_front_search"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="context"
+                   eval="{'robo_header': {}, 'search_add_custom': False, 'search_default_previous_month': 1, 'search_default_other': 1, 'search_default_rent': 1}"/>
+        </record>
+
+        <menuitem id="menu_other_payments_search_report"
+                  name="Kiti mokėjimai"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="action_open_other_payments"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="kiti,mokėjimai"
+        />
+    </data>
+</odoo>

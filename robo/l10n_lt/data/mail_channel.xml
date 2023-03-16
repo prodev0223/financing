@@ -1,0 +1,13 @@
+<odoo>
+    <data noupdate="1">
+        <record id="invoices_waiting_for_input_notification_mail_channel" model="mail.channel">
+            <field name="name">Messages about invoices waiting for input</field>
+            <field name="description">Inform by email, when there are invoices waiting for input</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>invoices</field>
+        </record>
+    </data>
+</odoo>

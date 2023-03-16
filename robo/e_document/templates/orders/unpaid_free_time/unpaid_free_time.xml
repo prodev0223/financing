@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="unpaid_free_time_order_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl nemokamo laisvo laiko</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="bool_1" attrs="{'invisible': True}"/>
+                </xpath>
+
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="employee_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) Vardas Pavardė" attrs="{
+                                   'required': True,
+                                   'readonly': [('bool_1', '=', True)]
+                               }"/>
+                    </group>
+                    <group colspan="4">
+                        <field name="e_document_time_line_ids" widget="one2many_list" string="Requested times off"
+                               colspan="4" options="{'no_open': True}" attrs="{
+                                    'readonly': [('bool_1', '=', True)],
+                                    'required': True
+                               }">
+                            <tree editable="false" edit="false" open="0" class="robo_tree_in_form">
+                                <field name="date"/>
+                                <field name="time_from" widget="float_time"/>
+                                <field name="time_to" widget="float_time"/>
+                                <field name="duration" sum="duration" widget="float_time"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="unpaid_free_time_order_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl nemokamo laisvo laiko</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{
+                u'default_document_type': u'isakymas',
+                u'rec_template_id': u'unpaid_free_time_order_template',
+                u'e_document_view_type': u'rigid'
+            }</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="unpaid_free_time_order_form"/>
+        </record>
+
+        <record id="unpaid_free_time_order_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl nemokamo laisvo laiko</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.unpaid_free_time_order_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">
+                isakymas,nemokamos,atostogos,laisvas laikas,laisvas,nedirbti,neapmokamos,neapmokama,leisti
+            </field>
+            <field name="groups_id" eval="[(6, 0, [
+                ref('robo_basic.group_robo_free_manager'),
+                ref('robo_basic.group_robo_premium_manager'),
+                ref('robo_basic.group_robo_edocument_manager')
+            ])]"/>
+        </record>
+
+        <record id="unpaid_free_time_order_mail_channel" model="mail.channel">
+            <field name="name">Unpaid free time order notifications</field>
+            <field name="description">Notifications when someone signs an unpaid free time order</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>e_documents</field>
+        </record>
+
+        <record id="unpaid_free_time_order_template" model="e.document.template">
+            <field name="name">Įsakymas dėl nemokamo laisvo laiko</field>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded {
+                            width: 100px;
+                        }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS SUTEIKTI {{ kam(employee_id2.upper(), 'AA') }} LAISVĄ LAIKĄ</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    {% if not e_document_time_line_ids %}
+                        Skiriu {{ placeholder | safe }} laisvą laiką. {{ placeholder | safe }}
+                    {% else %}
+                        {% if bool_1 %}
+                            {% if not signed_user_id or not signed_user_id.employee_ids or not signed_user_id.employee_ids[0].gender %}
+                                Vadovaudamasi(-s)
+                            {% elif signed_user_id.employee_ids[0].gender == 'male' %}
+                                Vadovaudamasis
+                            {% else %}
+                                Vadovaudamasi
+                            {% endif %}
+                            darbuotojo(-s) {{ ko(employee_id2, 'Aa') }} prašymu, darbuotojui(-ai) skiriu
+                        {% else %}
+                            Skiriu darbuotojui(-ai) {{ kam(employee_id2, 'Aa') }}
+                        {% endif %}
+                        {% set number_of_lines = len(e_document_time_line_ids) %}
+                        {% if number_of_lines == 1 or (min_date_from and min_date_from == max_date_to) %}
+                            {% set line = e_document_time_line_ids and e_document_time_line_ids[0] %}
+                            {{ ko(date_to_string(line.date)) }} dieną nemokamą laisvą laiką
+
+                            {% set iterator = 1 %}
+                            {% for line in e_document_time_line_ids %}
+                                {% if iterator != number_of_lines %}
+                                    nuo {{ format_float_to_hours(line.time_from) }} iki
+                                    {{ format_float_to_hours(line.time_to) }}{% if iterator != number_of_lines - 1 %},{% endif %}
+                                {% endif %}
+                                {% set iterator = iterator + 1 %}
+                            {% endfor %}
+                            {% set line = e_document_time_line_ids and e_document_time_line_ids[number_of_lines-1] %}
+                            {% if number_of_lines > 1 %} ir {% endif %} nuo {{ format_float_to_hours(line.time_from) }} iki
+                            {{ format_float_to_hours(line.time_to) }}
+                            (viso {{ format_float_to_hours_and_minutes(sum(e_document_time_line_ids.mapped('duration'))) }}). {{ extra_text_html }}
+                        {% else %}
+                            nemokamą laisvą laiką šiomis dienomis:
+                            <br/>
+                            {{ unpaid_free_time_table | safe }}
+                            <br/>
+                            {{ extra_text_html }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.unpaid_free_time_order_form"/>
+            <field name="python_code">obj.unpaid_free_time_order_workflow()</field>
+            <field name="date_from_field_name">min_date_from</field>
+            <field name="date_to_field_name">max_date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="sign_mail_channel_ids" eval="[(4, ref('e_document.unpaid_free_time_order_mail_channel'))]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="isakymas_del_priemimo_i_darba_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl priėmimo į darbą</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="show_warning" invisible="1"/>
+                    <field name="show_wage_less_than_mma_warning" invisible="1"/>
+                    <field name="show_wage_is_mma_warning" invisible="1"/>
+                    <field name="show_etatas" invisible="1"/>
+                    <field name="show_etatas_computed" invisible="1"/>
+                    <field name="show_weekly_work_hours" invisible="1"/>
+                    <field name="show_weekly_work_hours_computed" invisible="1"/>
+                    <field name="show_fixed_attendance_lines" invisible="1"/>
+                    <field name="show_request_date_after_order_date_warning" invisible="1"/>
+                </xpath>
+                <xpath expr="//header" position="after">
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('show_warning','!=',True)]}">Nepamirškite užpildyti asmens kodo
+                        darbuotojo kortelėje!
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('show_wage_is_mma_warning','=',False)]}">
+                        Atkreipiame dėmesį, kad minimalus darbo užmokestis gali būti mokamas tik už nekvalifikuotą
+                        darbą (DK 141 str. 2 dalis). Jei darbinate į kvalifikuotas pareigas, siūlome rinktis didesnį
+                        nei minimalųjį darbo užmokestį.
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('show_wage_less_than_mma_warning','=',False)]}">
+                        Informuojame, jog šio darbuotojo nustatytas atlyginimas yra mažesnis, nei
+                        minimali mėnesinė alga (MMA), todėl gali būti pritaikyti papildomi SODRA mokesčiai: taikomos
+                        SODRA įmokų „grindys“. Dėl išsamesnės informacijos kreipkitės į Jūsų įmonei priskirtą buhalterį.
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('show_request_date_after_order_date_warning', '=', False)]}">
+                        Įsitikinkite, kad prašymo data nėra vėlesnė, nei įsakymo data!
+                    </div>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="employee_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) Vardas Pavardė" required="True" invisible="0"/>
+                        <field name="bool_1" string="Foreigner"/>
+                        <field name="country_id" string='Pilietybė' options="{'no_create': True, 'no_open': True}"
+                               attrs="{'invisible': [('bool_1', '=', False)], 'required': [('bool_1', '=', True)]}"/>
+                        <field name="job_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) pareigos" required="1" invisible="0"/>
+                        <field name="department_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Department"/>
+                        <field name="date_2" string="Prašymo data" required="True" invisible="0"/>
+                        <field name="date_from" string="Pirma darbo diena" required="True" invisible="0"/>
+                        <field name="terminuota_sutartis" invisible="1"/>
+                        <field name="date_6" string="Sutarties pabaiga"
+                               attrs="{'required': [('terminuota_sutartis', '=', True)], 'invisible': [('terminuota_sutartis', '=', False)]}"/>
+                        <field name="date_1" string="Bandomojo laikotarpio pabaigos data"
+                               help="Jeigu yra bandomasis laikotarpis, nurodykite jo pabaigos datą"/>
+                        <field name="darbo_rusis" string="Darbo sutarties rūšis" required="True" invisible="0"/>
+                        <field name="struct" options="{'no_create': True, 'no_open': True}"
+                               string="Atlyginimo struktūra" required="True" invisible="0"/>
+                        <field name="enable_advance_setup" invisible="1"/>
+                        <field name="selection_1" options="{'no_create': True, 'no_open': True}"
+                               string="Kiek kartų mokėti"
+                               attrs="{'required': [('enable_advance_setup', '=', True)], 'invisible': [('enable_advance_setup', '!=', True)]}"/>
+                        <field name="advance_amount" string="Avanso dydis (neto)"
+                               attrs="{'invisible': ['|', ('selection_1', '!=', 'twice_per_month'), ('enable_advance_setup', '!=', True)], 'required': [('selection_1', '=', 'twice_per_month'), ('enable_advance_setup', '=', True)]}"/>
+                        <field name="selection_bool_1" options="{'no_create': True, 'no_open': True}"
+                               string="Papildomas sodros kaupimas" required="True" invisible="0"/>
+                        <field name="sodra_papildomai_type" string="Sodros kaupimo tipas"
+                               attrs="{'required': [('selection_bool_1', '=', 'true'),('date_from','&gt;=','2019-01-01'),('date_from','!=',False)], 'invisible': ['|', ('selection_bool_1', '!=', 'true'),'|',('date_from','&lt;','2019-01-01'),('date_from','=',False)]}"/>
+                    </group>
+                    <group>
+                        <field name="darbo_grafikas" string="Darbo laiko grafikas" required="True"
+                               invisible="0"/>
+                        <field name="fixed_schedule_template"
+                               attrs="{'invisible': [('show_fixed_attendance_lines', '=', False)]}"/>
+                        <field name="etatas"
+                               attrs="{'invisible': [('show_etatas', '=', False)], 'required': [('show_etatas', '=', True)]}"/>
+                        <field name="extra_fields_visible" invisible="1"/>
+                        <field name="work_norm"
+                               attrs="{'invisible':[('extra_fields_visible','=',False)], 'required': [('extra_fields_visible','=',True)], 'readonly': ['|', ('extra_fields_visible','=',False), ('state', '!=', 'draft')]}"/>
+                        <field name="etatas_computed"
+                               attrs="{'invisible': [('show_etatas_computed', '=', False)], 'required': [('show_etatas_computed', '=', True)]}"/>
+                        <field name="weekly_work_hours"
+                               attrs="{'invisible': [('show_weekly_work_hours', '=', False)], 'required': [('show_weekly_work_hours', '=', True)]}"/>
+                        <field name="weekly_work_hours_computed"
+                               attrs="{'invisible': [('show_weekly_work_hours_computed', '=', False)], 'required': [('show_weekly_work_hours_computed', '=', True)]}"/>
+                        <field name="selection_bool_3" string="Pilnas etatas" required="False" invisible="1"/>
+                        <field name="du_input_type" nolabel="True" class="oe_inline"
+                               attrs="{'invisible': [('struct', '!=', 'MEN')], 'required': [('struct', '=', 'MEN')]}"/>
+                        <field name="float_1" string="Darbo užmokestis" required="True" invisible="0"/>
+                        <field name="freeze_net_wage"
+                               attrs="{
+                                    'invisible': ['|', ('struct', '!=', 'MEN'), ('du_input_type', '!=', 'neto')]
+                               }"/>
+                        <field name="npd_type"
+                               attrs="{'required': [('struct', '=', 'MEN')], 'invisible': [('bool_1', '=', True)]}"/>
+                        <field name="contract_priority" attrs="{
+                                   'required': [('npd_type', '=', 'manual')],
+                                   'invisible': [('npd_type', '=', 'auto')]
+                               }"
+                        />
+                        <!--<field name="float_2" string="Taikomas NPD"
+                               attrs="{'invisible': [('npd_type', '=', 'auto')], 'required': [('npd_type', '!=', 'auto')]}"/>-->
+                        <field name="selection_bool_2" string="Ar darbuotojas turi ribotą darbingumą?"
+                               attrs="{'invisible': [('npd_type', '!=', 'auto')], 'required': [('npd_type', '=', 'auto')]}"/>
+                        <field name="selection_nedarbingumas" options="{'no_create': True, 'no_open': True}"
+                               string="Darbingumo lygis"
+                               attrs="{'invisible': ['|', ('selection_bool_2', '=', 'false'), ('npd_type', '!=', 'auto')], 'required': [('selection_bool_2', '=', 'true'), ('npd_type', '=', 'auto')]}"/>
+                    </group>
+
+                    <field name="fixed_attendance_ids" nolabel="1"
+                           attrs="{'invisible': [('show_fixed_attendance_lines', '=', False)], 'required': [('show_fixed_attendance_lines', '=', True)]}"
+                           options="{'no_open': True}">
+                        <tree string="Grafikas" editable="bottom" class="robo_tree_in_form">
+                            <field name="dayofweek"/>
+                            <field name="hour_from" widget="float_time"/>
+                            <field name="hour_to" widget="float_time"/>
+                            <field name="time_total" widget="float_time" sum="time_total"/>
+                        </tree>
+                    </field>
+                    <field name="atlyginimo_lentele" string=" "
+                           attrs="{'invisible': [('struct', '!=', 'MEN')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_priemimo_i_darba_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl priėmimo į darbą</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'rec_template_id': u'isakymas_del_priemimo_i_darba_template',
+                'default_selection_bool_2': 'false', 'default_selection_bool_3': 'true', 'default_selection_bool_1':
+                'false', u'default_document_type': u'isakymas', u'e_document_view_type': u'rigid', 'default_float_3': 1}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.isakymas_del_priemimo_i_darba_form"/>
+        </record>
+
+
+        <record id="isakymas_del_priemimo_i_darba_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl priėmimo į darbą</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.isakymas_del_priemimo_i_darba_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas,priėmimas į darbą</field>
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+        <record id="isakymas_del_priemimo_i_darba_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie pasirašytus priėmimo į darbą įsakymus</field>
+            <field name="description">Informuoti, kuomet būna pasirašomas priėmimo į darbą įsakymas</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, [ref('robo_basic.group_robo_premium_manager'),
+                                                       ref('robo_basic.group_robo_hr_manager'),
+                                                       ])]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>e_documents</field>
+        </record>
+
+        <record id="isakymas_del_priemimo_i_darba_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Atsižvelgdamas(-a) į {{ko(employee_id2, 'Aa')}} {{ date_2 }} prašymą:
+                    <ol>
+                        <li>P r i i m u {{ka(employee_id2, 'Aa')}} dirbti {{kuo(job_id2, 'aa')}}
+                            {% if department_id2 %} padalinyje {{ department_id2 }} {% endif %} nuo {{ date_from }},
+                            sudarant {% if darbo_rusis %} {{ka(darbo_rusis, 'aa')}} {% endif %} darbo sutartį ir mokant
+                            {% if freeze_net_wage == 'Taip' and du_input_type == 'Neto' and struct == 'Mėnesinis' %}
+                                {{ float_1 }} EUR (NETO)
+                            {% else %}
+                                {{wage_bruto}} EUR
+                            {% endif %}
+                            {% if struct == 'Mėnesinis' %} mėnesinį {% else
+                            %} valandinį {% endif %}darbo užmokestį{% if selection_1 == 'du kartus' %} mokant {{advance_amount}} EUR avansą{% endif %}.
+                            {% if date_1 %}
+                        </li>
+                        <li>N u s t a t a u {{kam(employee_id2, 'Aa')}} išbandymo laikotarpį iki {{date_1}}, siekiant
+                            patikrinti, ar darbuotojas(-a) tinka sulygtam darbui atlikti. {% endif %}
+                        </li>
+                        <li>N u s t a t a u {{kam(employee_id2, 'Aa')}} darbo laiką skaičiuoti pagal {{ka(struct,
+                            'aa')}} {{ka(darbo_grafikas_string, 'aa')}}, nustatant
+                            {% if darbo_grafikas_string == 'Nekintančio darbo laiko režimas' %}
+                            {{ weekly_work_days_computed }} darbo dienų,
+                            {% endif %}
+                            {{ weekly_work_hours_computed }} valandų darbo savaitę, pagal {{ka(etatas_computed, 'aa')}}
+                            etatą, taikant {{ work_norm }} darbo laiko normą.
+                        </li>
+                    </ol>
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl priėmimo į darbą</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.isakymas_del_priemimo_i_darba_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS
+                                DĖL {{ko(employee_id2.upper(), 'AA')}} PRIĖMIMO Į DARBĄ
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.isakymas_del_priemimo_i_darba_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_6</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="sign_mail_channel_ids" eval="[(4, ref('e_document.isakymas_del_priemimo_i_darba_mail_channel'))]"/>
+            <field name="date_lim_for_signing_field_name">date_from</field>
+        </record>
+    </data>
+</odoo>

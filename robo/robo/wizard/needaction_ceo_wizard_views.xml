@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="needaction_ceo_wizard_view" model="ir.ui.view">
+            <field name="name">needaction.ceo.wizard.view</field>
+            <field name="model">needaction.ceo.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Duomenų importas">
+                    <field name="agree" invisible="1"/>
+                    <div attrs="{'invisible': [('agree','=', False)]}">
+                        <p>
+                            Pagrįskite, kodėl šios sąnaudos <b>yra</b> priskiriamos reprezentacinėms sąnaudoms.
+                        </p>
+                    </div>
+                    <div attrs="{'invisible': [('agree','=', True)]}">
+                        <p>
+                            Pagrįskite, kodėl šios sąnaudos <b>nėra</b>  priskiriamos reprezentacinėms sąnaudoms.
+                        </p>
+                    </div>
+                    <group>
+                        <field name="comment" required="1"/>
+                    </group>
+                    <footer>
+                        <button string="Tvirtinu" name="post" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

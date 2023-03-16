@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="robo_onboarding_category_view_search" model="ir.ui.view">
+            <field name="name">robo.onboarding.category.view.search</field>
+            <field name="model">robo.onboarding.category</field>
+            <field name="robo_front">True</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <separator/>
+                    <filter string="Client can see" name="shown_to_client"
+                            domain="[('shown_to_client', '=', True)]"/>
+                    <filter string="Client can't see" name="not_shown_to_client"
+                            domain="[('shown_to_client', '=', False)]"/>
+                    <separator/>
+                    <filter string="Completed" name="completed"
+                            domain="[('completed', '=', True)]"/>
+                    <filter string="Not completed" name="not_completed"
+                            domain="[('completed', '=', False)]"/>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+        <record id="robo_onboarding_category_view_tree" model="ir.ui.view">
+            <field name="name">robo.onboarding.category.view.tree</field>
+            <field name="model">robo.onboarding.category</field>
+            <field name="arch" type="xml">
+                <tree editable="top" string="Robo onboarding category" import="false" edit="false">
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="shown_to_client" readonly="1"/>
+                    <field name="completed" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+        <record id="robo_onboarding_category_view_form" model="ir.ui.view">
+            <field name="name">robo.onboarding.category.view.form</field>
+            <field name="model">robo.onboarding.category</field>
+            <field name="arch" type="xml">
+                <form string="Robo onboarding category">
+                    <sheet>
+                        <group>
+                            <group colspan="4">
+                                <h1>
+                                    <field name="name"/>
+                                </h1>
+                            </group>
+                            <group>
+                                <field name="sequence"/>
+                                <field name="shown_to_client"/>
+                                <field name="completed"/>
+                            </group>
+                            <group colspan="4">
+                                <field name="comment" widget="html"/>
+                            </group>
+                            <group colspan="4">
+                                <field name="task_ids" nolabel="1"
+                                       context="{'form_view_ref': 'robo_onboarding.robo_onboarding_task_view_form'}">
+                                    <tree edit="1" editable="top">
+                                        <field name="sequence"/>
+                                        <field name="name"/>
+                                        <field name="shown_to_client"/>
+                                        <field name="completed"/>
+                                        <field name="weight" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="robo_onboarding_category_view_kanban" model="ir.ui.view">
+            <field name="name">robo.onboarding.category.view.kanban</field>
+            <field name="model">robo.onboarding.category</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" string="Robo onboarding category">
+                    <field name="name"/>
+                    <field name="shown_to_client" readonly="1"/>
+                    <field name="completed" readonly="1"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row" style="margin: 0;">
+                                    <div>
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.name.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin: 0;">
+                                    <div>
+                                        <t t-if="record.completed.raw_value">
+                                            <span style="color: green">Done</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span style="color: red">Not done</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="robo_onboarding_categories_view_action">
+            <field name="name">Robo onboarding categories</field>
+            <field name="res_model">robo.onboarding.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('robo_onboarding_category_view_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('robo_onboarding_category_view_kanban')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_onboarding_category_view_form')})]"/>
+            <field name="search_view_id" ref="robo_onboarding_category_view_search"/>
+            <field name="context" eval="{
+                'search_default_not_completed':1,
+            }"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,101 @@
+<odoo>
+    <data>
+        <!--Tree-->
+        <record id="tree_robo_import_job" model="ir.ui.view">
+            <field name="name">tree.robo.import.job</field>
+            <field name="model">robo.import.job</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0" string="Duomenų importo darbai"
+                      decoration-info="state == 'in_progress'"
+                      decoration-success="state == 'succeeded'"
+                      decoration-danger="state == 'failed'">
+                    <field name="action_name"/>
+                    <field name="execution_start_date"/>
+                    <field name="execution_end_date"/>
+                    <field name="state"/>
+                    <field name="fail_message"/>
+                    <field name="user_name"/>
+                    <field name="imported_file" filename="imported_file_name"/>
+                    <field name="imported_file_name" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <!--Forms-->
+        <record id="form_robo_import_job" model="ir.ui.view">
+            <field name="name">form.robo.import.job</field>
+            <field name="model">robo.import.job</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Duomenų importo darbai" edit="0" delete="0">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="action_name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="execution_start_date" readonly="1"/>
+                            <field name="execution_end_date" readonly="1"/>
+                            <field name="user_name"/>
+                            <field name="fail_message" attrs="{'invisible': [('fail_message', '=', False)]}"/>
+                            <field name="imported_file" filename="imported_file_name"/>
+                            <field name="imported_file_name" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Search-->
+        <record id="search_robo_import_job" model="ir.ui.view">
+            <field name="name">search.robo.import.job</field>
+            <field name="model">robo.import.job</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="state_in_progress"
+                            string="Būsena - Vykdoma" domain="[('state','=','in_progress')]"/>
+                    <filter name="state_failed"
+                            string="Būsena - Vykdymas nepavyko" domain="[('state','=','failed')]"/>
+                    <filter name="state_succeeded"
+                            string="Būsena - Sėkmingai įvykdyta" domain="[('state','=','succeeded')]"/>
+                </search>
+            </field>
+        </record>
+        <!--Action-->
+        <record id="action_open_robo_import_job" model="ir.actions.act_window">
+            <field name="name">Duomenų importo darbai</field>
+            <field name="res_model">robo.import.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="search_view_id" ref="search_robo_import_job"/>
+            <field name="header" ref="robo.robo_front_header_no_content"/>
+            <field name="with_settings">True</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_robo_import_job')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_robo_import_job')})]"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="robo_front" eval="1"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <!--Menu-->
+        <menuitem id="menu_robo_import_job"
+                  name="Duomenų importo darbai"
+                  parent="menu_kita"
+                  force_web_icon="icon-share,none,none"
+                  groups="robo_basic.group_robo_premium_accountant"
+                  action="action_open_robo_import_job"
+                  robo_front="True"
+                  sequence="62"
+                  searchable="True"
+                  tags="duomenų,importo,darbai"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_users_form" model="ir.ui.view">
+            <field name="name">res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='access_rights']" position="inside">
+                    <group string="Stock locations" name="stock_locations" col="2" colspan="2">
+                        <field name='location_ids' options='{"no_create": True, "no_quick_create": True}'
+                               widget="many2many_tags" groups="robo_stock.robo_stock_extended" readonly="1"/>
+                        <field name='own_location_ids' class="oe_edit_only"
+                               options='{"no_create": True, "no_quick_create": True}' widget="many2many_tags"
+                               groups="robo_stock.robo_stock_extended"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="res_users_front_end_form_view" model="ir.ui.view">
+            <field name="name">res.users.front.end.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="robo_user_management.res_users_front_end_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='main_user_rights_group']" position="after">
+                    <field name='location_ids' options='{"no_create": True, "no_quick_create": True}'
+                               widget="many2many_tags" groups="robo_stock.robo_stock_extended" readonly="1"/>
+                    <field name='own_location_ids' class="oe_edit_only"
+                           options='{"no_create": True, "no_quick_create": True}' widget="many2many_tags"
+                           groups="robo_stock.robo_stock_extended"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

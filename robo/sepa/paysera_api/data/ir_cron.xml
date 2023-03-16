@@ -1,0 +1,83 @@
+<odoo>
+    <data noupdate="1">
+        <record id="cron_inform_about_failed_wallets" model="ir.cron">
+            <field name="name">Paysera: Failed wallet reminders</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">paysera.wallet</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=03, minute=00, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_inform_about_failed_wallets</field>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_refresh_access_tokens" model="ir.cron">
+            <field name="name">Paysera: Refresh access tokens</field>
+            <field name="interval_number">2</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">paysera.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=01, minute=30, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_refresh_access_tokens</field>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_fetch_statements_daily" model="ir.cron">
+            <field name="name">Paysera: Fetch statements (Daily)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="False"/>
+            <field name="doall" eval="False"/>
+            <field name="model">paysera.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=01, minute=15, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_daily</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_fetch_statements_weekly_paysera" model="ir.cron">
+            <field name="name">Paysera: Fetch statements (Weekly)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">weeks</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="False"/>
+            <field name="doall" eval="False"/>
+            <field name="model">paysera.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=01, minute=45, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_weekly</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_fetch_statements_monthly_paysera" model="ir.cron">
+            <field name="name">Paysera: Fetch statements (Monthly)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="False"/>
+            <field name="doall" eval="False"/>
+            <field name="model">paysera.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(months=1, day=1, hour=02, minute=15)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_monthly</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_fetch_wallet_balance_paysera" model="ir.cron">
+            <field name="name">Paysera: Fetch wallet end balance</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">paysera.api.base</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(minute=05, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_wallet_balance</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+    </data>
+</odoo>

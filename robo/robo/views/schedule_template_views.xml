@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="schedule_form_view">
+            <field name="name">Darbo grafikas</field>
+            <field name="model">schedule.template</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Darbo grafikas" create="false" edit="false">
+                    <sheet>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="template_type" readonly="1"/>
+                            <field name="work_week_type" readonly="1"/>
+                            <field name="shorter_before_holidays" readonly="1"/>
+                            <field name="etatas" readonly="1"/>
+                            <field name="work_norm" readonly="1"/>
+                        </group>
+                        <field name="fixed_attendance_ids" nolabel="1"
+                               attrs="{'invisible': [('template_type', 'not in', ['fixed', 'suskaidytos'])], 'readonly': 1}">
+                            <tree string="Grafikas" editable="top">
+                                <field name="name"/>
+                                <field name="dayofweek"/>
+                                <field name="hour_from" widget="float_time"/>
+                                <field name="hour_to" widget="float_time"/>
+                                <field name="time_total" widget="float_time" sum="time_total"/>
+                                <field name="working_remotely"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

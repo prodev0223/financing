@@ -1,0 +1,43 @@
+<odoo>
+    <data>
+        <!--FORM EXTENSION-->
+        <record id="view_move_line_form" model="ir.ui.view">
+            <field name="name">extend.account.move.line.form</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group style="display: inline-table;">
+                        <field name="bank_export_state_alert_html" colspan="4" string=" "/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="has_export_job_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Bankinių mokėjimų eksportas" name="bank_exports"
+                          attrs="{'invisible': [('has_export_job_ids','=',False)]}"
+                          groups="robo_basic.group_robo_premium_manager">
+                        <field name="bank_export_job_ids" nolabel="1" options="{'always_reload': True}"
+                               mode="tree,kanban" widget="one2many_list">
+                            <tree edit="0" create="0" delete="0" class="robo_tree_in_form"
+                                  decoration-success="export_state in ['processed', 'processed_partial']"
+                                  decoration-info="export_state in ['accepted', 'accepted_partial']"
+                                  decoration-danger="export_state in ['rejected', 'rejected_partial', 'rejected_sign']"
+                                  decoration-warning="export_state == 'waiting'">
+                                <field name="tr_name"/>
+                                <field name="date_exported"/>
+                                <field name="tr_amount"/>
+                                <field name="tr_partner_id"/>
+                                <field name="tr_currency_id"/>
+                                <field name="tr_bank_account_id"/>
+                                <field name="export_state"/>
+                                <field name="available_for_signing"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

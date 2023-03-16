@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_basic.group_robo_free_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('mrp.group_mrp_manager'))]"/>
+        </record>
+        <record id="robo_basic.group_robo_premium_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('mrp.group_mrp_manager'))]"/>
+        </record>
+        <record id="group_robo_mrp" model="res.groups">
+            <field name="name">Gamyba</field>
+            <field name="implied_ids" eval="[(4, ref('stock.group_stock_user'))]"/>
+            <field name="robo_front" eval="False"/>
+            <field name="front_help"></field>
+            <field name="front_category_id" eval=""/>
+        </record>
+        <record id="group_robo_mrp_bom_readonly" model="res.groups">
+            <field name="name">Komplektacijų peržiūra</field>
+            <field name="front_help">Leidžia matyti komplektacijas</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_mrp')"/>
+        </record>
+        <record id="mrp.group_mrp_manager" model="res.groups">
+            <field name="name">Gamybos vadovas</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Visos teisės valdyti gamybą ir produkciją</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_mrp')"/>
+        </record>
+        <record id="mrp.group_mrp_user" model="res.groups">
+            <field name="name">Gamyba</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Prieiga prie gamybų</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_mrp')"/>
+        </record>
+        <record id="group_robo_mrp_bom_manager" model="res.groups">
+            <field name="name">Komplektacijų vadovas</field>
+            <field name="implied_ids" eval="[(4, ref('group_robo_mrp_bom_readonly'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžia matyti, pridėti, ištrinti komplektacijas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_mrp')"/>
+        </record>
+        <record id="group_recursive_bom_production" model="res.groups">
+            <field name="name">Gamyba: Sudėtinės komplektacijos</field>
+        </record>
+        <record id="group_bom_expiry_dates" model="res.groups">
+            <field name="name">Gamyba: Komplektacijų galiojimo datos</field>
+        </record>
+        <record id="group_production_modification_rules" model="res.groups">
+            <field name="name">Gamyba: Modifikavimo taisyklės</field>
+        </record>
+    </data>
+</odoo>

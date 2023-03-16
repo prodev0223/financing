@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--Pajamos-->
+        <record id="robo_button_pajamos_sask" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_pajamos"/>
+            <field name="name">Sąskaitą</field>
+            <field name="icon">icon-document</field>
+            <field name="action" ref="robo.new_client_invoice"/>
+            <field name="item_class">new_invoice</field>
+            <field name="help"/>
+        </record>
+        <record id="robo_button_pajamos_kred" model="robo.header.items">
+            <field name="header" ref="robo_button_pajamos"/>
+            <field name="name">Kreditinę sąskaitą</field>
+            <field name="icon">icon-register</field>
+            <field name="action" ref="robo.new_client_credit_invoice"/>
+            <field name="item_class">new_credit_invoice</field>
+            <field name="help">Grąžinimai, nuolaidos</field>
+        </record>
+        <!--end Pajamos-->
+
+        <!--Islaidos-->
+        <record id="robo_button_islaidos_sask" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_islaidos"/>
+            <field name="name">Sąskaitą</field>
+            <field name="icon">icon-document</field>
+            <field name="action" ref="robo.new_supplier_invoice"/>
+            <field name="item_class">new_invoice</field>
+            <field name="help"/>
+        </record>
+        <record id="robo_button_islaidos_cek" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_islaidos"/>
+            <field name="name">Čekį</field>
+            <field name="icon">icon-receipt</field>
+            <field name="action" ref="robo.new_cheque_action"/>
+            <field name="item_class">new_cheque</field>
+            <field name="help"/>
+        </record>
+        <record id="robo_button_islaidos_sask_cek" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_islaidos"/>
+            <field name="name">Sąskaitą su čekiu</field>
+            <field name="icon">icon-file-image</field>
+            <field name="action" ref="robo.new_expenses_with_cheque"/>
+            <field name="item_class">new_invoice_with_cheque</field>
+            <field name="help"/>
+        </record>
+        <record id="robo_button_islaidos_kred" model="robo.header.items">
+            <field name="header" ref="robo_button_islaidos"/>
+            <field name="name">Kreditinę sąskaitą</field>
+            <field name="icon">icon-register</field>
+            <field name="action" ref="robo.new_supplier_credit_invoice"/>
+            <field name="item_class">new_credit_invoice</field>
+            <field name="help">Grąžinimai, nuolaidos</field>
+        </record>
+        <!--end Islaidos-->
+
+        <!--Darbuotojai-->
+        <record id="robo_button_darbuotojai_new" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="name">Naujas darbuotojas</field>
+            <field name="icon">icon-user-plus</field>
+            <field name="action" ref="robo.open_employees_action_new"/>
+            <field name="item_class">new_employee</field>
+            <field name="group_ids"
+                   eval="[(4, ref('robo_basic.group_robo_free_manager')), (4, ref('robo_basic.group_robo_premium_manager')), (4, ref('robo_basic.group_robo_hr_manager'))]"/>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_button_hr_job_new" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="name">Naujos pareigos</field>
+            <field name="icon">icon-file-add</field>
+            <field name="action" ref="robo.open_hr_job"/>
+            <field name="item_class">new_ehr_job</field>
+            <field name="group_ids"
+                   eval="[(4, ref('robo_basic.group_robo_free_manager')), (4, ref('robo_basic.group_robo_premium_manager')), (4, ref('robo_basic.group_robo_hr_manager'))]"/>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_button_darbuotojai_atlyginimas" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="name">Atlyginimų keitimas</field>
+            <field name="icon">icon-wallet</field>
+            <field name="action" ref="e_document.isakymas_del_darbo_uzmokescio_pakeitimo_action"/>
+            <field name="item_class">new_salary</field>
+            <field name="group_ids"
+                   eval="[(4, ref('robo_basic.group_robo_free_manager')), (4, ref('robo_basic.group_robo_premium_manager')), (4, ref('robo_basic.group_robo_hr_manager'))]"/>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_button_darbuotojai_atleidimas" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="name">Atleidimas</field>
+            <field name="icon">icon-user-minus</field>
+            <field name="action" ref="e_document.isakymas_del_atleidimo_is_darbo_action"/>
+            <field name="item_class">new_fire</field>
+            <field name="group_ids"
+                   eval="[(4, ref('robo_basic.group_robo_free_manager')), (4, ref('robo_basic.group_robo_premium_manager')), (4, ref('robo_basic.group_robo_hr_manager'))]"/>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_button_darbuotojai_kasmetines" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="name">Kasmetinės atostogos</field>
+            <field name="icon">icon-landscape</field>
+            <field name="action" ref="e_document.prasymas_del_kasmetiniu_atostogu_action"/>
+            <field name="item_class">new_holidays</field>
+            <field name="group_ids"
+                   eval="[(4, ref('robo_basic.group_robo_free_employee')), (4, ref('robo_basic.group_robo_premium_user'))]"/>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_button_darbuotojai_komandiruotes" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="name">Komandiruotės</field>
+            <field name="icon">icon-plane</field>
+            <field name="action" ref="e_document.prasymas_del_tarnybines_komandiruotes_action"/>
+            <field name="item_class">new_trip</field>
+            <field name="group_ids"
+                   eval="[(4, ref('robo_basic.group_robo_free_employee')), (4, ref('robo_basic.group_robo_premium_user'))]"/>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_button_darbuotojai_nemokamos" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="name">Nemokamos atostogos</field>
+            <field name="icon">icon-tissue</field>
+            <field name="action" ref="e_document.prasymas_del_nemokamu_atostogu_suteikimo_action"/>
+            <field name="item_class">new_unpaid_holidays</field>
+            <field name="group_ids"
+                   eval="[(4, ref('robo_basic.group_robo_free_employee')), (4, ref('robo_basic.group_robo_premium_user'))]"/>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_button_darbuotojai_kalendorius" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="name">Kalendorius</field>
+            <field name="icon">icon-calendar-full</field>
+            <field name="action" ref="robo.open_employee_calendar"/>
+            <field name="item_class">calendar</field>
+            <field name="group_ids"
+                   eval="[(4, ref('robo_basic.group_robo_free_employee')), (4, ref('robo_basic.group_robo_premium_user'))]"/>
+            <field name="help"/>
+        </record>
+
+        <!--end Darbuotojai-->
+
+        <!--Customer-->
+        <record id="robo_button_customer_new" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_customer"/>
+            <field name="name">Klientą</field>
+            <field name="icon">icon-profile</field>
+            <field name="action" ref="robo.new_client_customer"/>
+            <field name="item_class">new_client</field>
+            <field name="help"/>
+        </record>
+
+        <!--End Customer-->
+
+
+        <!--Supplier-->
+        <record id="robo_button_supplier_new" model="robo.header.items">
+            <field name="header" ref="robo.robo_button_supplier"/>
+            <field name="name">Tiekėją</field>
+            <field name="icon">icon-profile</field>
+            <field name="action" ref="robo.new_client_supplier"/>
+            <field name="item_class">new_client</field>
+            <field name="help"/>
+        </record>
+        <!--End Supplier-->
+
+
+        <!--Cash-->
+        <record id="robo_button_cash_pajamu" model="robo.header.items">
+            <field name="header" ref="robo_button_cash"/>
+            <field name="name">Pajamų orderį</field>
+            <field name="icon">icon-plus-circle</field>
+            <field name="action" ref="new_revenue_operation"/>
+            <field name="item_class">new_revenue_operation</field>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_button_cash_islaidu" model="robo.header.items">
+            <field name="header" ref="robo_button_cash"/>
+            <field name="name">Išlaidų orderį</field>
+            <field name="icon">icon-circle-minus</field>
+            <field name="action" ref="new_expense_operation"/>
+            <field name="item_class">new_expense_operation</field>
+            <field name="help"/>
+        </record>
+        <!--End Cash-->
+
+        <!--Cash Register-->
+        <record id="robo_button_cash_register_pajamu" model="robo.header.items">
+            <field name="header" ref="robo_button_cash_register"/>
+            <field name="name">Pajamų orderį</field>
+            <field name="icon">icon-plus-circle</field>
+            <field name="action" ref="new_cash_register_inc"/>
+            <field name="item_class">new_revenue_operation</field>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_button_cash_register_islaidu" model="robo.header.items">
+            <field name="header" ref="robo_button_cash_register"/>
+            <field name="name">Išlaidų orderį</field>
+            <field name="icon">icon-circle-minus</field>
+            <field name="action" ref="new_cash_register_exp"/>
+            <field name="item_class">new_expense_operation</field>
+            <field name="help"/>
+        </record>
+        <!--End Register-->
+
+
+        <!--Priemimo kvitas-->
+        <record id="robo_button_priemimo_kvitas_new" model="robo.header.items">
+            <field name="header" ref="header_pinigu_priemimas"/>
+            <field name="name">Priėmimo kvitą</field>
+            <field name="icon">icon-plus-circle</field>
+            <field name="action" ref="action_front_pinigu_priemimo_kvitai"/>
+            <field name="item_class">new_revenue_operation</field>
+            <field name="help"/>
+        </record>
+        <!--Front bank statement-->
+        <record id="header_item_create_front_statements" model="robo.header.items">
+            <field name="header" ref="robo.header_front_statements"/>
+            <field name="name">Mokėjimo ruošinį</field>
+            <field name="icon">icon-credit-card</field>
+            <field name="action" ref="robo.new_open_robo_front_statement"/>
+            <field name="item_class">new_front_statement</field>
+            <field name="help"/>
+        </record>
+
+        <record id="robo_header_create_product_template" model="robo.header.items">
+            <field name="header" ref="robo_header_product_template"/>
+            <field name="name">Produktą</field>
+            <field name="icon">icon-box</field>
+            <field name="action" ref="action_open_product_template_front_form"/>
+            <field name="item_class">new_product</field>
+            <field name="help"/>
+        </record>
+    </data>
+</odoo>

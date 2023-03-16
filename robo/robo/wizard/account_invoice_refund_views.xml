@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_account_invoice_refund" model="ir.ui.view">
+            <field name="name">account.invoice.refund.form</field>
+            <field name="model">account.invoice.refund</field>
+            <field name="arch" type="xml">
+                <form string="Sąskaitos kreditavimas">
+                    <group>
+                        <group>
+                            <field name="refund_only" invisible="1"/>
+                            <field name="filter_refund" invisible="1" widget="radio"/>
+                            <field name="description" string="Priežastis"/>
+                        </group>
+                        <group>
+                            <field name="date_invoice" string="Grąžinimo data"/>
+                            <field name="date" string="Apskaitos data" groups="base.group_no_one"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Kredituoti" name="invoice_refund_front" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_account_invoice_refund" model="ir.actions.act_window">
+            <field name="name">Sąskaitos kreditavimas</field>
+            <field name="res_model">account.invoice.refund</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_invoice_refund"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_account_invoice_refund" model="ir.ui.view">
+            <field name="name">account.invoice.refund.form</field>
+            <field name="model">account.invoice.refund</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Sąskaitos kreditavimas">
+                    <group>
+                        <group>
+                            <field name="refund_only" invisible="1"/>
+                            <field name="filter_refund" invisible="1" widget="radio"/>
+                            <field name="description" string="Priežastis"/>
+                            <field name="user_refund" required="1"/>
+                        </group>
+                        <group>
+                            <field name="date_invoice" string="Grąžinimo data"/>
+                            <field name="date" string="Apskaitos data" groups="base.group_no_one"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Kredituoti" name="invoice_refund_front" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_account_invoice_refund" model="ir.actions.act_window">
+            <field name="name">Sąskaitos kreditavimas</field>
+            <field name="res_model">account.invoice.refund</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_invoice_refund"/>
+            <field name="target">new</field>
+        </record>
+        <!--end other-->
+    </data>
+</odoo>

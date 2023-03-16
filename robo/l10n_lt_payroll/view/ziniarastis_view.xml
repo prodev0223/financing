@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ziniarastis_day_form" model="ir.ui.view">
+            <field name="name">ziniarastis.day.form</field>
+            <field name="model">ziniarastis.day</field>
+            <field name="arch" type="xml">
+                <form string="Darbo apskaitos žiniaraščio diena">
+                    <sheet>
+                        <header>
+                            <field name="state" widget="statusbar" class="oe_right"/>
+                        </header>
+                        <group>
+                            <field name="employee_id" readonly="True"/>
+                            <field name="contract_id"/>
+                            <field name="date"/>
+                            <field name="not_by_schedule"/>
+                            <field name="holiday"/>
+                            <field name="business_trip"/>
+                            <field name="normal_hours_work_in_day"/>
+                        </group>
+                        <field name="ziniarastis_day_lines" attrs="{'readonly': ['|',('state', 'in', ['done']), ('contract_id', '=', False)]}">
+                            <tree editable="bottom">
+                                <field name="state" invisible="1"/>
+                                <field name="tabelio_zymejimas_id" options="{'no_create': True}"/>
+                                <field name="worked_time_hours"/>
+                                <field name="worked_time_minutes"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ziniarastis_day_form_wizard" model="ir.ui.view">
+            <field name="name">ziniarastis.day.form.wizard</field>
+            <field name="model">ziniarastis.day</field>
+            <field name="arch" type="xml">
+                <form string="Darbo apskaitos žiniaraščio diena">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="employee_id" readonly="True"/>
+                            <field name="contract_id"/>
+                            <field name="date"/>
+                            <field name="not_by_schedule"/>
+                            <field name="holiday"/>
+                            <field name="business_trip"/>
+                        </group>
+                         <group class="text-center">
+                            <button accesskey="," special="" string="" name="next-left"><span class="icon-arrow-left"></span></button>
+                            <button accesskey="." special="" string="" name="next-right"><span class="icon-arrow-right"></span></button>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="default_fd_value" default_focus="1"/>
+                            </group>
+                            <group></group>
+                        </group>
+                        <field name="ziniarastis_day_lines" attrs="{'readonly': ['|', ('state', 'in', ['done']), ('contract_id', '=', False)]}">
+                            <tree editable="bottom">
+                                <field name="state" invisible="1"/>
+                                <field name="tabelio_zymejimas_id" options="{'no_create': True}"/>
+                                <field name="worked_time_hours"/>
+                                <field name="worked_time_minutes"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                    <footer>
+                        <button string="Save" type="object" name="save"/>
+                        <button string="Close" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="zinirastis_pivot" model="ir.ui.view">
+            <field name="name">ziniarastis.day.pivot</field>
+            <field name="model">ziniarastis.day</field>
+            <field name="arch" type="xml">
+                <pivot string="Žiniaraštis">
+                    <field name="employee_id" type="row"/>
+                    <field name="ziniarastis_period_line_id" type="row"/>
+                    <field name="date" type="col" interval="day"/>
+                    <field name="name" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="ziniarastis_period_form" model="ir.ui.view">
+            <field name="name">main.ziniarastis.view</field>
+            <field name="model">ziniarastis.period</field>
+            <field name="robo_front">False</field>
+            <field name="arch" type="xml">
+                <ziniarastis string="Žiniaraštis" adjustment="object" adjust_name="grid_adjust"/>
+            </field>
+        </record>
+        <record id="ziniarastis_period_tree" model="ir.ui.view">
+            <field name="name">ziniarastis.period.tree</field>
+            <field name="model">ziniarastis.period</field>
+            <field name="robo_front">False</field>
+            <field name="arch" type="xml">
+                <tree string="Darbo apskaitos žiniaraštis" create="false" delete="false" edit="false" context="{'form_view_ref': 'l10n_lt_payroll.ziniarastis_period_form'}">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_ziniarastis">
+            <field name="name">Darbo apskaitos žiniaraštis</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ziniarastis.period</field>
+            <field name="robo_front">False</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,ziniarastis</field>
+            <field name="view_id" ref="ziniarastis_period_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('l10n_lt_payroll.ziniarastis_period_tree')}),
+                (0, 0, {'view_mode': 'ziniarastis', 'view_id': ref('l10n_lt_payroll.ziniarastis_period_form')})]"/>
+            <field name="context" eval="{'search_add_custom': False}"/>
+        </record>
+            <record id="ziniarastis_period_search_view" model="ir.ui.view">
+            <field name="name">ziniarastis.period.search</field>
+            <field name="model">ziniarastis.period</field>
+            <field name="arch" type="xml">
+                <search string="Žiniaraštis">
+                    <field name="employee_id" string='Darbuotojas' domain="['|', ('active', '=', True), ('active', '=', False)]" filter_domain="[('related_ziniarasciai_lines.employee_id', 'ilike', self)]"/>
+                    <filter string="Nepatvirtinta" name="draft_search" domain="[('related_ziniarasciai_lines.state', '=', 'draft')]"/>
+                    <filter string="Patvirtinta" name="done_search" domain="[('related_ziniarasciai_lines.state', '=', 'done')]"/>
+                </search>
+            </field>
+        </record>
+        <menuitem
+          name="Darbo apskaitos žiniaraštis"
+          id="meniu_ziniarastis"
+          parent="hr_payroll.menu_hr_payroll_root"
+          sequence="2"
+          />
+        <menuitem
+          name="Žiniaraščių suvestinė"
+          id="meniu_ziniarastis_period"
+          parent="meniu_ziniarastis"
+          sequence="10"
+          action="action_ziniarastis"
+          />
+        <record id="ziniarastis_period_line_form" model="ir.ui.view">
+            <field name="name">ziniarastis.period.line.form</field>
+            <field name="model">ziniarastis.period.line</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="button_auto_fill_period_line" states="draft" type="object" string="Auto fill"/>
+                        <button name="button_cancel" states="done" type="object" string="Cancel"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="ziniarastis_period_id"/>
+                                <field name="employee_id"/>
+                                <field name="contract_id"/>
+                            </group>
+                            <group>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="working_schedule_number"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="days_total"/>
+                                <field name="hours_worked"/>
+                                <field name="hours_night"/>
+                                <field name="hours_overtime"/>
+                                <field name="hours_not_regular"/>
+                            </group>
+                            <group>
+                                <field name="hours_watch_home"/>
+                                <field name="hours_watch_work"/>
+                                <field name="hours_weekends"/>
+                                <field name="hours_holidays"/>
+                            </group>
+                        </group>
+                        <field name="ziniarastis_day_ids">
+                            <tree>
+                                <field name="date"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- <DELETE>-->
+        <record id="ziniarastis_day_search" model="ir.ui.view">
+            <field name="name">ziniarastis.day.search</field>
+            <field name="model">ziniarastis.day</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="ziniarastis_period_line_id"/>
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <filter name="group_by_sheet" context="{'group_by': 'ziniarastis_period_line_id'}"/>
+                </search>
+            </field>
+        </record>
+        <record id="ziniarastis_day_tree" model="ir.ui.view">
+            <field name="name">ziniarastis.day.tree</field>
+            <field name="model">ziniarastis.day</field>
+            <field name="arch" type="xml">
+                <tree string="Darbo apskaitos žiniaraštis">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_ziniarastis_dienos">
+            <field name="name">Darbo apskaitos žiniaraštis dienos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ziniarastis.day</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_id" ref="ziniarastis_day_tree"/>
+        </record>
+        <!--<menuitem-->
+          <!--name="Darbo apskaitos žiniaraštis day"-->
+          <!--id="meniu_ziniarastis_day"-->
+          <!--parent="meniu_ziniarastis"-->
+          <!--sequence="11"-->
+          <!--action="action_ziniarastis_dienos"-->
+          <!--/>-->
+        <record id="ziniarastis_period_line_tree" model="ir.ui.view">
+            <field name="name">ziniarastis.period.line.tree</field>
+            <field name="model">ziniarastis.period.line</field>
+            <field name="arch" type="xml">
+                <tree string="Darbo apskaitos žiniaraštis" create="false">
+                    <field name="employee_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </tree>
+            </field>
+        </record>
+        <record id="ziniarastis_period_action" model="ir.actions.act_window">
+            <field name="name">Mėnesiniai žiniaraščiai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ziniarastis.period.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="ziniarastis_period_line_tree"/>
+        </record>
+        <record id="ziniarastis_period_line_search" model="ir.ui.view">
+            <field name="name">ziniarastis.period.line.search</field>
+            <field name="model">ziniarastis.period.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <filter name="group_by_sheet" context="{'group_by': 'ziniarastis_period_id'}"/>
+                </search>
+            </field>
+        </record>
+        <record id="ziniarastis_day_line" model="ir.ui.view">
+            <field name="name">ziniarastis.day.line.form</field>
+            <field name="model">ziniarastis.day.line</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="state" invisible="1"/>
+                        <field name="employee_id"/>
+                        <field name="contract_id"/>
+                        <field name="date"/>
+                        <field name="tabelio_zymejimas_id" options="{'no_create': True}"/>
+                        <field name="worked_time_hours"/>
+                        <field name="worked_time_minutes"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <menuitem
+          name="Darbo apskaitos žiniaraščiai"
+          id="meniu_ziniarastis_period_line"
+          parent="meniu_ziniarastis"
+          sequence="10"
+          action="ziniarastis_period_action"
+          />
+
+        <record id="ziniarastis_line_report_pivot_view" model="ir.ui.view">
+            <field name="name">ziniarastis.line.report.pivot</field>
+            <field name="model">ziniarastis.line.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Žiniaraščio analizė">
+                    <field name="date" type="col"/>
+                    <field name="employee_id" type="row"/>
+                    <field name="worked_time" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="ziniarastis_line_report_search" model="ir.ui.view">
+            <field name="name">ziniarastis.line.report.search</field>
+            <field name="model">ziniarastis.line.report</field>
+            <field name="arch" type="xml">
+                <search string="Žiniaraščio analizė">
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="['&amp;',('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                     ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['&amp;',('date', '&gt;=', (context_today()+relativedelta(months=-1,day=1)).strftime('%Y-%m-%d')),
+                                     ('date', '&lt;=', (context_today()+relativedelta(months=-1,day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter name="fd" string="FD" domain="[('code', '=', 'FD')]"/>
+                    <separator/>
+                    <field name="employee_id"/>
+                    <field name="contract_id"/>
+                    <field name="code"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Darbuotojas" context="{'group_by': 'employee_id'}"/>
+                        <filter string="Kontraktas" context="{'group_by': 'contract_id'}"/>
+                        <filter string="Žymėjimas" context="{'group_by': 'code'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ziniarastis_line_report" model="ir.actions.act_window">
+            <field name="name">Žiniaraščio analizė</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ziniarastis.line.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="context">{'search_default_previous_month': True}</field>
+        </record>
+
+        <menuitem
+            name="Žiniaraščio analizė"
+            parent="meniu_payrol_reports"
+            action="action_ziniarastis_line_report"
+            id="menu_ziniarastis_report"/>
+
+        <record id="ziniarastis_export_wizard_form" model="ir.ui.view">
+            <field name="name">ziniarastis.export.wizard.form</field>
+            <field name="model">ziniarastis.export.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="year"/>
+                        <field name="month"/>
+                        <field name="department_id"/>
+                    </group>
+                    <footer>
+                        <button name="export" string="Eksportuoti" type="object" class="oe_highlight"/>
+                        <button name="cancel" string="Atšaukti" special="cancel" class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ziniarastis_export_wizard" model="ir.actions.act_window">
+            <field name="name">Žiniaraščio eksportas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ziniarastis.export.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem
+            name="Žiniaraščio eksportas"
+            parent="meniu_payrol_reports"
+            action="action_ziniarastis_export_wizard"
+            id="menu_ziniarastis_export_wizard"/>
+
+        <template id="assets_backend_ziniarastis" name="ziniarastis css" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/l10n_lt_payroll/static/src/js/ziniarastis_view.js"/>
+                <link rel="stylesheet" type="text/less" href="/l10n_lt_payroll/static/src/less/ziniarastis.less" t-ignore="true"/>
+                <link rel="stylesheet" type="text/less" href="/l10n_lt_payroll/static/src/less/ziniarastis-new.less" t-ignore="true"/>
+            </xpath>
+        </template>
+        <record id="tabelio_zymejimas_tree" model="ir.ui.view">
+            <field name="name">tabelio.zymejimas.tree</field>
+            <field name="model">tabelio.zymejimas</field>
+            <field name="arch" type="xml">
+                <tree string="Tabelio žymėjimas">
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>
+

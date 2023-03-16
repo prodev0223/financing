@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="base_view_editing_robo_front" model="ir.ui.view">
+            <field name="name">base.view.editing.robo.front</field>
+            <field name="model">ir.ui.view</field>
+            <field name="inherit_id" ref="base.view_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="robo_front"/>
+                </xpath>
+            </field>
+        </record>
+
+        <delete id="account.cash_box_in_form" model="ir.ui.view"/>
+        <delete id="account.cash_box_out_form" model="ir.ui.view"/>
+    </data>
+</odoo>

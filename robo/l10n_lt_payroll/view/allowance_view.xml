@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="country_allowance_tree_view" model="ir.ui.view">
+            <field name="name">country.allowance.tree</field>
+            <field name="model">country.allowance</field>
+            <field name="arch" type="xml">
+                <tree string="Dienpinigių dydžiai">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="country_allowance_form_view" model="ir.ui.view">
+            <field name="name">country.allowance.form</field>
+            <field name="model">country.allowance</field>
+            <field name="arch" type="xml">
+                <form string="Dienpinigių dydžiai">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="amount_allowance"/>
+                            <field name="amount_max_renting"/>
+                            <field name="line_ids">
+                                <tree>
+                                    <field name="amount_allowance"/>
+                                    <field name="amount_max_renting"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="country_allowance_search_view" model="ir.ui.view">
+            <field name="name">country.allowance.search</field>
+            <field name="model">country.allowance</field>
+            <field name="arch" type="xml">
+                <search string="Allowance Search">
+                    <field name="name"/>
+                    <filter name="active" string="Aktyvūs" domain="[('active','=', True)]"/>
+                    <filter name="archived" string="Suarchyvuoti" domain="[('active','=', False)]"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_open_country_allowance" model="ir.actions.act_window">
+            <field name="name">Dienpinigių dydžiai</field>
+            <field name="res_model">country.allowance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        <menuitem
+            id="country_allowance_menu"
+            name="Dienpinigių dydžiai"
+            action="action_open_country_allowance"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="15"
+            groups="hr.group_hr_manager"/>
+    </data>
+</odoo>

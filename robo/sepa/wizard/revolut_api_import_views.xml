@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="revolut_api_import_view_form" model="ir.ui.view">
+            <field name="name">revolut.api.import.view.form</field>
+            <field name="model">revolut.api.import</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Importuoti revolut per API">
+                    <group>
+                        <field name="date_from" required="True"/>
+                        <field name="date_to" required="True"/>
+                        <newline/>
+                        <field name="apply_import_rules"/>
+                    </group>
+                    <footer>
+                        <button name="btn_fetch_transactions" string="Importuoti" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="account_bank_statement_api_import_revolut" model="ir.actions.act_window">
+            <field name="name">Sinchronizuoti per Revolut API</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">revolut.api.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="revolut_api_import_view_form"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="gpais_wizard_view_form" model="ir.ui.view">
+            <field name="name">gpais.wizard.view.form</field>
+            <field name="model">gpais.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': [('xml_type','!=','journal')]}">
+                            GPAIS žurnalą pateikite tik pasibaigus ketvirčiui,
+                            kitu atveju yra galimi duomenų neatitikimai.
+                        </div>
+                        <group string="Filtrai">
+                            <field name="xml_type"/>
+                        </group>
+                        <field name="state" invisible="1"/>
+                        <group attrs="{'invisible': [('xml_type', '=', False)]}" col="4">
+                            <div attrs="{'invisible': [('xml_type', '!=', 'products')]}" colspan="4">
+                                <p>Reikia pasirinkti datas, kurios įtrauktų produktus nuo paskutinio duomenų pateikimo.
+                                </p>
+                            </div>
+                            <newline/>
+                            <field name="date_from" colspan="4"/>
+                            <newline/>
+                            <field name="date_to" colspan="4" attrs="{'invisible': [('xml_type', '!=', 'journal')]}"/>
+                        </group>
+                        <div class="alert alert-danger" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': [('show_warning','=',False)]}">
+                            <field name="show_warning" invisible="1"/>
+                            <field name="warning_msg"/>
+                        </div>
+                        <div states="download">
+                            <h2>GPAIS XML</h2>
+                            <p>Sugeneruotas GPAIS XML:
+                                <field name="file_save" filename="name"/>
+                                <field name="name" invisible="1"/>
+                            </p>
+                        </div>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="download_products" string="Generuoti produktų XML" context="{'upload': False}"
+                                    type="object" class="oe_highlight" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('xml_type', '!=', 'products')]}"/>
+                            <button name="download_journal" string="Generuoti žurnalo XML" context="{'upload': False}"
+                                    type="object" class="oe_highlight" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('xml_type', '!=', 'journal')]}"/>
+                            <button name="download_products" string="Siųsti produktų XML" context="{'upload': True}"
+                                    type="object" class="oe_highlight" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('xml_type', '!=', 'products')]}"/>
+                            <button name="download_journal" string="Siųsti žurnalo XML" context="{'upload': True}"
+                                    type="object" class="oe_highlight" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('xml_type', '!=', 'journal')]}"/>
+                            <button name="generate_journal_excel" string="Generate journal .xls"
+                                    context="{'export_xls': True}" type="object" class="oe_highlight"
+                                    style="margin-right: 10px;" attrs="{'invisible': [('xml_type', '!=', 'journal')]}"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="open_gpais_wizard" model="ir.actions.act_window">
+            <field name="name">GPAIS</field>
+            <field name="res_model">gpais.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="robo.front_wizard_default_header"/>
+        </record>
+
+        <menuitem id="menu_gpais_search_report"
+                  name="GPAIS"
+                  groups="robo_electronics.robo_electronics_reports"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_gpais_wizard"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="GPAIS"
+        />
+    </data>
+</odoo>

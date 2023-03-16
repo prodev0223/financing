@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_payslip_run_payslip_print_view_form" model="ir.ui.view">
+            <field name="name">hr.payslip.run.payslip.print.view.form</field>
+            <field name="model">hr.payslip.run.payslip.print</field>
+            <field name="arch" type="xml">
+                <form string="Pasirinkite darbuotojus">
+                    <group>
+                        <field name="employee_ids" string="Darbuotojai" widget="many2many_tags"
+                               options="{'no_create': True}"/>
+                        <field name="payslip_run_id" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button name="export_selected_payslip" string="Peržiūrėti" type="object"
+                                class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

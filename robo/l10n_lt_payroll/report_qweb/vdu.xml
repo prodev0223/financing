@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <report
+            id="action_report_vdu"
+            model="hr.employee"
+            string="VDU ataskaita"
+            report_type="qweb-html"
+            name="l10n_lt_payroll.report_vdu"
+            file="l10n_lt_payroll.report_vdu"
+            paperformat="l10n_lt.robo_paperformat_a4"
+        />
+
+        <template id="report_vdu">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-lang="doc['employee'].address_home_id.lang"
+                       t-call="l10n_lt_payroll.report_vdu_document"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="report_vdu_document">
+            <t t-call="report.external_layout">
+                <t t-set="o" t-value="doc"/>
+                <div class="page">
+                    <style type="text/css">
+                        table, tr, th, td {
+                            border: 1px solid black;
+                            border-collapse: collapse;
+                        }
+                        td, th {
+                            padding: 5px;
+                        }
+                    </style>
+                    <br style="height: 200%"/>
+                    <t t-if="res_company.logo">
+                        <h3 style="text-align: center; margin: 40px 0px;">
+                            Vidutinio darbo užmokesčio ataskaita
+                        </h3>
+                    </t>
+                    <t t-if="not res_company.logo">
+                        <h3 style="text-align: center; margin-bottom: 40px;">
+                            Vidutinio darbo užmokesčio ataskaita
+                        </h3>
+                    </t>
+                    <h4>Darbuotojas: <t t-esc="o['employee'].name"/></h4>
+                    <h4>Data: <t t-esc="date"/></h4>
+                    <br/><br/>
+                    <h4>Darbo užmokesčio priskaitymai:</h4>
+                    <table width="100%">
+                        <tr>
+                            <th></th>
+                            <th>Priskaityta, Eur</th>
+                            <th>Dirbta dienų</th>
+                            <th>Dirbta valandų</th>
+                        </tr>
+                        <t t-set="salary_info" t-value="o['salary_info']"/>
+                        <t t-set="vdu_records" t-value="salary_info['vdu_record_data']"/>
+                        <t t-set="total_amount" t-value="0.0"/>
+                        <t t-set="total_days" t-value="0.0"/>
+                        <t t-set="total_hours" t-value="0.0"/>
+                        <t t-foreach="vdu_records" t-as="vdu_record">
+                            <t t-set="total_amount" t-value="total_amount+vdu_record['amount']"/>
+                            <t t-set="total_days" t-value="total_days+vdu_record['days']"/>
+                            <t t-set="total_hours" t-value="total_hours+vdu_record['hours']"/>
+                            <tr>
+                                <th><t t-esc="vdu_record['date'][:7]"/></th>
+                                <td><t t-esc="formatLang(vdu_record['amount'], digits=2)"/></td>
+                                <td><t t-esc="formatLang(vdu_record['days'], digits=2)"/></td>
+                                <td><t t-esc="formatLang(vdu_record['hours'], digits=2)"/></td>
+                            </tr>
+                        </t>
+
+                        <t t-if="salary_info['quarterly_bonus_amount']">
+                            <t t-set="total_amount" t-value="total_amount+salary_info['quarterly_bonus_amount']"/>
+                            <tr>
+                                <th>Ketvirtinės premijos</th>
+                                <td><t t-esc="formatLang(salary_info['quarterly_bonus_amount'], digits=2)"/></td>
+                                <td/>
+                                <td/>
+                            </tr>
+                        </t>
+                        <t t-if="salary_info['long_term_bonus_amount']">
+                            <t t-set="total_amount" t-value="total_amount+salary_info['long_term_bonus_amount']"/>
+                            <tr>
+                                <th>Ilgesnės premijos laikotarpiui</th>
+                                <td><t t-esc="formatLang(salary_info['long_term_bonus_amount'], digits=2)"/></td>
+                                <td/>
+                                <td/>
+                            </tr>
+                        </t>
+                        <tr>
+                            <th>Viso</th>
+                            <td style="font-weight: bold"><t t-esc="formatLang(total_amount, digits=2)"/></td>
+                            <td style="font-weight: bold"><t t-esc="formatLang(total_days, digits=2)"/></td>
+                            <td style="font-weight: bold"><t t-esc="formatLang(total_hours, digits=2)"/></td>
+                        </tr>
+                    </table>
+                    <br/><br/>
+                    <h4>Vidutinio darbo užmokesčio paskaičiavimas:</h4>
+                    <table width="100%">
+                        <tr>
+                            <th/>
+                            <th>Dieninis VDU</th>
+                            <th>Valandinis VDU</th>
+                            <t t-if="o['minimum_wage_adjustment_d']">
+                                <th>Dieninio VDU pritraukimas iki MMA</th>
+                            </t>
+                            <t t-if="o['minimum_wage_adjustment_h']">
+                                <th>Valandinio VDU pritraukimas iki MMA</th>
+                            </t>
+                        </tr>
+
+                        <tr>
+                            <th>Formulė</th>
+                            <td><t t-esc="o.get('calculation_info_d', {}).get('formula', '-')"/></td>
+                            <td><t t-esc="o.get('calculation_info_h', {}).get('formula', '-')"/></td>
+                            <t t-if="o['minimum_wage_adjustment_d']">
+                                <td><t t-esc="o.get('minimum_wage_adjustment_d', {}).get('formula', '-')"/></td>
+                            </t>
+                            <t t-if="o['minimum_wage_adjustment_h']">
+                                <td><t t-esc="o.get('minimum_wage_adjustment_h', {}).get('formula', '-')"/></td>
+                            </t>
+                        </tr>
+
+                        <tr>
+                            <th>Skaičiavimo logika</th>
+                            <td><t t-esc="o.get('calculation_info_d', {}).get('reason', '-')"/></td>
+                            <td><t t-esc="o.get('calculation_info_h', {}).get('reason', '-')"/></td>
+                            <t t-if="o['minimum_wage_adjustment_d']">
+                                <td><t t-esc="o.get('minimum_wage_adjustment_d', {}).get('reason', '-')"/></td>
+                            </t>
+                            <t t-if="o['minimum_wage_adjustment_h']">
+                                <td><t t-esc="o.get('minimum_wage_adjustment_h', {}).get('reason', '-')"/></td>
+                            </t>
+                        </tr>
+
+                        <tr>
+                            <th>Paskaičiavimas</th>
+                            <td>
+                                <t t-esc="o.get('calculation_info_d', {}).get('formula_with_real_values', '-')"/>
+                                 =
+                                <span style="font-weight: bold;">
+                                    <t t-esc="formatLang(o.get('calculation_info_d', {}).get('amount', 0.0), digits=2)"/>
+                                     €
+                                </span>
+                            </td>
+                            <td>
+                                <t t-esc="o.get('calculation_info_h', {}).get('formula_with_real_values', '-')"/>
+                                 =
+                                <span style="font-weight: bold;">
+                                    <t t-esc="formatLang(o.get('calculation_info_h', {}).get('amount', 0.0), digits=2)"/>
+                                     €
+                                </span>
+                            </td>
+                            <t t-if="o['minimum_wage_adjustment_d']">
+                                <td>
+                                    <t t-esc="o.get('minimum_wage_adjustment_d', {}).get('formula_with_real_values', '-')"/>
+                                     =
+                                    <span style="font-weight: bold;">
+                                        <t t-esc="formatLang(o.get('vdu_d', 0.0), digits=2)"/>
+                                         €
+                                    </span>
+                                </td>
+                            </t>
+                            <t t-if="o['minimum_wage_adjustment_h']">
+                                <td>
+                                    <span style="font-weight: bold;">
+                                        <t t-esc="formatLang(o.get('vdu_h', 0.0), digits=2)"/>
+                                         €
+                                    </span>
+                                </td>
+                            </t>
+                        </tr>
+                    </table>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

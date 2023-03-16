@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="payslip_form">
+            <field name="name">Algalapis</field>
+            <field name="model">hr.payslip</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group name="general">
+                                <field name="name" string="Pavadinimas" attrs="{'readonly': 1}"/>
+                                <field name="number" string="Numeris" attrs="{'readonly': 1}"/>
+                                <field name="employee_id" string="Darbuotojas" attrs="{'readonly': 1}"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <label for="date_from" string="Periodas"/>
+                                <div>
+                                    <field name="date_from" class="oe_inline" attrs="{'readonly': 1}"/>
+                                    -
+                                    <field name="date_to" class="oe_inline" attrs="{'readonly': 1}"/>
+                                </div>
+                                <field name="contract_id" string="Sutartis" attrs="{'readonly': 1}"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="atostogu_likutis" string="Atostogų likutis" attrs="{'readonly': 1}"/>
+                                <field name="bruto" string="Atlyginimas (bruto)" attrs="{'readonly': 1}"/>
+                                <field name="moketinas" string="Mokėtinas atlyginimas" attrs="{'readonly': 1}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

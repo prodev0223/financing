@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_registry_dynamic_report_view_form" model="ir.ui.view">
+            <field name="name">invoice.registry.dynamic.report.view.form</field>
+            <field name="model">invoice.registry.dynamic.report</field>
+            <field name="arch" type="xml">
+                <form string="Invoice Registry">
+                    <sheet>
+                        <header>
+                            <field name="activated_threaded_reports" attrs="{'invisible': True}"/>
+                        </header>
+                        <div align="right">
+                            <button name="%(account_dynamic_reports.dynamic_report_change_report_settings_action)d"
+                                    type="action"
+                                    class="fa fa-cog"
+                                    context="{'report_model': 'invoice.registry.dynamic.report'}"/>
+                        </div>
+                        <group colspan="4" col="4">
+                            <group string="Period" colspan="4" col="6">
+                                <field name="date_range"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                            </group>
+                            <group string="Filters" colspan="4" col="4">
+                                <group colspan="4" col="2">
+                                    <field name="partner_ids" widget="many2many_tags"/>
+                                </group>
+                                <group colspan="4" col="4">
+                                    <field name="type"/>
+                                    <field name="refund"/>
+                                    <field name="draft"/>
+                                    <field name="include_canceled"/>
+                                </group>
+                            </group>
+                            <group string="Options" colspan="4" col="4">
+                                <field name="report_language"/>
+                            </group>
+                            <group string="Group by" colspan="4" col="4"
+                                   attrs="{'invisible': [('show_group_by_selection', '=', False)]}">
+                                <field name="group_by_field_ids" widget="many2many_tags" colspan="4"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                <field name="show_group_by_selection" attrs="{'invisible': True}" colspan="4"/>
+                            </group>
+                        </group>
+                        <footer style="text-align: center;">
+                            <button name="action_view" string="View"
+                                    type="object" class="oe_highlight" style="margin-right: 10px;"
+                                    attrs="{'invisible': [('activated_threaded_reports', '=', True)]}"
+                                    context="{'force_refresh_data': True}"/>
+                            <button name="action_pdf" string="PDF" type="object" class="oe_highlight"
+                                    style="margin-right: 10px;" context="{'force_refresh_data': True}"/>
+                            <button name="action_xlsx" string="XLSX" class="oe_highlight" type="object"
+                                    style="margin-right: 10px;" context="{'force_refresh_data': True}"/>
+                            <button string="Cancel" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="invoice_registry_dynamic_report_wizard_action" model="ir.actions.act_window">
+            <field name="name">Invoice Registry</field>
+            <field name="res_model">invoice.registry.dynamic.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="invoice_registry_dynamic_report_view_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="invoice_registry_dynamic_report_front_end_wizard_action" model="ir.actions.act_window">
+            <field name="name">Invoice Registry</field>
+            <field name="res_model">invoice.registry.dynamic.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="invoice_registry_dynamic_report_view_form"/>
+            <field name="target">inline</field>
+        </record>
+
+        <menuitem id="account_report_dynamic_invoice_registry" sequence="50"
+                  action="invoice_registry_dynamic_report_wizard_action"
+                  name="Invoice Registry" parent="account_dynamic_reports.account_reports_ins"
+                  groups="robo_basic.group_robo_premium_manager"/>
+
+        <report
+                id="action_invoice_registry_dynamic_report_xlsx"
+                model="invoice.registry.dynamic.report"
+                string="Invoice registry Dynamic XLSX Report"
+                report_type="xlsx"
+                name="robo_dynamic_reports.invoice_registry_xlsx_report"
+                file="robo_dynamic_reports.invoice_registry_xlsx_report"
+                attachment_use="False"
+        />
+    </data>
+</odoo>

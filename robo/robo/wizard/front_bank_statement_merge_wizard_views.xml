@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Form-->
+        <record id="form_front_bank_statement_merge_wizard" model="ir.ui.view">
+            <field name="name">form.front.bank.statement.merge.wizard</field>
+            <field name="model">front.bank.statement.merge.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimo ruošinių apjungimas">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                            Šiame vedlyje galite sujungti mokėjimo ruošinius į vieną.
+                            Jugiamojo mokėjimo laukelyje nurodykite ruošinį į kurį bus sujungiami duomenys.
+                        </div>
+                        <group>
+                            <field name="destination_statement_id"
+                                   context="{'detailed_name_get': True}"
+                                   domain="[('id', 'in', front_statement_ids and front_statement_ids[0]
+                                                         and front_statement_ids[0][2] or False)]"
+                                   options="{'no_open': True, 'no_create': True}" required="1"/>
+                        </group>
+                        <group string="Apjungiami mokėjimai">
+                            <field name="front_statement_ids" readonly="1" widget="one2many_list" nolabel="1">
+                                <tree create="0" edit="0" delete="0">
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Apjungti mokėjimus"
+                                name="merge_statements" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </odoo>
+</data>

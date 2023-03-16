@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="braintree_merchant_account_view_form" model="ir.ui.view">
+            <field name="name">braintree.merchant.account.view.form</field>
+            <field name="model">braintree.merchant.account</field>
+            <field name="arch" type="xml">
+                <form string="Braintree merchant account">
+                    <sheet>
+                        <div class="oe_button_box">
+                            <button name="action_open_transactions" class="oe_stat_button" icon="fa-bars" type="object"
+                                    string="View transactions">
+                            </button>
+                        </div>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" readonly="True"/>
+                        </h1>
+                        <group>
+                            <field name="journal_id"/>
+                            <field name="currency_id"/>
+                        </group>
+                        <group>
+                            <field name="status"/>
+                            <field name="last_fetch_date"/>
+                            <field name="gateway_id"/>
+                        </group>
+                        <footer style="text-align: center;"
+                                attrs="{'invisible': [('status', '!=', 'active')]}">
+                            <button name="button_fetch_transactions" class="oe_highlight" type="object"
+                                    style="background-color: rgb(70,136,71) !important;"
+                                    string="Fetch transactions" default_focus="1"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="braintree_merchant_account_view_tree" model="ir.ui.view">
+            <field name="name">braintree.merchant.account.view.tree</field>
+            <field name="model">braintree.merchant.account</field>
+            <field name="arch" type="xml">
+                <tree string="Braintree merchant accounts"
+                      decoration-muted="status!='active'"
+                      create="0" delete="1" update="0">
+                    <field name="name"/>
+                    <field name="journal_id"/>
+                    <field name="currency_id"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="braintree_merchant_account_action" model="ir.actions.act_window">
+            <field name="name">Braintree merchant accounts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">braintree.merchant.account</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5,0,0),
+                          (0,0,{'view_mode':'tree', 'view_id': ref('braintree_merchant_account_view_tree')}),
+                          (0,0,{'view_mode':'form', 'view_id': ref('braintree_merchant_account_view_form')})]"/>
+            <field name="target">current</field>
+        </record>
+    </data>
+</odoo>

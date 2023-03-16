@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!--TREE EXTENSION-->
+        <record id="view_move_line_tree" model="ir.ui.view">
+            <field name="name">account.move.line.tree.extend</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="bank_export_state_html" widget="BankExportState" string=""/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="extent_view_account_move_line_report_search_front" model="ir.ui.view">
+            <field name="name">account.move.line.report.search.front</field>
+            <field name="model">account.move.line</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="sl_general_report.view_account_move_line_report_search_front"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_id']" position="after">
+                    <field name="move_id"/>
+                    <field name="account_code"/>
+                </xpath>
+                <xpath expr="//filter[@name='previous_year']" position="after">
+                    <filter name="until_previous_year_end" string="Iki praeitų metų galo" domain="[
+                    ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="until_previous_month_end" string="Iki praeito mėnesio galo" domain="[
+                    ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                </xpath>
+                <xpath expr="//filter[@name='group_account_id']" position="after">
+                    <filter name="bank_export_states" string="Bankinio eksportavimo būsena"
+                            context="{'group_by':'bank_export_state'}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_move_line_report_search_front" model="ir.ui.view">
+            <field name="name">account.move.line.report.search.front</field>
+            <field name="model">account.move.line</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="ref"/>
+                    <field name="date"/>
+                    <field name="date" string="Data nuo" filter_domain="[('date', '&gt;=', self)]"/>
+                    <field name="date" string="Data iki" filter_domain="[('date', '&lt;=', self)]"/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="account_code"/>
+                    <filter name="not_exported" string="Neeksportuota"
+                            domain="['&amp;',('eksportuota','=', False), ('reconciled','=', False)]"/>
+                    <separator/>
+                    <filter name="exclude_payroll" string="Netraukti atlyginimų"
+                            domain="['!',('account_id.code','=like', '448%')]"/>
+                    <separator/>
+                    <filter name="reconciled" string="Sudengta" domain="[('reconciled','=',True)]"/>
+                    <filter name="unreconciled" string="Nesudengta"
+                            domain="['&amp;', ('reconciled','=',False), ('account_id.reconcile', '=', True)]"/>
+                    <separator/>
+                    <filter name="late" string="Vėluojantys mokėjimai"
+                            domain="[('date_maturity','&lt;',context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter name="not_late" string="Nevėluojantys mokėjimai"
+                            domain="[('date_maturity','&gt;=',context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter name="pay_this_month" string="Mokėti šį mėnesį"
+                            domain="['&amp;',('date_maturity','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date_maturity','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter string="Šie metai" name="thisyear"
+                            domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', time.strftime('%Y-12-31')),('date','&gt;=',time.strftime('%Y-01-01'))]"
+                            help="Journal invoices with period in current year"/>
+                    <filter name="current_month" string="Einamasis mėnuo"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(months=-1,day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="last_two_months" string="Paskutiniai 2 mėnesiai"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(years=1, month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="date" string="Data" context="{'group_by': 'date'}"/>
+                        <filter name="date_maturity" string="Mokėjimo terminas"
+                                context="{'group_by': 'date_maturity'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="account_move_line_tree_view" model="ir.ui.view">
+            <field name="name">account.move.line.front.tree</field>
+            <field name="model">account.move.line</field>
+            <field eval="2" name="priority"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Journal Items" create="false">
+                    <field name="partner_id"/>
+                    <field name="name" string="Aprašymas"/>
+                    <field name="ref" invisible="1"/>
+                    <field name="move_id" invisible="1"/>
+                    <field name="account_id" options='{"no_open":True}' domain="[('company_id', '=', company_id)]"/>
+                    <field name="balance" string="Suma" sum="balance"/>
+                    <field name="amount_residual" sum="amount_residual"/>
+                    <field name="amount_currency" readonly="True" groups="base.group_multi_currency"
+                           sum="amount_currency"/>
+                    <field name="amount_residual_currency" readonly="True" groups="base.group_multi_currency"
+                           sum="amount_residual_currency"/>
+                    <field name="currency_id" readonly="True" invisible="1"/>
+                    <field name="date_maturity"/>
+                    <field name="date"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="bank_export_state_html" widget="BankExportState" string=""/>
+                </tree>
+            </field>
+        </record>
+        <record id="account_move_line_pivot_view" model="ir.ui.view">
+            <field name="name">account.move.line.front.pivot</field>
+            <field name="model">account.move.line</field>
+            <field eval="2" name="priority"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="DK įrašai" disable_linking="true">
+                    <field name="account_id" type="row"/>
+                    <field name="date" type="col"/>
+                    <field name="balance" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="mokejimu_eksportas.account_move_line_bank_statement_action">
+            <field name="name">Generuoti mokėjimą</field>
+            <field name="robo_front" eval="True"/>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_open_payable_aml">
+            <field name="name">Visos mokėtinos sumos</field>
+            <field name="res_model">account.move.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo</field>
+            <field name="target">current</field>
+            <field name="robo_front">True</field>
+            <field name="domain">[('account_id.reconcile', '=', True), ('account_id.user_type_id','=',2),
+                ('amount_residual', '&lt;', 0), ('move_id.state','=','posted')]
+            </field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('account_move_line_tree_view')})]"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="search_view_id" ref="view_account_move_line_report_search_front"/>
+            <field name="context"
+                   eval="{'search_default_exclude_payroll': 1, 'search_default_not_exported': 1, 'search_add_custom': False, 'robo_header': {'fit':True}}"/>
+        </record>
+
+        <menuitem id="menu_payable_aml_search_report"
+                  name="Visos mokėtinos sumos"
+                  groups="robo_basic.group_robo_premium_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="action_open_payable_aml"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="visos,mokėtinos,sumos"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="frontMessages_tree">
+            <field name="name">Robo žinutės</field>
+            <field name="model">mail.message</field>
+             <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Contacts" create="0" import="0" colors="#3498DB:needaction==True;gray:needaction==False">
+                    <field name="subject" string="Pavadinimas"/>
+                    <field name="body" string="Žinutė" widget="htmlToText"/>
+                    <field name="date" string="Data"/>
+                    <field name="rec_model" invisible="1"/>
+                    <field name="rec_id" invisible="1"/>
+                    <field name="view_id" invisible="1"/>
+                    <field name="action_id" invisible="1"/>
+                    <field name="needaction" string="Neperskaityta" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="frontMessages_search">
+            <field name="name">Robo žinutės</field>
+            <field name="model">mail.message</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="subject" string="Pavadinimas"/>
+                    <field name="body" string="Žinutė"/>
+                    <field name="date" string="Data"/>
+                    <filter name="needaction" string="Neperskaitytos" domain="[('needaction','=',True)]"/>
+                    <group>
+                        <filter name="date" string="Data" context="{'group_by':'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="all_frontMessages_act">
+            <field name="name">Žinutės</field>
+            <field name="res_model">mail.message</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_front_messages</field>
+            <field name="search_view_id" ref="frontMessages_search"/>
+            <field name="context" eval="{
+                'robo_header': {},
+                'search_default_needaction':1,
+                'search_add_custom': False,
+                }"/>
+            <!--'search_default_needaction':1,-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_front_messages', 'view_id': ref('frontMessages_tree')})]"/>
+            <field name="domain" eval="[('front_message', '=', True), ('subtype_id','=',ref('robo.mt_robo_front_message')),
+            '|', ('model','!=','client.support.ticket'),('rec_model','=','client.support.ticket')]"/>
+        </record>
+        <record id="view_message_form" model="ir.ui.view">
+            <field name="name">mail.message.form.extend</field>
+            <field name="model">mail.message</field>
+            <field name="inherit_id" ref="mail.view_message_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ids']" position="after">
+                    <field name="additional_recipients"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

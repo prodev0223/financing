@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="report_invoice_processing_issue_form" model="ir.ui.view">
+            <field name="name">report.invoice.processing.issue.form</field>
+            <field name="model">report.invoice.processing.issue</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pranešti apie dokumentų apdorojimo klaidą" class="robo_other_questions">
+                    <sheet>
+                        <h1 class="mt0">
+                            <span class='text-center o_horizontal_separator'>Praneškite apie dokumento apdorojimo klaidą</span>
+                        </h1>
+                        <group>
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="message" required="0"/>
+                        </group>
+                        <footer>
+                            <button name="report_issue" class="oe_highlight" type="object" string="Pranešti"/>
+                            <button string="Atšaukti" class="oe_link" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="invoice_processing_issue_report_success_form" model="ir.ui.view">
+            <field name="name">invoice.processing.issue.report.success.form</field>
+            <field name="model">report.invoice.processing.issue</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pranešti apie dokumentų apdorojimo klaidą">
+                    <sheet>
+                        <group colspan="2">
+                            <h1>
+                                Jūsų užklausa priimta. Dėkojame už grįžtamąjį ryšį.
+                            </h1>
+                        </group>
+                        <footer>
+                            <button string="Uždaryti" class="oe_link" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="report_invoice_processing_issue_action" model="ir.actions.act_window">
+            <field name="name">Pranešti apie sąskaitos apdorojimo klaidą</field>
+            <field name="res_model">report.invoice.processing.issue</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="report_invoice_processing_issue_form"/>
+        </record>
+        <record id="report_invoice_processing_issue_done_action" model="ir.actions.act_window">
+            <field name="name">Pranešta apie sąskaitos apdorojimo klaidą</field>
+            <field name="res_model">report.invoice.processing.issue</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="invoice_processing_issue_report_success_form"/>
+        </record>
+    </data>
+</odoo>

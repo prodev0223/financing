@@ -1,0 +1,90 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="amazon_sp_product_category_view_tree" model="ir.ui.view">
+            <field name="name">amazon.sp.product.category.view.tree</field>
+            <field name="model">amazon.sp.product.category</field>
+            <field name="arch" type="xml">
+                <tree string="Amazon product categories"
+                      decoration-info="configured"
+                      decoration-warning="not configured"
+                      create="1" edit="1" delete="1">
+                    <field name="name"/>
+                    <field name="external_id"/>
+                    <field name="marketplace_id"/>
+                    <field name="product_category_id"/>
+                    <field name="category_type"/>
+                    <field name="configured"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="amazon_sp_product_category_view_form" model="ir.ui.view">
+            <field name="name">amazon.sp.product.category.view.form</field>
+            <field name="model">amazon.sp.product.category</field>
+            <field name="arch" type="xml">
+                <form string="Amazon product category">
+                    <header>
+                        <button name="button_create_system_category"
+                                attrs="{'invisible': ['|', ('activated', '=', False),
+                                       ('product_category_id', '!=', False)]}"
+                                class="oe_highlight" type="object" string="Create system category"/>
+                    </header>
+                    <sheet>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                             attrs="{'invisible': [('activated', '=', True)]}">
+                            Please check the category type (Products/Services)
+                            before activating the category!
+                        </div>
+                        <div>
+                            <label string="Category name"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" readonly="True"/>
+                            </h1>
+                        </div>
+                        <group string="Category information">
+                            <field name="external_id"/>
+                            <field name="marketplace_id"/>
+                            <field name="product_category_id"/>
+                            <field name="category_type"/>
+                            <field name="activated"/>
+                            <field name="configured"/>
+                        </group>
+                        <group string="Category products">
+                            <field name="amazon_product_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree decoration-success="configured"
+                                      decoration-danger="not configured"
+                                      create="1" edit="1" delete="1">
+                                    <field name="product_name"/>
+                                    <field name="product_id"/>
+                                    <field name="product_group_type"/>
+                                    <field name="product_group"/>
+                                    <field name="configured"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_amazon_product_category" model="ir.actions.act_window">
+            <field name="name">Amazon SP-API product categories</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.product.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="amazon_sp_product_category_view_tree"/>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_amazon_sp_product_category"
+                name="Product categories"
+                sequence="2"
+                parent="menu_amazon_sp_stock_data_root"
+                action="action_open_amazon_product_category"
+        />
+    </data>
+</odoo>

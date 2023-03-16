@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="algalapio_siuntimas_view" model="ir.ui.view">
+            <field name="name">algalapio.siuntimas.view</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='paid']" position="replace">
+                    <field name="paid" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="pre_paid"/>
+                </xpath>
+                <xpath expr="//button[@name='action_payslip_done']" position="after">
+                    <button name="cancel_payment" string="Atšaukti pavedimus" type="object"
+                            confirm="Atšaukiant pavedimus bus atidengiami ir ištrinami susiję banko išrašai, ar norite tęsti?"
+                            class="oe_highlight" attrs="{'invisible':[('pre_paid','=',False)]}"/>
+                    <button name="form_transfer" string="Formuoti pavedimus" type="object"
+                            class="oe_highlight" attrs="{'invisible':['|', ('pre_paid','=',True),('state','!=', 'done')]}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_payslip_cancel']" position="after">
+                    <button name="siusti_emaila" string="Siųsti el. paštu" type="object" states="verify,done"
+                            class="oe_highlight"/>
+                    <button name="export_payslips" string="Eksportuoti" type="object" class="oe_highlight"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="algalapio_siuntimas_batch_view" model="ir.ui.view">
+            <field name="name">algalapio.siuntimas.batch.view</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='close_payslip_run']" position="before">
+                    <field name="busy" invisible="1"/>
+                </xpath>
+                <xpath expr="//button[@name='close_payslip_run']" position="attributes">
+                    <attribute name="states"/>
+                    <attribute name="attrs">{'invisible': ['|', ('busy', '=', True), ('state', '!=', 'draft')]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='draft_payslip_run']" position="attributes">
+                    <attribute name="states"/>
+                    <attribute name="attrs">{'invisible': ['|', ('busy', '=', True), ('state', '!=', 'close')]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(hr_payroll.action_hr_payslip_by_employees)d']" position="attributes">
+                    <attribute name="states"/>
+                    <attribute name="attrs">{'invisible': ['|', ('busy', '=', True), ('state', '!=', 'draft')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <div attrs="{'invisible':[('busy','=',False)]}" style="color: #2a80b9; display: inline-block">
+                        <span style="margin-left: 10px; margin-right: 10px;">Vykdomi Skaičiavimai</span>
+                        <i class="fa fa-spinner fa-spin"/>
+                    </div>
+                </xpath>
+                <xpath expr="//button[@name='draft_payslip_run']" position="after">
+                    <button name="patvirtinti_visus" string="Patvirtinti visus algalapius" type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|', ('busy', '=', True), ('state', '!=', 'draft')]}"/>
+                    <button name="format_transfers_wizard" string="Formuoti pavedimus" type="object"
+                            class="oe_highlight" attrs="{'invisible': [('busy', '=', True)]}"/>
+                    <button name="siusti_emailus" string="Siųsti algalapius el. paštu" type="object"
+                            class="oe_highlight"/>
+                    <button name="button_cancel" string="Atšaukti visus" type="object"
+                            confirm="Atšauksite visus neišankstinius algalapius, ar norite tęsti?"
+                            attrs="{'invisible': ['|', ('busy', '=', True), ('state', '!=', 'draft')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='credit_note']" position="after">
+                    <field name="account_move_id"/>
+                    <field name="skip_payment_creation"/>
+                </xpath>
+                <xpath expr="//field[@name='slip_ids']" position="before">
+                    <group col="1">
+                        <div attrs="{'invisible':['|', ('last_confirm_fail_message','=', False), ('state', '!=', 'draft')]}" style="color:red">
+                            <field name="last_confirm_fail_message" nolabel="1"/>
+                        </div>
+                        <div attrs="{'invisible':['|', ('last_confirm_warning_message','=', False)]}" style="color:orange">
+                            <field name="last_confirm_warning_message" nolabel="1"/>
+                        </div>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='credit_note']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='slip_ids']" position="replace">
+                    <field name="slip_ids">
+                        <tree decoration-danger="neto_5proc_skirtumas == True">
+                            <field name="number"/>
+                            <field name="tabelio_numeris"/>
+                            <field name="employee_id"/>
+                            <field name="name"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="state"/>
+                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                            <field name="neto_skirtumas"/>
+                            <field name="neto_5proc_skirtumas" invisible="1"/>
+                        </tree>
+                    </field>
+                </xpath>
+                <xpath expr="//button[@name='siusti_emailus']" position="after">
+                    <button name="spausdinti_algalapius" string="Spausdinti algalapius" type="object"
+                            class="oe_highlight" context="{'active_test': False}"/>
+                </xpath>
+                <xpath expr="//sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+    <record id="algalapis_pivot" model="ir.ui.view">
+        <field name="name">algalapis.pivot</field>
+        <field name="model">hr.payslip</field>
+        <field name="arch" type="xml">
+            <pivot string="Algalapių analizė">
+                <field name="employee_id" type="row"/>
+                <field name="date_to" interval="month" type="col"/>
+                <field name="atostogu_likutis" type="measure"/>
+                <field name="vdu" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="hr_payroll.action_view_hr_payslip_form" model="ir.actions.act_window">
+        <field name="view_mode">tree,form,pivot</field>
+    </record>
+    <record id="algalapio_view" model="ir.ui.view">
+        <field name="name">hr.payslip.form</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='worked_days_line_ids']" position="attributes">
+                <attribute name="context">"{'contract_id':contract_id}"</attribute>
+            </xpath>
+            <xpath expr="//field[@name='worked_days_line_ids']//field[@name='number_of_hours']" position="attributes">
+                <attribute name="context">{"precision_rounding": 2}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='input_line_ids']" position="attributes">
+                <attribute name="context">"{'contract_id':contract_id}"</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <label for="neto_skirtumas"/>
+                <div>
+                    <field name="neto_skirtumas" />&#032;(<field class="oe_inline" nolabel="1" name="neto_skirtumas_proc"/>%)
+                    <field name="neto_5proc_skirtumas" invisible="1"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <record id="disable_payslip_edits" model="ir.ui.view">
+        <field name="name">disable.payslip.edits</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='worked_days_line_ids']" position="attributes">
+                <attribute name="attrs">{'readonly': 1}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='payment_line_ids']" position="attributes">
+                <attribute name="attrs">{'readonly': 1}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='date_from']" position="attributes">
+                <attribute name="attrs">{'readonly': 1}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='date_to']" position="attributes">
+                <attribute name="attrs">{'readonly': 1}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='employee_id']" position="attributes">
+                <attribute name="attrs">{'readonly': 1}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="server_action_payslip_confirm" model="ir.actions.server">
+        <field name="name">Confirm payslips</field>
+        <field name="model_id" ref="hr_payroll.model_hr_payslip"/>
+        <field name="code">
+            action = env['hr.payslip'].browse(context.get('active_ids', False)).action_payslip_done()
+        </field>
+    </record>
+    <function name="create_payslip_confirm_action" model="hr.payslip"/>
+    <record id="server_action_payslip_export" model="ir.actions.server">
+        <field name="name">Eksportuoti algalapius</field>
+        <field name="model_id" ref="hr_payroll.model_hr_payslip"/>
+        <field name="code">
+            action = env['hr.payslip'].browse(context.get('active_ids', False)).export_payslips()
+        </field>
+    </record>
+    <record model="ir.actions.server" id="server_action_payslip_xls_export">
+            <field name="name">Atsisiųsti XLS formatu</field>
+            <field name="model_id" ref="hr_payroll.model_hr_payslip"/>
+            <field name="code">
+                action = model.browse(context.get('active_ids', [])).export_payslips_xls()
+            </field>
+    </record>
+    <function name="payslip_export_xls_action" model="hr.payslip"/>
+    <record model="ir.actions.server" id="server_action_payslip_run_xls_export">
+            <field name="name">Atsisiųsti XLS formatu</field>
+            <field name="model_id" ref="hr_payroll.model_hr_payslip_run"/>
+            <field name="code">
+                action = model.browse(context.get('active_ids', [])).button_export_run_xls()
+            </field>
+    </record>
+    <function name="payslip_run_export_xls_action" model="hr.payslip.run"/>
+    <record model="ir.values" id="server_action_prepare_payslip_export">
+        <field name="model_id" ref="hr_payroll.model_hr_payslip"/>
+        <field name="name">Eksportuoti algalapius</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('server_action_payslip_export'))"/>
+        <field name="key">action</field>
+        <field name="model">hr.payslip</field>
+    </record>
+
+    <record id="payslip_form_transfers_wizard" model="ir.ui.view">
+            <field name="name">hr.payslip.run.transfers.wizard</field>
+            <field name="model">hr.payslip.run.transfers.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Pasirinkite algalapius">
+                    <group>
+                        <field name="parent_id" invisible="1"/>
+                        <field name="payslip_ids" string="Algalapiai" widget="many2many_tags" options="{'no_create': True}" domain="[('state','=','done'), ('payslip_run_id', '=', parent_id), ('pre_paid', '!=', True)]"/>
+                    </group>
+                    <footer>
+                        <button name="form_transfers" string="Formuoti pavedimus" type="object" context="" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="server_action_cancel_payment">
+        <field name="name">Atšaukti pavedimus ir algalapius</field>
+        <field name="model_id" ref="l10n_lt_payroll.model_hr_payslip"/>
+        <field name="code">
+            if user.is_manager():
+                action = object.browse(context.get('active_ids', False)).cancel_payment()
+        </field>
+    </record>
+    <function name="server_action_cancel_payment_func" model="hr.payslip"/>
+
+</odoo>
+

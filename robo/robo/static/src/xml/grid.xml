@@ -1,0 +1,25 @@
+<template>
+    <t t-name="grid.GridArrows">
+        <div>
+            <button class="grid_arrow_previous btn btn-sm btn-primary hidden" type="button">
+                <span class="fa fa-arrow-left"/>
+            </button>
+            <button class="grid_arrow_next btn btn-sm btn-primary hidden" type="button">
+                <span class="fa fa-arrow-right"/>
+            </button>
+            <div class="btn-group btn-group-sm" t-if="widget._ranges.length > 1">
+                <button class="grid_arrow_range btn btn-sm btn-default" t-as="range" t-att-data-name="range.name"
+                        t-foreach="widget._ranges" type="button">
+                    <t t-esc="range.string"/>
+                </button>
+            </div>
+            <div class="btn-group btn-group-sm" t-if="widget._buttons.length">
+                <button t-as="btn" t-att-data-index="btn_index"
+                        t-attf-class="grid_arrow_button btn btn-sm {{ btn['class'] || 'btn-default' }}"
+                        t-foreach="widget._buttons" type="button">
+                    <t t-esc="btn.string"/>
+                </button>
+            </div>
+        </div>
+    </t>
+</template>

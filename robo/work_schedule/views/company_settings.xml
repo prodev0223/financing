@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_company_extended_work_schedule_tree" model="ir.ui.view">
+            <field name="name">res.company.extended.schedule.period</field>
+            <field name="model">res.company.extended.schedule.period</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree editable="bottom" default_order="date_to desc">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_open_company_extended_work_schedule_period" model="ir.actions.act_window">
+            <field name="name">Išplėstinio grafiko naudojimo intervalai</field>
+            <field name="res_model">res.company.extended.schedule.period</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo</field>
+            <field name="domain">[]</field>
+            <field name="context">{'robo_header':{}}</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+        <record id="change_work_schedule_group_access" model="ir.ui.view">
+            <field name="name">hr.employee.work.schedule.access</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page string="Darbo grafiko tvarkymas" attrs="{'invisible': [('robo_access','=',False)]}" groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager">
+                        <group>
+                            <field name="robo_work_schedule_group" string="Darbo grafiko teisių grupė"
+                           attrs="{'required': [('robo_access','=',True)], 'invisible': [('robo_access','=',False)]}"/>
+                            <field name="fill_department_ids" options="{'no_open':True, 'no_create':True}" widget="many2many_tags"/>
+                            <field name="validate_department_ids" options="{'no_open':True, 'no_create':True}" widget="many2many_tags"/>
+                            <field name="confirm_department_ids" options="{'no_open':True, 'no_create':True}" widget="many2many_tags"/>
+                            <field name="can_fill_own_schedule" groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="add_bypass_day_constraints_option_in_employee_card" model="ir.ui.view">
+            <field name="name">hr.employee.bypass.day.constraints.work.schedule</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_id']" position="after">
+                    <field name="bypass_day_constraints"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="work_schedule_company_settings" model="ir.ui.view">
+            <field name="name">work.schedule.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="before">
+                    <group string="Darbo grafiko nustatymai" name="work_schedule_settings" class="robo_group_collapsable robo_group_collapsed">
+                        <field name="work_schedule_labour_code_bypass" attrs="{'required': True}"/>
+                        <field name="work_schedule_state_to_check_constraints" attrs="{'required': True}"/>
+                        <field name="show_user_who_exported_info"/>
+                        <field name="schedule_export_extra_text_1"/>
+                        <field name="schedule_export_extra_text_2"/>
+                        <field name="update_planned_schedule_on_holiday_set"/>
+                        <field name="inform_employees_about_schedule_changes" attrs="{'required': True}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">company.settings.form</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside">
+                        <button name="%(action_open_company_extended_work_schedule_period)d"
+                                string="Išplėstinio grafiko periodai"
+                                type="action"
+                                class="oe_link"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_extended_work_schedule_settings_search"
+                  name="Išplėstinio grafiko periodai"
+                  parent="robo.menu_company_settings_search"
+                  action="action_open_company_extended_work_schedule_period"
+                  groups="robo_basic.group_robo_premium_accountant"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="išplėstinio,grafiko,periodai"
+        />
+    </data>
+    <data noupdate="1">
+        <record id="cron_check_work_schedule_periods" model="ir.cron">
+            <field name="name">Check schedule periods and hide/show menu</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=00, minute=01, second=00)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="doall" eval="False"/>
+            <field name="model">res.company</field>
+            <field name="function">cron_check_work_schedule_periods</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="start_employee_internship_view_form" model="ir.ui.view">
+            <field name="name">start.employee.internship.form</field>
+            <field name="model">start.employee.internship</field>
+            <field name="arch" type="xml">
+                <form string="Priimti darbuotoją praktikai">
+                    <group>
+                        <field name="internship_type"/>
+                    </group>
+                    <group colspan="4" col="1">
+                        <field class="oe_grey" name="internship_description" nolabel="1"/>
+                    </group>
+                    <footer>
+                        <button name="create_internship_contract" type="object" string="Priimti praktikai"
+                                class="oe_highlight"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="start_employee_internship_wizard">
+            <field name="name">Darbuotojo praktikos sąranka</field>
+            <field name="res_model">start.employee.internship</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="change_invoice_number"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,282 @@
+<odoo>
+    <data>
+        <record model="ir.actions.server" id="server_action_move">
+            <field name="name">Kurti žurnalo įrašus</field>
+            <field name="model_id" ref="gemma.model_gemma_payment"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).with_context(validate=True).move_creation_prep()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="server_action_moves" model="gemma.payment"/>
+        <record model="ir.actions.server" id="server_action_cancel_payments">
+            <field name="name">Anuliuoti mokėjimus</field>
+            <field name="model_id" ref="gemma.model_gemma_payment"/>
+            <field name="code">
+                    action = object.browse(context.get('active_ids', False)).cancel_records()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="server_action_cancel_payments_f" model="gemma.payment"/>
+        <record model="ir.actions.server" id="server_action_cancel_payments_sale">
+            <field name="name">Anuliuoti mokėjimus ir susijusius pardavimus</field>
+            <field name="model_id" ref="gemma.model_gemma_payment"/>
+            <field name="code">
+                    action = object.browse(context.get('active_ids', False)).with_context(include_sales=True).cancel_records()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="server_action_cancel_payments_sale_f" model="gemma.payment"/>
+        <record id="gemma_payment_form" model="ir.ui.view">
+            <field name="name">gemma.payment.form</field>
+            <field name="model">gemma.payment</field>
+            <field name="arch" type="xml">
+                <form string="Gemma sąskaita" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="move_creation_prep" type="object" states="active,warning,failed" string="Sukurti žurnalo įrašą" class="oe_highlight" context="{'validate': True}"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Mokėjimo numeris"/>
+                        <h1 class="mt0">
+                            <field name="ext_payment_id" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="payment_sum"/>
+                            <field name="residual" attrs="{'invisible': [('type', '=', 'cash_operations')]}"/>
+                            <field name="vat_rate" attrs="{'invisible': [('type', '=', 'cash_operations')]}"/>
+                            <field name="vat_class" attrs="{'invisible': [('type', '=', 'cash_operations')]}"/>
+                            <field name="payment_type_id" attrs="{'invisible': [('type', '=', 'cash_operations')]}"/>
+                            <field name="receipt_id" attrs="{'invisible': [('type', '=', 'cash_operations')]}"/>
+                            <field name="payer_id" attrs="{'invisible': [('type', '=', 'cash_operations')]}"/>
+                            <field name="partner_id"/>
+                            <field name="payment_date"/>
+                            <field name="payment_type_text" attrs="{'invisible': [('type', '=', 'cash_operations')]}"/>
+                            <field name="cash_operation_type" attrs="{'invisible': [('cash_operation_type', '=', 'unused')]}"/>
+                            <field name="move_id" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                            <field name="ext_payment_type_id" groups="base.group_system"/>
+                            <field name="cash_register_id" attrs="{'invisible': [('cash_register_id', '=', False)]}"/>
+                            <field name="payment_type_id" attrs="{'invisible': [('payment_type_id', '=', False)]}"/>
+                            <field name="reverse_move_id" attrs="{'invisible': [('reverse_move_id', '=', False)]}"/>
+                            <field name="type" invisible="1"/>
+                        </group>
+                        <group string="Eilutės už kurias mokėta" attrs="{'invisible': [('type', '=', 'cash_operations')]}">
+                        <field name="sale_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                        <tree>
+                            <field name="ext_product_code"/>
+                            <field name="qty"/>
+                            <field name="price"/>
+                            <field name="receipt_total"/>
+                            <field name="sale_date"/>
+                            <field name="receipt_id"/>
+                            <field name="ext_payment_id"/>
+                        </tree>
+                        </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="gemma_payment_tree" model="ir.ui.view">
+            <field name="name">gemma.payment.tree</field>
+            <field name="model">gemma.payment</field>
+            <field name="arch" type="xml">
+                <tree string="Mokėjimai"
+                      create="1" edit="1" delete="1"
+                      decoration-danger="state in ['warning', 'failed']"
+                      decoration-success="state == 'reconciled'"
+                      decoration-info="state in ['open', 'active']"
+                      decoration-warning="state == 'cancel_locked'">
+                    <field name="payment_type_text"/>
+                    <field name="ext_payment_type_id"/>
+                    <field name="payment_sum" sum="payment_sum"/>
+                    <field name="residual"/>
+                    <field name="department_id"/>
+                    <field name="receipt_id"/>
+                    <field name="payment_date"/>
+                    <field name="vat_rate"/>
+                    <field name="state"/>
+                    <field name="type"/>
+                </tree>
+            </field>
+        </record>
+        <record id="gemma_cash_op_tree" model="ir.ui.view">
+            <field name="name">gemma.cash.operation.tree</field>
+            <field name="model">gemma.payment</field>
+            <field name="arch" type="xml">
+                <tree string="Kasos operacijos"
+                      create="1" edit="1" delete="1"
+                      decoration-danger="state == ['warning', 'failed']"
+                      decoration-success="state == 'cash_done'"
+                      decoration-info="state in ['active']">
+                    <field name="ext_payment_id"/>
+                    <field name="payment_date"/>
+                    <field name="cash_operation_type"/>
+                    <field name="department_id"/>
+                    <field name="payment_sum" sum="payment_sum"/>
+                    <field name="state"/>
+                    <field name="type"/>
+                </tree>
+            </field>
+        </record>
+        <record id="gemma_payment_action" model="ir.actions.act_window">
+            <field name="name">Mokėjimai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">gemma.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[('type', 'in', ['related', 'unrelated', 'missing_data'])]</field>
+            <field name="view_id" ref="gemma_payment_tree"/>
+        </record>
+        <record id="gemma_cash_op_action" model="ir.actions.act_window">
+            <field name="name">Kasos Operacijos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">gemma.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[('type', 'in', ['cash_operations'])]</field>
+            <field name="view_id" ref="gemma_cash_op_tree"/>
+        </record>
+        <record model="ir.ui.view" id="gemma_payment_search">
+            <field name="name">Mokėjimų paieška</field>
+            <field name="model">gemma.payment</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="type_u" string="Be susijusiu pardavimų" domain="[('type','=','unrelated')]"/>
+                    <filter name="type_r" string="Su susijusiais pardavimais" domain="[('type','=','related')]"/>
+                    <filter name="type_c" string="Inkasacijos" domain="[('type','=','cash_operations')]"/>
+                    <filter name="open" string="Būsena: Laukiama sudengimo" domain="[('state','=','open')]"/>
+                    <filter name="rec" string="Būsena: Sudengta" domain="[('state','=','reconciled')]"/>
+                    <filter name="part_rec" string="Būsena: Sudengta dalinai" domain="[('state','=','partially_reconciled')]"/>
+                    <filter name="active" string="Būsena: Panaudojama" domain="[('state','=','active')]"/>
+                    <filter name="warning" string="Būsena: Trūksta konfigūracijos" domain="[('state','=','warning')]"/>
+                    <filter name="cancel" string="Būsena: Atšauktas" domain="[('state','=','canceled')]"/>
+                    <filter name="failed" string="Būsena: Klaida kuriant įrašą" domain="[('state','=','failed')]"/>
+                    <filter name="locked" string="Būsena: Užrakinta, neatšaukta" domain="[('state','=','cancel_locked')]"/>
+                    <separator/>
+                    <field name="partner_id"/>
+                    <field name="payment_type_text" filter_domain="[('payment_type_text','ilike',self)]"/>
+                    <field name="payer_id" filter_domain="[('payer_id','ilike',self)]"/>
+                    <field name="department_id" filter_domain="[('receipt_id','ilike',self)]"/>
+                    <field name="ext_payment_id" filter_domain="[('ext_payment_id','ilike',self)]"/>
+                    <separator/>
+                    <field name="payment_date" string="Data nuo" filter_domain="[('payment_date', '&gt;=', self)]"/>
+                    <field name="payment_date" string="Data iki" filter_domain="[('payment_date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Mokėjimo data" context="{'group_by':'payment_date'}"/>
+                        <filter name="group_partner_id" string="Partneris"
+                                context="{'group_by':'partner_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+        <record id="gemma_payment_form_front" model="ir.ui.view">
+            <field name="name">gemma.payment.form</field>
+            <field name="model">gemma.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimai">
+                    <sheet>
+                        <group>
+                            <field name="payment_type_text"/>
+                            <field name="payment_sum"/>
+                            <field name="residual"/>
+                            <field name="partner_id"/>
+                            <field name="payment_date"/>
+                            <field name="vat_rate"/>
+                            <field name="state"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="gemma_payment_tree_front" model="ir.ui.view">
+            <field name="name">gemma.payment.tree</field>
+            <field name="model">gemma.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Mokėjimai"
+                      create="0" edit="0" delete="0"
+                      decoration-danger="state == ['warning', 'failed']"
+                      decoration-success="state == 'reconciled'"
+                      decoration-info="state in ['open', 'active']">
+                    <field name="payment_type_text"/>
+                    <field name="payment_sum"/>
+                    <field name="residual"/>
+                    <field name="partner_id"/>
+                    <field name="payment_date"/>
+                    <field name="vat_rate"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="gemma_payment_pivot_front" model="ir.ui.view">
+            <field name="name">gemma.payment.pivot</field>
+            <field name="model">gemma.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Mokėjimai">
+                    <field name="payment_sum" type="measure"/>
+                    <field name="payment_date" type="row"/>
+                    <field name="payment_type_id" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_gemma_payment_front">
+            <field name="name">Mokėjimai</field>
+            <field name="res_model">gemma.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,pivot</field>
+            <field name="with_settings">True</field>
+            <field name="search_view_id" ref="gemma_payment_search"/>
+            <field name="header" ref="header_gemma"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('gemma_payment_pivot_front')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('gemma_payment_tree_front')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

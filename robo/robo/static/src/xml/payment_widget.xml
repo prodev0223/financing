@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ShowPaymentInfoRobo">
+        <div>
+            <t t-if="outstanding">
+                <div>
+                    <strong class="pull-left" id="outstanding">Nepriskirti mokėjimai</strong>
+                </div>
+            </t>
+            <table style="width:100%;">
+                <t t-foreach="lines" t-as="line">
+                    <tr>
+                    <t t-if="outstanding">
+                        <td>
+                                <a title="assign to invoice" role="button" class="oe_form_field outstanding_credit_assign" t-att-data-id="line.id" t-if="line.state != 'proforma' &amp;&amp; line.state != 'proforma2'" style="margin-right: 10px;">Pridėti</a>
+                        </td>
+                        <td>
+                            <span class="oe_form_field" style="margin-right: 30px;font-size: 11px;"><t t-esc="line.journal_name"></t></span>
+                        </td>
+                        <td>
+                            <span class="oe_form_field" style="margin-right: 30px;font-size: 11px;white-space: nowrap"><t t-esc="line.date"></t></span>
+                        </td>
+                    </t>
+                    <t t-if="!outstanding">
+                        <td>
+                            <a role="button" tabindex="0" class="js_payment_info fa fa-info-circle" t-att-index="line.index" style="margin-right:5px;"></a>
+                        </td>
+                        <td>
+                            <i class="oe_form_field text-right oe_payment_label">Sumokėta <t t-esc="line.date"></t></i>
+                        </td>
+                    </t>
+                        <td style="text-align:right; white-space:nowrap;">
+                            <span class="oe_form_field oe_form_field_float oe_form_field_monetary" style="margin-left: -10px;">
+                                <t t-if="line.position === 'before'">
+                                    <t t-esc="line.currency"/>
+                                </t>
+                                <t t-esc="line.amount"></t>
+                                <t t-if="line.position === 'after'">
+                                    <t t-esc="line.currency"/>
+                                </t>
+                            </span>
+                        </td>
+                    </tr>
+                </t>
+            </table>
+        </div>
+    </t>
+    <t t-name="PaymentPopOverRobo">
+        <div>
+            <table>
+                <tr>
+                    <td><strong>Pavadinimas: </strong></td>
+                    <td style="text-align:right;"><t t-esc="name"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Data: </strong></td>
+                    <td style="text-align:right;"><t t-esc="date"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Mokėjimo metodas: </strong></td>
+                    <td style="text-align:right;"><t t-esc="journal_name"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Nuoroda: </strong></td>
+                    <td style="text-align:right;"><t t-esc="ref"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Suma: </strong></td>
+                    <td style="text-align:right;">
+                        <t t-if="position === 'before'">
+                            <t t-esc="currency"/>
+                        </t>
+                        <t t-esc="amount"></t>
+                        <t t-if="position === 'after'">
+                            <t t-esc="currency"/>
+                        </t>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <t t-if="offsetting_move">
+            <button class="btn btn-xs btn-primary js_unreconcile_offsetting pull-left" t-att-payment-id="payment_id" style="margin-top:5px; margin-bottom:5px;">Pašalinti užskaitą</button>
+        </t>
+        <t t-else="">
+            <button class="btn btn-xs btn-primary js_unreconcile_payment pull-left" t-att-payment-id="payment_id" style="margin-top:5px; margin-bottom:5px;">Pašalinti</button>
+            <button t-if="show" class="btn btn-xs btn-primary js_delete_payment pull-right" t-att-payment-id="payment_id" style="margin-top:5px; margin-bottom:5px;">Pašalinti ir ištrinti mokėjimą</button>
+        </t>
+        <t t-if="accountant">
+            <button class="btn btn-xs btn-default js_open_payment pull-right" t-att-move-id="move_id" style="margin-top:5px; margin-bottom:5px;">Atverti mokėjimą</button>
+        </t>
+        <!--<button class="btn btn-xs btn-default js_open_payment pull-right" t-att-move-id="move_id" style="margin-top:5px; margin-bottom:5px;">Atidaryti mokėjimą</button>-->
+    </t>
+    <t t-name="ShowBankStatementInfoRobo">
+        <div>
+            <t t-if="outstanding_statements">
+                <div>
+                    <strong class="pull-left" id="outstanding_statements">Nepriskirtos banko operacijos</strong>
+                </div>
+            </t>
+            <table style="width:100%;">
+                <t t-foreach="lines" t-as="line">
+                    <tr>
+                    <t t-if="outstanding_statements">
+                        <td>
+                            <a title="assign to invoice" role="button" class="oe_form_field bank_statement_assign" t-att-data-id="line.id" t-if="line.state != 'proforma' &amp;&amp; line.state != 'proforma2'" style="margin-right: 10px;">Priskirti</a>
+                        </td>
+                        <td>
+                            <span class="oe_form_field" style="margin-right: 30px;font-size: 11px;"><t t-esc="line.journal_name"></t></span>
+                        </td>
+                        <td>
+                            <span class="oe_form_field" style="margin-right: 30px;font-size: 11px;white-space: nowrap"><t t-esc="line.date"></t></span>
+                        </td>
+                    </t>
+                        <td style="text-align:right; white-space:nowrap;">
+                            <span class="oe_form_field oe_form_field_float oe_form_field_monetary" style="margin-left: -10px;">
+                                <t t-if="line.position === 'before'">
+                                    <t t-esc="line.currency"/>
+                                </t>
+                                <t t-esc="line.amount"></t>
+                                <t t-if="line.position === 'after'">
+                                    <t t-esc="line.currency"/>
+                                </t>
+                            </span>
+                        </td>
+                    </tr>
+                </t>
+            </table>
+        </div>
+    </t>
+    <t t-name="ShowOffsettingInfoRobo">
+        <div>
+            <t t-if="offsetting">
+                <div>
+                    <strong class="pull-left" id="outstanding">Sukurti užskaitą</strong>
+                </div>
+            </t>
+            <table style="width:100%;">
+                <t t-foreach="lines" t-as="line">
+                    <tr>
+                    <t t-if="offsetting">
+                        <td>
+                                <a title="assign to invoice" role="button" class="oe_form_field make_offsetting" t-att-data-id="line.id" t-if="line.state != 'proforma' &amp;&amp; line.state != 'proforma2'" style="margin-right: 10px;">Sukurti</a>
+                        </td>
+                        <td>
+                            <span class="oe_form_field" style="margin-right: 30px;font-size: 11px;"><t t-esc="line.journal_name"></t></span>
+                        </td>
+                        <td>
+                            <span class="oe_form_field" style="margin-right: 30px;font-size: 11px;white-space: nowrap"><t t-esc="line.date"></t></span>
+                        </td>
+                    </t>
+                        <td style="text-align:right; white-space:nowrap;">
+                            <span class="oe_form_field oe_form_field_float oe_form_field_monetary" style="margin-left: -10px;">
+                                <t t-if="line.position === 'before'">
+                                    <t t-esc="line.currency"/>
+                                </t>
+                                <t t-esc="line.amount"></t>
+                                <t t-if="line.position === 'after'">
+                                    <t t-esc="line.currency"/>
+                                </t>
+                            </span>
+                        </td>
+                    </tr>
+                </t>
+            </table>
+        </div>
+    </t>
+</templates>

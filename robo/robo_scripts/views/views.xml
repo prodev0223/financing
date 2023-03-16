@@ -1,0 +1,59 @@
+<openerp>
+  <data>
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="robo_scripts.list">
+      <field name="name">robo_scripts list</field>
+      <field name="model">robo_scripts.robo_scripts</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="robo_scripts.action_window">
+      <field name="name">robo_scripts window</field>
+      <field name="res_model">robo_scripts.robo_scripts</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="robo_scripts.action_server">
+      <field name="name">robo_scripts server</field>
+      <field name="model_id" ref="model_robo_scripts_robo_scripts"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="robo_scripts" id="robo_scripts.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="robo_scripts.menu_1" parent="robo_scripts.menu_root"/>
+    <menuitem name="Menu 2" id="robo_scripts.menu_2" parent="robo_scripts.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="robo_scripts.menu_1_list" parent="robo_scripts.menu_1"
+              action="robo_scripts.action_window"/>
+    <menuitem name="Server to list" id="robo_scripts" parent="robo_scripts.menu_2"
+              action="robo_scripts.action_server"/>
+    -->
+  </data>
+</openerp>

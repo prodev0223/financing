@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.values" id="model_account_asset_assign_materially_responsible">
+            <field name="model">account.asset.asset</field>
+            <field name="model_id" ref="account_asset.model_account_asset_asset"/>
+            <field name="name">Assign materially responsible</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,' + str(ref('multiple_material_responsibility'))"/>
+            <field name="key">action</field>
+        </record>
+    </data>
+
+    <record model="ir.actions.server" id="action_nurasyti">
+        <field name="name">Nurašyti</field>
+        <field name="model_id" ref="account_asset.model_account_asset_asset"/>
+        <field name="code">
+           action = object.browse(context.get('active_ids')).action_set_to_close()
+        </field>
+    </record>
+    <record id="ir_nurasyti" model="ir.values">
+        <field name="name">actionNurasyti</field>
+        <field name="key2">client_action_multi</field>
+        <field eval="'ir.actions.server,%d'%action_nurasyti" name="value"/>
+        <field name="key">action</field>
+        <field name="model">account.asset.asset</field>
+    </record>
+
+    <record id="merge_assets_server_action" model="ir.actions.server">
+        <field name="name">Merge assets</field>
+        <field name="model_id" ref="account_asset.model_account_asset_asset"/>
+        <field name="code">
+            action = object.browse(context.get('active_ids', False)).action_merge()
+        </field>
+    </record>
+
+    <record id="ir_merge_assets" model="ir.values">
+        <field name="name">actionIn</field>
+        <field name="key2">client_action_multi</field>
+        <field eval="'ir.actions.server,%d'%merge_assets_server_action" name="value"/>
+        <field name="key">action</field>
+        <field name="model">account.asset.asset</field>
+    </record>
+</odoo>

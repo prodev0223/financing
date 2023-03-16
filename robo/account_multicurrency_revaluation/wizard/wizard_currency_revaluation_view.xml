@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_currency_revaluation_wizard" model="ir.ui.view">
+            <field name="name">Currency revaluation</field>
+            <field name="model">wizard.currency.revaluation</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Currency Revaluation">
+                    <label string="Vedlys perkainuos valiutų svyravimus"/>
+                    <group>
+                        <field name="revaluation_date" string="Perkainavimo data" />
+                        <field name="atstatymo_data" string="Atstatymo data" />
+                        <field name="journal_id" string="Žurnalas" />
+                        <field name="partneris" string="Partneris" />
+                        <field name="saskaita" string="Sąskaita" />
+                        <field name="label" string="Įrašo aprašymas" />
+                        <label string="%%(account)s : Sąskaita, kuriai bus atliktas valiutos perkainavimas"/>
+                        <label string="%%(rate)s : Valiutų kursas perkainavimo metu"/>
+                    </group>
+                    <footer>
+                        <button name="revaluate_currency" string="Patvirtinti" type="object" context="{'partneris':partneris,'saskaita':saskaita}" class="oe_highlight" />
+                        or
+                        <button string="Atšaukti" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_view_account_currency_revaluation_wizard" model="ir.actions.act_window">
+            <field name="name">Currency revaluation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.currency.revaluation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+            action="action_view_account_currency_revaluation_wizard"
+            id="menu_view_account_currency_revaluation_wizard"
+            parent="account.menu_finance_entries" string="Valiutų perkainavimas" />
+
+    </data>
+</openerp>
+

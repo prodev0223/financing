@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="stock_inventory_adjustment_confirmation_view" model="ir.ui.view">
+        <field name="name">stock.inventory.adjustment.confirmation.view</field>
+        <field name="model">stock.inventory.adjustment.confirmation</field>
+        <field name="robo_front">True</field>
+        <field name="arch" type="xml">
+            <form string="Apply adjustments?">
+                <group>
+                    <p>
+                        <field name="warning_message" readonly="1"/>
+                    </p>
+                </group>
+                <footer>
+                    <button name="confirm" string="Apply adjustments" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

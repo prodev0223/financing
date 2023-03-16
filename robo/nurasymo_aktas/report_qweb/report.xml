@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                string="Nurašymo aktas"
+                id="action_report_inventory"
+                model="stock.inventory"
+                report_type="qweb-pdf"
+                name="nurasymo_aktas.report_nurasymo_aktas_templ"
+                file="nurasymo_aktas.report_nurasymo_aktas_templ"
+        />
+        <record id="paperformat_euro_narrow_margin" model="report.paperformat">
+            <field name="name">European A4 (narrow)</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">15</field>
+            <field name="margin_bottom">20</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">35</field>
+            <field name="dpi">90</field>
+        </record>
+        <record id="action_report_inventory" model="ir.actions.report.xml">
+            <field name="print_report_name">'nurasymas-'+time.strftime('%Y-%m-%d')+'.pdf'</field>
+            <field name="paperformat_id" ref="paperformat_euro_narrow_margin"/>
+        </record>
+        <template id="report_nurasymo_aktas_templ">
+            <style>div.page{page-break-after: always;}</style>
+            <t t-foreach="docs" t-as="o">
+                <t t-call="report.html_container">
+                    <t t-call="nurasymo_aktas.report_nurasymo_aktas_templ_trans" t-lang="o.company_id.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="nurasymo_aktas.report_nurasymo_aktas_templ_trans">
+            <div class="page writeoff_page">
+                <div class="row">
+                    <div class="col-xs-8 col-xs-offset-4">
+                        <div class="row">
+                            <div class="col-xs-4 text-right">
+                                <strong>Tvirtinu</strong>
+                            </div>
+                            <div class="col-xs-2 col-xs-offset-1"></div>
+                            <div class="col-xs-4 col-xs-offset-1"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 text-right">Įstaigos vadovas</div>
+                            <div class="col-xs-2 col-xs-offset-1"></div>
+                            <div class="col-xs-4 col-xs-offset-1 text-center">
+                                <span t-field="o.company_id.with_context(date=o.accounting_date).vadovas.name"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 text-right">Data
+                                <span t-field="o.accounting_date"/>
+                            </div>
+                            <div class="col-xs-3" id="signiture">(parašas)</div>
+                            <div class="col-xs-4 col-xs-offset-1 text-center" id="signiture">(vardas pavardė)</div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <div class="row">
+                    <div class="col-xs-4 col-xs-offset-4 text-center">
+                        <h4>
+                            <div id="report_name">
+                                <strong>
+                                    <t t-if="o.state != 'done'">PRELIMINARUS </t>
+                                    SUNAUDOTŲ MEDŽIAGŲ NURAŠYMO AKTAS NR.
+                                    <span t-field="o.number"/>
+                                </strong>
+                            </div>
+                        </h4>
+                    </div>
+                </div>
+                <br/>
+
+                <div class="row">
+                    <div class="col-xs-10">
+                        <div class="row">
+                            <div class="col-xs-4 text-left">Data
+                                <span t-field="o.accounting_date"/>
+                            </div>
+                            <div class="col-xs-8"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 text-left">Įstaiga</div>
+                            <div class="col-xs-8" id="border_below">
+                                <span t-field="o.company_id"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 text-left">Sandėlis</div>
+                            <div class="col-xs-8" id="border_below">
+                                <span t-field="o.location_id"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 text-left">Pavadinimas</div>
+                            <div class="col-xs-8" id="border_below">
+                                <span t-field="o.name"/>
+                            </div>
+                        </div>
+                        <div t-if="o.reason_details" class="row">
+                            <div class="col-xs-4 text-left">Nurašymo priežasties aprašymas</div>
+                            <div class="col-xs-8" id="border_below">
+                                <span t-field="o.reason_details"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <div class="row mt16" style="font-size:16px;">
+                    <div class="col-xs-4">Paskirta komisija</div>
+                </div>
+                <br/>
+
+                <div class="row text-left">
+                    <div class="col-xs-2">Pirmininkas:</div>
+                    <div class="col-xs-4">
+                        <div class="row">
+                            <span t-field="o.company_id.with_context(date=o.accounting_date).vadovas.name"/>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <div class="row text-left">
+                    <div class="col-xs-2">Nariai:</div>
+                    <div class="col-xs-4">
+                        <t t-foreach="o.komisija.employee_ids" t-as="v">
+                            <div class="row">
+                                <span t-field="v.name"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <br/>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table class="table table-condensed text-center">
+                            <thead>
+                                <tr>
+                                    <th class="col-xs-3 text-center">Kodas</th>
+                                    <th class="col-xs-4">Pavadinimas</th>
+                                    <th>Mat. vnt.</th>
+                                    <th>Kiekis</th>
+                                    <th>Kaina</th>
+                                    <th>Suma</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="o.state == 'done'">
+                                    <t t-foreach="o.move_ids" t-as="m">
+                                        <t t-foreach="m.quant_ids" t-as="q">
+                                            <tr>
+                                                <td align="center">
+                                                    <span t-field="q.product_id.id"/>
+                                                </td>
+                                                <td align="left">
+                                                    <span t-field="q.product_id"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="q.product_uom_id"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="q.qty"/>
+                                                </td>
+                                                <td align="right">
+                                                    <span t-esc="round(q.cost, 2)"/>
+                                                </td>
+                                                <td align="right">
+                                                    <span t-field="q.inventory_value"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <t t-foreach="o.line_ids" t-as="l">
+                                        <tr>
+                                            <td align="center">
+                                                <span t-field="l.product_id.id"/>
+                                            </td>
+                                            <td align="left">
+                                                <span t-field="l.product_id"/>
+                                            </td>
+                                            <td>
+                                                <span t-field="l.product_uom_id"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="l.consumed_qty"/>
+                                            </td>
+                                            <td/>
+                                            <td/>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <t t-if="o.state == 'done'">
+                    <div class="row text-right" id="border_below">
+                        <t t-set="suma" t-value="o._calc_total_value()"/>
+                        <strong>Iš viso:
+                            <span t-esc="'{:.2f}'.format(suma).replace('.', ',')"/>
+                        </strong>
+                    </div>
+                    <br/>
+
+                    <div class="row">
+                        <div class="col-xs-10 col-xs-offset-1">
+                            <div class="row text">
+                                <div id="total">
+                                    Iš viso pagal šį aktą nurašoma už:
+                                </div>
+                            </div>
+                            <div class="row">
+                                <strong>
+                                    <span t-esc="o._convert_sum_to_words(suma,'lt', 'EUR')"/>
+                                </strong>
+                            </div>
+                            <div class="row text-center" id="signiture">(suma žodžiais)</div>
+                        </div>
+                    </div>
+                </t>
+                <br/>
+
+                <div class="row">
+                    <div class="col-xs-3">
+                        <strong>Komisijos pirmininkas</strong>
+                    </div>
+                    <div class="col-xs-9">
+                        <div class="row text-center">
+                            <div class="col-xs-3 col-xs-offset-1">
+                                <span t-field="o.company_id.with_context(date=o.accounting_date).vadovas.job_id.name"/>
+                            </div>
+                            <div class="col-xs-2 col-xs-offset-1"></div>
+                            <div class="col-xs-4 col-xs-offset-1">
+                                <span t-field="o.with_context(date=o.accounting_date).company_id.vadovas.name"/>
+                            </div>
+                        </div>
+                        <div class="row mt40 text-center">
+                            <div class="col-xs-3 col-xs-offset-1" id="signiture">(pareigos)</div>
+                            <div class="col-xs-2 col-xs-offset-1" id="signiture">(parašas)</div>
+                            <div class="col-xs-4 col-xs-offset-1" id="signiture">(vardas pavardė)</div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <div class="row">
+                    <div class="col-xs-3">
+                        <strong>Komisijos nariai</strong>
+                    </div>
+                    <div class="col-xs-9">
+                        <t t-foreach="o.komisija.employee_ids" t-as="v">
+                            <br/>
+                            <div style="white-space: nowrap; display: inline-flex; overflow: hidden; page-break-inside: avoid;">
+                                <div class="row text-center">
+                                    <div class="col-xs-3 col-xs-offset-1">
+                                        <span t-field="v.job_id.name"/>
+                                    </div>
+                                    <div class="col-xs-2 col-xs-offset-1"></div>
+                                    <div class="col-xs-4 col-xs-offset-1">
+                                        <span t-field="v.name"/>
+                                    </div>
+                                </div>
+                                <div class="row mt40 text-center">
+                                    <div class="col-xs-3 col-xs-offset-1" id="signiture">(pareigos)</div>
+                                    <div class="col-xs-2 col-xs-offset-1" id="signiture">(parašas)</div>
+                                    <div class="col-xs-4 col-xs-offset-1" id="signiture">(vardas pavardė)</div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <record id="inventorizacijos_aktas_komisija" model="ir.ui.view">
+            <field name="name">inventorizacijos.aktas.komisija</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='location_id']" position="after">
+                    <field name="komisija"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

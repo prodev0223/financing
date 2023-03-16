@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_invoice_distributed_payment_line_wizard" model="ir.ui.view">
+            <field name="name">account.invoice.distributed.payment.line.wizard</field>
+            <field name="model">account.invoice.distributed.payment.line.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="date" options="{'no_open':True, 'no_create':True}"
+                               attrs="{'readonly':  [('hide_generate_button', '=', True)]}"/>
+                        <field name="payments" attrs="{'readonly':  [('hide_generate_button', '=', True)]}"/>
+                        <field name="amount"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                    <field name="hide_generate_button" invisible="1"/>
+                    <button name="create_lines" string="Generate lines" type="object"
+                            attrs="{'invisible': [('hide_generate_button', '=', True)]}"/>
+                    <button name="recompute_balanced_line_amount" string="Rebalance lines" type="object"
+                            attrs="{'invisible': [('hide_generate_button', '=', False)]}"/>
+                    <group>
+                        <field name="line_ids" nolabel="1" options="{'always_reload': True}">
+                            <tree editable="bottom">
+                                <field name="date"/>
+                                <field name="amount" sum="Total amount"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="correct" widget="boolean_radio"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="export_lines" string="Confirm" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,18 @@
+<template>
+    <t t-extend="RoboReports">
+        <!--:last here means insert block just after basic reports-->
+        <t t-jquery=".robo_stock_buttons .reports-box:last" t-operation="after">
+            <div t-if="widget.robo_gpais_reports" class="robo_reports_buttons reports-box  r-cursor">
+                <div class="robo_button_gpais">
+                    <div class="icon">
+                        <span class="icon-recycle"></span>
+                    </div>
+                    <h3>
+                        <a class="btn-header">GPAIS</a>
+                    </h3>
+                </div>
+            </div>
+        </t>
+    </t>
+
+</template>

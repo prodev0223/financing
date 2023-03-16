@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="paperformat_a4_narrow_payslip_report" model="report.paperformat">
+            <field name="name">European A4 narrow (payslip report)</field>
+            <field name="format">A4</field>
+            <field name="margin_top" eval="10"/>
+            <field name="margin_bottom" eval="23"/>
+            <field name="margin_left" eval="7"/>
+            <field name="margin_right" eval="7"/>
+            <field name="orientation">Landscape</field>
+            <field name="header_spacing" eval="20"/>
+            <field name="dpi" eval="90"/>
+        </record>
+
+        <report
+                id="report_suvestine"
+                model="hr.payslip.run"
+                string="Darbo užmokesčio suvestinė"
+                report_type="qweb-html"
+                name="l10n_lt_payroll.report_suvestine_sl"
+                file="l10n_lt_payroll.report_suvestine_sl"
+                paperformat="paperformat_a4_narrow_payslip_report"
+        />
+
+        <template id="report_suvestine_sl">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-lang="force_lang or 'lt_LT'"
+                       t-call="l10n_lt_payroll.report_suvestine_sl_document"/>
+                </t>
+            </t>
+        </template>
+
+
+        <template id="report_suvestine_sl_document">
+            <t t-set="o" t-value="doc"/>
+
+            <t t-set="slips" t-value="o.slip_ids.filtered(lambda s: s.contract_id and s.line_ids)"/>
+            <t t-if="employee_ids">
+                <t t-set="slips" t-value="slips.filtered(lambda r: r.employee_id.id in employee_ids)"/>
+            </t>
+            <t t-set="slips" t-value="slips.sorted(key=lambda s: int(s.tabelio_numeris))"/>
+
+            <t t-call="report.html_container">
+
+                <style type="text/css">
+                    body.container {
+                      margin-left: inherit !important;
+                    }
+                    .payroll_report h3 {
+                      text-align: center;
+                    }
+                    .payroll_report .centras {
+                      text-align: center;
+                      margin-left: auto;
+                      margin-right: auto;
+                    }
+                    .payroll_report .virsus {
+                      border-top: 1px solid black;
+                    }
+                    .payroll_report .desine {
+                      float: right;
+                      width: 300px;
+                      text-align: justify;
+                    }
+                    .payroll_report .lentele {
+                      border: 1px solid black;
+                    }
+                    .payroll_report .tr,
+                    .payroll_report th,
+                    .payroll_report td {
+                      border: 1px solid black;
+                    }
+                    .payroll_report table.main-payslip-run-report-table {
+                      width: 100%;
+                      border: 1px solid black;
+                    }
+                    .payroll_report table.main-payslip-run-report-table tr th,
+                    .payroll_report table.main-payslip-run-report-table tr td {
+                      width: min-content !important;
+                      font-weight: 300;
+                      padding: 3px;
+                      vertical-align: middle;
+                    }
+                    .payroll_report table.main-payslip-run-report-table tr th {
+                      font-size: 12px;
+                      vertical-align: middle;
+                      text-align: center;
+                    }
+                    .payroll_report table.main-payslip-run-report-table tr.row-text-align-center th,
+                    .payroll_report table.main-payslip-run-report-table tr.row-text-align-center td {
+                      text-align: center;
+                    }
+                    .payroll_report table.main-payslip-run-report-table tr.slip-data,
+                    .payroll_report table.main-payslip-run-report-table tr.total-slip-data {
+                      border-top: 1px solid black;
+                      white-space: nowrap;
+                      page-break-inside: avoid;
+                      font-size: 11px !important;
+                    }
+                    .payroll_report table.main-payslip-run-report-table tr.slip-data td,
+                    .payroll_report table.main-payslip-run-report-table tr.total-slip-data td {
+                      white-space: nowrap;
+                      text-align: center;
+                    }
+                    .payroll_report table.main-payslip-run-report-table tr.total-slip-data td {
+                        border-top: 2px solid;
+                    }
+                    .payroll_report table.main-payslip-run-report-table tr.slip-data td:nth-of-type(2) {
+                        text-align: left !important;
+                    }
+                    .payroll_report table.payment-table {
+                        font-weight: normal;
+                    }
+                    .payroll_report table.payment-table tr td, th{
+                        padding: 5px;
+                        vertical-align: middle;
+                        text-align: center;
+                    }
+                    .payroll_report table.payment-table tr td:nth-of-type(1){
+                        text-align: left;
+                    }
+                    .payroll_report table.payment-table tr:last-of-type td{
+<!--                        font-weight: bold;-->
+<!--                        border-top: 2px solid;-->
+                    }
+                    table.main-payslip-run-report-table thead {display: table-header-group; }
+                </style>
+                <t t-call="report.simple_page_number_footer"/>
+                <div class="page payroll_report">
+                    <t t-if="slips">
+                        <t t-call="report.internal_layout"/>
+
+                        <t t-set="total_amounts" t-value="payslip_amounts(slips)"/>
+
+                        <t t-set="print_downtime_amounts"
+                           t-value="bool(total_amounts['downtime_amount'])"/>
+
+                        <t t-set="print_illness_amounts"
+                           t-value="bool(total_amounts['liga_amount'])"/>
+
+
+                        <t t-set="print_other_additions"
+                           t-value="bool(total_amounts['other_additions_amount'])"/>
+
+                        <t t-set="print_shorter_before_holidays"
+                           t-value="bool(trumpinimas_pries_sventes_h(slips))"/>
+
+                        <t t-set="print_advance_payment_amounts"
+                           t-value="bool(total_amounts['advance_payment_amount'])"/>
+
+                        <t t-set="print_late_payment_amounts"
+                           t-value="bool(total_amounts['late_payments_amount'])"/>
+
+                        <t t-set="print_other_payment_amounts"
+                           t-value="bool([payment for payment in payments if payment['contract_id'] and payment['type'] not in ['benefit_in_kind_employer_pays_taxes','benefit_in_kind_employee_pays_taxes']])"/>
+
+                        <t t-set="print_sodra_grindys_vals"
+                           t-value="bool(total_amounts['SODRA_employee_floor_amount'] + total_amounts['SODRA_employer_floor_amount'])"/>
+
+                        <t t-set="time_colspan" t-value="4"/>
+                        <t t-if="print_shorter_before_holidays">
+                            <t t-set="time_colspan" t-value="time_colspan+1"/>
+                        </t>
+
+                        <t t-set="payment_colspan" t-value="1"/>
+                        <t t-set="absolute_total_col" t-value="20"/>
+                        <t t-if="print_advance_payment_amounts">
+                            <t t-set="payment_colspan" t-value="payment_colspan+1"/>
+                            <t t-set="absolute_total_col" t-value="absolute_total_col+1"/>
+                        </t>
+                        <t t-if="print_late_payment_amounts">
+                            <t t-set="payment_colspan" t-value="payment_colspan+1"/>
+                            <t t-set="absolute_total_col" t-value="absolute_total_col+1"/>
+                        </t>
+                        <t t-if="print_other_payment_amounts">
+                            <t t-set="payment_colspan" t-value="payment_colspan+1"/>
+                            <t t-set="absolute_total_col" t-value="absolute_total_col+1"/>
+                        </t>
+                        <t t-if="print_advance_payment_amounts or print_late_payment_amounts or print_other_payment_amounts">
+                            <t t-set="payment_colspan" t-value="payment_colspan+1"/>
+                        </t>
+
+                        <t t-set="additions_colspan" t-value="4"/>
+                        <t t-if="print_downtime_amounts">
+                            <t t-set="additions_colspan" t-value="additions_colspan+1"/>
+                        </t>
+                        <t t-if="print_illness_amounts">
+                            <t t-set="additions_colspan" t-value="additions_colspan+1"/>
+                        </t>
+                        <t t-if="print_other_additions">
+                            <t t-set="additions_colspan" t-value="additions_colspan+1"/>
+                        </t>
+
+                        <t t-set="late_payment_col" t-value="20"/>
+                        <t t-if="print_advance_payment_amounts">
+                            <t t-set="late_payment_col" t-value="late_payment_col+1"/>
+                        </t>
+
+                        <t t-set="employer_taxes_colspan" t-value="1"/>
+                        <t t-if="print_sodra_grindys_vals">
+                            <t t-set="employer_taxes_colspan" t-value="employer_taxes_colspan + 3"/>
+                        </t>
+
+                        <table class="centras" align="center" style="border-style:none" width="35%">
+                            <tr style="font-weight:bold; border-style:none">
+                                <td style="border-style:none">ATLYGINIMO SUVESTINĖ</td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table class="centras" align="center" width="60%">
+                            <td style="border-style:none">
+                                <span>Laikotarpis:</span>
+                                <span t-esc="periodas(slips[0])"/>
+                            </td>
+                        </table>
+                        <p>
+                        </p>
+
+                        <table class="main-payslip-run-report-table">
+
+                            <thead>
+                                <!--HEADERS START-->
+                                <tr>
+                                    <!-- Essential info -->
+                                    <th rowspan="2">Eilės nr.</th>
+    <!--                                <th rowspan="2">Tabelio numeris</th>-->
+                                    <th rowspan="2">Darbuotojas</th>
+
+                                    <!-- Time info -->
+                                    <th t-att-colspan="time_colspan">Laiko priskaitymai</th>
+
+                                    <!-- Additions info -->
+                                    <th t-att-colspan="additions_colspan">Priskaitymai, Eur</th>
+
+
+                                    <!-- Deductions info -->
+                                    <th colspan="5">Išskaitymai, Eur</th>
+
+                                    <!-- Payment info -->
+                                    <th t-att-colspan="payment_colspan">Išmokėti, Eur</th>
+
+                                    <!-- Employer tax info -->
+                                    <th t-att-colspan="employer_taxes_colspan">Darbdavio kaštai, Eur</th>
+
+                                    <!-- Totals info -->
+                                    <th>Iš viso, Eur</th>
+                                </tr>
+
+                                <tr>
+                                    <!-- Time info -->
+                                    <th>Maksimali darbo laiko trukmė</th>
+                                    <th>Dirbtas laikas</th>
+                                    <t t-if="print_shorter_before_holidays">
+                                        <th>Trumpinimas prieš šventes</th>
+                                    </t>
+                                    <th>Ligos;<br/>Prastovos;<br/>Atostogos;</th>
+                                    <th>Neapmokamas nedirbtas laikas<sup>[1]</sup></th>
+
+                                    <!-- Additions info -->
+                                    <th>Darbo užmokestis</th>
+                                    <t t-if="print_downtime_amounts">
+                                        <th>Prastovos išmokos</th>
+                                    </t>
+                                    <t t-if="print_illness_amounts">
+                                        <th>Ligos pašalpos</th>
+                                    </t>
+                                    <th>Atostoginiai ir nepanaudotų atostogų išmokos</th>
+                                    <th>Priedai ir premijos</th>
+                                    <t t-if="print_other_additions">
+                                        <th>Kitos išmokos</th>
+                                    </t>
+                                    <th style="font-weight: bold !important;">Iš viso</th>
+
+                                    <!-- Deductions info -->
+                                    <th>GPM<sup>[2]</sup></th>
+                                    <th>PSD ir VSD<sup>[3]</sup></th>
+                                    <th>Papildomos pensijų kaupimo įmokos</th>
+                                    <th>Kita<sup>[4]</sup></th>
+                                    <th style="font-weight: bold !important;">Iš viso</th>
+
+                                    <!-- Payment info -->
+                                    <th style="font-weight: bold !important;">Darbo užmokesčio</th>
+                                    <t t-if="print_advance_payment_amounts">
+                                        <th>Darbo užmokesčio avanso</th>
+                                    </t>
+                                    <t t-if="print_late_payment_amounts">
+                                        <th>Vėluojančių mokėjimų</th>
+                                    </t>
+                                    <t t-if="print_other_payment_amounts">
+                                        <th>Kitų mokėjimų<sup>[5]</sup></th>
+                                    </t>
+                                    <t t-if="print_advance_payment_amounts or print_late_payment_amounts or print_other_payment_amounts">
+                                        <th style="font-weight: bold !important;">Iš viso</th>
+                                    </t>
+                                    <t t-if="print_sodra_grindys_vals">
+                                        <th>Darbuotojo socialinio draudimo įmokos pritraukimas iki grindų</th>
+                                        <th>Darbdavio socialinio draudimo įmokos pritraukimas iki grindų</th>
+                                        <th>Darbdaviui tenkantis mokestis socialiniam draudimui</th>
+                                        <th style="font-weight: bold !important;">Iš viso</th>
+                                    </t>
+                                    <t t-else="">
+                                        <th>Darbdaviui tenkantis mokestis socialiniam draudimui</th>
+                                    </t>
+                                    <th style="font-weight: bold !important;">Darbo vietos kaštai</th>
+                                </tr>
+                                <!--HEADERS END-->
+                            </thead>
+                            <tbody>
+                                <t t-set="i" t-value="0"/>
+                                <t t-foreach="slips" t-as="s">
+                                    <t t-set="i" t-value="i+1"/>
+                                    <t t-set="amounts" t-value="payslip_amounts(s)"/>
+                                    <t t-set="empl_payments" t-value="[payment for payment in payments if payment['contract_id'] == s.contract_id.id and payment['type'] not in ['benefit_in_kind_employer_pays_taxes','benefit_in_kind_employee_pays_taxes']]"/>
+                                    <t t-set="payment_amounts" t-value="sum(payment['neto'] for payment in empl_payments)"/>
+                                    <t t-set="num_of_emp_slips" t-value="brotherly_slips[s.id]"/>
+                                    <tr class="slip-data">
+                                        <td t-esc="i"/>
+    <!--                                    <td t-esc="s.tabelio_numeris"/>-->
+                                        <td style="text-align: left !important;">
+                                            <span t-esc="s.employee_id.name"/>
+                                            <t t-if="num_of_emp_slips > 1">
+                                                <br/>
+                                                <span t-esc="'(' + s.contract_id.name + ')'"/>
+                                            </t>
+                                        </td>
+                                        <td style="text-align: center !important;">
+                                            <span t-esc="remove(max_laikas_d(s)) + ' d.d.'"/>
+                                            <br/>
+                                            <span t-esc="round_time(max_laikas_h(s)) + ' val.'"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="remove(dirbtas_laikas_d(s)) + ' d.d.'"/>
+                                            <br/>
+                                            <span t-esc="round_time(dirbtas_laikas_h(s)) + ' val.'"/>
+                                        </td>
+                                        <t t-if="print_shorter_before_holidays">
+                                            <td>
+                                                <t t-set="trumpinimas_h" t-value="trumpinimas_pries_sventes_h(s)"/>
+                                                <t t-if="trumpinimas_h != 0">
+                                                    <span t-esc="round_time(trumpinimas_h) + ' val.'"/>
+                                                </t>
+                                            </td>
+                                        </t>
+                                        <td>
+                                            <t t-set="absence_time_days"
+                                               t-value="atostogos_d(s)+prastovos_d(s)+virsyta_norma_d(s)+neivykdyta_norma_d(s)"/>
+                                            <t t-set="absence_time_hours"
+                                               t-value="atostogos_h(s) + prastovos_h(s) + neivykdyta_norma_h(s) + virsyta_norma_h(s)"/>
+                                            <t t-if="absence_time_days != 0 or absence_time_hours != 0">
+                                                <span t-esc="remove(absence_time_days) + ' d.d.'"/>
+                                                <br/>
+                                                <span t-esc="round_time(absence_time_hours) + ' val.'"/>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-set="nemokamos_atostogos_ir_nedarbingumas_d"
+                                               t-value="nemokamos_atostogos_d(s) + neapmokamas_nedarbingumas_d(s)"/>
+                                            <t t-if="nemokamos_atostogos_ir_nedarbingumas_d != 0">
+                                                <span t-esc="remove(nemokamos_atostogos_ir_nedarbingumas_d) + ' d.d.'"/>
+                                                <br/>
+                                                <span t-esc="round_time(nemokamos_atostogos_h(s)+neapmokamas_nedarbingumas_h(s)) + ' val.'"/>
+                                            </t>
+                                        </td>
+
+                                        <td t-esc="replace(formatLang(amounts['regular_amount'] + amounts['extra_amount_excl_downtime'], digits=2))"/>
+                                        <t t-if="print_downtime_amounts">
+                                            <td t-esc="replace(formatLang(amounts['downtime_amount'], digits=2))"/>
+                                        </t>
+                                        <t t-if="print_illness_amounts">
+                                            <td t-esc="replace(formatLang(amounts['liga_amount'], digits=2))"/>
+                                        </t>
+                                        <td t-esc="replace(formatLang(amounts['all_holidays_amount'] + amounts['tevystes_amount'], digits=2))"/>
+                                        <td t-esc="replace(formatLang(amounts['other_bonuses_amount'], digits=2))"/>
+                                        <t t-if="print_other_additions">
+                                            <td t-esc="replace(formatLang(amounts['other_additions_amount'], digits=2))"/>
+                                        </t>
+                                        <td style="font-weight: bold !important;"
+                                            t-esc="replace(formatLang(amounts['total_additions_amount'], digits=2))"/>
+                                        <td t-esc="replace(formatLang(amounts['gpm_amount'], digits=2))"/>
+                                        <td t-esc="replace(formatLang(amounts['social_security_excl_pension_amount'], digits=2))"/>
+                                        <td t-esc="replace(formatLang(amounts['social_pension_security_amount'], digits=2))"/>
+                                        <td t-esc="replace(formatLang(amounts['other_deductions_amount'], digits=2))"/>
+                                        <td style="font-weight: bold !important;"
+                                            t-esc="replace(formatLang(amounts['total_deductions_amount'], digits=2))"/>
+                                        <td style="font-weight: bold !important;"
+                                            t-esc="replace(formatLang(amounts['total_additions_amount']-amounts['total_deductions_amount'], digits=2))"/>
+                                        <t t-if="print_advance_payment_amounts">
+                                            <td t-esc="replace(formatLang(amounts['advance_payment_amount'], digits=2))"/>
+                                        </t>
+                                        <t t-if="print_late_payment_amounts">
+                                            <td t-esc="replace(formatLang(amounts['late_payments_amount'], digits=2))"/>
+                                        </t>
+                                        <t t-if="print_other_payment_amounts">
+                                            <td t-esc="replace(formatLang(payment_amounts, digits=2))"/>
+                                        </t>
+                                        <t t-if="print_advance_payment_amounts or print_late_payment_amounts or print_other_payment_amounts">
+                                            <td style="font-weight: bold !important;" t-esc="replace(formatLang(
+                                            amounts['total_additions_amount']-amounts['total_deductions_amount']-
+                                            amounts['advance_payment_amount']+amounts['late_payments_amount']+payment_amounts, digits=2))"/>
+                                        </t>
+                                        <t t-if="print_sodra_grindys_vals">
+                                            <td t-esc="replace(formatLang(amounts['SODRA_employee_floor_amount'], digits=2))"/>
+                                            <td t-esc="replace(formatLang(amounts['SODRA_employer_floor_amount'], digits=2))"/>
+                                            <td t-esc="replace(formatLang(amounts['SODRA_employer_amount'], digits=2))"/>
+                                            <td style="font-weight: bold !important;"
+                                                t-esc="replace(formatLang(amounts['SODRA_total_amount'], digits=2))"/>
+                                        </t>
+                                        <t t-else="">
+                                            <td t-esc="replace(formatLang(amounts['SODRA_total_amount'], digits=2))"/>
+                                        </t>
+                                        <td style="font-weight: bold !important;"
+                                            t-esc="replace(formatLang(amounts['labor_costs_amount'], digits=2))"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <!--Don't add tfoot since this sums all the records and tfoot is displayed on each page-->
+                            <t t-set="payment_amounts"
+                               t-value="sum(payment['neto'] for payment in payments if payment['contract_id'] and payment['type'] not in ['benefit_in_kind_employer_pays_taxes','benefit_in_kind_employee_pays_taxes'])"/>
+                            <tr class="total-slip-data" >
+                                <td colspan="2" style="text-align: right; font-weight: bold !important;">Viso:</td>
+                                <td>
+                                    <span t-esc="remove(max_laikas_d(slips)) + ' d.d.'"/>
+                                    <br/>
+                                    <span t-esc="round_time(max_laikas_h(slips)) + ' val.'"/>
+                                </td>
+                                <td>
+                                    <span t-esc="remove(dirbtas_laikas_d(slips)) + ' d.d.'"/>
+                                    <br/>
+                                    <span t-esc="round_time(dirbtas_laikas_h(slips)) + ' val.'"/>
+                                </td>
+                                <t t-if="print_shorter_before_holidays">
+                                    <td>
+                                        <span t-esc="round_time(trumpinimas_pries_sventes_h(slips)) + ' val.'"/>
+                                    </td>
+                                </t>
+                                <td>
+                                    <t t-set="absence_time_days"
+                                       t-value="atostogos_d(slips)+prastovos_d(slips)+virsyta_norma_d(slips)+neivykdyta_norma_d(slips)"/>
+                                    <t t-set="absence_time_hours"
+                                       t-value="atostogos_h(slips) + prastovos_h(slips) + neivykdyta_norma_h(slips) + virsyta_norma_h(slips)"/>
+                                    <span t-esc="remove(absence_time_days) + ' d.d.'"/>
+                                    <br/>
+                                    <span t-esc="round_time(absence_time_hours) + ' val.'"/>
+                                </td>
+                                <td>
+                                    <t t-set="nemokamos_atostogos_ir_nedarbingumas_d"
+                                       t-value="nemokamos_atostogos_d(slips) + neapmokamas_nedarbingumas_d(slips)"/>
+                                    <span t-esc="remove(nemokamos_atostogos_ir_nedarbingumas_d) + ' d.d.'"/>
+                                    <br/>
+                                    <span t-esc="round_time(nemokamos_atostogos_h(slips)+neapmokamas_nedarbingumas_h(slips)) + ' val.'"/>
+                                </td>
+                                <td t-esc="replace(formatLang(total_amounts['regular_amount'] +
+                                           total_amounts['extra_amount_excl_downtime'], digits=2))"/>
+                                <t t-if="print_downtime_amounts">
+                                    <td t-esc="replace(formatLang(total_amounts['downtime_amount'], digits=2))"/>
+                                </t>
+                                <t t-if="print_illness_amounts">
+                                    <td t-esc="replace(formatLang(total_amounts['liga_amount'], digits=2))"/>
+                                </t>
+                                <td t-esc="replace(formatLang(total_amounts['all_holidays_amount'] +
+                                           total_amounts['tevystes_amount'], digits=2))"/>
+                                <td t-esc="replace(formatLang(total_amounts['other_bonuses_amount'], digits=2))"/>
+                                <t t-if="print_other_additions">
+                                    <td t-esc="replace(formatLang(total_amounts['other_additions_amount'], digits=2))"/>
+                                </t>
+                                <td style="font-weight: bold !important;"
+                                    t-esc="replace(formatLang(total_amounts['total_additions_amount'], digits=2))"/>
+                                <td t-esc="replace(formatLang(total_amounts['gpm_amount'], digits=2))"/>
+                                <td t-esc="replace(formatLang(total_amounts['social_security_excl_pension_amount'], digits=2))"/>
+                                <td t-esc="replace(formatLang(total_amounts['social_pension_security_amount'], digits=2))"/>
+                                <td t-esc="replace(formatLang(total_amounts['other_deductions_amount'], digits=2))"/>
+                                <td style="font-weight: bold !important;"
+                                    t-esc="replace(formatLang(total_amounts['total_deductions_amount'], digits=2))"/>
+                                <td style="font-weight: bold !important;"
+                                    t-esc="replace(formatLang(total_amounts['total_additions_amount']-
+                                    total_amounts['total_deductions_amount'], digits=2))"/>
+                                <t t-if="print_advance_payment_amounts">
+                                    <td t-esc="replace(formatLang(total_amounts['advance_payment_amount'], digits=2))"/>
+                                </t>
+                                <t t-if="print_late_payment_amounts">
+                                    <td t-esc="replace(formatLang(total_amounts['late_payments_amount'], digits=2))"/>
+                                </t>
+                                <t t-if="print_other_payment_amounts">
+                                    <td t-esc="replace(formatLang(payment_amounts, digits=2))"/>
+                                </t>
+                                <t t-if="print_advance_payment_amounts or print_late_payment_amounts or print_other_payment_amounts">
+                                    <td style="font-weight: bold !important;" t-esc="replace(formatLang(
+                                    total_amounts['total_additions_amount']-total_amounts['total_deductions_amount']-
+                                    total_amounts['advance_payment_amount']+total_amounts['late_payments_amount']+payment_amounts, digits=2))"/>
+                                </t>
+                                <t t-if="print_sodra_grindys_vals">
+                                    <td t-esc="replace(formatLang(total_amounts['SODRA_employee_floor_amount'], digits=2))"/>
+                                    <td t-esc="replace(formatLang(total_amounts['SODRA_employer_floor_amount'], digits=2))"/>
+                                    <td t-esc="replace(formatLang(total_amounts['SODRA_employer_amount'], digits=2))"/>
+                                    <td style="font-weight: bold !important;"
+                                        t-esc="replace(formatLang(total_amounts['SODRA_total_amount'], digits=2))"/>
+                                </t>
+                                <t t-else="">
+                                    <td t-esc="replace(formatLang(total_amounts['SODRA_total_amount'], digits=2))"/>
+                                </t>
+                                <td style="font-weight: bold !important;"
+                                    t-esc="replace(formatLang(total_amounts['labor_costs_amount'], digits=2))"/>
+                            </tr>
+                        </table>
+                        <div style="font-size: 10px; margin-left: 15px;">
+                            <ol>
+                                <li>Nemokamų atostogų ir neapmokamo nedarbingumo trukmė</li>
+                                <li>Gyventojų pajamų mokestis</li>
+                                <li>Privalomojo sveikatos draudimo ir valstybinio socialinio draudimo (išskyrus papildomą pensijų kaupimą) įmokos</li>
+                                <li>Kitos išskaitos</li>
+                                <t t-if="print_other_payment_amounts">
+                                    <li>Dienpinigiai ir kompensacijos</li>
+                                </t>
+                            </ol>
+                        </div>
+                    </t>
+                    <t t-if="payments">
+                        <div class="payment-table-section" style="display: flex; flex-wrap: wrap;">
+                            <!--payment_types = sorted payment types from doc args-->
+                            <t t-foreach="payment_types" t-as="payment_type">
+                                <t t-set="payments_by_type" t-value="[p for p in payments if p['type'] == payment_type]"/>
+                                <div class="payment-table-container" style="display: inline-block;">
+                                    <span class="payment-table-title" style="font-weight: bold; page-break-after: avoid">
+                                        <t t-esc="payments_by_type[0]['type_str']"/>
+                                    </span>
+                                    <table class="payment-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Vardas Pavardė</th>
+                                                <th>Sutarties nr.</th>
+                                                <th>Suma</th>
+                                                <th>GPM</th>
+                                                <t t-if="payment_type in ['benefit_in_kind_employer_pays_taxes', 'benefit_in_kind_employee_pays_taxes']">
+                                                    <th>SoDra</th>
+                                                </t>
+                                                <t t-if="payment_type not in ['benefit_in_kind_employer_pays_taxes', 'benefit_in_kind_employee_pays_taxes']">
+                                                    <th>Išmokėti</th>
+                                                </t>
+                                            </tr>
+                                        </thead>
+                                        <t t-set="payment_type_total" t-value="0.0"/>
+                                        <t t-set="payment_type_gpm_total" t-value="0.0"/>
+                                        <t t-set="payment_type_sodra_total" t-value="0.0"/>
+                                        <t t-set="payment_type_neto_total" t-value="0.0"/>
+                                        <tbody>
+                                            <t t-foreach="payments_by_type" t-as="payment">
+                                                <tr>
+                                                    <td><span t-esc="payment['employee']"/></td>
+                                                    <td><span t-esc="payment['contract']"/></td>
+                                                    <td><span t-esc="replace(formatLang(payment['bruto'], digits=2))"/></td>
+                                                    <td><span t-esc="replace(formatLang(payment['gpm'], digits=2))"/></td>
+                                                    <t t-if="payment_type in ['benefit_in_kind_employer_pays_taxes', 'benefit_in_kind_employee_pays_taxes']">
+                                                        <td><span t-esc="replace(formatLang(payment['sodra'], digits=2))"/></td>
+                                                    </t>
+                                                    <t t-if="payment_type not in ['benefit_in_kind_employer_pays_taxes', 'benefit_in_kind_employee_pays_taxes']">
+                                                        <td><span t-esc="replace(formatLang(payment['neto'], digits=2))"/></td>
+                                                    </t>
+                                                </tr>
+                                                <t t-set="payment_type_total" t-value="payment_type_total+payment['bruto']"/>
+                                                <t t-set="payment_type_gpm_total" t-value="payment_type_gpm_total+payment['gpm']"/>
+                                                <t t-set="payment_type_sodra_total" t-value="payment_type_sodra_total+payment['sodra']"/>
+                                                <t t-set="payment_type_neto_total" t-value="payment_type_neto_total+payment['neto']"/>
+                                            </t>
+                                            <tr>
+                                                <td colspan="2" style="font-weight: bold">Viso</td>
+                                                <td style="font-weight: bold">
+                                                    <span t-esc="replace(formatLang(payment_type_total, digits=2))"/>
+                                                </td>
+                                                <td style="font-weight: bold">
+                                                    <span t-esc="replace(formatLang(payment_type_gpm_total, digits=2))"/>
+                                                </td>
+                                                <t t-if="payment_type in ['benefit_in_kind_employer_pays_taxes', 'benefit_in_kind_employee_pays_taxes']">
+                                                    <td style="font-weight: bold">
+                                                        <span t-esc="replace(formatLang(payment_type_sodra_total, digits=2))"/>
+                                                    </td>
+                                                </t>
+                                                <t t-if="payment_type not in ['benefit_in_kind_employer_pays_taxes', 'benefit_in_kind_employee_pays_taxes']">
+                                                    <td style="font-weight: bold">
+                                                        <span t-esc="replace(formatLang(payment_type_neto_total, digits=2))"/>
+                                                    </td>
+                                                </t>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                    <t t-if="slips or payments">
+                        <table class="tax-table" style="page-break-inside: avoid;">
+                            <tr>
+                                <th>Mokesčiai</th>
+                                <th>Suma</th>
+                                <th>Įmokos kodas</th>
+                            </tr>
+                            <tr>
+                                <td>SODRA</td>
+                                <td><span t-esc="replace(formatLang(total_amounts['SODRA_total_amount']+
+                                total_amounts['social_security_excl_pension_amount']+
+                                total_amounts['social_pension_security_amount']+
+                                sum(payment['sodra'] for payment in payments if payment['type'] in ['rent', 'auto_rent', 'other', 'benefit_in_kind_employer_pays_taxes']), digits=2))"/></td>
+                                <td>252</td>
+                            </tr>
+                            <t t-set="benefit_in_kind_gpm"
+                               t-value="sum(payment['gpm'] for payment in payments if payment['type'] == 'benefit_in_kind_employer_pays_taxes')"/>
+                            <tr>
+                                <td>GPM nuo A kl. pajamų susijusių su darbo santykiais</td>
+                                <td><span t-esc="replace(formatLang(total_amounts['gpm_amount'] + benefit_in_kind_gpm, digits=2))"/></td>
+                                <td>1311</td>
+                            </tr>
+                            <tr>
+                                <td>GPM nuo A kl. pajamų nesusijusių su darbo užmokesčiu</td>
+                                <td><span t-esc="replace(formatLang(sum(payment['gpm'] for payment in payments if payment['type'] in ['rent', 'auto_rent', 'other']), digits=2))"/></td>
+                                <td>1411</td>
+                            </tr>
+                        </table>
+                    </t>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

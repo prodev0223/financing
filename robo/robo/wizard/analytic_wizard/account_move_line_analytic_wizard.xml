@@ -1,0 +1,42 @@
+<odoo>
+    <data>
+    <!--Forms-->
+        <record id="aml_analytics_wizard_form" model="ir.ui.view">
+        <field name="name">aml.analytics.wizard.form</field>
+        <field name="model">account.move.line.analytic.wizard</field>
+        <field name="robo_front" eval="True"/>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="locked_analytic_period" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('locked_analytic_period', '=', False)]}">
+                        <field name="locked_analytic_period_message"/>
+                    </div>
+                <group string="Keisti analitinę sąskaitą"/>
+                    <div>
+                <p>
+                    Šis vedlys pakeis analitines sąskaitas visoms sąskaitos faktūros eilutėms.<br/>
+                    Jeigu pageidaujate analitines sąskaitas keisti kiekvienai eilutei atskirai, <br/>
+                    naudokite mygtuką esantį sąskaitos faktūros eilutėje<br/>
+                </p>
+                </div>
+                <group>
+                    <field name="tax_line_warning" invisible="1"/>
+                    <field name="analytic_id" options="{'no_create': True, 'no_open': True}"/>
+                </group>
+                </sheet>
+                <footer>
+                    <button name="change_analytics" type="object" string="Keisti analitiką"
+                            class="oe_highlight" attrs="{'invisible': [('tax_line_warning', '=', True)]}"/>
+                    <button name="change_analytics" type="object" string="Keisti analitiką"
+                            class="oe_highlight" attrs="{'invisible': [('tax_line_warning', '!=', True)]}"
+                            confirm="Keičiate PVM eilutės analitiką, tačiau nepasirinkote
+                            visų šiai PVM eilutei priklausančių sąskaitos eilučių, ar norite tęsti?"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    </data>
+</odoo>

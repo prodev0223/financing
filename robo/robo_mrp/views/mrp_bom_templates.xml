@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Table templates that are rendered in BOM form view-->
+        <template id="bom_line_template">
+            <tr t-att-style="style">
+                <td>
+                    <t t-esc='hierarchy_level'/>
+                </td>
+                <td>
+                    <t t-esc='product_name'/>
+                </td>
+                <td>
+                    <t t-esc='location_src_name'/>
+                </td>
+                <td>
+                    <t t-esc='product_qty'/>
+                </td>
+                <td>
+                    <t t-esc='product_uom_name'/>
+                </td>
+                <td>
+                    <t t-esc='average_cost'/>
+                </td>
+            </tr>
+        </template>
+        <template id="bom_line_table_template">
+            <div class="table-responsive">
+                <table class="o_list_view table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>Hierarchijos lygis</th>
+                            <th>Produktas</th>
+                            <th>Žaliavų vieta</th>
+                            <th>Sunaudojamas kiekis</th>
+                            <th>Matavimo vienetas</th>
+                            <th>Vid. savikaina</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-raw='table_body'/>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+        <template id="bom_line_table_print_template">
+            <table class="o_list_view table table-condensed main_table">
+                <thead>
+                    <tr>
+                        <th>Hierarchijos lygis</th>
+                        <th>Produktas</th>
+                        <th>Žaliavų vieta</th>
+                        <th>Sunaudojamas kiekis</th>
+                        <th>Matavimo vienetas</th>
+                        <th>Vid. savikaina</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-raw='table_body'/>
+                </tbody>
+            </table>
+        </template>
+        <!--Table templates that are rendered in Production form view-->
+        <template id="bom_line_production_template">
+            <tr t-att-style="style">
+                <td>
+                    <t t-esc='hierarchy_level'/>
+                </td>
+                <td>
+                    <t t-esc='product_name'/>
+                </td>
+                <td>
+                    <t t-esc='product_uom_name'/>
+                </td>
+                <td>
+                    <t t-esc='location_src_name'/>
+                </td>
+                <td>
+                    <t t-esc='product_qty'/>
+                </td>
+                <td>
+                    <t t-esc='quantity_available'/>
+                </td>
+                <td>
+                    <t t-esc='average_cost'/>
+                </td>
+            </tr>
+        </template>
+        <template id="bom_line_production_table_template">
+            <div class="table-responsive">
+                <table class="o_list_view table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>Hierarchijos lygis</th>
+                            <th>Produktas</th>
+                            <th>Matavimo vienetas</th>
+                            <th>Žaliavų vieta</th>
+                            <th>Sunaudojamas kiekis</th>
+                            <th>Panaudojamas (Turimas) kiekis</th>
+                            <th>Vid. savikaina</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-raw='table_body'/>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+    </data>
+</odoo>

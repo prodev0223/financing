@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_nsoft_product_category" model="ir.ui.view">
+            <field name="name">nsoft.product.category.tree</field>
+            <field name="model">nsoft.product.category</field>
+            <field name="arch" type="xml">
+                <tree create="0" edit="1" delete="1"
+                      decoration-success="state == 'working'"
+                      decoration-danger="state == 'failed'">
+                    <field name="name"/>
+                    <field name="external_id"/>
+                    <field name="product_category_id"/>
+                    <field name="parent_product_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_nsoft_product_category" model="ir.actions.act_window">
+            <field name="name">Suminių produktų kategorijos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.product.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_nsoft_product_category"/>
+        </record>
+        <!--Forms-->
+        <record id="form_nsoft_product_category" model="ir.ui.view">
+            <field name="name">nsoft.product.category.form</field>
+            <field name="model">nsoft.product.category</field>
+            <field name="arch" type="xml">
+                <form string="nSoft Suminių produktų kategorijos"
+                      create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                        <label string="Kategorijos pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                        </div>
+                        <group>
+                            <field name="external_id"/>
+                            <field name="product_category_id"/>
+                            <field name="parent_product_id"/>
+                            <field name="forced_tax_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+        <record id="search_nsoft_product_category" model="ir.ui.view">
+            <field name="name">Produktų kategorijų paieška</field>
+            <field name="model">nsoft.product.category</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="working" string="Būsena: Importuota" domain="[('state','=','working')]"/>
+                    <filter name="failed" string="Būsena: Klaida kuriant sąskaitą" domain="[('state','=','failed')]"/>
+                    <separator/>
+                    <field name="name" filter_domain="[('name','ilike',self)]"/>
+                    <field name="external_id" filter_domain="[('external_id','ilike',self)]"/>
+                    <field name="product_category_id"/>
+                    <field name="parent_product_id"/>
+                </search>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Kategorijos"
+                id="menu_nsoft_product_category_base"
+                sequence="70"
+                parent="nsoft_sum_accounting"
+                groups="nsoft.group_nsoft_sum_accounting"
+        />
+        <menuitem
+                name="Suminių produktų kategorijos"
+                id="nsoft_product_category_menu"
+                sequence="45"
+                action="action_open_nsoft_product_category"
+                parent="menu_nsoft_product_category_base"
+                groups="nsoft.group_nsoft_sum_accounting"
+        />
+    </data>
+</odoo>

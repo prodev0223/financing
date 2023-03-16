@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_hidden" model="res.groups">
+            <field name="name">Hidden</field>
+        </record>
+        <record id="e_document.e_document_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_scanning_mode.robo_hidden')])]"/>
+        </record>
+        <record id="robo.menu_employees" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_scanning_mode.robo_hidden')])]"/>
+        </record>
+        <record id="robo.menu_employees_search" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_scanning_mode.robo_hidden')])]"/>
+        </record>
+        <record id="robo.menu_kita" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_scanning_mode.robo_hidden')])]"/>
+        </record>
+        <record id="robo.menu_klientai" model="ir.ui.menu">
+            <field name="parent_id" ref="robo.menu_start"/>
+        </record>
+        <record id="robo.menu_ataskaitos" model="ir.ui.menu">
+            <field name="parent_id" ref="robo.menu_start"/>
+        </record>
+        <record id="hide_robo_settings" model="ir.ui.view">
+            <field name="name">hide.robo.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='import_partners']" position="replace"/>
+                <xpath expr="//group[@name='import_products']" position="replace"/>
+                <xpath expr="//group[@name='import_customer_invoices']" position="replace"/>
+                <xpath expr="//group[@name='import_supplier_invoices']" position="replace"/>
+                <xpath expr="//group[@name='import_financials']" position="replace"/>
+                <xpath expr="//group[@name='import_assets']" position="replace"/>
+                <xpath expr="//group[@name='import_employees']" position="replace"/>
+                <xpath expr="//group[@name='import_aml']" position="replace"/>
+                <xpath expr="//group[@name='import_du']" position="replace"/>
+            </field>
+        </record>
+        <record id="res_partner_employee_tree" model="ir.ui.view">
+            <field name="name">res.partner.employee.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0">
+                    <field name="name"/>
+                    <button name="open_cashbalance_wizard" type="object" string="Balansas" icon="fa-print"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_reportable_employees_action">
+            <field name="name">Darbuotojai</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo</field>
+            <field name="view_id" ref="res_partner_employee_tree"/>
+            <field name="context" eval="{'robo_header':{}}"/>
+            <field name="domain">[('is_employee','=',True)]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('res_partner_employee_tree')})]"/>
+            <field name="help"></field>
+        </record>
+        <menuitem id="menu_employees_partner" parent="robo.menu_start" name="Darbuotojai" sequence="50"
+                  action="open_reportable_employees_action"/>
+        <record model="ir.ui.menu" id="menu_employees_partner">
+            <field name="web_icon">icon-man,none,none</field>
+        </record>
+    </data>
+</odoo>
+

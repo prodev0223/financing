@@ -1,0 +1,83 @@
+<odoo>
+    <data>
+        <record id="form_res_users_chart_settings_forecast" model="ir.ui.view">
+            <field name="name">res.users.chart.settings.forecast</field>
+            <field name="model">res.users.chart.settings</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="Prognozės grafiko nustatymai">
+                            <field name="average_expenses_forecast"/>
+                            <field name="average_income_forecast"/>
+                            <field name="average_du_forecast"/>
+                            <field name="include_income"/>
+                            <field name="include_expenses"/>
+                        </group>
+                        <group string="Prognozuojamų išlaidų/pajamų eilutės">
+                            <field name="settings_line_ids" nolabel="1" mode="tree,kanban">
+                                <tree class="robo_tree_in_form" editable="bottom">
+                                    <field name="expected_date" required="True"/>
+                                    <field name="expected_amount" required="True"/>
+                                </tree>
+                                <kanban>
+                                    <field name="expected_date"/>
+                                    <field name="expected_amount"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                <div class="row">
+                                                    <div class="col-xs-12 text-muted">
+                                                        <span>
+                                                            Prognozuojama data:
+                                                            <t t-esc="record.expected_date.value"/>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12 text-muted">
+                                                        <span>
+                                                            Prognozuojama suma (kompanijos valiuta):
+                                                            <t t-esc="record.expected_amount.value"/>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_chart_settings" class="btn-primary" string="Išsaugoti" type="object"/>
+                        <button special="cancel" class="btn-default" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="form_res_users_chart_settings_line_forecast" model="ir.ui.view">
+            <field name="name">res.users.chart.settings.line.forecast</field>
+            <field name="model">res.users.chart.settings.line</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="expected_date"/>
+                            <field name="expected_amount"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_res_users_chart_settings_forecast" model="ir.actions.act_window">
+            <field name="name">Prognozės grafiko nustatymai</field>
+            <field name="res_model">res.users.chart.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="form_res_users_chart_settings_forecast"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

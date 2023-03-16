@@ -1,0 +1,108 @@
+<odoo>
+    <data>
+        <!--TREE-->
+        <record id="ebay_tax_rule_view_tree" model="ir.ui.view">
+            <field name="name">ebay.tax.rule.view.tree</field>
+            <field name="model">ebay.tax.rule</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1" import="0">
+                    <field name="name"/>
+                    <field name="rule_type"/>
+                    <field name="origin_country_id"
+                           options="{'no_open': True, 'no_create': True}" required="1"/>
+                    <field name="destination_country_id"
+                           options="{'no_open': True, 'no_create': True}" required="1"/>
+                    <field name="product_zero_rate_tax_id"/>
+                    <field name="service_zero_rate_tax_id"/>
+                </tree>
+            </field>
+        </record>
+        <!--Forms-->
+        <record id="ebay_tax_rule_view_form" model="ir.ui.view">
+            <field name="name">ebay.tax.rule.view.form</field>
+            <field name="model">ebay.tax.rule</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Ebay tax rule" create="0" delete="0">
+                    <sheet>
+                        <div>
+                            <label string="Rule"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group string="Main settings" colspan="1" col="2">
+                            <field name="rule_type" required="1"/>
+                            <field name="origin_country_id"
+                                   attrs="{'invisible': [('rule_type', '!=', 'country_to_country')]}"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                            <field name="destination_country_id"
+                                   attrs="{'invisible': [('rule_type', '!=', 'country_to_country')]}"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                        <group string="Zero rate tax information"
+                               groups="robo_basic.group_robo_premium_accountant">
+                            <field name="product_zero_rate_tax_id" required="1"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                            <field name="service_zero_rate_tax_id" required="1"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="ebay_tax_rule_view_search" model="ir.ui.view">
+            <field name="name">ebay.tax.rule.view.search</field>
+            <field name="model">ebay.tax.rule</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="rule_type"/>
+                    <field name="origin_country_id"/>
+                    <field name="destination_country_id"/>
+                    <group>
+                        <filter name="group_origin_country_id" string="Origin country"
+                                context="{'group_by':'origin_country_id'}"/>
+                        <filter name="group_destination_country_id" string="Destination country"
+                                context="{'group_by':'destination_country_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_ebay_tax_rule" model="ir.actions.act_window">
+            <field name="name">Ebay tax rules</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ebay.tax.rule</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="ebay_tax_rule_view_tree"/>
+            <field name="robo_front" eval="1"/>
+            <field name="context">{'robo_header': {}, 'active_test': False}</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('ebay.ebay_tax_rule_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('ebay.ebay_tax_rule_view_form')})]"
+            />
+        </record>
+        <record id="action_open_ebay_tax_rule_back" model="ir.actions.act_window">
+            <field name="name">Ebay tax rules</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ebay.tax.rule</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="ebay_tax_rule_view_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_ebay_tax_rule_back"
+                name="Tax rules"
+                sequence="1"
+                action="action_open_ebay_tax_rule_back"
+                parent="menu_ebay_management_root"
+        />
+    </data>
+</odoo>

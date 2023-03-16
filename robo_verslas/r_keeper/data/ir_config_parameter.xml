@@ -1,0 +1,61 @@
+<odoo>
+    <data noupdate="1">
+        <!--Client specific settings-->
+        <record id="r_keeper_server_address" model="ir.config_parameter">
+            <field name="key">r_keeper_server_address</field>
+            <field name="value"> </field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="r_keeper_user_name" model="ir.config_parameter">
+            <field name="key">r_keeper_user_name</field>
+            <field name="value"> </field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="r_keeper_password" model="ir.config_parameter">
+            <field name="key">r_keeper_password</field>
+            <field name="value"> </field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="r_keeper_server_root_directory" model="ir.config_parameter">
+            <field name="key">r_keeper_server_root_directory</field>
+            <field name="value"> </field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <!--Global settings-->
+        <record id="r_keeper_to_import_sub_dir" model="ir.config_parameter">
+            <field name="key">r_keeper_to_import_sub_dir</field>
+            <field name="value">TO_IMPORT</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="r_keeper_imported_sub_dir" model="ir.config_parameter">
+            <field name="key">r_keeper_imported_sub_dir</field>
+            <field name="value">IMPORTED</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="r_keeper_imported_error_sub_dir" model="ir.config_parameter">
+            <field name="key">r_keeper_imported_error_sub_dir</field>
+            <field name="value">ERROR</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="r_keeper_processed_export_sub_dir" model="ir.config_parameter">
+            <field name="key">r_keeper_processed_sub_dir</field>
+            <field name="value">PROCESSED_EXPORTS</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="r_keeper_exported_sub_dir" model="ir.config_parameter">
+            <field name="key">r_keeper_exported_sub_dir</field>
+            <field name="value">EXPORTED</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="r_keeper_local_temp_directory" model="ir.config_parameter">
+            <field name="key">r_keeper_local_temp_directory</field>
+            <field name="value">/r_keeper_tmp</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="r_keeper_invoice_allowed_diff_amount" model="ir.config_parameter">
+            <field name="key">r_keeper_invoice_allowed_diff_amount</field>
+            <field name="value">0.03</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+    </data>
+</odoo>

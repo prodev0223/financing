@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="invoice_delivery_wizard_form" model="ir.ui.view">
+            <field name="name">invoice.delivery.wizard.form</field>
+            <field name="model">invoice.delivery.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Create Delivery">
+                    <group>
+                        <field name="location_id" string="Atsargų Vieta"/>
+                        <field name="delivery_date" string="Pristatymo data"/>
+                    </group>
+                    <field name="invoice_id" invisible="1"/>
+                    <field name="is_out_refund" invisible="1"/>
+                    <group string="Grąžinimų nustatymai" groups="robo_basic.group_robo_premium_accountant"
+                           attrs="{'invisible': [('is_out_refund', '=', False)]}">
+                        <field name="select_origin_picking"/>
+                    </group>
+                    <group attrs="{'invisible': [('select_origin_picking', '=', False)]}">
+                        <field name="origin_picking_ids" options="{'no_create': True}" nolabel="1"
+                               domain="[('location_id.usage', '=', 'internal'), ('location_dest_id.usage', '=', 'customer'), ('move_lines.non_error_quant_ids', '!=', 'False)]">
+                            <tree editable="bottom">
+                                <field name="name" readonly="True"/>
+                                <field name="partner_id" readonly="True"/>
+                                <field name="location_id" readonly="True"/>
+                                <field name="min_date" readonly="True"/>
+                                <field name="origin" readonly="True"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="create_delivery" string="Create" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

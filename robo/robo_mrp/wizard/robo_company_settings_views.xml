@@ -1,0 +1,96 @@
+<odoo>
+    <data>
+        <record id="production_lot_numbering_form" model="ir.ui.view">
+            <field name="name">company.lot.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group name="last_lot" string="Gamybos partijų numeracija">
+                        <field name="production_lot_series" string="Serija"/>
+                        <field name="production_lot_number" string="Numeris"/>
+                        <field name="production_lot_length" string="Ilgis"/>
+                        <field name="production_lot_actual_number"
+                               string="Naujam partijos vienetui bus suteiktas numeris"/>
+                    </group>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'production_lot': True}"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="production_lot_numbering_action" model="ir.actions.act_window">
+            <field name="name">Gamybos partijų numeracija</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="production_lot_numbering_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+        <record id="production_serial_numbering_form" model="ir.ui.view">
+            <field name="name">company.serial.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group name="last_lot" string="Gamybos SN numeracija">
+                        <field name="serial_num_series" string="Serija"/>
+                        <field name="serial_num_number" string="Numeris"/>
+                        <field name="serial_num_length" string="Ilgis"/>
+                        <field name="serial_num_actual_number" string="Naujam SN bus suteiktas numeris"/>
+                    </group>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'production_serial': True}"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="production_serial_numbering_action" model="ir.actions.act_window">
+            <field name="name">Gamybos SN numeracija</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="production_serial_numbering_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+        <record id="robo_mrp_company_settings" model="ir.ui.view">
+            <field name="name">robo_mrp.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='module_robo_mrp']" position="after">
+                    <field name="politika_gamybos_apskaita" string="Gamybos apskaita"/>
+                    <field name="mrp_type"/>
+                    <field name="enable_recursive_bom_production"/>
+                    <field name="enable_production_modification_rules"/>
+                    <field name="recursive_bom_production_mode"
+                           attrs="{'invisible': [('enable_recursive_bom_production', '=', False)],
+                           'required': [('enable_recursive_bom_production', '=', True)]}"/>
+                    <field name="enable_bom_expiry_dates"/>
+                    <field name="scan_new_serial"/>
+                    <field name="autocreate_lot_number"/>
+                    <field name="autocreate_serial_number"/>
+                    <field name="default_mrp_production_location_src_id"/>
+                    <field name="default_mrp_production_location_dest_id"/>
+                    <field name="force_accounting_date" groups="robo_basic.group_robo_premium_accountant"/>
+                    <field name="enable_production_surplus"/>
+                    <field name="disable_default_production_locations"/>
+                </xpath>
+                <xpath expr="//group[@name='numbering_sequences']" position="inside">
+                    <button name="%(production_lot_numbering_action)d" string="Gamybos partijų numeracija"
+                            type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                    <button name="%(production_serial_numbering_action)d" string="Gamybos SN numeracija"
+                            type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

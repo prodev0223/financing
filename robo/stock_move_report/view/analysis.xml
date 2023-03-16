@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="stock_move_search_category" model="ir.ui.view">
+            <field name="name">stock.move.search.view.category</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='by_product']" position="after">
+                    <filter name="by_category" string="Produkto kategorija" context="{'group_by':'product_category'}"/>
+                    <separator/>
+                    <filter name="supplier" string="Iš tiekėjo" domain="[('location_id.usage','=','supplier')]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock_quant_search_category" model="ir.ui.view">
+            <field name="name">stock.quant.search.view.category</field>
+            <field name="model">stock.quant</field>
+            <field name="inherit_id" ref="stock.quant_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='productgroup']" position="before">
+                    <filter name="by_category" string="Product category" context="{'group_by':'product_category'}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="inventory_summary_analysis_action" model="ir.actions.act_window">
+            <field name="name">Inventory summary</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.move.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="view_id" eval="False"/>
+            <field name="context">{'search_default_last_two_months':1}</field>
+            <field name="target"></field>
+        </record>
+        <record id="inventory_summary_search_view" model="ir.ui.view">
+            <field name="name">inventory.summary.search.view</field>
+            <field name="model">stock.move.report</field>
+            <field name="arch" type="xml">
+                <search string="Inventory summary">
+                    <field name="product_id"/>
+                    <field name="product_category"/>
+                    <field name="location_id"/>
+                    <!--<field name="contract_id"/>-->
+                    <field name="partner_id"/>
+                    <field name="picking_id"/>
+                    <filter name="current_month" string="Current month" domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Previous month" domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(months=-1,day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1,day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="last_two_months" string="Last 2 months" domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="last_six_months" string="Last 6 months" domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=5, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Location" name="location_id" groups="purchase.group_purchase_manager" context="{'group_by': 'location_id'}"/>
+                        <filter string="Product" name="product_id" context="{'group_by': 'product_id'}"/>
+                        <filter string="Product category" name="product_id" context="{'group_by': 'product_category'}"/>
+                        <filter string="Date" name="date" context="{'group_by': 'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="inventory_summary_pivot_view" model="ir.ui.view">
+            <field name="name">inventory.summary.pivot.view</field>
+            <field name="model">stock.move.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Inventory summary" disable_linking="True">
+                    <field name="product_id" type="row"/>
+                    <field name="date" type="col"/>
+                    <field name="start_stock" type="measure"/>
+                    <field name="qty_supplied" type="measure"/>
+                    <field name="qty_produced" type="measure"/>
+                    <field name="qty_in_reverse" type="measure"/>
+                    <field name="qty_in_other" type="measure"/>
+                    <field name="qty_delivered" type="measure"/>
+                    <field name="qty_consumed" type="measure"/>
+                    <field name="qty_out_reverse" type="measure"/>
+                    <field name="qty_scrap" type="measure"/>
+                    <field name="qty_out_other" type="measure"/>
+                    <field name="end_stock" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="inventory_summary_graph_view" model="ir.ui.view">
+            <field name="name">inventory.line.graph.view</field>
+            <field name="model">stock.move.report</field>
+            <field name="arch" type="xml">
+                <graph string="Inventory analysis">
+                    <field name="product_category" type="row"/>
+                    <field name="location_id" type="col"/>
+                    <field name="qty_ordered" type="measure"/>
+                </graph>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="stock.quantsact">
+            <field name="context">{'search_default_internal_loc': 1, 'group_by': ['product_id', 'location_id'], 'search_default_positive':1}</field>
+        </record>
+        <record id="inventory_summary_wizard_form_view" model="ir.ui.view">
+            <field name="name">inventory.summary.wizard.form</field>
+            <field name="model">inventory.summary.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Atsargų analizė">
+                    <group>
+                        <field name="date_from" string="Nuo"/>
+                        <field name="date_to" string="Iki"/>
+                        <field name="selection_type" string="Filtruoti pagal" widget="radio"/>
+                        <field name="select_all_products" string="Rodyti visus produktus" attrs="{'invisible': [('selection_type', '!=', 'product')]}"/>
+                        <field name="product_ids" string="Filtruoti produktus" widget="many2many_tags" attrs="{'invisible':['|', ('select_all_products','=',True), ('selection_type', '!=', 'product')]}"/>
+                        <field name="select_all_categories" string="Rodyti visas produktų kategorijas" attrs="{'invisible': [('selection_type', '!=', 'category')]}"/>
+                        <field name="category_ids" string="Filtruoti produktų kategorijas" widget="many2many_tags" attrs="{'invisible':['|', ('select_all_categories','=',True), ('selection_type', '!=', 'category')]}"/>
+                        <field name="group_by_location"/>
+                        <field name="select_all_locations" string="Rodyti visus sandėlius"/>
+                        <field name="location_ids" string="Filtruoti sandėlius" widget="many2many_tags" attrs="{'invisible':[('select_all_locations','=',True)]}" domain="[('usage', '=','internal')]"/>
+                    </group>
+                    <footer>
+                        <button name="show_report" string="Rodyti ataskaitą" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="inventory_summary_wizard_action" model="ir.actions.act_window">
+            <field name="name">Atsargų analizė</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">inventory.summary.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem
+              name="Inventory summary"
+              id="menu_inventory_summary"
+              sequence="5"
+              parent="stock.menu_warehouse_report"
+              action="inventory_summary_wizard_action"
+              />
+        <record model="ir.actions.act_window" id="action_stock_move_summary_pivot">
+            <field name="name">Atsargų analizė</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.move.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+        </record>
+    </data>
+</odoo>

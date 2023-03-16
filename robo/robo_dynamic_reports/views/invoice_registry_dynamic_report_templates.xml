@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="InvoiceRegistryDynamicReportHeader">
+            <div style="margin-top: 20px; margin-bottom: 10px;">
+                <table style="text-align: center; margin-left:auto; margin-right:auto; border-style:none;" width="50%">
+                    <tr style="border-style:none">
+                        <td style="border-style:none">
+                            <h4 class="text_centered" t-esc="company_info"/>
+                        </td>
+                    </tr>
+                    <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                        <td style="border-style:none">
+                            <p class="text_centered reduced_text_size">(įmonės teisinė forma, pavadinimas, kodas)</p>
+                        </td>
+                    </tr>
+                    <tr style="border-style:none">
+                        <td style="border-style:none">
+                            <h4 class="text_centered" t-esc="company_address"/>
+                        </td>
+                    </tr>
+                    <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                        <td style="border-style:none">
+                            <p class="text_centered reduced_text_size">
+                                (buveinė (adresas), registras, kuriame kaupiami ir saugomi duomenys)
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="row">
+                <div style="text-align: center;">
+                    Periodas: <span t-esc="date_from"/> - <span t-esc="date_to"/>
+                </div>
+            </div>
+            <t t-if="show_report_title">
+                <div class="row" style="margin-top: 10px; margin-bottom: 10px; text-align: center;">
+                    <div style="white-space: nowrap; text-align: center;">
+                        <t t-if="report_type == 'in'">
+                            <h4>
+                                <strong>GAUNAMŲ SĄSKAITŲ FAKTŪRŲ REGISTRO DUOMENYS</strong>
+                            </h4>
+                        </t>
+                        <t t-if="report_type == 'out'">
+                            <h4>
+                                <strong>IŠRAŠOMŲ SĄSKAITŲ FAKTŪRŲ REGISTRO DUOMENYS</strong>
+                            </h4>
+                        </t>
+                        <t t-if="report_type == 'all'">
+                            <h4>
+                                <strong>IŠRAŠOMŲ IR GAUNAMŲ SĄSKAITŲ FAKTŪRŲ REGISTRO DUOMENYS</strong>
+                            </h4>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="InvoiceRegistryDynamicReportFooter">
+            <div class="row" style="margin-top: 20px;"><t t-raw="footer_data"/></div>
+        </template>
+
+        <template id="InvoiceRegistryDynamicReportAmountsByCurrency">
+            <div class="col-xs-4">
+                <table class="table table-condensed main_table" style="break-inside: avoid; break-after: avoid;">
+                    <thead>
+                        <th>Currency</th>
+                        <th>VAT amount</th>
+                        <th>Amount excl. VAT</th>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="currencies.keys()" t-as="currency_key">
+                            <tr>
+                                <td>
+                                    <span t-esc="currency_key"/>
+                                </td>
+                                <td>
+                                    <span t-esc-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: currencies[currency_key]['currency_id']}"
+                                          t-esc="currencies[currency_key]['pvm_suma']"/>
+                                </td>
+                                <td>
+                                    <span t-esc-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: currencies[currency_key]['currency_id']}"
+                                          t-esc="currencies[currency_key]['suma']"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+
+        <template id="InvoiceRegistryDynamicReportAmountsByVATCode">
+            <div class="col-xs-4">
+                <table class="table table-condensed main_table" style="break-inside: avoid;">
+                    <thead>
+                        <th>VAT code</th>
+                        <th>Amount excl. VAT</th>
+                        <th>VAT amount</th>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="vat_amounts.keys()" t-as="vat_code">
+                            <tr>
+                                <td>
+                                    <span t-esc="vat_code"/>
+                                </td>
+                                <td>
+                                    <span t-esc-options='{"widget": "monetary", "display_currency": company_currency}'
+                                          t-esc="vat_amounts[vat_code]['suma']"/>
+                                </td>
+                                <td>
+                                    <span t-esc-options='{"widget": "monetary", "display_currency": company_currency}'
+                                          t-esc="vat_amounts[vat_code]['pvm_suma']"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+
+        <template id="InvoiceRegistryDynamicReportAmountsByVATAccount">
+            <div class="col-xs-4">
+                <table class="table table-condensed main_table" style="break-inside: avoid;">
+                    <thead>
+                        <th>Tax Account</th>
+                        <th>Amount excl. VAT</th>
+                        <th>VAT Amount</th>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="tax_accounts.keys()" t-as="tax_account_code">
+                            <tr>
+                                <td>
+                                    <span t-esc="tax_account_code"/>
+                                </td>
+                                <td>
+                                    <span t-esc-options='{"widget": "monetary", "display_currency": company_currency}'
+                                          t-esc="tax_accounts[tax_account_code]['suma']"/>
+                                </td>
+                                <td>
+                                    <span t-esc-options='{"widget": "monetary", "display_currency": company_currency}'
+                                          t-esc="tax_accounts[tax_account_code]['pvm_suma']"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+
+        <template id="InvoiceRegistryDynamicReportTotalVATAmount">
+            <div class="col-xs-2 col-xs-offset-1">
+                <table class="table table-condensed main_table" style="break-inside: avoid;">
+                    <thead>
+                        <th>VAT payable</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span t-esc-options='{"widget": "monetary", "display_currency": company_currency}'
+                                      t-esc="total_vat_payable"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="res_company_mix_vat_tree" model="ir.ui.view">
+            <field name="name">res.company.mixed.vat.tree</field>
+            <field name="model">res.company.mixed.vat</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree editable="bottom" default_order="date_to desc" import="0">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="rate"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_open_company_mixed_vat" model="ir.actions.act_window">
+            <field name="name">Mišrus PVM</field>
+            <field name="res_model">res.company.mixed.vat</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="robo_front" eval="True"/>
+        </record>
+        <record id="company_settings_mixed_vat" model="ir.ui.view">
+            <field name="name">mixed.vat.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='politika']" position="inside" >
+                    <field name="auto_split_invoice_tax"/>
+                    <field name="enable_extended_invoice_tax_amounts"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">company.settings.form</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside">
+                    <button name="%(action_open_company_mixed_vat)d" string="Mišraus PVM procentas"
+                            type="action" class="oe_link"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_company_mixed_vat_settings_search"
+                  name="Mišraus PVM procentas"
+                  parent="robo.menu_company_settings_search"
+                  action="action_open_company_mixed_vat"
+                  groups="robo_basic.group_robo_premium_accountant"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="mišraus,PVM,procentas"
+        />
+    </data>
+</odoo>

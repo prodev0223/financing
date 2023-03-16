@@ -1,0 +1,95 @@
+<odoo>
+    <data>
+        <!--Tree-->
+        <record id="view_account_financial_report_tree" model="ir.ui.view">
+            <field name="name">account.financial.report.tree.extend</field>
+            <field name="model">account.financial.report</field>
+            <field name="inherit_id" ref="account.view_account_financial_report_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_report_id']" position="after">
+                    <field name="activity_form"/>
+                    <field name="ultimate_parent_id"/>
+                </xpath>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="account.view_account_financial_report_form" model="ir.ui.view">
+            <field name="name">account.financial.report.form</field>
+            <field name="model">account.financial.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div>
+                            <label string="Pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="parent_id"/>
+                            <field name="ultimate_parent_id"/>
+                            <field name="activity_form"/>
+                            <field name="type"/>
+                            <field name="report_type" invisible="1"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Vizualizavimas" colspan="1" col="2">
+                                <field name="code"/>
+                                <field name="label"/>
+                                <field name="sequence"/>
+                                <field name="sign"/>
+                                <field name="style_overwrite"/>
+                            </group>
+                            <group string="Kita informacija" colspan="1" col="2">
+                                <field name="formula_prev"/>
+                                <field name="formula"/>
+                                <field name="balance_line_side"
+                                       attrs="{'invisible': [('report_type', '!=', 'BL')]}"/>
+                                <field name="balance_leveling_line"
+                                       attrs="{'invisible': [('report_type', '!=', 'BL')]}"/>
+                                <field name="display_detail"
+                                       attrs="{'invisible': [('type','not in',['accounts','account_type'])]}"/>
+                                <field name="account_report_id"
+                                       attrs="{'invisible': [('type', '!=', 'account_report')]}"/>
+                            </group>
+                        </group>
+                        <notebook
+                                attrs="{'invisible': [('type','not in',['accounts','account_type', 'account_report'])]}">
+                            <page string="Traukiamos sąskaitos">
+                                <field name="account_ids" context="{'show_views':True}"
+                                       attrs="{'invisible': [('type', '!=', 'accounts')]}" class="robo_tree_in_form"/>
+                                <field name="account_type_ids" attrs="{'invisible': [('type', '!=', 'account_type')]}"/>
+                            </page>
+                            <page string="Praleidžiamos sąskaitos">
+                                <field name="excluded_account_ids" nolabel="1" context="{'show_views':1}"
+                                       attrs="{'invisible': [('type', '!=', 'accounts')]}" class="robo_tree_in_form"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Search-->
+        <record id="view_account_financial_report_search" model="ir.ui.view">
+            <field name="name">account.financial.report.search.extend</field>
+            <field name="model">account.financial.report</field>
+            <field name="inherit_id" ref="account.view_account_financial_report_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_report_id']" position="after">
+                    <field name="ultimate_parent_id"/>
+                    <separator/>
+                    <filter name="form_uab" string="Forma - UAB"
+                            domain="[('activity_form', '=', 'uab')]"/>
+                    <filter name="form_mb" string="Forma - MB"
+                            domain="[('activity_form', '=', 'mb')]"/>
+                    <filter name="form_vsi" string="Forma - VŠĮ"
+                            domain="[('activity_form', '=', 'vsi')]"/>
+                </xpath>
+                <xpath expr="//group" position="inside">
+                    <filter name="group_ultimate_parent_id" string="Ataskaita"
+                            context="{'group_by':'ultimate_parent_id'}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,3 @@
+from odoo.addons.l10n_lt_payroll.report import suvestine
+
+suvestine.total_additions_amount_codes = suvestine.total_additions_amount_codes + suvestine.qualification_training_amount_codes

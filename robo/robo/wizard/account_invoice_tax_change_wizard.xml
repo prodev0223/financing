@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="form_account_invoice_tax_change_wizard" model="ir.ui.view">
+            <field name="name">account.invoice.tax.change.wizard.form</field>
+            <field name="model">account.invoice.tax.change.wizard</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="Keisti mokesčius">
+                            <div>
+                                <p>
+                                    Šis vedlys pakeis mokesčius visoms sąskaitos faktūros eilutėms.<br/>
+                                    Jeigu pageidaujate mokesčius sąskaitas keisti kiekvienai eilutei atskirai, <br/>
+                                    naudokite laukelius esančius sąskaitos faktūros eilutėje<br/>
+                                </p>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="tax_ids" options="{'no_create': True, 'no_open': True}"
+                                   widget="many2many_tags"/>
+                            <field name="has_picking" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="change_invoice_tax_ids" type="object" string="Keisti"
+                                class="oe_highlight" context="{'check_move_validity': False}"/>
+                        <button name="change_invoice_tax_ids" type="object"
+                                string="Keisti (priverstinai)"
+                                context="{'skip_stock': True, 'check_move_validity': False}"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('has_picking', '=', False)]}"
+                                confirm="Šis veiksmas nemodifikuos susijusio važtaraščio, ar tikrai norite tęsti?"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

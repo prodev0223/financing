@@ -1,0 +1,184 @@
+@robo-dark-blue: #2c3e50;
+@robo-red: #E74C3C;
+@robo-background: #ECF0F1;
+@robo-light-blue: #3498DB;
+@robo-blue: #2980B9;
+
+@robo-invoice-draft-print-color: @robo-light-blue;//#8394a1;
+@robo-invoice-proforma-print-color: @robo-light-blue;//@robo-invoice-draft-print-color;
+@robo-invoice-open-print-color: @robo-light-blue;//#77d3e0;//#EDC02B;
+@robo-invoice-paid-print-color: @robo-light-blue;//#85c51f;//#4cbe83;// #85c51f;//@robo-button-color;
+@robo-invoice-cancel-print-color: @robo-light-blue;//@robo-red;//#FA405C;
+@robo-invoice-imported-print-color: @robo-light-blue;//#feb742;//@robo-blue;//#e5f2ff;
+
+.main_logo_header {
+    position: absolute;
+    min-width: 50px;
+    max-width: 250px !important;
+    height: auto;
+}
+.robo_company_logo{
+    position: relative;
+    min-width: 50px;
+    max-width: 250;
+    min-height: 50px;
+  >img{
+    max-width: inherit;
+    min-width: inherit;
+    max-height: inherit;
+  }
+}
+.report_invoice_page{
+  > h2{
+    text-align: center;
+    margin-top: 0px !important;
+  }
+
+  .account_nr{
+    font-weight: 600;
+  }
+
+  .report_invoice_reference{
+    text-align: center;
+    font-size:16px;
+    font-weight: bold;
+    color:black;
+    h3{
+      margin-top: 10px;
+    }
+  }
+  .invoice_dates{
+    p{
+      margin-bottom: 0px;
+      &:last-child{
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .companies{
+    //clear: both;
+    padding: 28px 0 40px;
+    color: #000;
+    .left, .right{
+      //width: 43%;
+      p{
+        margin-bottom: 0px;
+      }
+      h3.company_type{
+        margin-bottom: 20px;
+        margin-top: 0px !important;
+        padding-bottom: 0;
+        border-bottom: none;
+        font-weight: 500;
+        font-size: 24px;
+        color: black;
+        & + p{
+          margin-bottom: 8px;
+        }
+      }
+    }
+    .right{
+      float: right;
+       width: 50%;
+      .comp_{
+        &pvm,&code,&bank,&bic{
+          font-weight: bold;
+        }
+      }
+    }
+    .left{
+      float: left;
+      width: 50%;
+      .comp_{
+        &pvm,&code,&bank,&bic{
+          font-weight: bold;
+        }
+      }
+    }
+    &:after{
+      clear:both;
+      display: block;
+      content: '';
+    }
+  }
+
+  table{
+    tr.border-robo-invoice, .invoice_tbody{
+      border-top: 2px solid @robo-blue;
+    }
+    thead, tr.border-robo-invoice strong{
+      &.invoice_{
+        &open{
+          color: @robo-invoice-open-print-color;
+        }
+        &draft{
+          color: @robo-invoice-draft-print-color;
+        }
+        &paid{
+          color: @robo-invoice-paid-print-color;
+        }
+        &cancel{
+          color: @robo-invoice-cancel-print-color;
+        }
+
+      }
+    }
+  }
+  .table-condensed{
+    tr{
+      white-space: nowrap;
+      page-break-inside: avoid;
+    }
+  }
+
+  table.invoice_lines{
+    tr{
+      td:first-child{
+        white-space: normal;
+      }
+    }
+    thead{
+      tr > th:first-child{
+        width: 50%;
+      }
+    }
+  }
+
+  .invoice_additional{
+    margin-left: 0;
+    margin-right: 0;
+    .invoice_imt, .invoice_pvm, .invoice_proforma_total{
+      width: 50%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  table.invoice_amount_words{
+    width: 50%;
+    float: right;
+    tr{
+      td:first-child{
+        white-space: normal;
+      }
+    }
+    .amount_words{
+      text-align: left;
+    }
+  }
+}
+
+
+.footer {
+  .robolabs_marketing{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 10px;
+    color: rgba(150,150,150,0.7);
+  }
+  ul{
+     margin-bottom: 0;
+  }
+}

@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="form_paysera_wallet_iban" model="ir.ui.view">
+            <field name="name">form.paysera.wallet.iban</field>
+            <field name="model">paysera.wallet.iban</field>
+            <field name="arch" type="xml">
+                <form string="Paysera bank account" create="0" delete="0">
+                    <sheet>
+                        <group string="Information">
+                            <field name="paysera_wallet_id"/>
+                            <field name="journal_id"/>
+                            <field name="currency_id"/>
+                            <field name="iban"/>
+                        </group>
+                        <group string="API Balances">
+                            <field name="api_end_balance"/>
+                            <field name="api_reserved_amount"/>
+                            <field name="api_balance_update_date"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

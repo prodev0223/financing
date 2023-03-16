@@ -1,0 +1,20 @@
+<odoo>
+    <data noupdate="1">
+        <!--Client specific settings-->
+        <record id="seb_cert_path" model="ir.config_parameter">
+            <field name="key">seb_cert_path</field>
+            <field name="value"> </field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="seb_api_url" model="ir.config_parameter">
+            <field name="key">seb_api_url</field>
+            <field name="value">api.bgw.baltics.sebgroup.com</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <record id="seb_state_update_retry_count" model="ir.config_parameter">
+            <field name="key">seb_state_update_retry_count</field>
+            <field name="value">3</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+    </data>
+</odoo>

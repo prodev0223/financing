@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_employee_downtime_view_form" model="ir.ui.view">
+            <field name="hr.employee.downtime.view.form"/>
+            <field name="model">hr.employee.downtime</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form edit="1" create="1">
+                    <header>
+                        <field name="downtime_duration" invisible="1"/>
+                        <field name="employee_schedule_is_regular" invisible="1"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <group colspan="4">
+                                <field name="holiday_id" options="{'no_create': True}"/>
+                                <field name="date_from_date_format" readonly="1" string="Prastovos pradžia"/>
+                                <field name="date_to_date_format" readonly="1" string="Prastovos pabaiga"/>
+                                <field name="downtime_type"/>
+                                <field name="downtime_subtype"/>
+                                <field name="reason" attrs="{
+                                    'invisible': [('downtime_subtype', '!=', 'ordinary')],
+                                    'required': [('downtime_subtype', '=', 'ordinary')]
+                                }"/>
+                                <field name="state_declared_emergency_id"
+                                    attrs="{
+                                        'invisible': [('downtime_subtype', '=', 'ordinary')],
+                                        'required': [('downtime_subtype', '!=', 'ordinary')]
+                                    }" options="{'no_create': True, 'no_open': True}"
+                                />
+
+                                <field name="pay_type" attrs="{
+                                    'invisible': [('downtime_subtype', '=', 'ordinary')],
+                                    'required': [('downtime_subtype', '!=', 'ordinary')]
+                                }"/>
+                                <field name="pay_amount" attrs="{
+                                    'invisible': [
+                                        '|',
+                                        ('downtime_subtype', '=', 'ordinary'),
+                                        ('pay_type', '!=', 'custom')
+                                    ],
+                                    'required': [
+                                        ('downtime_subtype', '!=', 'ordinary'),
+                                        ('pay_type', '=', 'custom')
+                                    ]
+                                }"/>
+                            </group>
+                            <group colspan="4">
+                                <field name="come_to_work_schedule_line_ids" attrs="{
+                                    'invisible': [
+                                        '|',
+                                        ('downtime_type', '=', 'partial'),
+                                        '|',
+                                        ('downtime_duration', 'not in', [1, 2, 3]),
+                                        ('downtime_subtype', '=', 'due_to_special_cases')
+                                    ],
+                                    'required': [
+                                        ('downtime_type', '!=', 'partial'),
+                                        ('downtime_subtype', '!=', 'due_to_special_cases'),
+                                        ('downtime_duration', 'in', [1, 2, 3])
+                                    ]
+                                }">
+                                    <tree editable="bottom" class="robo_tree_in_form" create="1" edit="1" delete="1">
+                                        <field name="date"/>
+                                        <field name="weekday" readonly="1"/>
+                                        <field name="time_from" widget="float_time"/>
+                                        <field name="time_to" widget="float_time"/>
+                                        <field name="time_total" widget="float_time" sum="time_total"/>
+                                    </tree>
+                                </field>
+
+                                <field name="downtime_schedule_line_ids" attrs="{
+                                    'invisible': [
+                                        '|',
+                                        ('employee_schedule_is_regular', '=', False),
+                                        ('downtime_type', '!=', 'partial')
+                                    ],
+                                    'required': [
+                                        ('employee_schedule_is_regular', '=', True),
+                                        ('downtime_type', '=', 'partial')
+                                    ]
+                                }">
+                                    <tree string="Grafikas" editable="bottom" class="robo_tree_in_form">
+                                        <field name="weekday"/>
+                                        <field name="time_from" widget="float_time"/>
+                                        <field name="time_to" widget="float_time"/>
+                                        <field name="time_total" widget="float_time" sum="time_total"/>
+                                    </tree>
+                                </field>
+
+                                <field name="downtime_reduce_in_time" attrs="{
+                                    'invisible': [
+                                        '|',
+                                        ('employee_schedule_is_regular', '=', True),
+                                        ('downtime_type', '!=', 'partial')
+                                    ],
+                                    'required': [
+                                        ('employee_schedule_is_regular', '=', False),
+                                        ('downtime_type', '=', 'partial')
+                                    ]
+                                }"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_employee_downtime_view_tree" model="ir.ui.view">
+            <field name="name">hr.employee.downtime.view.tree</field>
+            <field name="model">hr.employee.downtime</field>
+            <field name="arch" type="xml">
+                <tree string="Prastovos">
+                    <field name="employee_id"/>
+                    <field name="date_from_date_format" string="Pradžios data"/>
+                    <field name="date_to_date_format" string="Pabaigos data"/>
+                    <field name="downtime_type"/>
+                    <field name="downtime_subtype"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_employee_downtime_search" model="ir.ui.view">
+            <field name="name">hr.employee.downtime.search</field>
+            <field name="model">hr.employee.downtime</field>
+            <field name="arch" type="xml">
+                <search string="Prastova">
+                    <field name="employee_id"/>
+                    <field name="downtime_type"/>
+                    <field name="downtime_subtype"/>
+                    <field name="date_from_date_format" string="Pradžios data"/>
+                    <field name="date_to_date_format" string="Pabaigos data"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_open_hr_employee_downtime" model="ir.actions.act_window">
+            <field name="name">Prastovos</field>
+            <field name="res_model">hr.employee.downtime</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_employee_downtime_view_tree')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('hr_employee_downtime_view_form')})]"/>
+        </record>
+
+        <menuitem id="menu_downtime"
+                  name="Prastovos"
+                  action="action_open_hr_employee_downtime"
+                  parent="l10n_lt_payroll.menu_holiday_specific_entries"
+                  sequence="150"
+                  groups="robo_basic.group_robo_premium_accountant"/>
+
+    </data>
+</odoo>

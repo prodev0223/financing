@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="gpm312_report_pivot" model="ir.ui.view">
+            <field name="name">gpm312.report.pivot</field>
+            <field name="model">gpm312.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Išmokos" create="false" delete="false">
+                    <field name="date" type="col"/>
+                    <field name="amount_bruto" type="measure"/>
+                    <field name="amount_gpm" type="measure"/>
+                    <field name="partner_id" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="gpm312_report_tree" model="ir.ui.view">
+            <field name="name">gpm312.report.tree</field>
+            <field name="model">gpm312.report</field>
+            <field name="arch" type="xml">
+                <tree string="GPM312" editable="top" create="false" delete="false">
+                    <field name="date"/>
+                    <field name="resident"/>
+                    <field name="klase"/>
+                    <field name="kodas"/>
+                    <field name="partner_id"/>
+                    <field name="natura"/>
+                    <field name="gpm_percentage"/>
+                    <field name="amount_gpm"/>
+                    <field name="amount_bruto"/>
+                    <field name="country_id"/>
+                    <field name="document_type" required="1"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_gpm312_report">
+            <field name="name">GPM312</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">gpm312.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot,tree</field>
+            <field name="view_id" ref="gpm312_report_pivot"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('gpm312_report_pivot')}),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('gpm312_report_tree')})]"/>
+            <field name="target">current</field>
+        </record>
+    </data>
+</odoo>

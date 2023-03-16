@@ -1,0 +1,130 @@
+<odoo>
+    <data>
+         <menuitem
+                name="Gemma"
+                id="gemma"
+                sequence="49"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Pardavimai"
+                id="gemma_sale_line"
+                sequence="49"
+                action="gemma_sale_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="gemma"
+        />
+        <menuitem
+                name="Sąskaitos Faktūros"
+                id="gemma_invoice"
+                sequence="50"
+                action="gemma_invoice_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="gemma"
+        />
+        <menuitem
+                name="Mokėjimai"
+                id="gemma_payment"
+                sequence="51"
+                action="gemma_payment_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="gemma"
+        />
+        <menuitem
+                name="Kasos Operacijos"
+                id="gemma_cash_op_menu"
+                sequence="52"
+                action="gemma_cash_op_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="gemma"
+        />
+        <menuitem
+                name="Mokėjimų Tipai"
+                id="gemma_payment_type"
+                sequence="53"
+                action="gemma_payment_type_action"
+                parent="gemma"
+        />
+        <menuitem
+                name="Kasos/Departamentai"
+                id="gemma_cash_registers"
+                sequence="54"
+                action="gemma_register_action"
+                parent="gemma"
+        />
+        <menuitem
+                name="Banko išrašai"
+                id="menu_polis_bank_statement_line"
+                sequence="55"
+                action="action_open_polis_bank_statement_line"
+                parent="gemma"
+        />
+        <menuitem
+                name="Duomenų patikrinimas"
+                id="menu_polis_real_time_fetcher"
+                sequence="56"
+                action="action_open_polis_real_time_fetcher"
+                parent="gemma"
+        />
+        <menuitem id="menu_front_gemma" parent="robo.menu_start" name="Polis"
+              sequence="80"
+              robo_front="True"
+              action=""
+              groups="gemma.group_gemma_manager"
+                  robo_extended="1"
+        />
+        <menuitem id="menu_front_gemma_sales" parent="menu_front_gemma" name="Pardavimai"
+                  sequence="1"
+                  robo_front="True"
+                  action="open_gemma_sale_front"
+                  groups="gemma.group_gemma_manager"
+                  force_web_icon="icon-receipt,none,none"
+                  searchable="True"
+                  tags="pardavimai"
+        />
+        <menuitem id="menu_front_gemma_payments" parent="menu_front_gemma" name="Mokėjimai"
+                  sequence="2"
+                  robo_front="True"
+                  action="open_gemma_payment_front"
+                  groups="gemma.group_gemma_manager"
+                      force_web_icon="icon-coin-euro,none,none"
+                  searchable="True"
+                  tags="mokėjimai"
+        />
+        <menuitem id="menu_front_gemma_invoice" parent="menu_front_gemma" name="Išorinės sąskaitos"
+                  sequence="2"
+                  robo_front="True"
+                  action="open_gemma_invoice_front"
+                  groups="gemma.group_gemma_manager"
+                  force_web_icon="icon-register,none,none"
+                  searchable="True"
+                  tags="išorinės,sąskaitos"
+        />
+        <record model="ir.ui.menu" id="menu_front_gemma">
+            <field name="web_icon">icon-first-aid,none,none</field>
+        </record>
+        <menuitem
+            name="Ataskaitos"
+            id="gemma_meniu_ataskaitos_stat_root"
+            parent="gemma"
+            sequence="57"
+            groups="hr.group_hr_manager"
+        />
+        <menuitem
+              name="Du ASPI"
+              id="gemma_meniu_ataskaitos_DU_ASPI"
+              parent="gemma_meniu_ataskaitos_stat_root"
+              sequence="56"
+              action="action_stat_gemma_du_aspi_wizard"
+        />
+        <menuitem
+                name="Importuoti Gemma XLS"
+                id="gemma_xls"
+                sequence="99"
+                action="action_gemma_xls_wizard"
+                groups="base.group_system"
+                parent="gemma"
+        />
+    </data>
+</odoo>

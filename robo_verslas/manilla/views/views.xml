@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_pajamos_form_extend" model="ir.ui.view">
+            <field name="name">account.invoice.form.manilla</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='team_id']" position="after">
+                    <field name="print_display_discount"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//field[@name='discount']" position="before">
+                    <field name="prevent_discount_change" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//field[@name='discount']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('prevent_discount_change', '=', True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

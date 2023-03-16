@@ -1,0 +1,64 @@
+<template>
+    <t t-extend="RoboReports">
+        <t t-jquery=".robo_activity_reports_buttons:last" t-operation="after">
+            <div t-if="widget.robo_stock_reports" class="robo_reports_buttons robo_stock_buttons container mb32 mt32">
+                <div class="row mb16 text-center">
+                  <h2 class="heading-text">Sandėlio ataskaitos</h2>
+                </div>
+                <div class="report_section">
+                    <div class="reports-box r-cursor">
+                        <div class="robo_button_stock_store">
+                            <div class="icon">
+                                <span class="icon-cube"></span>
+                            </div>
+                            <h3><a class="btn-header">Turimos atsargos</a></h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_stock_forecast">
+                            <div class="icon">
+                                <span class="icon-trailer"></span>
+                                <span class="icon-signal-80"></span>
+                            </div>
+                            <h3><a class="btn-header">Atsargų prognozė</a></h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_stock_analysis">
+                            <div class="icon">
+                                <span class="icon-scale-truck"></span>
+                            </div>
+                            <h3><a class="btn-header">Atsargų analizė</a></h3>
+                        </div>
+                    </div>
+                    <div class="reports-box  r-cursor">
+                        <div class="robo_button_stock_move_analysis">
+                            <div class="icon">
+                                <span class="icon-3d-rotate"></span>
+                            </div>
+                            <h3><a class="btn-header">Atsargų judėjimas</a></h3>
+                        </div>
+                    </div>
+<!--                    <div class="reports-box  r-cursor">-->
+<!--                        <div class="robo_button_compare_report">-->
+<!--                            <div class="icon">-->
+<!--                                <span class="icon-3d-rotate"></span>-->
+<!--                            </div>-->
+<!--                            <h3><a class="btn-header">Sandėlio/apskaitos palyginimo ataskaita</a></h3>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <!--<div class="reports-box  r-cursor" t-if="widget.is_tara_available">-->
+                        <!--<div class="robo_button_taros_analysis">-->
+                            <!--<div class="icon">-->
+                                <!--<span class="icon-3d-rotate"></span>-->
+                                <!--<span class="icon-bottle2"></span>-->
+                            <!--</div>-->
+                            <!--<h3><a class="btn-header">Tara</a></h3>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+            </div>
+        </t>
+    </t>
+
+</template>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('robo_basic.group_robo_premium_accountant'), 0)]"/>
+        </record>
+        <record id="robo.menu_islaidos" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_employee'),ref('robo_basic.group_robo_premium_user')])]"/>
+        </record>
+        <record id="robo.menu_klientai" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_see_income'), ref('robo_basic.group_robo_manage_partners')])]"/>
+        </record>
+        <record id="robo.menu_pajamos" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_see_income')])]"/>
+        </record>
+        <record id="robo.menu_ataskaitos" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo.robo_reports')])]"/>
+        </record>
+        <record id="robo.menu_ataskaitos_search" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo.robo_reports')])]"/>
+        </record>
+        <record id="robo.menu_pagalbininkas" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_employee'),ref('robo_basic.group_robo_premium_user')])]"/>
+        </record>
+        <record id="account.menu_finance" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_premium_accountant')])]"/>
+        </record>
+        <record id="sales_team.menu_base_partner" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_premium_accountant')])]"/>
+        </record>
+        <record id="mail.mail_channel_menu_root_chat" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_premium_accountant')])]"/>
+        </record>
+        <record id="calendar.mail_menu_calendar" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_premium_accountant')])]"/>
+        </record>
+        <record id="contacts.menu_contacts" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_premium_accountant')])]"/>
+        </record>
+        <record id="hr.menu_hr_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_premium_accountant')])]"/>
+        </record>
+        <record id="hr_holidays.menu_hr_holidays_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_premium_accountant')])]"/>
+        </record>
+        <record id="hr_expense.menu_hr_expense_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+        </record>
+        <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+        </record>
+        <record id="sales_team.menu_base_partner" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+        </record>
+        <record id="hr_expense.property_rule_expense_manager" model="ir.rule">
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_manager')), (4, ref('robo_basic.group_robo_free_manager'))]"/>
+        </record>
+        <record id="hr_expense.property_rule_expense_employee" model="ir.rule">
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_free_employee')), (4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+    </data>
+    <!--<data noupdate="1">-->
+        <!--<record id="base.group_user" model="res.groups">-->
+            <!--<field name="implied_ids" eval="[(4, ref('robo_basic.group_robo_free_employee'))]"/>-->
+        <!--</record>-->
+    <!--</data>-->
+</odoo>

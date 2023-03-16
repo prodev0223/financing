@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_employee_work_norm_report_export_view_form" model="ir.ui.view">
+            <field name="name">Work norm report export</field>
+            <field name="model">hr.employee.work.norm.report.export</field>
+            <field name="arch" type="xml">
+                <form string="Work norm report">
+                    <sheet>
+                        <group colspan="4">
+                            <field name="employees_to_export"/>
+                            <field name="department_ids" attrs="{
+                                'invisible': [('employees_to_export', '!=', 'by_department')],
+                                'required': [('employees_to_export', '=', 'by_department')]
+                            }" options="{'no_create': True, 'no_open': True}" widget="many2many_tags"/>
+                            <field name="employee_ids" attrs="{
+                                'invisible': [('employees_to_export', '!=', 'select')],
+                                'required': [('employees_to_export', '=', 'select')]
+                            }" options="{'no_create': True, 'no_open': True}" widget="many2many_tags"/>
+                        </group>
+                        <group colspan="4" col="4">
+                            <field name="year" colspan="2"/>
+                            <field name="month" colspan="2"/>
+                        </group>
+                        <footer>
+                            <button name="export_xlsx" type="object" string="Export" class="btn-primary"/>
+                            <button string="Cancel" class="btn-default" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_employee_work_norm_report_export_action" model="ir.actions.act_window">
+            <field name="name">Work norm report export</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.work.norm.report.export</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="hr_employee_work_norm_report_export_front_action" model="ir.actions.act_window">
+            <field name="name">Work norm report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.work.norm.report.export</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="view_id" eval="hr_employee_work_norm_report_export_view_form"/>
+        </record>
+
+        <menuitem id="hr_employee_work_norm_report_menu_export"
+                  name="Work norm report"
+                  parent="l10n_lt_payroll.meniu_payrol_reports"
+                  groups="robo_basic.group_robo_premium_accountant"
+                  action="hr_employee_work_norm_report_export_action"/>
+
+    </data>
+</odoo>

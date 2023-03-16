@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_view_change_production_qty_wizard" model="ir.ui.view">
+            <field name="name">Keisti gaminamą kiekį</field>
+            <field name="model">change.production.qty</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pakeisti gamybos kiekį">
+                    <group>
+                        <field name="product_qty"/>
+                    </group>
+                    <footer>
+                        <button name="change_prod_qty" string="Tvirtinti"
+                                colspan="1" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="robo_action_change_production_qty" model="ir.actions.act_window">
+            <field name="name">Pakeiskite gamybos kiekį</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">change.production.qty</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="robo_view_change_production_qty_wizard"/>
+            <field name="target">new</field>
+            <field name="robo_menu" ref="menu_robo_mrp_start"/>
+        </record>
+    </data>
+</odoo>

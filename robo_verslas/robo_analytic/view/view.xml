@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Main Menu-->
+        <menuitem id="menu_analytic_parent"
+                  parent="robo.menu_start"
+                  name="Analitika"
+                  sequence="80"
+                  groups="robo_analytic.group_robo_analytic,robo_analytic.group_robo_business_analytic"
+                  force_web_icon="icon-align-left,none,none"
+                  robo_front="True"
+                  robo_extended="1"
+        />
+        <!--Analytic account line-->
+        <record id="view_account_analytic_line_tree" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree</field>
+            <field name="model">account.analytic.line</field>
+            <field name="priority">10</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Analytic Entries" create="0">
+                    <field name="date"/>
+                    <field name="name"/>
+                    <field name="account_id"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="unit_amount" sum="Kiekis"/>
+                    <field name="amount" sum="Suma"/>
+                </tree>
+            </field>
+        </record>
+        <record id="robo_view_account_analytic_line_form" model="ir.ui.view">
+            <field name="name">account.analytic.line.form.robo.inherit</field>
+            <field name="model">account.analytic.line</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_line_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='account_id']" position="attributes">
+                        <attribute name="options">{'no_open': True, 'no_create': True}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='product_uom_id']" position="attributes">
+                        <attribute name="options">{'no_open': True, 'no_create': True}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='general_account_id']" position="attributes">
+                        <attribute name="options">{'no_open': True, 'no_create': True}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='partner_id']" position="attributes">
+                        <attribute name="options">{'no_create': True}</attribute>
+                        <attribute name="context">{'form_view_ref': 'robo.new_clients_customer_form'}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='move_id']" position="attributes">
+                        <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+                        <attribute name="string">Sąskaitos įrašas</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='move_id']" position="after">
+                        <field name="tag_ids" widget="many2many_tags"
+                               groups="robo_analytic.group_analytic_tags"/>
+                    </xpath>
+                    <xpath expr="//field[@name='product_id']" position="attributes">
+                        <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='move_id']" position="before">
+                        <field name="invoice_id" options="{'new_window': True}"
+                               attrs="{'readonly': True, 'invisible': [('invoice_id', '=', False)]}"/>
+                    </xpath>
+                </data>
+            </field>
+         </record>
+        <record id="robo_view_account_analytic_line_pivot" model="ir.ui.view">
+            <field name="name">account.analytic.line.pivot.robo.inherit</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_line_pivot"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml"><data></data></field>
+        </record>
+        <record id="view_account_analytic_line_kanban" model="ir.ui.view">
+            <field name="name">account.analytic.line.kanban</field>
+            <field name="model">account.analytic.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban string="Analytic Entries" class="o_kanban_mobile" import="0" create="0">
+                    <field name="date"/>
+                    <field name="name"/>
+                    <field name="account_id"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="unit_amount" sum="Kiekis"/>
+                    <field name="amount" sum="Suma"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.name.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-muted">
+                                        <span>
+                                            <t t-esc="record.account_id.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row" t-if="record.amount">
+                                    <div class="col-xs-12 text-muted">
+                                        <span>
+                                            <span>Suma:  </span><t t-esc="record.amount.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-muted">
+                                        <span>
+                                            <t t-esc="record.date.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="view_account_analytic_line_filter" model="ir.ui.view">
+            <field name="name">account.analytic.line.select</field>
+            <field name="model">account.analytic.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Analitinių sąsk. įrašai">
+                    <field name="name" string="Aprašymas"/>
+                    <field name="user_id" string="Darbuotojas"/>
+                    <field name="product_id" string="Produktas"/>
+                    <field name="account_id" string="Analitinė sąskaita"/>
+                    <field name="tag_ids" widget="many2many_tags" string="Žymės"/>
+                    <field name="tag_ids" widget="many2many_tags" string="Analytic tags"
+                           groups="robo_analytic.group_analytic_tags"
+                           filter_domain="[('tag_ids.name', 'ilike', self)]"/>
+                    <group string="Group By..." expand="0" name="groupby">
+                        <filter name="is_timesheet" string="Yra žiniaraštis" domain="[('project_id', '!=', False)]"/>
+                        <filter string="Sąskaita" context="{'group_by':'account_id'}" name="account_id"/>
+                        <filter string="Mėnesis" context="{'group_by':'date'}" name="group_date"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="account_analytic_line_action">
+            <field name="name">Sąnaudos-Pajamos</field>
+            <field name="res_model">account.analytic.line</field>
+            <field name="view_mode">tree_robo,form,pivot,kanban</field>
+            <field name="view_id" ref="view_account_analytic_line_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('view_account_analytic_line_tree')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('robo_view_account_analytic_line_pivot')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_account_analytic_line_kanban')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_view_account_analytic_line_form')})]"/>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="view_account_analytic_line_filter"/>
+            <field name="domain">[('account_id','=', active_id), '|', '|', ('general_account_id.code', '=ilike', '5%'),
+                ('general_account_id.code', '=ilike', '6%'), ('general_account_id', '=', False)]</field>
+            <field name="header" ref="robo.analytic_default"/>
+            <field name="robo_menu" ref="robo_analytic.menu_analytic_parent"/>
+            <field name="context">
+                {
+                    'search_default_group_journal': 1,
+                    'default_account_id': active_id,
+                }
+             </field>
+             <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <!--END Analytic account line-->
+
+        <!--Analytic account-->
+        <record id="view_account_analytic_account_form" model="ir.ui.view">
+            <field name="name">analytic.analytic.account.form</field>
+            <field name="model">account.analytic.account</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Analytic Account">
+                    <sheet string="Analytic Account">
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="object" name="toggle_active" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                            <button class="oe_stat_button" type="action" name="%(account_analytic_line_action)d"
+                                icon="fa-usd"  string="Analitika" widget="statinfo" help="Pajamos/Sąnaudos"/>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" class="oe_inline" placeholder="pvz. Pavadinimas XYZ" options="{'translatable': False}"/>
+                            </h1>
+                        </div>
+                        <div name="project"/>
+                        <group name="main">
+                            <group>
+                                <field name="code" string="Numeris"/>
+                                <field name="partner_id" string="Partneris" context="{'form_view_ref': 'robo.new_clients_customer_form'}"/>
+                                <field name="analytic_group_id"/>
+                                <field name="privacy_visibility" widget="radio"/>
+                            </group>
+                            <group>
+                                <field name="tag_ids" widget="many2many_tags" string="Žymos"
+                                       groups="robo_analytic.group_analytic_tags"/>
+                                <field name="company_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_company"/>
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency" string="Valiuta"/>
+                                <field name="account_type"/>
+                            </group>
+                            <notebook colspan="2">
+                                <page string="Komanda">
+                                    <field name="team_involvement_ids">
+                                        <tree editable="bottom" class="robo_tree_in_form">
+                                            <field name="user_id" string="Naudotojas" options="{'no_open': True, 'no_create': True}"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="view_account_analytic_account_list" model="ir.ui.view">
+            <field name="name">account.analytic.account.list</field>
+            <field name="model">account.analytic.account</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Analytic Accounts" create="0">
+                    <field name="display_name"/>
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="analytic_group_id"/>
+                    <field name="active" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="credit" string="Pajamos" sum="credit"/>
+                    <field name="debit" string="Sąnaudos" sum="debit"/>
+                    <field name="balance" string="Pelnas" sum="balance"/>
+                    <field name="income_percentage"/>
+                    <field name="expense_percentage"/>
+                    <field name="account_type"/>
+                    <button name="open_budget_lines" string="Atverti biudžeto eilutes"
+                                groups="robo_analytic.group_robo_analytic_see_amounts,robo_basic.group_robo_premium_manager"
+                                type="object"
+                                icon="fa-bars analytic_button"/>
+                </tree>
+            </field>
+        </record>
+        <record id="account_analytic_budget_line_tree" model="ir.ui.view">
+            <field name="name">analytic.account.budget.line</field>
+            <field name="model">analytic.account.budget.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Sąskaitų biudžetas" create="1" editable="bottom" import="0">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="account_analytic_id"/>
+                    <field name="income_budget"/>
+                    <field name="expense_budget"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="open_account_analytic_budget_line_tree" model="ir.actions.act_window">
+            <field name="name">Biudžeto eilutės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">analytic.account.budget.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo</field>
+            <field name="robo_front">True</field>
+            <field name="header" ref="robo_analytic.robo_analytic_budget"/>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="account_analytic_budget_line_tree"/>
+        </record>
+        <record id="view_account_analytic_account_kanban" model="ir.ui.view">
+            <field name="name">account.analytic.account.kanban</field>
+            <field name="model">account.analytic.account</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" import="0" create="0">
+                    <field name="display_name"/>
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="analytic_group_id"/>
+                    <field name="active" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="debit" />
+                    <field name="credit"/>
+                    <field name="balance"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.display_name.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-muted">
+                                        <span>
+                                            <t t-esc="record.partner_id.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div t-if='record.debit and record.credit' class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <span>Debetas:  </span><t t-esc="record.debit.value"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <span>Kreditas:  </span><t t-esc="record.credit.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="view_account_analytic_account_search" model="ir.ui.view">
+            <field name="name">account.analytic.account.search</field>
+            <field name="model">account.analytic.account</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Analitinė sąskaita">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Analitinė sąskaita"/>
+                    <field name="name" string="Analitinė sąskaita (tikslus pavadinimas)" filter_domain="['|', ('name','=ilike',self), ('code','=ilike',self)]"/>
+                    <field name="tag_ids" string="Žymos" groups="robo_analytic.group_analytic_tags"/>
+                    <field name="partner_id" string="Partneris"/>
+                    <filter string="Archyvuoti" domain="[('active', '=', False)]" name="inactive"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Partneris" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Analytic group" domain="[]" context="{'group_by':'analytic_group_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_analytic_account_form" model="ir.actions.act_window">
+            <field name="name">Analitinių sąskaitų planas</field>
+            <field name="res_model">account.analytic.account</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="search_view_id" ref="view_account_analytic_account_search"/>
+            <field name="context">{'search_default_active':1, 'default_privacy_visibility': 'employees'}</field>
+            <field name="view_id" ref="view_account_analytic_account_list"/>
+             <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('view_account_analytic_account_list')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_account_analytic_account_kanban')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_analytic_account_form')})]"/>
+            <field name="header" ref="robo_analytic.robo_analytic_new"/>
+            <field name="robo_menu" ref="robo_analytic.menu_analytic_parent"/>
+             <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <!--End Analytic account-->
+
+        <!--act_business_analytics-->
+        <record id="view_business_analytics_tree" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree.hr_timesheet</field>
+            <field name="model">account.analytic.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree editable="top" string="Timesheet Activities" import="0">
+                    <field name="date"/>
+                    <field name="user_id" required="1" options='{"no_open": True}'/>
+                    <field name="name"/>
+                    <field name="product_id" string="Produktas"/>
+                    <!--<field name="unit_amount" string="Trukmė" sum="Total time" widget="float_time"/>-->
+                </tree>
+            </field>
+        </record>
+        <record id="view_business_analytics_pivot" model="ir.ui.view">
+            <field name="name">account.analytic.line.pivot</field>
+            <field name="model">account.analytic.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Analitika">
+                    <field name="account_id" type="row"/>
+                    <field name="date" interval="month" type="col"/>
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_business_shared_analytics_pivot" model="ir.ui.view">
+            <field name="name">account.analytic.line.pivot</field>
+            <field name="model">account.analytic.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Analytics" disable_linking="True">
+                    <field name="account_id" type="row"/>
+                    <field name="date" interval="month" type="col"/>
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_business_analytics_search" model="ir.ui.view">
+            <field name="name">account.analytic.line.search</field>
+            <field name="model">account.analytic.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="account_id" string="Analitinė sąskaita"/>
+                    <field name="account_id" string="Netraukti analitinės sąskaitos kodo" filter_domain="[('account_id.code','not ilike',self)]"/>
+                    <field name="tag_ids" string="Analytic tags" groups="robo_analytic.group_analytic_tags"
+                           filter_domain="[('tag_ids.name', 'ilike', self)]"/>
+                    <field name="move_partner_id" string="Partneris"/>
+                    <field name="user_id" string="Naudotojas"/>
+                    <field name="department_id" string="Padalinys"/>
+                    <field name="product_id" string="Produktas"/>
+                    <field name="general_account_id" string="Finansinė sąskaita"/>
+                    <field name="ref" string="Nuoroda"/>
+                    <field name="name" string="Pavadinimas"/>
+                    <filter name="current_year" string="Šie metai" domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', time.strftime('%Y-12-31')),('date','&gt;=',time.strftime('%Y-01-01'))]"/>
+                    <filter name="last_year" string="Praeiti metai" domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', (context_today() + relativedelta(years=-1)).strftime('%Y-12-31')),('date','&gt;=',(context_today() + relativedelta(years=-1)).strftime('%Y-01-01'))]"/>
+                    <filter name="current_month" string="Šis mėnuo" domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',time.strftime('%Y-%m-01'))]"/>
+                    <filter name="last_month" string="Praeitas mėnuo" domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', (context_today() + relativedelta(months=-1,day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today() + relativedelta(months=-1)).strftime('%Y-%m-01'))]"/>
+                    <separator/>
+                    <filter name="du" string="Darbo užmokestis" domain="[('payslip_id', '!=', False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Naudotojai" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter string="Produktas" domain="[]" context="{'group_by':'product_id'}"/>
+                        <filter string="Analitinė grupė" domain="[]" context="{'group_by':'analytic_group_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="act_business_analytics" model="ir.actions.act_window">
+            <field name="name">Verslo analitika</field>
+            <field name="res_model">account.analytic.line</field>
+            <field name="view_mode">pivot,tree_robo,form</field>
+            <field name="view_id" ref="view_business_analytics_pivot"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_business_analytics_pivot')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('view_account_analytic_line_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_view_account_analytic_line_form')})]"/>
+            <field name="search_view_id" ref="view_business_analytics_search"/>
+            <field name="domain">['|',('general_account_id.code', '=ilike', '5%'), ('general_account_id.code', '=ilike', '6%')]</field>
+            <field name="header" ref="robo.analytic_default"/>
+            <field name="robo_menu" ref="robo_analytic.menu_analytic_parent"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+        <record id="action_open_shared_business_analytics" model="ir.actions.server">
+            <field name="name">Business analytics of team members</field>
+            <field name="model_id" ref="analytic.model_account_analytic_line"/>
+            <field name="code">
+                action = model.action_open_shared_business_analytics()
+            </field>
+            <field name="robo_front">True</field>
+        </record>
+
+        <record id="action_shared_business_analytics" model="ir.actions.act_window">
+            <field name="name">Business analytics of team members</field>
+            <field name="res_model">account.analytic.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="view_business_shared_analytics_pivot"/>
+            <field name="search_view_id" ref="view_business_analytics_search"/>
+            <field name="domain">['|',('general_account_id.code', '=ilike', '5%'),
+                ('general_account_id.code', '=ilike', '6%')]</field>
+            <field name="header" ref="robo.analytic_default"/>
+            <field name="robo_menu" ref="menu_analytic_parent"/>
+        </record>
+
+        <record model="ir.ui.view" id="account_analytic_account_filter_wizard_view">
+            <field name="name">account.analytic.account.filter.wizard.view</field>
+            <field name="model">account.analytic.account.filter.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <footer>
+                        <button name="return_action" type="object" string="Rodyti" class="oe_highlight"/>
+                        <button name="cancel" type="special" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_analytic_account_wizard_form">
+            <field name="name">Analitinės sąskaitos</field>
+            <field name="res_model">account.analytic.account.filter.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="account_analytic_account_filter_wizard_view"/>
+        </record>
+        <!--END act_business_analytics-->
+
+        <!--MENU-->
+        <menuitem id="menu_analytic_accounts"
+                  parent="robo_analytic.menu_analytic_parent"
+                  name="Analitinės sąskaitos"
+                  sequence="10"
+                  action="action_analytic_account_wizard_form"
+                  groups="robo_analytic.group_robo_analytic"
+                  robo_front="True"
+                  force_web_icon="icon-layers,none,none"
+                  searchable="True"
+                  tags="analitinės,sąskaitos"
+        />
+        <menuitem id="menu_timesheets_analysis"
+                  parent="robo_analytic.menu_analytic_parent"
+                  name="Verslo analitika"
+                  sequence="20"
+                  action="act_business_analytics"
+                  groups="robo_analytic.group_robo_business_analytic"
+                  robo_front="True"
+                  force_web_icon="icon-chart-growth,none,none"
+                  searchable="True"
+                  tags="verslo,analitika"
+        />
+        <menuitem id="menu_shared_business_analytics"
+                  parent="robo_analytic.menu_analytic_parent"
+                  name="Business analytics of team members"
+                  sequence="20"
+                  action="action_open_shared_business_analytics"
+                  groups="robo_analytic.group_robo_business_analytic_sharing"
+                  robo_front="True"
+                  force_web_icon="icon-chart-growth,none,none"
+                  searchable="True"
+                  tags="team,members,business,analytics"
+        />
+        <menuitem id="menu_invoice_report_materialized"
+                  parent="robo_analytic.menu_analytic_parent"
+                  name="Sąskaitų analitika"
+                  sequence="20"
+                  groups="robo_analytic.group_robo_analytic"
+                  force_web_icon="icon-chart-bars,none,none"
+                  robo_front="True"
+                  action="robo.account_invoice_report_materialized_action_server"
+                  searchable="True"
+                  tags="sąskaitų,analitika"
+        />
+        <!--END MENU-->
+
+
+        <!-- ANALYTIC DEFAULTS -->
+        <record id="analytic_defaults_tree_view" model="ir.ui.view">
+            <field name="name">analytic.defaults.tree.view</field>
+            <field name="model">account.analytic.default</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0" editable="top">
+                    <field name="sequence" widget="handle"/>
+                    <field name="analytic_id" context="{'form_view_ref': 'robo_analytic.view_account_analytic_account_form'}" required="0" groups="analytic.group_analytic_accounting"/>
+                    <field name="product_id" context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"/>
+                    <field name="product_category"/>
+                    <field name="partner_id" context="{'form_view_ref': 'robo.new_clients_customer_form'}"/>
+                    <field name="user_id" options="{'no_open': True, 'no_create': True}"/>
+                    <field name="account_id"/>
+                    <field name="journal_id"/>
+                    <field name="invoice_type"/>
+                    <field name="date_start"/>
+                    <field name="date_stop"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="force_analytic_account"/>
+                </tree>
+            </field>
+        </record>
+        <record id="act_business_analytics_defaults" model="ir.actions.act_window">
+            <field name="name">Analitinės taisyklės</field>
+            <field name="res_model">account.analytic.default</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_id" ref="analytic_defaults_tree_view"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('analytic_defaults_tree_view')})]"/>
+            <!--<field name="search_view_id" ref="view_business_analytics_search"/>-->
+            <field name="domain"></field>
+            <field name="header" ref="robo_analytic.analytic_rules"/>
+            <field name="robo_menu" ref="robo_analytic.menu_analytic_parent"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <menuitem id="menu_analytic_defaults"
+                  parent="robo_analytic.menu_analytic_parent"
+                  name="Analitinės taisyklės"
+                  sequence="55"
+                  action="act_business_analytics_defaults"
+                  groups="robo_analytic.robo_analytic_defaults"
+                  robo_front="True"
+                  force_web_icon="icon-equalizer,none,none"
+                  searchable="True"
+                  tags="analitinės,taisyklės"
+        />
+
+        <record id="cron_refresh_analytics" model="ir.cron">
+            <field name="name">Refresh analytics</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">months</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">account.analytic.line</field>
+            <field name="function">cron_refresh_analytic_accounts</field>
+            <field name="args">()</field>
+        </record>
+        <record id="add_analytic_account_for_company" model="ir.ui.view">
+             <field name="name">robo.company.settings.analytic.account</field>
+             <field name="model">robo.company.settings</field>
+             <field name="inherit_id" ref="robo.company_settings_form"/>
+             <field name="arch" type="xml">
+                <xpath expr="//field[@name='payroll_bank_journal_id']" position="after">
+                    <field name="analytic_account_id" string="Default analytic account"/>
+                </xpath>
+                 <xpath expr="//group[@name='politika']" position="inside">
+                     <field name="additional_analytic_actions"/>
+                     <field name="required_du_analytic"/>
+                     <field name="change_analytic_on_accountant_validated"/>
+                 </xpath>
+                 <xpath expr="//group[@name='other_settings']" position="inside">
+                     <button name="%(action_analytic_lock_date_wizard)d"
+                             string="Analitikos užrakinimas" type="action" class="oe_link"/>
+                 </xpath>
+             </field>
+        </record>
+
+        <menuitem id="menu_analytic_lock_date_settings_search"
+                  name="Analitikos užrakinimas"
+                  parent="robo.menu_company_settings_search"
+                  action="action_analytic_lock_date_wizard"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="analitikos,užrakinimas"
+        />
+
+        <record id="view_account_analytic_account_list_ext" model="ir.ui.view">
+            <field name="name">account.analytic.account.list.ext</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_list"/>
+            <field name="arch" type="xml">
+                    <xpath expr="//field[@name='credit']" position="attributes">
+                    <attribute name="string">Pajamos</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='debit']" position="attributes">
+                    <attribute name="string">Sąnaudos</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='balance']" position="attributes">
+                    <attribute name="string">Pelnas</attribute>
+                    </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_account_form_backend" model="ir.ui.view">
+            <field name="name">account.analytic.account.form.backend</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="analytic_group_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_account_search_backend" model="ir.ui.view">
+            <field name="name">account.analytic.account.search.backend</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="inside">
+                    <filter string="Analytic group" domain="[]" context="{'group_by':'analytic_group_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account.account_analytic_tag_menu" model="ir.ui.menu">
+            <field name="name">Analytic tags</field>
+            <field name="groups_id" eval="[(6,0,[ref('robo_analytic.group_analytic_tags')])]"/>
+        </record>
+    </data>
+</odoo>

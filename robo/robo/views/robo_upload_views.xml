@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="upload_files_kanban" model="ir.ui.view">
+            <field name="name">Upload kanban</field>
+            <field name="model">robo.upload</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban create="0" class="o_kanban_mobile"
+                multi_open="robo.new_cheque_action:(res_model=='hr.expense')and(state in ('done','need_action')):res_id;
+                    robo.new_supplier_invoice:(res_model=='account.invoice')and(state in ('done','need_action')and(res_type in ('in_invoice','in_refund'))):res_id;
+                    robo.new_client_invoice:(res_model=='account.invoice')and(state in ('done','need_action')and(res_type not in ('in_invoice','in_refund'))):res_id"
+                >
+                    <field name="res_model" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="datas_fname" string="Dokumento pavadinimas"/>
+                    <field name="person" string="Pateikė"/>
+                    <field name="create_date" string="Pateikimo data"/>
+                    <field name="state" string="Statusas"/>
+                    <field name="res_type" invisible="1"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6 short_name">
+                                        <strong><span t-attf-title="{{record.datas_fname.value}}"><t t-esc="record.datas_fname.value"/></span></strong>
+                                    </div>
+                                    <div class="col-xs-6 pull-right text-right">
+                                        <strong><span style="word-break: break-word;"><t t-esc="record.person.value"/></span></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span><t t-esc="record.create_date.value"/></span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span class="pull-right text-right">
+                                            <field name="state" widget="kanban_label_selection" options="{'classes': {'sent': 'robo-sent', 'accepted': 'robo-accepted', 'done': 'robo-done', 'rejected': 'robo-rejected', 'need_action': 'robo-need_action'}}"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+         <record model="ir.ui.view" id="upload_files_tree">
+            <field name="name">Files</field>
+            <field name="model">robo.upload</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Dokumentai" create="0" import="0"
+                multi_open="robo.new_cheque_action:(res_model=='hr.expense')and(state in ('done','need_action')):res_id;
+                robo.new_supplier_invoice:(res_model=='account.invoice')and(state in ('done','need_action')and(res_type in ('in_invoice','in_refund'))):res_id;
+                robo.new_client_invoice:(res_model=='account.invoice')and(state in ('done','need_action')and(res_type not in ('in_invoice','in_refund'))):res_id"
+                >
+                    <field name="thumbnail_force_enabled" invisible="1"/>
+                    <field name="thumbnail" widget="document_image"/>
+                    <field name="datas_fname" string="Dokumento pavadinimas" class="tooltip_expanded"/>
+                    <field name="ref" string="Nuoroda"/>
+                    <field name="person" string="Pateikė"/>
+                    <field name="create_date" string="Pateikimo data"/>
+                    <field name="date_done" string="Apdorojimo data"/>
+                    <field name="state" string="Statusas" widget="roboUploadState"/>
+                    <field name="res_type" invisible="1"/>
+                    <!--widget="robo_upload_status_info"/>-->
+                    <field name="reason" string="Priežastis" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="res_model" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="upload_files_search_view" model="ir.ui.view">
+            <field name="name">upload.files.search_view</field>
+            <field name="model">robo.upload</field>
+            <field name="arch" type="xml">
+                <search string="Dokumentai">
+                    <field name="datas_fname"/>
+                    <field name="person"/>
+                    <field name="ref"/>
+                    <filter name="accepted" string="Priimti" domain="[('state','=','accepted')]"/>
+                    <filter name="done" string="Apdoroti" domain="[('state','=','done')]"/>
+                    <filter name="rejected" string="Atmesti" domain="[('state','=','rejected')]"/>
+                    <filter name="need_action" string="Reikia papildymo" domain="[('state','=','need_action')]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Pateikimo data" context="{'group_by':'create_date'}"/>
+                        <filter name="group_date_done" string="Apdorojimo data" context="{'group_by':'date_done'}"/>
+                        <filter name="group_person" string="Pateikė" context="{'group_by':'person'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="show_all_files" model="ir.actions.act_window">
+            <field name="name">Dokumentai</field>
+            <field name="res_model">robo.upload</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,kanban</field>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'robo_header': {},
+            }"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('upload_files_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('upload_files_kanban')})]"/>
+            <field name="robo_help"  type="html">
+                 <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="show_rejected_files" model="ir.actions.act_window">
+            <field name="name">Atmesti dokumentai</field>
+            <field name="res_model">robo.upload</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo</field>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'search_default_rejected':1,
+                'robo_header': {},
+            }"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('upload_files_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('upload_files_kanban')})]"/>
+            <field name="help"></field>
+        </record>
+    </data>
+</odoo>

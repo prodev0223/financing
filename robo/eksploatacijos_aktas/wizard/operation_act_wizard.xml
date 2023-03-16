@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="operation_act_wizard_out_view_form" model="ir.ui.view">
+            <field name="name">operation.act.wizard.out.view.form</field>
+            <field name="model">operation.act.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Eksploatacijos aktas">
+                    <field name="act_type" invisible="True"/>
+                    <sheet>
+                        <group string="Sukurti išvedimo iš eksploatacijos aktą">
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="committee_id"/>
+                            <field name="committee_member_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="asset_ids" widget="one2many_list" nolabel="1">
+                                <tree create="false" edit="false"
+                                      decoration-danger="isvedimas_id or state != 'open' or written_off_or_sold"
+                                      class="robo_tree_in_form">
+                                    <field name="name"/>
+                                    <field name="category_id" invisible="1"/>
+                                    <field name="date"/>
+                                    <field name="original_value" widget="monetary"/>
+                                    <field name="likvidacine_verte" widget="monetary"/>
+                                    <field name="likvidavimo_data"/>
+                                    <field name="currency_id" groups="base.group_multi_currency"/>
+                                    <field name="state"/>
+                                    <field name="isvedimas_id" invisible="1"/>
+                                    <field name="written_off_or_sold" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="create_operation_act" class="oe_highlight" type="object" string="Sukurti"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="operation_act_wizard_in_view_form" model="ir.ui.view">
+            <field name="name">operation.act.wizard.in.view.form</field>
+            <field name="model">operation.act.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Eksploatacijos aktas">
+                    <field name="act_type" invisible="1"/>
+                    <sheet>
+                        <group string="Sukurti įvedimo į eksploataciją aktą">
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="committee_id"/>
+                            <field name="committee_member_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="asset_ids" widget="one2many_list" nolabel="1">
+                                <tree create="false" edit="false" decoration-danger="ivedimas_id"
+                                      class="robo_tree_in_form">
+                                    <field name="name"/>
+                                    <field name="category_id" invisible="1"/>
+                                    <field name="date"/>
+                                    <field name="original_value" widget="monetary"/>
+                                    <field name="currency_id" groups="base.group_multi_currency"/>
+                                    <field name="state"/>
+                                    <field name="ivedimas_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="create_operation_act" class="oe_highlight" type="object" string="Sukurti"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

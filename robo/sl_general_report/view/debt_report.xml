@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="partner_debt_analysis_action" model="ir.actions.act_window">
+            <field name="name">Partners Debt Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">partner.debt.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="view_id" eval="False"/>
+            <field name="context">{'search_default_ap_debts': True, 'search_default_due': True}</field>
+            <field name="target"></field>
+        </record>
+
+        <record id="partner_debt_report_search_view" model="ir.ui.view">
+            <field name="name">partner.debt.report.search.view</field>
+            <field name="model">partner.debt.report</field>
+            <field name="arch" type="xml">
+                <search string="Partner debt report">
+                    <field name="partner_id"/>
+                    <field name="date"/>
+                    <field name="date_maturity"/>
+                    <filter name="ar_debts" string="AR debts" domain="['&amp;', ('account_type_id','=',1), ('amount_debt', '&gt;', 0)]"/>
+                    <filter name="ar_payments" string="AR payments" domain="['&amp;', ('account_type_id','=',1), ('amount_debt', '&lt;', 0)]"/>
+                    <filter name="ap_debts" string="AP debts" domain="['&amp;', ('account_type_id','=',2), ('amount_debt', '&lt;', 0)]"/>
+                    <filter name="ap_payments" string="AP payments" domain="['&amp;', ('account_type_id','=',2), ('amount_debt', '&gt;', 0)]"/>
+                    <separator/>
+                    <filter name="out_invoice" string="Customer Invoice" domain="[('invoice_type', '=', 'out_invoice')]"/>
+                    <filter name="in_invoice" string="Vendor Bill" domain="[('invoice_type', '=', 'out_invoice')]"/>
+                    <filter name="out_refund" string="Customer Refund" domain="[('invoice_type', '=', 'out_refund')]"/>
+                    <filter name="in_refund" string="Vendor Refund" domain="[('invoice_type', '=', 'in_refund')]"/>
+                    <separator/>
+                    <filter name="due" string="Due" domain="[('days_difference', '&lt;', 0)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="partner_debt_report_pivot_view" model="ir.ui.view">
+            <field name="name">partner.debt.report.pivot.view</field>
+            <field name="model">partner.debt.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Partners Debt Report" disable_linking="True" order="days_difference">
+                    <field name="partner_id" type="row"/>
+                    <field name="days_difference" type="measure"/>
+                    <field name="amount_debt" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <menuitem name="Partners Debts Report"
+                  id="menu_partner_debt_report"
+                  parent="account.account_reports_business_intelligence_menu"
+                  action="partner_debt_analysis_action"
+                  sequence="20"/>
+        <record id="account_move_line_tree_extend_delay" model="ir.ui.view">
+            <field name="name">account.move.line.tree.view</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_maturity']" position="after">
+                    <field name="days_delay"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="cron_move_line_delay" model="ir.cron">
+            <field name="name">Account move line debt delay</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">account.move.line</field>
+            <field name="function">cron_compute_delay</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.actions.act_window" id="open_robo_sale_orders_ext">
+            <field name="name">Užsakymai</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot,kanban</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="robo_stock.robo_sale_order_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_stock.robo_sale_order_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('sale.view_sale_order_kanban')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_stock.robo_sale_order_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="menu_uzsakymai"/>
+            <field name="header" ref="robo_stock.robo_stock_header_sale"/>
+            <field name="with_settings">True</field>
+        </record>
+
+                <menuitem id="menu_uzsakymai"
+                  parent="robo.menu_start"
+                  name="Užsakymai"
+                  sequence="50"
+                  action="open_robo_sale_orders_ext"
+                  groups="stock_orders.group_stock_orders"
+                  robo_front="True"
+                  force_web_icon="icon-box,none,none"
+                  robo_extended="1"
+        />
+    </data>
+</odoo>
+

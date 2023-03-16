@@ -1,0 +1,102 @@
+<odoo>
+    <data>
+        <!--Tree-->
+        <record id="tree_front_stock_warehouse_orderpoint" model="ir.ui.view">
+            <field name="name">form.front.stock.warehouse.orderpoint</field>
+            <field name="model">stock.warehouse.orderpoint</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree string="Automatinio užsakymo taisyklės" create="0" import="0">
+                    <field name="name"/>
+                    <field name="active" invisible="1"/>
+                    <field name="warehouse_id" groups="stock.group_stock_multi_locations"/>
+                    <field name="location_id" groups="stock.group_stock_multi_locations"/>
+                    <field name="product_id"/>
+                    <field name="product_uom" options="{'no_open': True, 'no_create': True}"
+                           groups="product.group_uom"/>
+                    <field name="product_min_qty"/>
+                    <field name="product_max_qty"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="form_front_stock_warehouse_orderpoint" model="ir.ui.view">
+            <field name="name">form.front.stock.warehouse.orderpoint</field>
+            <field name="model">stock.warehouse.orderpoint</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Automatinio užsakymo taisyklės">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                            <button name="%(robo_stock.action_open_procurement_order_filtered)d"
+                                    type="action" string="Planiniai užsakymai" class="oe_stat_button"
+                                    icon="fa-refresh"/>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Taisyklė"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="warehouse_id" widget="selection"
+                                   groups="stock.group_stock_multi_locations"/>
+                            <field name="product_uom" options="{'no_open': True, 'no_create': True}"
+                                   groups="product.group_uom"/>
+                            <field name="location_id" groups="stock.group_stock_multi_locations"/>
+                            <field name="group_id" groups="stock.group_adv_location"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <group string="Taisyklės">
+                                <field name="product_min_qty"/>
+                                <field name="product_max_qty"/>
+                                <field name="qty_multiple"/>
+                            </group>
+                            <group string="Kiti nustatymai">
+                                <label for="lead_days" string="Periodai"/>
+                                <div class="o_row">
+                                    <field name="lead_days"/>
+                                    <field name="lead_type"/>
+                                </div>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_stock_warehouse_orderpoint" model="ir.actions.act_window">
+            <field name="name">Automatinio užsakymo taisyklės</field>
+            <field name="res_model">stock.warehouse.orderpoint</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="tree_front_stock_warehouse_orderpoint"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_front_stock_warehouse_orderpoint')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_front_stock_warehouse_orderpoint')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="menu_advanced_stock_locations"/>
+            <field name="header" ref="header_stock_warehouse_orderpoint"/>
+        </record>
+        <record id="action_open_stock_warehouse_orderpoint_new" model="ir.actions.act_window">
+            <field name="name">Nauja automatinio užsakymo taisyklė</field>
+            <field name="res_model">stock.warehouse.orderpoint</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="form_front_stock_warehouse_orderpoint"/>
+        </record>
+    </data>
+</odoo>

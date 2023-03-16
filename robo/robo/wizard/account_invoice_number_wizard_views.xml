@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="change_invoice_number" model="ir.ui.view">
+            <field name="name">change.invoice.number</field>
+            <field name="model">account.invoice.number.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Change invoice number">
+                    <group>
+                        <field name="show_ref_field" invisible="1"/>
+                        <field name="number"/>
+                        <field name="reference" attrs="{'invisible': [('show_ref_field','=', False)]}"/>
+                    </group>
+                    <footer>
+                        <button name="change_number" type="object" string="Keisti numerį" class="oe_highlight"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="change_invoice_number_wizard">
+            <field name="name">Keisti sąskaitos numerį</field>
+            <field name="res_model">account.invoice.number.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="change_invoice_number"/>
+        </record>
+    </data>
+</odoo>

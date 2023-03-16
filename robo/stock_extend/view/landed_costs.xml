@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="landed_costs_report_pivot" model="ir.ui.view">
+            <field name="name">stock.landed.costs.report.pivot.view</field>
+            <field name="model">stock.landed.costs.report</field>
+            <field name="arch" type="xml">
+                <pivot disable_linking="True">
+                    <field name="product_id" type="row"/>
+                    <field name="landed_product_id" type="col"/>
+                    <field name="additional_landed_cost" type="measure"/>
+                    <field name="quantity" type="measure"/>
+                    <field name="added_cost" type="measure"/>
+                    <field name="cost" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="landed_costs_report_graph" model="ir.ui.view">
+            <field name="name">stock.landed.costs.report.graph.view</field>
+            <field name="model">stock.landed.costs.report</field>
+            <field name="arch" type="xml">
+                <graph>
+                    <field name="product_id" type="row"/>
+                    <field name="additional_landed_cost" type="measure"/>
+                </graph>
+            </field>
+        </record>
+        <record id="landed_costs_report_search" model="ir.ui.view">
+            <field name="name">stock.landed.costs.report.search.view</field>
+            <field name="model">stock.landed.costs.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="product_id"/>
+                    <field name="landed_product_id"/>
+                    <field name="lot_id"/>
+                    <field name="split_method"/>
+                    <filter name="current_month" string="Current month" domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%%Y-%%m-%%d')),('date','&gt;=',(context_today()+relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="previous_month" string="Previous month" domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(months=-1,day=31)).strftime('%%Y-%%m-%%d')),('date','&gt;=',(context_today()+relativedelta(months=-1, day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+                    <filter name="internal" string="Internal Locations" domain="[('location_id.usage','=','internal')]"/>
+                    <group>
+                        <filter name="product_id" string="Product" context="{'group_by': 'product_id'}"/>
+                        <filter name="landed_product_id" string="Landed costs type" context="{'group_by': 'landed_product_id'}"/>
+                        <filter name="lot_id" string="Lot" context="{'group_by': 'lot_id'}"/>
+                        <filter name="date" string="Date" context="{'group_by': 'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="add_parent_id_stock_landed_costs_tree" model="ir.ui.view">
+            <field name="name">mrp.stock.landed.costs.tree.view</field>
+            <field name="model">stock.landed.cost</field>
+            <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="parent_id"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="action_landed_costs_report" model="ir.actions.act_window">
+            <field name="name">Landed costs report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.landed.costs.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="usage">menu</field>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_current_month':1, 'search_default_internal':1}</field>
+        </record>
+       <menuitem
+                  name="Landed costs analysis"
+                  parent="stock.menu_warehouse_report"
+                  id="landed_costs_report_menu"
+                  sequence="15"
+                  groups="stock.group_stock_manager"
+                  action="action_landed_costs_report"
+                  />
+        <record id="stock_quant_valuation_adjustment_lines_form_view" model="ir.ui.view">
+            <field name="name">stock.quant.valuation.adjustment.lines.form.view</field>
+            <field name="model">stock.quant</field>
+            <field name="inherit_id" ref="stock.view_stock_quant_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='history_ids']" position="after">
+                    <field name="valuation_adjustment_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="quantity"/>
+                            <field name="additional_landed_cost" sum="additional_landed_cost"/>
+                            <field name="former_cost_per_unit"/>
+                            <field name="unit_cost_change" sum="unit_cost_change"/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+        <record id="add_mrp_stock_landed_costs_form_view" model="ir.ui.view">
+            <field name="name">mrp.stock.landed.costs.form.view</field>
+            <field name="model">stock.landed.cost</field>
+            <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='picking_ids']" position="after">
+                    <field name="mos" widget="many2many_tags"/>
+                    <field name="unbuild_ids" widget="many2many_tags"/>
+                </xpath>
+                <xpath expr="//field[@name='account_move_id']" position="after">
+                    <field name="invoice_id"/>
+                </xpath>
+                <xpath expr="//div[1]" position="before">
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                         attrs="{'invisible': [('is_reverted','=',False)]}">
+                        Šis koregavimas buvo atšauktas.
+                        <button class="oe_inline oe_stat_button oe_right" name="action_view_reverse_lc"
+                                string="Atidaryti atšaukiantį koregavimą" type="object"/>
+                    </div>
+                </xpath>
+                <xpath expr="//div[1]" position="after">
+                    <div name="button_box" class="oe_right oe_button_box">
+                        <button class="oe_inline oe_stat_button oe_right" name="action_view_related_lc"
+                                type="object" icon="fa-list-alt"
+                                attrs="{'invisible': ['|',('related_lc_number','=',0)]}" widget="statinfo">
+                            <field string="Related" name="related_lc_number" widget="statinfo"/>
+                        </button>
+                        <button class="oe_inline oe_stat_button oe_right" name="action_view_origin_lc"
+                                type="object" icon="fa-undo-alt"
+                                attrs="{'invisible': ['|',('is_reversion','=', False)]}">Atšauktas koregavimas</button>
+                    </div>
+                </xpath>
+                <xpath expr="//button[@name='button_cancel']" position="after">
+                     <field name="is_reversion" invisible="1"/>
+                     <field name="is_reverted" invisible="1"/>
+                    <button name="button_revert_landed_cost" string="Atšaukti" states="done"
+                            attrs="{'invisible': [('is_reverted','=',False)]}" type="object"/>
+                </xpath>
+            </field>
+        </record>
+        <function model="stock.landed.cost" name="create_default_journal"/>
+        <record id="account_invoice_supplier_form_add_landed_costs" model="ir.ui.view">
+            <field name="name">supplier.invoice.add.landed.costs</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[last()]" position="after">
+                    <page name="landed_costs" string="Landed Costs" groups="stock.group_stock_manager,account.group_account_user" attrs="{'invisible': ['|',('landed_cost_ids','=',[])]}">
+                        <group>
+                            <field name="landed_cost_ids" nolabel="1">
+                                <tree create="0" delete="0" edit="0">
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="state"/>
+                                    <field name="amount_total"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
+

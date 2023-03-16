@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_supplier_form_deferred" model="ir.ui.view">
+            <field name="name">account.invoice.form.extend</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet[1]//div[1]" position="before">
+                    <div class="oe_right oe_button_box" name="buttons" groups="account.group_account_user">
+                        <button class="oe_inline oe_stat_button"
+                            name="show_related_accounting_entries" type="object"
+                            attrs="{'invisible':[('state','=','draft')]}"
+                            icon="fa-bars">
+                            <field name="num_account_entries"/>
+                        </button>
+                    </div>
+                </xpath>
+                <xpath expr="//notebook[1]" position="before">
+                    <field name="deferred" invisible="1"/>
+                </xpath>
+                <xpath expr="//notebook[1]//tree[1]//field[@name='price_unit']" position="before">
+                    <field name="deferred" groups="account.group_account_user"/>
+                </xpath>
+                <xpath expr="//notebook['last']/page['last']" position="after">
+                    <page string="Deferred" attrs="{'invisible':[('deferred','=',False)]}" groups="account.group_account_user">
+                        <field name="deferred_line_ids" attrs="{'readonly':[('state', '!=','draft')]}">
+                            <tree editable="bottom" create="0"  delete="0">
+                                <field name="invoice_line_id"/>
+                                <field name="date_from"/>
+                                <field name="account_id"/>
+                                <field name="number_periods"/>
+                                <field name="use_first_day"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="invoice_form_deferred" model="ir.ui.view">
+            <field name="name">account.invoice.form.extend</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet[1]//group[1]" position="before">
+                    <div class="oe_right oe_button_box" name="buttons" groups="account.group_account_user">
+                        <button class="oe_inline oe_stat_button"
+                            name="show_related_accounting_entries" type="object"
+                            attrs="{'invisible':[('state','=','draft')]}"
+                            icon="fa-bars">
+                            <field name="num_account_entries"/>
+                        </button>
+                        <!--<field name="show_related_sales" invisible="1"/>-->
+                        <!--<button class="oe_inline oe_stat_button"-->
+                            <!--name="show_related_sale_orders" type="object"-->
+                            <!--attrs="{'invisible':[('show_related_sales','=',False)]}"-->
+                            <!--groups="base.group_sale_salesman"-->
+                            <!--icon="fa-credit-card"-->
+                            <!--string="Sale Orders"-->
+                        <!--/>-->
+                    </div>
+                </xpath>
+                <xpath expr="//notebook[1]//tree[1]//field[@name='price_unit']" position="before">
+                    <field name="deferred" groups="account.group_account_user"/>
+                </xpath>
+                <xpath expr="//notebook[1]" position="before">
+                    <field name="deferred" invisible="1"/>
+                </xpath>
+                <xpath expr="//notebook['last']/page['last']" position="after">
+                    <page string="Deferred" attrs="{'invisible':[('deferred','=',False)]}" groups="account.group_account_user">
+                        <field name="deferred_line_ids"  attrs="{'readonly':[('state','!=','draft')]}">
+                            <tree editable="bottom" create="0" delete="0">
+                                <field name="invoice_line_id"/>
+                                <field name="date_from"/>
+                                <field name="account_id"/>
+                                <field name="number_periods"/>
+                                <field name="use_first_day"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_template_view_deferred_accounts">
+            <field name="name">product.template.view.deferred.accounts</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='taxes_id']" position="after">
+                    <field name="account_deferred_income_id"/>
+                    <field name="account_deferred_expense_id"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_product_view_deferred_accounts">
+            <field name="name">product.product.view.deferred.accounts</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='taxes_id']" position="after">
+                    <field name="account_deferred_income_id"/>
+                    <field name="account_deferred_expense_id"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_product_category_deferred_account" model="ir.ui.view">
+            <field name="name">product.category.form.deferred.account</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="account.view_category_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_account_expense_categ_id']" position="after">
+                    <field name="account_deferred_income_id"/>
+                    <field name="account_deferred_expense_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

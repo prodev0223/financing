@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_report_wizard" model="ir.ui.view">
+            <field name="name">robo.report.wizard</field>
+            <field name="model">accounting.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Finansinė ataskaita">
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="company_id" invisible="1"/>
+                            <field name="account_report_id" invisible="1"/>
+                            <field name="do_show_reduced" invisible="1"/>
+                            <group col="2">
+                                <field name="target_move" widget="radio" invisible="1"/>
+                                <field name="date_from" string="Nuo"/>
+                                <field name="date_to" string="Iki"/>
+                                <field name="reduced_uab_report" string="Sutrumpinta ataskaita"
+                                       attrs="{'invisible': [('do_show_reduced','!=',True)]}"/>
+                                <field name="vsi_report_version" groups="robo_basic.group_robo_premium_accountant"
+                                       attrs="{'invisible': [('activity_form','!=','vsi')], 'required': [('activity_form','=','vsi')]}"/>
+                                <field name="force_lang" attrs="{'invisible': [('activity_form','=','vsi')]}"/>
+                                <field name="activity_form" invisible="1"/>
+                            </group>
+                        </group>
+                        <footer style="text-align: center; margin-top:18%;">
+                            <div>
+                                <p>
+                                    <i>
+                                        Generuojama ataskaita yra preliminari, šios ataskaitos sumos gali pasikeisti po
+                                        metų uždarymo procedūrų.
+                                    </i>
+                                </p>
+                            </div>
+                            <button name="check_report" string="Peržiūrėti" type="object" default_focus="1"
+                                    class="oe_highlight" context="{'front':True, 'force_html': True}"
+                                    style="margin-right: 10px;"/>
+                            <button name="check_report" string="PDF" type="object" default_focus="1"
+                                    class="oe_highlight" context="{'front':True, 'force_pdf': True}"
+                                    style="margin-right: 10px;"/>
+                            <button name="xls_export" context="{'pelnas':1}" type="object"
+                                    string="Excel" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="robo_report_balance_wizard" model="ir.ui.view">
+            <field name="name">robo.report.balance.wizard</field>
+            <field name="model">accounting.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Finansinė ataskaita">
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="company_id" invisible="1"/>
+                            <field name="account_report_id" invisible="1"/>
+                            <field name="do_show_reduced" invisible="1"/>
+                            <group col="2">
+                                <field name="target_move" widget="radio" invisible="1"/>
+                                <field name="date_from" string="Nuo" invisible="1"/>
+                                <field name="date_to" string="Datai"/>
+                                <field name="uab_report_size"
+                                       attrs="{'invisible': [('do_show_reduced','!=',True)], 'required': [('do_show_reduced','=',True)]}"/>
+                                <field name="vsi_report_version" groups="robo_basic.group_robo_premium_accountant"
+                                       attrs="{'invisible': [('activity_form','!=','vsi')], 'required': [('activity_form','=','vsi')]}"/>
+                                <field name="force_lang" attrs="{'invisible': [('activity_form','=','vsi')]}"/>
+                                <field name="activity_form" invisible="1"/>
+                            </group>
+                        </group>
+                        <footer style="text-align: center; margin-top:20%;">
+                            <div>
+                                <p>
+                                    <i>
+                                        Generuojama ataskaita yra preliminari, šios ataskaitos sumos gali pasikeisti po
+                                        metų uždarymo procedūrų.
+                                    </i>
+                                </p>
+                            </div>
+                            <button name="check_report" string="Peržiūrėti" type="object" default_focus="1"
+                                    class="oe_highlight"
+                                    context="{'front':True, 'force_html': True}" style="margin-right: 10px;"/>
+                            <button name="check_report" string="PDF" type="object" default_focus="1"
+                                    class="oe_highlight"
+                                    context="{'front':True, 'force_pdf': True}" style="margin-right: 10px;"/>
+                            <button name="xls_export" context="{'balansas':1}" type="object"
+                                    string="Excel" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_balance">
+            <field name="name">Balansas</field>
+            <field name="res_model">accounting.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="context">{
+                'balansas': True
+                }
+            </field>
+            <field name="view_id" ref="robo_report_balance_wizard"/>
+        </record>
+
+        <menuitem id="menu_balance_search_report"
+                  name="Balansas"
+                  groups="robo_basic.group_robo_premium_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_balance"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="balansas"
+        />
+
+        <record model="ir.actions.act_window" id="open_profit">
+            <field name="name">Pelnas (Nuostolis)</field>
+            <field name="res_model">accounting.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="context">{
+                'pelnas': True
+                }
+            </field>
+            <field name="view_id" ref="robo_report_wizard"/>
+        </record>
+
+        <menuitem id="menu_profit_search_report"
+                  name="Pelnas (Nuostolis)"
+                  groups="robo_basic.group_robo_premium_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_profit"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="pelnas,nuostolis"
+        />
+    </data>
+</odoo>

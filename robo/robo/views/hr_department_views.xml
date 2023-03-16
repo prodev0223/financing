@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="new_department_form">
+            <field name="name">Padalinys</field>
+            <field name="model">hr.department</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Padalinys">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="text-align: center; font-size: 1.2em; margin-top: 1.1em" colspan="4">
+                                Attention: department name adjustment will be applied to all employees, who are subject to this department.<br/>
+                                If this is not the desired result - create a new department record.
+                        </div>
+                        <group>
+                            <field name="name" string="Padalinio pavadinimas"/>
+                            <field name="manager_id" groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager" options="{'no_create': 1, 'no_open':1}"/>
+                            <field name="default_cash_journal_id" groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="prime_cost"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_department_tree_view">
+            <field name="name">hr.department.tree</field>
+            <field name="priority" eval="99"/>
+            <field name="model">hr.department</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0">
+                    <field name="name" string="Pavadinimas"/>
+                    <field name="manager_id" string="Tvirtina atostogas"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="hr_department_kanban_view">
+            <field name="name">hr.department.kanban</field>
+            <field name="priority" eval="99"/>
+            <field name="model">hr.department</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false">
+                    <field name="name" string="Pavadinimas"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.name.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_hr_department">
+            <field name="name">Padaliniai</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="context">{'robo_header':{}}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('hr_department_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo.new_department_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('hr_department_kanban_view')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

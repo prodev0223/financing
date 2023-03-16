@@ -1,0 +1,141 @@
+<odoo>
+    <data>
+        <record id="raso_prices_tree" model="ir.ui.view">
+            <field name="name">product.template.prices.tree</field>
+            <field name="model">product.template.prices</field>
+            <field name="arch" type="xml">
+                 <tree  decoration-warning="need_to_update"
+                        string="Mokėjimai" create="1" edit="1" delete="1"
+                        decoration-info="is_terminated"
+                        decoration-success="not is_terminated">
+                     <field name="product_id"/>
+                     <field name="shop_id"/>
+                     <field name="price_no"/>
+                     <field name="price"/>
+                     <field name="qty"/>
+                     <field name="is_terminated"/>
+                     <field name="revision_number_display"/>
+                     <field name="need_to_update"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="raso_prices_action" model="ir.actions.act_window">
+            <field name="name">Kainos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.template.prices</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="raso_prices_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="raso_prices_form" model="ir.ui.view">
+            <field name="name">product.template.prices.form</field>
+            <field name="model">product.template.prices</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Mokėjimai" create="1" edit="1" delete="1">
+                    <header>
+                        <field name="is_terminated" invisible="1"/>
+                        <button name="import_product_prices" type="object"
+                                attrs="{'invisible': [('is_terminated', '=', True)]}"
+                                string="Importuoti į RASO" class="oe_highlight"/>
+                        <button name="import_product_prices_terminated" type="object"
+                                attrs="{'invisible': [('is_terminated', '=', False)]}"
+                                string="Importuoti į RASO" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    </header>
+                    <field name="last_update_state" invisible="1"/>
+                    <field name="importable_to_raso" invisible="1"/>
+                    <field name="need_to_update" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'waiting'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Laukiama atsakymo paskutiniam importuotam įrašui</h4></div>
+                    </div>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('need_to_update', '=', False)]}">
+                        <div><h4>Įrašo versija naujesnė nei RASO serveryje</h4></div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'rejected'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Paskutinis importas į RASO serverį buvo atmestas</h4></div>
+                    </div>
+                    <sheet>
+                    <div>
+                        <label string="Produktas"/>
+                        <h1 class="mt0">
+                            <field name="product_id" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="price_no"/>
+                            <field name="qty"/>
+                            <field name="price"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="is_terminated"/>
+                            <field name="shop_id"/>
+                            <field name="all_shop_price"/>
+                        </group>
+                         <group string="Raso Importas">
+                        <field name="revision_number_display"/>
+                        <field name="raso_revision"/>
+                         </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Functions-->
+        <record model="ir.actions.server" id="import_prices_action_rec">
+            <field name="name">Importuoti kainas į RASO</field>
+            <field name="model_id" ref="raso_retail.model_product_template_prices"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).import_product_prices()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="import_prices_action" model="product.template.prices"/>
+        <record model="ir.actions.server" id="import_prices_term_action_rec">
+            <field name="name">Importuoti terminuotas kainas į RASO</field>
+            <field name="model_id" ref="raso_retail.model_product_template_prices"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).import_product_prices_terminated()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="import_prices_term_action" model="product.template.prices"/>
+        <!--Searches-->
+        <record id="raso_product_template_prices_filter" model="ir.ui.view">
+            <field name="name">raso.product.template.prices.filter</field>
+            <field name="model">product.template.prices</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="need_to_update" domain="[('need_to_update','=', True)]" string='Reikia atnaujinti'/>
+                    <filter name="terminated" domain="[('is_terminated','=', True)]" string='Terminuotos kainos'/>
+                    <filter name="non_terminated" domain="[('is_terminated','=', False)]" string='Neterminuotos kainos'/>
+                    <separator/>
+                    <field name="product_id"/>
+                    <field name="shop_id"/>
+                    <separator/>
+                    <field name="date_from" string="Data nuo (Galiojimo pradžia)" filter_domain="[('date_from', '&gt;=', self)]"/>
+                    <field name="date_from" string="Data iki (Galiojimo pradžia)" filter_domain="[('date_from', '&lt;=', self)]"/>
+                    <field name="date_to" string="Data nuo (Galiojimo pabaiga)" filter_domain="[('date_to', '&gt;=', self)]"/>
+                    <field name="date_to" string="Data iki (Galiojimo pabaiga)" filter_domain="[('date_to', '&lt;=', self)]"/>
+                    <group>
+                        <filter name="group_product_id" string="Produktas" context="{'group_by':'product_id'}"/>
+                        <filter name="group_shop_id" string="Parduotuvė" context="{'group_by':'shop_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

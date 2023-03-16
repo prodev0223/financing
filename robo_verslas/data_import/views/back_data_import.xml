@@ -1,0 +1,52 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="form_back_data_import" model="ir.ui.view">
+            <field name="name">back.data.import</field>
+            <field name="model">back.data.import</field>
+            <field name="arch" type="xml">
+                <form string="Duomenu importavimas">
+                    <sheet>
+                        <group col="2">
+                            <field name="xls_data" filename="xls_name"/>
+                            <field name="xls_name" invisible="1"/>
+                            <field name="check_amounts"/>
+                        </group>
+                        <group>
+                            <a href="data_import/static/data/Duomenu_importas_backend.xlsx">Atsisiųsti XLS pavyzdį</a>
+                        </group>
+                    </sheet>
+                <footer>
+                    <button string="Importuoti Duomenis" name="data_import" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record model="ir.actions.act_window" id="action_open_back_data_import">
+            <field name="name">Importuoti duomenis</field>
+            <field name="res_model">back.data.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="form_back_data_import"/>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                name="Išplėstinis sąskaitų importas"
+                id="back_data_import"
+                sequence="49"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Importuoti duomenis"
+                id="back_data_import_wizard"
+                action="action_open_back_data_import"
+                sequence="49"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="back_data_import"
+        />
+    </data>
+</odoo>

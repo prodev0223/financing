@@ -1,0 +1,103 @@
+<odoo>
+    <data>
+        <!--Tree-->
+        <record id="tree_front_stock_location_route" model="ir.ui.view">
+            <field name="name">form.front.stock.location.route</field>
+            <field name="model">stock.location.route</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree string="Maršrutai" create="0" import="0">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name" string="Maršrutas"/>
+                    <field name="active" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="form_front_stock_location_route" model="ir.ui.view">
+            <field name="name">form.front.stock.location.route</field>
+            <field name="model">stock.location.route</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Route">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive"
+                                    groups="stock.group_adv_location">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Maršrutas"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group string="Taikoma">
+                            <group colspan="4">
+                                <div class="alert alert-info" role="alert" style="margin-bottom: 2px;">
+                                    Pasirinkite objektus, kuriose bus galima taikyti šį maršrutą.
+                                </div>
+                            </group>
+                            <group>
+                                <field name="product_categ_selectable" string="Produktų kategorijoms"/>
+                                <field name="product_selectable" string="Produktams"/>
+                                <field name="sale_selectable" string="Pardavimų užsakymo eilutėms"/>
+                                <field name="warehouse_selectable" string="Sandėliams"/>
+                                <field name="warehouse_ids" widget="many2many_tags" nolabel="1"
+                                   attrs="{'readonly': [('warehouse_selectable', '=', False)]}"/>
+                            </group>
+                        </group>
+                        <group string="Sandėlio išskirstymo taisyklės" colspan="4">
+                            <field name="push_ids" colspan="4" nolabel="1"
+                                   context="{'form_view_ref': 'robo_stock.form_front_stock_location_path'}">
+                                <tree>
+                                    <field name="location_from_id"/>
+                                    <field name="location_dest_id"/>
+                                    <field name="name" string="Operacijos pavadinimas"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Planinio užsakymo taisyklės" colspan="4">
+                            <field name="pull_ids" colspan="4" nolabel="1"
+                                   context="{'form_view_ref': 'robo_stock.form_front_procurement_rule'}">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="action"/>
+                                    <field name="picking_type_id"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_stock_location_route" model="ir.actions.act_window">
+            <field name="name">Maršrutai</field>
+            <field name="res_model">stock.location.route</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="tree_front_stock_location_route"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_front_stock_location_route')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_front_stock_location_route')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="menu_advanced_stock_locations"/>
+            <field name="header" ref="header_stock_location_route"/>
+        </record>
+        <record id="action_open_stock_location_route_new" model="ir.actions.act_window">
+            <field name="name">Naujas maršrutas</field>
+            <field name="res_model">stock.location.route</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="form_front_stock_location_route"/>
+        </record>
+    </data>
+</odoo>

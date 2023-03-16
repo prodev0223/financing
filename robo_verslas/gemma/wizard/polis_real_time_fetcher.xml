@@ -1,0 +1,115 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="form_polis_real_time_fetcher" model="ir.ui.view">
+            <field name="name">form.polis.real.time.fetcher</field>
+            <field name="model">polis.real.time.fetcher</field>
+            <field name="arch" type="xml">
+                <form string="Duomenų patikrinimas">
+                    <sheet>
+                        <group>
+                            <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                Paspaudus 'Atsisiųsti XLS' iš POLIS duomenų, ištrauktų realiu laiku, bus suformuojamas
+                                ir parsiunčiamas XLS failas.
+                                <br/>
+                                Duomenys yra filtruojami pagal Jūsų pasirinktus filtravimo kriterijus.
+                                Data nuo ir data iki žymi duomenų modifikavimo datą POLIS sistemoje.
+                                <br/>
+                            </div>
+                        </group>
+                        <group name="Filtravimas">
+                            <field name="date_from" required="1"/>
+                            <field name="date_to" required="1"/>
+                            <field name="include_only_done_sales"/>
+                            <field name="include_canceled_sales"/>
+                            <field name="partner_ids" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Atsisiųsti XLS" name="export_excel" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_polis_real_time_fetcher" model="ir.actions.act_window">
+            <field name="name">Duomenų patikrinimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">polis.real.time.fetcher</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="form_polis_real_time_fetcher"/>
+        </record>
+        <!--Table template -->
+        <template id="polis_real_time_data_table">
+            <div class="page xls_front" id="main">
+                <div class="table-responsive">
+                    <table class="o_list_view table table-condensed table-striped main_table" id="table_body">
+                        <thead>
+                            <tr>
+                                <th>Partneris</th>
+                                <th>Partnerio kodas</th>
+                                <th>Produkto kodas</th>
+                                <th>Kiekis</th>
+                                <th>Vnt. kaina</th>
+                                <th>Suma</th>
+                                <th>Pard. data</th>
+                                <th>Guld. data</th>
+                                <th>Reab. data</th>
+                                <th>Atlikta</th>
+                                <th>Atšaukta</th>
+                                <th>Atšaukimo data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-raw='table_body'/>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+        <!--Template for representative table lines-->
+        <template id="polis_real_time_data_table_line">
+            <tr>
+                <td>
+                    <t t-esc='partner_name'/>
+                </td>
+                <td>
+                    <t t-esc='buyer_id'/>
+                </td>
+                <td>
+                    <t t-esc='ext_product_code'/>
+                </td>
+                <td class="o_list_number">
+                    <t t-esc='qty'/>
+                </td>
+                <td class="o_list_number">
+                    <t t-esc='price'/>
+                </td>
+                <td class="o_list_number">
+                    <t t-esc='receipt_total'/>
+                </td>
+                <td>
+                    <t t-esc='sale_date'/>
+                </td>
+                <td>
+                    <t t-esc='bed_day_date'/>
+                </td>
+                <td>
+                    <t t-esc='rehabilitation_date'/>
+                </td>
+                <td>
+                    <t t-esc='ext_sale_done'/>
+                </td>
+                <td>
+                    <t t-esc='cancelled'/>
+                </td>
+                <td>
+                    <t t-esc='cancel_date'/>
+                </td>
+            </tr>
+        </template>
+    </data>
+</odoo>

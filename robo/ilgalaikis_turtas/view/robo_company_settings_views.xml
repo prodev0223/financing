@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">company.settings.form</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='politika']" position="inside">
+                    <field name="validate_assets_automatically"/>
+                </xpath>
+                <xpath expr="//div[@id='importas']" position="inside">
+                    <div class="import-element-container">
+                        <a href="ilgalaikis_turtas/static/src/import_examples/Ilgalaikio_turto_informacija.xlsx"
+                           class="import-download-container">
+                            <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                            <span>Ilgalaikio turto informacija</span>
+                        </a>
+                        <field style="border-radius: 4px !important;" name="import_assets" string="Importuoti"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_asset_numbering_form" model="ir.ui.view">
+            <field name="name">Ilgalaikio turto numeruotė</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group name="last_account_asset" string="Ilgalaikio turto numeruotė">
+                        <field name="asset_prefix"/>
+                        <field name="asset_suffix"/>
+                        <field name="asset_padding" required="True"/>
+                        <field name="asset_next_number" required="True"/>
+                    </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'assets': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="asset_numbering_action" model="ir.actions.act_window">
+            <field name="name">Ilgalaikio turto numeruotė</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_asset_numbering_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="company_settings_form_assets_numbering" model="ir.ui.view">
+            <field name="name">company.settings.form.assets.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='numbering_sequences']" position="inside">
+                    <button name="%(asset_numbering_action)d" string="Ilgalaikio turto numeruotė"
+                            type="action" class="oe_link"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

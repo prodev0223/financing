@@ -1,0 +1,1431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.actions.act_window" id="open_employee_vdu">
+            <field name="src_model">hr.employee</field>
+            <field name="name">VDU (1 mėn)</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employee.vdu</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,pivot</field>
+            <field name="view_id" eval="False"/>
+            <field name="context">{'search_default_employee_id': [active_id], 'search_default_last_three_months': True}</field>
+        </record>
+
+        <record id="hr_holidays_recompute" model="ir.ui.view">
+            <field name="name">hr.holidays.recompute</field>
+            <field name="model">hr.holidays</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="holiday_status_code" invisible="1"/>
+                </xpath>
+                <xpath expr="//button[@name='action_refuse']" position="after">
+                    <button string="Perskaičiuoti"
+                            name="recalculate_holiday_payment_amounts" states="draft"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('holiday_status_code', '!=', 'A')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="sistema_darbuotojai_view" model="ir.ui.view">
+            <field name="name">sistema.darbuotojai.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='gender']" position="before">
+                    <!--<field name="atostogu_dienos" string="Priklauso atostogų dienų per metus"/>-->
+                    <field name="tevystes" string="Tėvystės/motinystės atostogos"/>
+                    <field name="pensionner"/>
+                    <field name="use_favourable_sdd"/>
+                </xpath>
+                <xpath expr="//field[@name='passport_id']" position="before">
+                    <field name="is_non_resident"/>
+                    <field name="skip_monthly_income_tax_report"/>
+                    <field name="sodra_id" groups="hr.group_hr_user"
+                           attrs="{'invisible': [('is_non_resident','=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='bank_account_id']" position="after">
+                    <field name="tabelio_numeris" groups="hr.group_hr_user"/>
+                    <field name="type" groups="hr.group_hr_user"/>
+                </xpath>
+                <xpath expr="//field[@name='department_id']" position="attributes">
+                    <attribute name="required">True</attribute>
+                </xpath>
+                <xpath expr="//group[@name='active_group']" position="after">
+                    <group name="El. paštas" string="El. paštas" groups="hr.group_hr_user">
+                        <field name="nesiusti" groups="hr.group_hr_user"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <button name="open_contract_create_wizard" type="object" string="Priimti į darbą"
+                            attrs="{'invisible': ['|', ('active','=',False),('contracts_count', '!=', 0)]}"/>
+                </xpath>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Priedai" groups="hr.group_hr_manager">
+                        <group>
+                            <field name="appointment_ids" readonly="True">
+                                <tree create="false" edit="false" delete="false">
+                                    <field name="date_start"/>
+                                    <field name="date_end"/>
+                                    <field name="wage"/>
+                                    <field name="struct_id"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+
+                      <page string="Šeimos nariai" groups="hr.group_hr_user">
+                          <group groups="hr.group_hr_user">
+                              <field name="seimos_nariai" groups="hr.group_hr_user">
+                                  <tree editable="bottom">
+                                      <field name="name" groups="hr.group_hr_user"/>
+                                      <field name="seimos_narys" groups="hr.group_hr_user"/>
+                                      <field name="birthday" groups="hr.group_hr_user"/>
+                                      <field name="mokyklos_baigimas" groups="hr.group_hr_user"/>
+                                  </tree>
+                              </field>
+                          </group>
+                      </page>
+                </xpath>
+                <xpath expr="//field[@name='children']" position="attributes">
+                    <attribute name="string">Nepilnamečiai vaikai</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="context">{'partner_id': address_home_id, 'email': work_email}</attribute>
+                    <attribute name="on_change">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="related_user_archive_date" groups="robo_basic.group_robo_premium_accountant"
+                           attrs="{'invisible': [('user_id', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//group[@name='active_group']" position="after">
+                    <group name="other" string="Kita">
+                        <field name="recalculate_num_of_leaves"/>
+                    </group>
+                </xpath>
+                <xpath expr="//group[@name='other']" position="after">
+                    <group name="payslip" string="Darbo užmokestis">
+                        <field name="pay_salary_in_cash"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='coach_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='address_home_id']" position="after">
+                    <field name="advance_accountancy_partner_id"/>
+                </xpath>
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="%(open_employee_vdu)d"
+                            string="VDU"
+                            type="action"
+                            groups="hr.group_hr_manager"
+                            class="oe_stat_button"
+                            icon="fa-history"/>
+                </xpath>
+                <xpath expr="//field[@name='bank_account_id']" position="replace">
+                    <field name="bank_account_id"
+                           context="{'display_partner':True, 'default_partner_id': address_home_id}"
+                           options="{'no_quick_create': True}"/>
+                </xpath>
+                <xpath expr="//field[@name='country_id']" position="replace">
+                    <field name="nationality_id"/>
+                </xpath>
+                <xpath expr="//field[@name='address_home_id']" position="after">
+                    <field name="country_id" string="Šalis"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_employee_tree_extend" model="ir.ui.view">
+            <field name="name">hr.employee.tree.extend</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="tabelio_numeris"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="sistema_darbuotojai_tree" model="ir.ui.view">
+            <field name="name">sistema.darbuotojai.tree</field>
+            <field name="model">hr.payslip.line</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="replace">
+                    <field name="employee_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_hr_employee_view_form3" model="ir.ui.view">
+            <field name="name">hr.hr.employee.view.form2</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_contract.hr_hr_employee_view_form2"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//group[child::field[@name='medic_exam']]" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='medic_exam']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='vehicle']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='vehicle_distance']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='marital']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='marital']" position="after">
+                        <field name="seimynine_padetis" groups="hr.group_hr_user"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+        <template id="assets_backend_payslip" name="payslip css" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/less" href="/l10n_lt_payroll/static/src/less/payslip.less" t-ignore="true"/>
+            </xpath>
+        </template>
+        <record id="view_hr_payslip_form" model="ir.ui.view">
+            <field name="name">hr.payslip.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_ids']" position="replace">
+                    <field name="show_line_ids" colspan="4" nolabel="1">
+                        <tree string="Salary Structure" editable="bottom" decoration-info="total == 0">
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="total"/>
+                        </tree>
+                        <form string="Payslip Line">
+                            <group col="4">
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="category_id"/>
+                                <field name="sequence"/>
+                                <field name="quantity"/>
+                                <field name="rate"/>
+                                <field name="amount"/>
+                                <field name="total"/>
+                                <field name="salary_rule_id"/>
+                            </group>
+                        </form>
+                    </field>
+                </xpath>
+                <xpath expr="//field[@name='worked_days_line_ids']" position="before">
+                    <button name="refresh_and_recompute" string="Atnaujinti" type="object" states="draft"/>
+                </xpath>
+                <xpath expr="//button[@name='%(hr_payroll.act_payslip_lines)d']" position="after">
+                    <field name="isskaitos_ids" invisible="1"/>
+                    <button name="open_related_isskaitos" class="oe_stat_button" icon="fa-money" type="object"
+                            attrs="{'invisible': [('isskaitos_ids', '=', [])]}">
+                        <field name="isskaitos_count" widget="statinfo" string="Išskaitos"/>
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='action_payslip_cancel']" position="after">
+                    <button string="Cancel Payslip" name="atsaukti" type="object" states="done"/>
+                    <button string="Skaičiuoti VDU" name="generate_vdu" confirm="Jeigu keitėte VDU rankiniu būdu, tai jį pakeis. Ar norite tęsti?" states="done" type="object"/>
+                </xpath>
+                <xpath expr="//field[@name='credit_note']" position="after">
+                    <field name="atostogu_likutis"/>
+                    <field name="holiday_balance_by_accumulation_records"
+                           attrs="{'invisible': [('holiday_accumulation_usage_policy', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='date_to']" position="replace">
+                    <field name="date_to"
+                           class="oe_inline"/>
+                </xpath>
+                <xpath expr="//tree[1]//field[@name='number_of_hours']" position="attributes">
+                    <attribute name="sum">Total worked hours</attribute>
+                </xpath>
+                <xpath expr="//field[@name='credit_note']" position="replace">
+                </xpath>
+                <xpath expr="//group[@name='accounting']" position="after">
+                    <group name="other" string="Other">
+                        <field name="use_favourable_sdd"/>
+                        <field name="npd_nulis"/>
+                        <field name="npd_used" attrs="{'invisible': [('npd_nulis', '=', True)]}"/>
+                        <field name="pnpd_nulis"/>
+                        <field name="ismoketi_kompensacija"/>
+                        <field name="holiday_accumulation_usage_policy"/>
+                        <field name="credit_note" invisible="1"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='input_line_ids']//tree" position="inside">
+                    <field name="manual" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='input_line_ids']//tree" position="attributes">
+                    <attribute name="decoration-info">manual</attribute>
+                </xpath>
+                <xpath expr="//sheet[1]//div[@name='button_box']" position="before">
+                    <field name="unconfirmed_employee_payments_exist" invisible="1"/>
+                    <field name="planned_periodic_payments_exist" invisible="1"/>
+                    <field name="planned_periodic_deductions_exist" invisible="1"/>
+                    <field name="has_need_action_holidays" invisible="1"/>
+                    <field name="has_negative_holidays" invisible="1"/>
+                    <field name="has_natura_invoices" invisible="1"/>
+                    <field name="warn_about_possible_incorrect_calculations" invisible="1"/>
+                    <field name="show_not_all_benefits_in_kind_on_payslip_warning" invisible="1"/>
+                    <field name="show_benefit_in_kind_employer_pays_taxes_warning" invisible="1"/>
+                    <field name="warn_about_possible_parenthood_holidays_npd_issue" invisible="1"/>
+                    <div>
+                        <button class="payslip-warning" style="background-color: rgba(255, 0, 0, 0.6);" type="object"
+                                name="open_need_action_holidays"
+                                attrs="{'invisible': [('has_need_action_holidays', '=', False)]}">
+                            <span>
+                                Egzistuoja atostogų įrašai, kurie turėtų būti perskaičiuoti
+                            </span>
+                        </button>
+                    </div>
+                    <div>
+                        <button class="payslip-warning" type="object" name="open_unconfirmed_employee_payments"
+                                attrs="{'invisible': [('unconfirmed_employee_payments_exist', '=', False)]}">
+                            <span>
+                                Egzistuoja nepatvirtinti darbuotojo išmokėjimų įrašai šiam periodui
+                            </span>
+                        </button>
+                    </div>
+                    <div>
+                        <button class="payslip-warning" type="object" name="open_planned_periodic_payments"
+                                attrs="{'invisible': [('planned_periodic_payments_exist', '=', False)]}">
+                            <span>
+                                Egzistuoja suplanuoti tačiau nepriskaičiuoti išmokų įrašai šiam periodui
+                            </span>
+                        </button>
+                    </div>
+                    <div>
+                        <button class="payslip-warning" type="object" name="open_planned_periodic_deductions"
+                                attrs="{'invisible': [('planned_periodic_deductions_exist', '=', False)]}">
+                            <span>
+                                Egzistuoja suplanuoti tačiau neišskaičiuoti išskaitų įrašai šiam periodui
+                            </span>
+                        </button>
+                    </div>
+                    <div>
+                        <button class="payslip-warning" type="object" name="open_employee_natura_invoices"
+                                attrs="{'invisible': [('has_natura_invoices', '=', False)]}">
+                            <span>
+                                Egzistuoja sąskaitos, kuriose nurodyta darbuotojo pajamų natūra kategorija
+                            </span>
+                        </button>
+                    </div>
+                    <div>
+                        <div class="payslip-warning"
+                             attrs="{'invisible': ['|', ('has_negative_holidays', '=', False), ('ismoketi_kompensacija', '=', False)]}">
+                            Darbuotojo atostogų likutis yra neigiamas, galima išskaita iš DU
+                        </div>
+                    </div>
+                    <div>
+                        <div class="payslip-warning"
+                             attrs="{'invisible': [('warn_about_possible_incorrect_calculations', '=', False)]}">
+                            Atkreipkite dėmesį - galimai neteisingai paskaičiuotas darbuotojo atlyginimas!
+                            (Skiriasi NETO suma skaičiuojant pagal bendrą atlyginimo skaičiuoklę)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="payslip-warning"
+                             attrs="{'invisible': [('warn_about_possible_parenthood_holidays_npd_issue', '=', False)]}">
+                            Šiam darbuotojui prasideda arba baigiasi tėvystės atostogos viduryje mėnesio.
+                            Reikėtų atkreipti dėmesį, ar turėtų būti taikomas NPD.
+                        </div>
+                    </div>
+                    <div>
+                        <div class="payslip-warning"
+                             attrs="{'invisible': [('show_not_all_benefits_in_kind_on_payslip_warning', '=', False)]}">
+                            Galimai nebuvo įtraukti visi natūros įrašai. Reikėtų perskaičiuoti šį algalapį.
+                        </div>
+                    </div>
+                    <div>
+                        <div class="payslip-warning"
+                             attrs="{'invisible': [('show_not_all_benefits_in_kind_on_payslip_warning', '=', False)]}">
+                            Nepavyko sukurti žurnalo įrašo mokesčių perkėlimui, kai natūros mokesčius sumoka darbdavys.
+                            Įrašą sukurkite rankiniu būdu.
+                        </div>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='input_line_ids']" position="after">
+                    <separator string="Payments"/>
+                    <field name="payment_line_ids" colspan="4" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="code"/>
+                            <field name="vdu"/>
+                            <field name="amount_bruto"/>
+                            <field name="amount_npd"/>
+                            <field name="amount_gpm"/>
+                            <field name="amount_sodra"/>
+                            <field name="amount_paid"/>
+                            <field name="payment_status"/>
+                            <field name="payment_id" invisible="1"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </tree>
+                    </field>
+                </xpath>
+                <xpath expr="//field[@name='input_line_ids']" position="before">
+                    <field name="show_different_appointment_values_business_trip_warning" invisible="1"/>
+                    <div class="payslip-warning"
+                         attrs="{'invisible': [('show_different_appointment_values_business_trip_warning', '=', False)]}">
+                        Atkreipkite dėmesį - keitėsi darbuotojo sutarties informacija, galimai neteisingai paskaičiuota
+                        neapmokestinamų dienpinigių suma.
+                    </div>
+                </xpath>
+                <xpath expr="//page[2]" position="after">
+                    <page string="Kiti priskaitymai">
+                        <field name="other_line_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="a_klase_kodas_id"/>
+                                <field name="amount"/>
+                                <field name="type"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Vidutinis darbo užmokestis">
+                        <group name="VDU" colspan="4" col="1">
+                            <field name="warn_about_include_current_month" invisible="True"/>
+                            <div style="padding:0; background-color: rgba(255, 129, 0, 0.75); width: 100%;
+                            border-radius: 10px; margin-bottom: 10px; padding: 10px;"
+                                 attrs="{'invisible': [('warn_about_include_current_month', '=', False)]}">
+                                    <span style="color: #ffffff !important; font-weight:bold;">
+                                        Darbuotojas atleidžiamas paskutinę mėnesio darbo dieną. Reikia atkreipti dėmesį,
+                                        kad skaičiuojant atostoginių kompensaciją - į VDU skaičiavimus yra
+                                        įtrauktos šio mėnesio reikšmės!
+                                    </span>
+                            </div>
+                            <span colspan="4" style="font-weight: bold; text-allign:center;">VDU Įrašai</span>
+                            <field name="vdu_record_table" class="detailed-vdu-table" nolabel="1" colspan="4"/>
+                            <span colspan="4" style="font-weight: bold; text-allign:center;">VDU Paskaičiavimai</span>
+                            <field name="vdu_calculation_table" class="detailed-vdu-table" nolabel="1" colspan="4"/>
+                        </group>
+                        <!--<group>-->
+                            <!--<field name="vdu_previous" string="VDU (3 mėn)"/>-->
+                        <!--</group>-->
+                    </page>
+                </xpath>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Suminė darbo laiko apskaita" attrs="{'invisible': [('any_appointment_schedule_type_sumine_apskaita','=',False)]}">
+                        <field name="any_appointment_schedule_type_sumine_apskaita" invisible="True"/>
+                        <field name="sumine_apskaita_period_table"/>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='show_line_ids']" position="after">
+                    <field name="appointment_info_lines" colspan="4" options="{'no_open': True, 'no_create': True}">
+                        <tree string="Payslip info">
+                            <field name="name"/>
+                            <field name="struct"/>
+                            <field name="template_type"/>
+                            <field name="max_hours"/>
+                            <field name="etatas"/>
+                            <field name="work_norm"/>
+                            <field name="sodra_papildomai_proc"/>
+                            <field name="wage"/>
+                            <field name="use_npd" string="NPD"/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_hr_payslip_form_comp_date_extend" model="ir.ui.view">
+            <field name="name">hr.payslip.form.comp.date.extend</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll_account.view_hr_payslip_inherit_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="date_computation"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_payslip_run_tree_hide_credit_note" model="ir.ui.view">
+            <field name="name">hr.payslip.run.tree.hide.credit.note</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='credit_note']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+         <record id="sistema_payslip_search" model="ir.ui.view">
+            <field name="name">sistema.payslip.search</field>
+            <field name="model">hr.payslip.line</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_line_filter"/>
+            <field name="type">search</field> 
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='slip_id']" position="after">
+                   <field name="employee_id"/>
+                   <field name="code" string="Kodas" domain="[('code','like',code)]"/>
+                   <filter string="Daugiau už nulį" help="Daugiau už nulį" domain="[('total','>',0)]"/>
+               </xpath>
+            </field>
+        </record>
+
+        <record id="view_hr_payslip_company" model="ir.ui.view">
+            <field name="name">res.company.data</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="//field[@name='company_registry']" position="after">
+                 <field name="vadovas"/>
+                 <field name="findir"/>
+              </xpath>
+            </field>
+         </record>
+
+        <record id="view_hr_holidays_statusas" model="ir.ui.view">
+            <field name="name">hr.holidays.statusas</field>
+            <field name="model">hr.holidays.status</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_status_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="//field[@name='name']" position="after">
+                  <field name="kodas"/>
+                  <field name="komandiruotes"/>
+              </xpath>
+            </field>
+         </record>
+
+        <record id="algalapiai_sie_metai_search" model="ir.ui.view">
+            <field name="name">algalapiai.sie_metai.search</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_filter"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='name']" position="after">
+                  <filter name="sis_menuo" icon="terp-go-month" string="Šis mėnuo" domain="['&amp;',('date_from','&lt;=',(context_today()+relativedelta(day=31)).strftime('%%Y-%%m-%%d')),('date_from','&gt;=',(context_today()-relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                   <filter name="praitas_menuo" icon="terp-go-month" string="Praeitas mėnuo" domain="['&amp;',('date_from','&lt;=',(context_today()+relativedelta(months=-1, day=31)).strftime('%%Y-%%m-%%d')),('date_from','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                  <filter name="sie_metai" icon="terp-go-month" string="Šie metai" domain="['&amp;',('date_from','&gt;=',datetime.datetime(context_today().year,1,1).strftime('%%Y-%%m-%%d')),('date_from','&lt;=',datetime.datetime(context_today().year,12,31).strftime('%%Y-%%m-%%d'))]"/>
+               </xpath>
+            </field>
+        </record>
+
+        <record id="hr_contract_view_search_extend" model="ir.ui.view">
+            <field name="name">hr.contract.view.search.extend</field>
+            <field name="model">hr.contract</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_search"/>
+            <field name="arch" type="xml">
+               <xpath expr="//filter[@name='current_employee']" position="after">
+                   <separator/>
+                        <filter name="currently_active" string="Besitęsiantis"
+                                domain="['&amp;', ('date_start', '&lt;=' , context_today().strftime('%%Y-%%m-%%d')),
+                                                '|', ('date_end', '&gt;=', context_today().strftime('%%Y-%%m-%%d')),
+                                                     ('date_end', '=', False)]"/>
+               </xpath>
+            </field>
+        </record>
+
+        <record id="atlyginimas_sutartyse_tree" model="ir.ui.view">
+            <field name="name">atlyginimas.sutartyse.tree</field>
+            <field name="model">hr.contract</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_tree"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='wage']" position="replace">
+                   <field name="wage"/>
+                   <field name="working_schedule_number" invisible="1"/>
+               </xpath>
+            </field>
+        </record>
+
+        <record id="atlyginimo_eiluciu_graph" model="ir.ui.view">
+            <field name="name">atlyginimo.eiluciu.graph</field>
+            <field name="model">hr.payslip.line</field>
+            <field name="arch" type="xml">
+                <graph string="Analizė">
+                    <field name="employee_id" type="col"/>
+                    <field name="category_id"/>
+                    <field name="code" type="row"/>
+                    <field name="total" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="atlyginimo_eiluciu_pivot" model="ir.ui.view">
+            <field name="name">atlyginimo.eiluciu.pivot</field>
+            <field name="model">hr.payslip.line</field>
+            <field name="arch" type="xml">
+                <pivot string="Analizė">
+                    <field name="employee_id" type="col"/>
+                    <field name="code" type="row"/>
+                    <field name="total" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <act_window name="Payslip Computation Details"
+            context="{'default_slip_id': active_id,'search_default_slip_id': active_id}"
+            res_model="hr.payslip.line"
+            src_model="hr.payslip"
+            view_mode="tree,pivot,graph"
+            id="hr_payroll.act_payslip_lines"/>
+
+        <record id="search_atlyginimu_analize" model="ir.ui.view">
+            <field name="name">search.atlyginimu.analize</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_line_filter"/>
+            <field name="model">hr.payslip.line</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='slip_id']" position="after">
+                    <field name="employee_id"/>
+                    <field name="code"/>
+                    <filter name="sis_menuo" string="Šis mėnuo" domain="['&amp;',('slip_id.date_from','&lt;=',(context_today()+relativedelta(day=31)).strftime('%%Y-%%m-%%d')),('slip_id.date_from','&gt;=',(context_today()-relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                    <filter name="praeitas_menuo" string="Praeitas mėnuo" domain="['&amp;',('slip_id.date_from','&lt;=',(context_today().replace(day=1)-relativedelta(day=1)).strftime('%%Y-%%m-%%d')),('slip_id.date_from','&gt;=',(context_today().replace(day=1)-relativedelta(months=1)).strftime('%%Y-%%m-%%d'))]"/>
+                    <separator/>
+                    <filter name="done_slips" string="Patvirtinti algalapiai" domain="[('slip_id.state', '=', 'done')]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="holiday_fix_tree" model="ir.ui.view">
+            <field name="name">hr.holidays.fix.tree</field>
+            <field name="model">hr.holidays.fix</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="type"/>
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <field name="calendar_days_left"/>
+                    <field name="work_days_left"/>
+                    <field name="holiday_status_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="holiday_fix_search" model="ir.ui.view">
+            <field name="name">hr.holidays.fix.search</field>
+            <field name="type">search</field>
+            <field name="model">hr.holidays.fix</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <field name="type"/>
+                    <field name="holiday_status_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_darbo_atlyginimu_analize">
+            <field name="name">Atlyginimų analizė</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.payslip.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="view_id" eval="False"/>
+            <field name="context">{'search_default_praeitas_menuo':1, 'search_default_done_slips':1, 'group_by_employee_id':1, 'group_by_code':1}</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_holidays_fix_action">
+            <field name="name">Fiksuoti atostogų likučiai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.holidays.fix</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" eval="False"/>
+        </record>
+
+        <menuitem
+              name="Reporting"
+              id="meniu_payrol_reports"
+              parent="hr_payroll.menu_hr_payroll_root"
+              sequence="13"
+              groups="hr.group_hr_manager"
+              />
+        <menuitem
+              name="Atlyginimų analizė"
+              id="meniu_atlyginimo_analize"
+              parent="meniu_payrol_reports"
+              sequence="1"
+              action="action_darbo_atlyginimu_analize"
+              groups="hr.group_hr_manager"
+              />
+
+        <menuitem
+                name="Leaves Allocation"
+                parent="hr_holidays.menu_hr_holidays_configuration"
+                id="menu_open_department_leave_allocation_approve"
+                groups="base.group_no_one"
+                action="hr_holidays.open_department_holidays_allocation_approve"
+                sequence="2"
+                />
+
+        <menuitem
+                name="Fiksuoti atostogų likučiai"
+                parent="hr_holidays.menu_hr_holidays_configuration"
+                id="menu_open_holidays_fix"
+                action="open_holidays_fix_action"
+                sequence="2"
+                />
+
+        <record id="seimos_nariai_forma" model="ir.ui.view">
+            <field name="name">seimos.nariai.form</field>
+            <field name="model">seimos.nariai</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="name"/>
+                        <field name="seimos_narys"/>
+                        <field name="birthday"/>
+                        <field name="employee_id" invisible="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_holidays_pakeitimai_tree_view" model="ir.ui.view">
+            <field name="name">hr.holidays.pakeitimai.tree</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.view_holiday"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="after">
+                    <field name="pavaduoja"/>
+                </xpath>
+                <xpath expr="//field[@name='payslip_status']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='toggle_payslip_status']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='number_of_days']" position="after">
+                    <field name="number_of_days_temp" string="Darbo dienos" sum="Darbo dienos"/>
+                    <field name="vdu"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem
+              name="Atostoginių priskyrimai"
+              id="meniu_atostogu_priskyrimai"
+              parent="hr_payroll.menu_hr_payroll_configuration"
+              sequence="5"
+              />
+
+        <menuitem
+              name="Atostogų paskyrimai"
+              id="hr_holidays.menu_open_allocation_holidays"
+              parent="meniu_atostogu_priskyrimai"
+              action="hr_holidays.open_allocation_holidays"
+              />
+
+        <menuitem
+              name="Paskyrimų pritarimai"
+              id="hr_holidays.menu_request_approve_allocation"
+              parent="meniu_atostogu_priskyrimai"
+              action="hr_holidays.request_approve_allocation"
+              />
+
+        <record id="cron_nepilnameciai_vaikai" model="ir.cron">
+            <field name="name">Nepilnamečių vaikų tikrinimas</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">hr.employee</field>
+            <field name="function">cron_nepilnameciu_tikrinimas</field>
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_avansu_generavimas" model="ir.cron">
+            <field name="name">Avansų generavimas</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">avansai.run</field>
+            <field name="function">cron_avansu_generavimas</field>
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_sutarciu_archyvavimas" model="ir.cron">
+            <field name="name">Pasibaigusių sutarčių ir darbuotojų archyvavimas</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">hr.contract</field>
+            <field name="function">cron_archive_employees</field>
+            <field name="args">()</field>
+        </record>
+        <record id="view_res_user_simplified_form" model="ir.ui.view">
+            <field name="name">res.user.simplified.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_simple_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="//field[@name='fax']" position="after">
+                  <field name="partner_id" string="Partneris"/>
+              </xpath>
+            </field>
+         </record>
+
+        <record id="atostogu_likutis_view" model="ir.ui.view">
+            <field name="name">hr.employee.leave.form.inherit.button</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_holidays.view_employee_form_leave_inherit"/>
+            <field name="arch" type="xml">
+              <xpath expr="//div[@name='button_box']" position="attributes">
+                <attribute name="groups"/>
+              </xpath>
+              <xpath expr="//button[@name='toggle_active']" position="attributes">
+                  <attribute name="groups">hr.group_hr_user</attribute>
+              </xpath>
+              <!--<xpath expr="//field[@name='leaves_count']" position="attributes">-->
+                 <!--<attribute name="name">liko_mygtukas</attribute>-->
+              <!--</xpath>-->
+                <!--<xpath expr="//field[@name='remaining_leaves']" position="replace">-->
+                    <!--<field name="like_atostogu" string="Atostogų likutis"/>-->
+              <!--</xpath>-->
+            </field>
+        </record>
+        <record id="payroll_button_view" model="ir.ui.view">
+            <field name="name">hr.employee.payroll.button</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_payroll.payroll_hr_employee_view_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="//button[@name='%(hr_payroll.act_hr_employee_payslip_list)d']" position="attributes">
+                  <attribute name="groups">hr.group_hr_user</attribute>
+              </xpath>
+            </field>
+        </record>
+        <record id="partner_search_employee_view" model="ir.ui.view">
+            <field name="name">partner.employee.search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='category_id']" position="before">
+                    <filter name="is_employee" string="Employee" domain="[('is_employee','=',True)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="partner_property_accounts_view" model="ir.ui.view">
+            <field name="name">partner.property.accounts</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_account_receivable_id']" position="before">
+                    <field name="is_employee" invisible="1"/>
+                </xpath>
+                <xpath expr="//group[@name='fiscal_information']" position="before">
+                 <group name="rezidentas" colspan="2">
+                    <field name="rezidentas" attrs="{'invisible': [('is_company','=',True)]}"/>
+                 </group>
+                <group name="skip_monthly_income_tax_report" colspan="2">
+                    <field name="skip_monthly_income_tax_report" attrs="{'invisible': [('is_company','=',True)]}"/>
+                 </group>
+              </xpath>
+            </field>
+        </record>
+        <record id="contribution_registry_partner" model="ir.ui.view">
+            <field name="name">hr.contribution.register.partner</field>
+            <field name="model">hr.contribution.register</field>
+            <field name="inherit_id" ref="hr_payroll.hr_contribution_register_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="partner_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="a_klase_kodas_form_view" model="ir.ui.view">
+            <field name="name">a.klase.kodas.form</field>
+            <field name="model">a.klase.kodas</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="code"/>
+                        <field name="description"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="b_klase_kodas_form_view" model="ir.ui.view">
+            <field name="name">b.klase.kodas.form</field>
+            <field name="model">b.klase.kodas</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="code"/>
+                        <field name="description"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="a_klase_kodas_tree_view" model="ir.ui.view">
+            <field name="name">a.klase.kodas.tree</field>
+            <field name="model">a.klase.kodas</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="b_klase_kodas_tree_view" model="ir.ui.view">
+            <field name="name">b.klase.kodas.tree</field>
+            <field name="model">b.klase.kodas</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_a_klase_kodai_action">
+            <field name="name">A klasės pajamų kodai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">a.klase.kodas</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" eval="False"/>
+            <field name="context">{}</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_b_klase_kodai_action">
+            <field name="name">B klasės pajamų kodai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">b.klase.kodas</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" eval="False"/>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem
+            id="pajamu_rusiu_kodai_menu"
+            name="Pajamų rūšių kodai"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="3"
+            groups="account.group_account_user"/>
+
+        <menuitem
+            id="a_klases_kodai_menu"
+            name="A klasės pajamų kodai"
+            parent="pajamu_rusiu_kodai_menu"
+            action="open_a_klase_kodai_action"
+            sequence="1"/>
+
+        <menuitem
+            id="b_klases_kodai_menu"
+            name="B klasės pajamų kodai"
+            parent="pajamu_rusiu_kodai_menu"
+            action="open_b_klase_kodai_action"
+            sequence="1"/>
+
+        <record id="invoice_supplier_form_b_klase_ext" model="ir.ui.view">
+            <field name="name">invoice.supplier.form.b.klase.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook[1]//page[3]//field[@name='account_id']" position="after">
+                    <!--would be page[2] if not for deffered invoices-->
+                    <field name="b_klase_kodas_id"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_move_klases_kodai" model="ir.ui.view">
+            <field name="name">account.move.klases.kodai</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_maturity']" position="after">
+                    <field name="a_klase_kodas_id"/>
+                    <field name="b_klase_kodas_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_employee_bonus_tree" model="ir.ui.view">
+            <field name="name">hr.employee.bonus.tree</field>
+            <field name="model">hr.employee.bonus</field>
+            <field name="arch" type="xml">
+                <tree string="Premijos">
+                    <field name="employee_id"/>
+                    <field name="for_date_from"/>
+                    <field name="for_date_to"/>
+                    <field name="payment_date_from"/>
+                    <field name="payment_date_to"/>
+                    <field name="bonus_type"/>
+                    <field name="taxation_type"/>
+                    <field name="amount"/>
+                    <field name="amount_type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="hr_employee_bonus_form" model="ir.ui.view">
+            <field name="name">hr.employee.bonus.form</field>
+            <field name="model">hr.employee.bonus</field>
+            <field name="arch" type="xml">
+                <form string="Premijos">
+                    <header>
+                        <button name="confirm" string="Patvirtinti" states="draft" class="oe_highlight" type="object"/>
+                        <button name="action_cancel" string="Atšaukti" states="confirm" type="object"/>
+                        <field name="has_periodic_ids" invisible="1"/>
+                        <button name="make_periodic" type="object" string="Padaryti periodiniu"
+                                attrs="{'invisible': ['|', ('has_periodic_ids', '=', True), ('state', 'not in', ['confirm'])]}"/>
+                        <button name="stop_periodic" type="object" string="Sustabdyti periodinį kūrimą" attrs="{'invisible': ['|', ('has_periodic_ids', '=', False), ('state', 'not in', ['confirm'])]}"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="for_date_from"/>
+                            <field name="for_date_to"/>
+                            <field name="payment_date_from"/>
+                            <field name="payment_date_to"/>
+                            <field name="bonus_type"/>
+                            <field name="taxation_type"/>
+                            <field name="amount"/>
+                            <field name="amount_type"/>
+                            <field name="comment"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="hr_employee_bonus_search" model="ir.ui.view">
+            <field name="name">hr.employee.bonus.search</field>
+            <field name="model">hr.employee.bonus</field>
+            <field name="arch" type="xml">
+                <search string="Premijos">
+                    <field name="employee_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_open_hr_employee_bonus" model="ir.actions.act_window">
+            <field name="name">Premijos</field>
+            <field name="res_model">hr.employee.bonus</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem id="menu_premijos"
+                  name="Premijos"
+                  action="action_open_hr_employee_bonus"
+                  parent="l10n_lt_payroll.menu_payment_employee"
+                  sequence="150"
+                  groups="hr.group_hr_manager"/>
+
+        <record id="isskaitos_tree_view" model="ir.ui.view">
+            <field name="name">hr.employee.isskaitos.tree</field>
+            <field name="model">hr.employee.isskaitos</field>
+            <field name="arch" type="xml">
+                <tree string="Išskaitos" decoration-info="state=='draft'">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="partner_id"/>
+                    <field name="amount"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="isskaitos_form_view" model="ir.ui.view">
+            <field name="name">hr.employee.isskaitos.form</field>
+            <field name="model">hr.employee.isskaitos</field>
+            <field name="arch" type="xml">
+                <form string="Išskaitos">
+                    <header>
+                        <button name="confirm" string="Patvirtinti" states="draft" class="oe_highlight" type="object"/>
+                        <button name="action_cancel" string="Atšaukti" states="confirm" type="object"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title" attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="employee_id"/>
+                                <field name="date"/>
+                                <field name="reason"/>
+                                <field name="amount"/>
+                                <field name="limit_deduction_amount"
+                                       attrs="{'invisible': [('reason', '!=', 'atostoginiai')]}"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="date_maturity"/>
+                                <field name="journal_id"/>
+                                <field name="account_id"/>
+                                <field name="partner_id"/>
+                                <field name="move_id"/>
+                                <field name="comment"/>
+                                <field name="periodic_id" readonly="1"
+                                       attrs="{'invisible': [('periodic_id', '=', False)]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="hr_employee_isskaitos_search" model="ir.ui.view">
+            <field name="name">hr.employee.isskaitos.search</field>
+            <field name="model">hr.employee.isskaitos</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+               <search>
+                   <field name="employee_id"/>
+                   <filter string="Juodraštis" domain="[('state','=','draft')]"/>
+                   <filter string="Patvirtinta" domain="[('state','=','confirm')]"/>
+               </search>
+            </field>
+        </record>
+        <record id="action_deduction_tree1" model="ir.actions.act_window">
+            <field name="name">Payroll deduction</field>
+            <field name="res_model">hr.employee.isskaitos</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[]</field>
+        </record>
+        <record id="action_open_isskaitos" model="ir.actions.act_window">
+            <field name="name">Išskaitos</field>
+            <field name="res_model">hr.employee.isskaitos</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        <menuitem id="isskaitos_menu"
+                  name="Išskaitų įrašai"
+                  parent="l10n_lt_payroll.menu_deductions_employee"
+                  action="action_open_isskaitos"
+                  sequence="160"
+                  groups="hr.group_hr_manager"/>
+        <record id="periodic_deduction_tree_view" model="ir.ui.view">
+            <field name="name">hr.employee.deduction.periodic.tree</field>
+            <field name="model">hr.employee.deduction.periodic</field>
+            <field name="arch" type="xml">
+                <tree string="Periodinės išskaitos" decoration-info="state == 'draft'" decoration-muted="state == 'done'">
+                    <field name="reference"/>
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="date_first"/>
+                    <field name="date_stop"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="periodic_deduction_form_view" model="ir.ui.view">
+            <field name="name">hr.employee.deduction.periodic.form</field>
+            <field name="model">hr.employee.deduction.periodic</field>
+            <field name="arch" type="xml">
+                <form string="Periodinės išskaitos">
+                    <header>
+                        <button name="confirm" string="Patvirtinti"  states="draft" class="oe_highlight" type="object"/>
+                        <button name="set_to_draft" states="confirm,done" string="Atstatyti į juodraštį" type="object"/>
+                        <button name="mark_done" states="draft,confirm" string="Pažymėti kaip patvirtintą" type="object"/>
+                        <button name="run" states="confirm" string="Sukurti sekančias išskaitas" type="object"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4" attrs="{'invisible': [('show_gap_warning','=',False)]}">
+                            Periodas tarp praeitų išskaitų ir sekančių yra ilgesnis nei mėnuo.
+                            <field name="show_gap_warning" invisible="1"/>
+                        </div>
+                        <div class="oe_title">
+                            <h2><field name="reference"/></h2>
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <div class="oe_button_box" name="button_box">
+                        <button name="action_view_deduction"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-pencil-square-o">
+                            <field name="deduction_count" widget="statinfo" string="Išskaitos"/>
+                        </button>
+                    </div>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="reason"/>
+                                <field name="action"/>
+                                <field name="date_first"/>
+                                <field name="amount"/>
+                                <field name="amount_total"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="amount_deducted"/>
+                            </group>
+                            <group>
+                                <field name="journal_id"/>
+                                <field name="account_id"/>
+                                <field name="partner_id"/>
+                                <field name="comment"/>
+                                <field name="date" attrs="{'invisible': [('state', '=', 'done')]}"/>
+                                <field name="date_maturity" attrs="{'invisible': [('state', '=', 'done')]}"/>
+                                <field name="date_stop" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="hr_employee_periodic_deduction_search" model="ir.ui.view">
+            <field name="name">hr.employee.deduction.periodic.search</field>
+            <field name="model">hr.employee.deduction.periodic</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+               <search>
+                   <field name="reference"/>
+                   <field name="employee_id"/>
+                   <field name="name"/>
+                   <filter string="Juodraštis" domain="[('state','=','draft')]"/>
+                   <filter string="Patvirtinta" domain="[('state','=','confirm')]"/>
+                   <filter string="Done" domain="[('state','=','done')]"/>
+               </search>
+            </field>
+        </record>
+        <record id="action_open_periodic_deduction" model="ir.actions.act_window">
+            <field name="name">Periodinės išskaitos</field>
+            <field name="res_model">hr.employee.deduction.periodic</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        <menuitem id="periodic_deduction_menu"
+                  name="Periodinės Išskaitos"
+                  parent="l10n_lt_payroll.menu_deductions_employee"
+                  action="action_open_periodic_deduction"
+                  sequence="161"
+                  groups="hr.group_hr_manager"/>
+
+        <record id="natura_tree_view" model="ir.ui.view">
+            <field name="name">hr.employee.natura.tree</field>
+            <field name="model">hr.employee.natura</field>
+            <field name="arch" type="xml">
+                <tree string="Pajamos natūra" decoration-info="state=='draft'">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="date_to"/>
+                    <field name="taxes_paid_by"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="natura_form_view" model="ir.ui.view">
+            <field name="name">hr.employee.natura.form</field>
+            <field name="model">hr.employee.natura</field>
+            <field name="arch" type="xml">
+                <form string="Natūra">
+                    <header>
+                        <button name="confirm" string="Patvirtinti" states="draft" class="oe_highlight" type="object"/>
+                        <button name="action_cancel" string="Atšaukti" states="confirm" type="object"/>
+                        <field name="has_periodic_ids" invisible="1"/>
+                        <button name="make_periodic" type="object" string="Padaryti periodiniu"
+                                attrs="{'invisible': ['|', ('has_periodic_ids', '=', True),
+                                ('state', '!=', 'confirm')]}"/>
+                        <button name="stop_periodic" type="object" string="Sustabdyti periodinį kūrimą"
+                                attrs="{'invisible': ['|', ('has_periodic_ids', '=', False),
+                                ('state', '!=', 'confirm')]}"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="open_related_move_ids"
+                                    string="Journal Entries" type="object"
+                                    attrs="{'invisible':[('move_ids','=',[])]}" icon="fa-bars"/>
+                            <field name="move_ids" invisible="1"/>
+                        </div>
+                        <div class="oe_title">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="employee_id"/>
+                                <label for="date_from" string="Periodas"/>
+                                    <div>
+                                        <field name="date_from" class="oe_inline"/> - <field name="date_to" class="oe_inline"/>
+                                    </div>
+                                <field name="amount"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="taxes_paid_by"/>
+                                <field name="comment"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="hr_employee_natura_search" model="ir.ui.view">
+            <field name="name">hr.employee.natura.search</field>
+            <field name="model">hr.employee.natura</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+               <search>
+                   <field name="employee_id"/>
+                   <filter string="Juodraštis" domain="[('state','=','draft')]"/>
+                   <filter string="Patvirtinta" domain="[('state','=','confirm')]"/>
+               </search>
+            </field>
+        </record>
+        <record id="action_open_natura" model="ir.actions.act_window">
+            <field name="name">Natūra</field>
+            <field name="res_model">hr.employee.natura</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        <menuitem id="natura_menu"
+                  name="Natūra"
+                  parent="l10n_lt_payroll.menu_payment_employee"
+                  action="action_open_natura"
+                  sequence="170"
+                  groups="hr.group_hr_manager"/>
+
+        <record id="res_company_ceo_form" model="ir.ui.view">
+            <field name="name">res.company.ceo.form</field>
+            <field name="model">res.company.ceo</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="employee_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </tree>
+            </field>
+         </record>
+        <record id="view_users_form" model="ir.ui.view">
+            <field name="name">res.users.form.session</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="main_accountant" groups="base.group_system"/>
+                <field name="substitute_accountant" groups="base.group_system"/>
+                <field name="work_phone"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="action_open_company_ceo" model="ir.actions.act_window">
+            <field name="name">Kompanijos vadovų istorija</field>
+            <field name="res_model">res.company.ceo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo</field>
+            <field name="robo_front">True</field>
+            <field name="domain">[]</field>
+            <field name="context">{'robo_header':{}}</field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record forcecreate="1" id="atostogu_numerio_seq_id" model="ir.sequence">
+            <field name="name">DARBO_A</field>
+            <field name="code">DARBO_A</field>
+            <field name="padding" eval="3"/>
+            <field name="prefix">%(year)s/</field>
+        </record>
+        <record id="darbo_sutarciu_numeruote" model="ir.sequence">
+            <field name="name">DU</field>
+            <field name="code">DU</field>
+            <field name="implementation">no_gap</field>
+        </record>
+        <record forcecreate="1" id="isskaitos_seq_id" model="ir.sequence">
+            <field name="name">IŠSKAITOS</field>
+            <field name="code">IŠSK</field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">IŠSK</field>
+        </record>
+        <record forcecreate="1" id="periodic_deduction_seq_id" model="ir.sequence">
+            <field name="name">PERIODINĖS IŠSKAITOS</field>
+            <field name="code">PIŠSK</field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">P_IŠSK</field>
+        </record>
+        <record forcecreate="1" id="natura_seq_id" model="ir.sequence">
+            <field name="name">Natūra</field>
+            <field name="code">NATUR</field>
+            <field name="padding" eval="4"/>
+            <field name="prefix">NATUR</field>
+        </record>
+        <record id="cron_periodic_bonus" model="ir.cron">
+            <field name="name">Create periodic bonus</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">hr.employee.bonus.periodic</field>
+            <field name="function">cron_create_periodic_bonus</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=20)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_periodic_deduction" model="ir.cron">
+            <field name="name">Create periodic deduction</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">hr.employee.deduction.periodic</field>
+            <field name="function">cron_create_periodic_deduction</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=20)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_force_job_id_ir" model="ir.cron">
+            <field name="name">Darbuotojų pareigų perskaičiavimas</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">hr.contract</field>
+            <field name="function">cron_force_new_jobs</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=03, minute=00, second=00)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_recalculate_holidays" model="ir.cron">
+            <field name="name">Recalculate holidays VDU</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">hr.holidays</field>
+            <field name="function">cron_recalculate</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=06, minute=1, second=1)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_force_recalculate_holidays" model="ir.cron">
+            <field name="name">Recalculate holidays</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">hr.holidays</field>
+            <field name="function">cron_force_recalculate</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=05, minute=1, second=1)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>
+

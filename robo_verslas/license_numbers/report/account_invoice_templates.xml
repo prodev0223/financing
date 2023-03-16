@@ -1,0 +1,18 @@
+<odoo>
+    <data>
+        <template id="report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//p[@t-if='o.company_id.company_registry']" position="after">
+                <p t-if="o.company_id.license_number">
+                    <span class="comp_pvm">Licencija:</span>
+                    <span t-field="o.company_id.license_number"/>
+                </p>
+            </xpath>
+            <xpath expr="//p[@t-if='o.partner_id.kodas']" position="after">
+                <p t-if="o.partner_id.license_number">
+                    <span class="comp_pvm">Licencija:</span>
+                    <span t-field="o.partner_id.license_number"/>
+                </p>
+            </xpath>
+        </template>
+    </data>
+</odoo>

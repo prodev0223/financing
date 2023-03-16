@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="mail_template_tree_view" model="ir.ui.view">
+            <field name="name">mail.template.tree.view</field>
+            <field name="model">mail.template</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree import="0" edit="0" create="1" delete="1" default_order="model_id">
+                    <field name="name" required="1"/>
+                    <field name="model_id" required="1" domain="[('robo_editable_mail_templates', '=', True)]"
+                           options="{'no_create': True, 'no_open': True}"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="mail_template_form_view" model="ir.ui.view">
+            <field name="name">mail.template.form.view</field>
+            <field name="model">mail.template</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Email template manager" class="robo_mail_template_manager">
+                    <sheet>
+                        <button name="%(robo_mail_template_manager.mail_template_action_preview)d" type="action"
+                                string="Preview" context="{'template_id':active_id}" class="oe_stat_button"
+                                icon="fa-search-plus"/>
+                        <group>
+                            <field name="model_id" options="{'no_create': True, 'no_open': True}"
+                                   domain="[('robo_editable_mail_templates', '=', True)]" required="True"/>
+                            <field name="name" options="{'no_create': True, 'no_open': True}" required="True"/>
+                            <field name="robo_subject" string="Tema"/>
+                        </group>
+
+                        <field name="robo_body_html" nolabel="1"/>
+                        <field name="variable_text" nolabel="1"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="mail_template_action_view_tree" model="ir.actions.act_window">
+            <field name="name">Email templates</field>
+            <field name="res_model">mail.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('mail_template_tree_view')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('mail_template_form_view')})]"/>
+            <field name="domain">[
+                ('model_id.robo_editable_mail_templates', '=', True),
+                ('robo_custom', '=', True)]
+            </field>
+            <field name="context" eval="{
+                'default_robo_custom': True,
+                'default_report_template': ref('saskaitos.account_invoices_sl'),
+                'robo_header': {},
+                'robo_menu_name': ref('robo.menu_start')
+            }"/>
+            <field name="robo_front" eval="True"/>
+        </record>
+
+        <record id="mail_template_action_edit" model="ir.actions.act_window">
+            <field name="name">Edit email template</field>
+            <field name="res_model">mail.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="target">inline</field>
+            <field name="view_id" ref="robo_mail_template_manager.mail_template_form_view"/>
+        </record>
+    </data>
+</odoo>

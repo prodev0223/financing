@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <report
+                id="atostoginiu_kaupiniu_report"
+                model="report.l10n_lt_payroll.atostoginiu_kaupiniu_report_template"
+                string="Atostoginių kaupiniai"
+                report_type="qweb-html"
+                name="l10n_lt_payroll.atostoginiu_kaupiniu_report_template"
+                file="l10n_lt_payroll.atostoginiu_kaupiniu_report_template"
+        />
+
+        <template id="atostoginiu_kaupiniu_report_template">
+            <style type="text/css">
+                h3 {
+                text-align: center;
+                }
+            </style>
+            <t t-call="report.html_container">
+                <div class="page xls_front" id="main">
+                    <t t-set="o" t-value="doc"/>
+                    <div>
+                        <table style="margin-left:auto; margin-right:auto; border-style:none" align="left">
+                            <tr style="border-style:none">
+                                <td style="border-style:none" align="left">
+                                    <span t-esc="company.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-style:none" align="left">
+                                    <span t-esc="company.company_registry"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div align="center">
+                        <table style="border-style:none" align="center">
+                            <tr style="border-style:none">
+                                <td style="border-style:none" align="center">
+                                    DARBUOTOJŲ ATOSTOGINIŲ KAUPIMO SUVESTINĖ
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none" align="center">
+                                    <span t-esc="date"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p/>
+                    <table class="table table-bordered mb32 main_table" style="table-layout:auto; border-style:none">
+                        <thead>
+                            <tr style="border-color:black; border-bottom-width:1px">
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">
+                                    <strong>Eil. Nr.</strong>
+                                </td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">
+                                    <strong>Tab. Nr.</strong>
+                                </td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">
+                                    <strong>Darbuotojo vardas, pavardė</strong>
+                                </td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">
+                                    <strong>Nepanaudotų atostogų darbo dienomis</strong>
+                                </td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">
+                                    <strong>Dienos vidutinis atlyginimas</strong>
+                                </td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">
+                                    <strong>Sukaupta atostogų rezervo</strong>
+                                </td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">
+                                    <strong>Soc. draudimas</strong>
+                                </td>
+                                <td style="border-color:black; border-bottom-width:1px; border-top: 1px solid black;">
+                                    <strong>Viso</strong>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="index" t-value="0"/>
+                            <t t-foreach='data' t-as='line'>
+                                <t t-set="index" t-value="index+1"/>
+                                <tr style="page-break-inside: avoid;">
+                                    <td style="border-color:black; border-bottom-width:1px"
+                                        t-esc="index"/>
+                                    <td style="border-color:black; border-bottom-width:1px"
+                                        t-esc="line['tabelio_numeris']"/>
+                                    <td style="border-color:black; border-bottom-width:1px"
+                                        t-esc="line['employee_name']"/>
+                                    <td style="border-color:black; border-bottom-width:1px"
+                                        t-esc="round(line['remaining_leaves'],3)"/>
+                                    <td style="border-color:black; border-bottom-width:1px"
+                                        t-esc="round(line['vdu'],3)"/>
+                                    <td style="border-color:black; border-bottom-width:1px"
+                                        t-esc="line['reserve']"/>
+                                    <td style="border-color:black; border-bottom-width:1px"
+                                        t-esc="line['sodra']"/>
+                                    <td style="border-color:black; border-bottom-width:1px"
+                                        t-esc="line['total']"/>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>

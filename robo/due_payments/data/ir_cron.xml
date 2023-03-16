@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cron_apr" model="ir.cron">
+            <field name="name">Automatic payment reminders (APR)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">res.partner</field>
+            <field name="function">cron_apr_send_reminders</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=8)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

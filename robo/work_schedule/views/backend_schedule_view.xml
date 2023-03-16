@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="work_schedule_codes_search" model="ir.ui.view">
+            <field name="name">work.schedule.codes.search</field>
+            <field name="model">work.schedule.codes</field>
+            <field name="arch" type="xml">
+                <search string="Search Work schedule codes">
+                    <field name="tabelio_zymejimas_id"/>
+                    <filter string="Marks overtime" domain="[('is_overtime','=',True)]"/>
+                    <filter string="Marks holidays" domain="[('is_holiday','=',True)]"/>
+                    <filter string="Marks absences" domain="[('is_absence','=',True)]"/>
+                    <filter string="Marks the entire day" domain="[('is_whole_day','=',True)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="work_schedule_codes_tree" model="ir.ui.view">
+            <field name="name">work.schedule.codes.tree</field>
+            <field name="model">work.schedule.codes</field>
+            <field name="arch" type="xml">
+                <tree string="Darbo grafikų žymėjimo kodai" editable="bottom">
+                    <field name="tabelio_zymejimas_id"/>
+                    <field name="is_overtime"/>
+                    <field name="is_holiday"/>
+                    <field name="is_absence"/>
+                    <field name="is_whole_day"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="work_schedules_search" model="ir.ui.view">
+            <field name="name">work.schedules.search</field>
+            <field name="model">work.schedule</field>
+            <field name="arch" type="xml">
+                <search string="Search Work Schedules">
+                    <field name="name"/>
+                    <filter string="Planned" domain="[('schedule_type','=','planned')]"/>
+                    <filter string="Factual" domain="[('schedule_type','=','factual')]"/>
+                    <filter string="Other" domain="[('schedule_type','not in', ['planned', 'factual'])]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="work_schedules_tree" model="ir.ui.view">
+            <field name="name">work.schedule.tree</field>
+            <field name="model">work.schedule</field>
+            <field name="arch" type="xml">
+                <tree string="Darbo grafikai" editable="bottom">
+                    <field name="company_id" attrs="{'readonly': True}" options="{'no_open': True, 'no_create': True}"/>
+                    <field name="name"/>
+                    <field name="schedule_type"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="work_schedule_line_search" model="ir.ui.view">
+            <field name="name">work.schedules.line.search</field>
+            <field name="model">work.schedule.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Work Schedule lines">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="state"/>
+                    <field name="year"/>
+                    <field name="month"/>
+                    <field name="work_schedule_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="work_schedule_line_tree" model="ir.ui.view">
+            <field name="name">work.schedule.line.tree</field>
+            <field name="model">work.schedule.line</field>
+            <field name="arch" type="xml">
+                <tree string="Darbo grafikų eilutės">
+                    <field name="work_schedule_id" attrs="{'readonly': True}"/>
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="state"/>
+                    <field name="year"/>
+                    <field name="month"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="work_schedule_day_search" model="ir.ui.view">
+            <field name="name">work.schedules.day.search</field>
+            <field name="model">work.schedule.day</field>
+            <field name="arch" type="xml">
+                <search string="Search Work Schedule Days">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="date"/>
+                    <field name="business_trip"/>
+                    <field name="free_day"/>
+                    <field name="state"/>
+                    <field name="work_schedule_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="work_schedule_day_tree" model="ir.ui.view">
+            <field name="name">work.schedule.day.tree</field>
+            <field name="model">work.schedule.day</field>
+            <field name="arch" type="xml">
+                <tree string="Darbo grafikų dienos">
+                    <field name="name"/>
+                    <field name="work_schedule_line_id" attrs="{'readonly': True}"/>
+                    <field name="employee_id" attrs="{'readonly': True}"/>
+                    <field name="appointment_id"/>
+                    <field name="date" attrs="{'readonly': True}"/>
+                    <field name="business_trip"/>
+                    <field name="free_day"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="work_schedule_day_line_search" model="ir.ui.view">
+            <field name="name">work.schedules.day.line.search</field>
+            <field name="model">work.schedule.day.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Work Schedule Day lines">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="date"/>
+                    <field name="work_schedule_code_id"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="work_schedule_day_line_tree" model="ir.ui.view">
+            <field name="name">work.schedule.day.line.tree</field>
+            <field name="model">work.schedule.day.line</field>
+            <field name="arch" type="xml">
+                <tree string="Darbo grafikų dienų eilutės">
+                    <field name="day_id" attrs="{'readonly': True}"/>
+                    <field name="employee_id" attrs="{'readonly': True}"/>
+                    <field name="department_id" attrs="{'readonly': True}"/>
+                    <field name="time_from"/>
+                    <field name="time_to"/>
+                    <field name="work_schedule_code_id"/>
+                    <field name="date" attrs="{'readonly': True}"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="work_schedule_holiday_search" model="ir.ui.view">
+            <field name="name">work.schedules.holiday.search</field>
+            <field name="model">work.schedule.holidays</field>
+            <field name="arch" type="xml">
+                <search string="Search Work Schedule Holidays">
+                    <field name="employee_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="holiday_status_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="work_schedule_holidays_tree" model="ir.ui.view">
+            <field name="name">work.schedule.holidays.tree</field>
+            <field name="model">work.schedule.holidays</field>
+            <field name="arch" type="xml">
+                <tree string="Darbo grafikų atostogos">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="holiday_status_id"/>
+                    <field name="is_confirmed" attrs="{'readonly': True}"/>
+                    <field name="employee_id" attrs="{'readonly': True}"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_open_work_schedule_codes">
+            <field name="name">Darbo grafiko kodai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">work.schedule.codes</field>
+            <field name="search_view_id" ref="work_schedule_codes_search"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_open_work_schedules">
+            <field name="name">Darbo grafikai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">work.schedule</field>
+            <field name="search_view_id" ref="work_schedules_search"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_open_work_schedule_lines">
+            <field name="name">Darbo grafikų eilutės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">work.schedule.line</field>
+            <field name="search_view_id" ref="work_schedule_line_search"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_open_work_schedule_days">
+            <field name="name">Darbo grafikų dienos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">work.schedule.day</field>
+            <field name="search_view_id" ref="work_schedule_day_search"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_open_work_schedule_day_lines">
+            <field name="name">Darbo grafikų dienų eilutės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">work.schedule.day.line</field>
+            <field name="search_view_id" ref="work_schedule_day_line_search"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_open_work_schedule_holidays">
+            <field name="name">Darbo grafikų atostogos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">work.schedule.holidays</field>
+            <field name="search_view_id" ref="work_schedule_holiday_search"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+          name="Darbo grafikai"
+          id="menu_work_schedule"
+          parent="hr_payroll.menu_hr_payroll_root"
+          sequence="3"
+          groups="base.group_system"
+        />
+        <menuitem
+            name="Kodai"
+            id="menu_work_schedule_codes"
+            parent="menu_work_schedule"
+            sequence="20"
+            action="action_open_work_schedule_codes"
+        />
+        <menuitem
+            name="Grafikai"
+            id="menu_work_schedules"
+            parent="menu_work_schedule"
+            sequence="21"
+            action="action_open_work_schedules"
+        />
+        <menuitem
+            name="Grafikų eilutės"
+            id="menu_work_schedule_lines"
+            parent="menu_work_schedule"
+            sequence="22"
+            action="action_open_work_schedule_lines"
+        />
+        <menuitem
+            name="Dienos"
+            id="menu_work_schedule_days"
+            parent="menu_work_schedule"
+            sequence="24"
+            action="action_open_work_schedule_days"
+        />
+        <menuitem
+            name="Dienų eilutės"
+            id="menu_work_schedule_day_lines"
+            parent="menu_work_schedule"
+            sequence="25"
+            action="action_open_work_schedule_day_lines"
+        />
+        <menuitem
+            name="Atostogos"
+            id="menu_work_schedule_day_lines"
+            parent="menu_work_schedule"
+            sequence="26"
+            action="action_open_work_schedule_holidays"
+        />
+
+
+    </data>
+</odoo>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="e_document.isakymas_del_darbo_sutarties_salygu_pakeitimo_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_priedo_skyrimo_grupei_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_atleidimo_is_darbo_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_priemimo_i_darba_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_3_menesiu_atostogu_vaikui_priziureti_suteikimo_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_kasmetiniu_atostogu_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_kurybiniu_atostogu_suteikimo_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_mamadienio_/_tevadienio_suteikimo_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_nemokamu_atostogu_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_vaiko_prieziuros_atostogu_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_vaiko_prieziuros_atostogu_nutraukimo_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+
+        <record id="e_document.isakymas_del_darbo_sutarties_salygu_pakeitimo_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_priedo_skyrimo_grupei_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_atleidimo_is_darbo_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_priemimo_i_darba_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_3_menesiu_atostogu_vaikui_priziureti_suteikimo_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_kasmetiniu_atostogu_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_kurybiniu_atostogu_suteikimo_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_mamadienio_/_tevadienio_suteikimo_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_nemokamu_atostogu_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_vaiko_prieziuros_atostogu_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="e_document.isakymas_del_vaiko_prieziuros_atostogu_nutraukimo_template" model="e.document.template">
+            <field name="is_signable_by_region_manager" eval="True"/>
+        </record>
+
+        <record id="isakymas_del_darbo_sutarties_salygu_pakeitimo_form" model="ir.ui.view">
+            <field name="name">Order for amendment of work contract conditions</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_darbo_sutarties_salygu_pakeitimo_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='department_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_ids and department_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_priedo_skyrimo_grupei_form" model="ir.ui.view">
+            <field name="name">Order on award of a bonus</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_priedo_skyrimo_grupei_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='e_document_line_ids']//tree//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in', parent.department_employee_ids and parent.department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='e_document_line_ids']//form//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in', parent.department_employee_ids and parent.department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_atleidimo_is_darbo_form" model="ir.ui.view">
+            <field name="name">Order for employment termination</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_atleidimo_is_darbo_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_priemimo_i_darba_form" model="ir.ui.view">
+            <field name="name">Order for recruitment</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_priemimo_i_darba_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='department_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_ids and department_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_3_menesiu_atostogu_vaikui_priziureti_suteikimo_form" model="ir.ui.view">
+            <field name="name">Order for 3 month child supervision holiday</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_3_menesiu_atostogu_vaikui_priziureti_suteikimo_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_kasmetiniu_atostogu_form" model="ir.ui.view">
+            <field name="name">Order for annual leave</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_kasmetiniu_atostogu_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_kurybiniu_atostogu_suteikimo_form" model="ir.ui.view">
+            <field name="name">Order for creative leave</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_kurybiniu_atostogu_suteikimo_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_mamadienio_/_tevadienio_suteikimo_form" model="ir.ui.view">
+            <field name="name">Order for creative leave</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_mamadienio_/_tevadienio_suteikimo_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_nemokamu_atostogu_form" model="ir.ui.view">
+            <field name="name">Unpaid holiday form</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_nemokamu_atostogu_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_vaiko_prieziuros_atostogu_form" model="ir.ui.view">
+            <field name="name">Parenthood holiday leave template</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_vaiko_prieziuros_atostogu_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_vaiko_prieziuros_atostogu_nutraukimo_form" model="ir.ui.view">
+            <field name="name">Parenthood holiday leave cancellation template</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.isakymas_del_vaiko_prieziuros_atostogu_nutraukimo_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <field name="department_employee_ids" invisible="1"/>
+                    <field name="department_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']"
+                       position="attributes">
+                    <attribute name="domain">
+                        [('id', 'in',department_employee_ids and department_employee_ids[0][2])]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="e_document_search_view" model="ir.ui.view">
+            <field name="name">e.document.search.view</field>
+            <field name="model">e.document</field>
+            <field name="inherit_id" ref="e_document.e_document_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='pending_direct_action']" position="replace">
+                    <filter name="pending_direct_action" string="Waiting for direct action"
+                            domain="['&amp;',
+                            '|',
+                            '|',
+                            ('state','=','draft'),
+                            '&amp;',
+                            ('state','=','confirm'),
+                            ('multi_user_state', '=', 'pending'),
+                            ('approve_status','=','waiting_approval'),
+                            '|',
+                            ('employee_id1.user_id', '=', uid),
+                            '|',
+                            ('document_type', '!=', 'prasymas'),
+                            '|',
+                            ('employee_id1.department_id.manager_id.user_id', '=', uid),
+                            '|',
+                            ('current_user_department_delegate', '=', True),
+                            ('current_user_region_manager', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

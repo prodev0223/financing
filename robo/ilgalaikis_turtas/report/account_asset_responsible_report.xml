@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="asset_responsible_report"
+                model="account.asset.responsible"
+                string="Materialiai atsakingo asmens priskyrimo aktas"
+                report_type="qweb-pdf"
+                name="ilgalaikis_turtas.asset_responsible_report_template"
+                file="ilgalaikis_turtas.asset_responsible_report_template"
+        />
+
+        <template id="asset_responsible_report_template">
+            <style>div.page{page-break-after: always;}</style>
+            <t t-foreach="docs" t-as="o">
+                <t t-call="report.html_container">
+                    <t t-call="ilgalaikis_turtas.asset_responsible_report_template_translated"
+                       t-lang="o.asset_id.company_id.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="asset_responsible_report_template_translated">
+            <t t-call="report.html_container">
+                <div class="page">
+                    <style type="text/css">
+                        table{
+                        font-size: 13px;
+                        }
+                    </style>
+                    <center>
+                        <img t-if="o.asset_id.company_id.logo"
+                             t-att-src="'data:image/png;base64,%s' % o.asset_id.company_id.logo"
+                             style="max-height: 100px;"/>
+                        <p/>
+                        <span t-field="o.asset_id.company_id.partner_id"/>
+                    </center>
+                    <br/>
+
+                    <div class="row">
+                        <div class="col-xs-3"></div>
+                        <div class="col-xs-6" style="text-align:center;">
+                            <p style="font-weight:bold">
+                                UŽ ILGALAIKĮ TURTĄ MATERIALIAI ATSAKINGO ASMENS PRISKYRIMO AKTAS
+                            </p>
+                        </div>
+                        <div class="col-xs-3">
+                            <table>
+                                <tr>
+                                    <td style="font-weight:bold">TVIRTINU:</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <center>
+                                            <span t-field="o.asset_id.company_id.vadovas.job_id.name"/>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="height:5px"></tr>
+                                <tr>
+                                    <td>
+                                        <center>
+                                            <span t-field="o.asset_id.company_id.vadovas.name"/>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="height:5px"></tr>
+                                <tr>
+                                    <td>________________
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <center style="font-size: 60%;">(parašas)</center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <br/>
+                    <p>
+                        Ilgalaikiam turtui <span style="font-weight:bold" t-field="o.asset_id.name"/>,
+                        perduotam naudoti ūkinėje veikloje nuo
+                        <span style="font-weight:bold" t-field="o.asset_id.date"/>
+                        yra priskiriamas materialiai atsakingas asmuo
+                        <span style="font-weight:bold" t-field="o.employee_id.name"/>,
+                        atsakingas nuo <span style="font-weight:bold" t-field="o.date"/>.
+                    </p>
+                    <p>
+                        Turtas naudotinas iki
+                        <t t-if="o.asset_id.depreciation_line_ids">
+                            <span style="font-weight:bold"
+                                  t-field="o.asset_id.depreciation_line_ids[-1].depreciation_date"/>.
+                        </t>
+                        <t t-if="not o.asset_id.depreciation_line_ids">
+                            <span style="font-weight:bold" t-field="o.asset_id.date"/>.
+                        </t>
+                    </p>
+                    <p>
+                        Šio turto likvidacinė vertė
+                        <span style="font-weight:bold" t-field="o.asset_id.salvage_value"/>
+                        <span t-field="o.asset_id.currency_id"/>
+                        (
+                        <span style="font-weight:bold"
+                              t-esc="str(round(o.asset_id.value and o.asset_id.salvage_value / o.asset_id.value * 100 or 0,2)).replace('.',',')"/>
+                        proc. nuo
+                        <span style="font-weight:bold" t-field="o.asset_id.value"/>
+                        <span t-field="o.asset_id.currency_id"/>
+                        įsigijimo vertės).
+                    </p>
+                    <p>
+                        Ilgalaikis turtas
+                        <span style="font-weight:bold" t-field="o.asset_id.name"/>
+                        priskirtas
+                        <span style="font-weight:bold" t-field="o.asset_id.category_id"/>
+                        turto grupei
+                        <t t-if="o.asset_id.code">
+                            numeriu <span style="font-weight:bold" t-field="o.asset_id.code"/>
+                        </t>.
+                    </p>
+                    <br/>
+                    Priėmiau materialinėn atsakomybėn:
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-9">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <span t-field="o.employee_id.job_id.name"/>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <span t-field="o.employee_id.name"/>
+                                    </div>
+                                    <div class="cols-xs-1">
+                                        <table style="text-align:center">
+                                            <tr>
+                                                <td>________________</td>
+                                            </tr>
+                                            <tr style="text-align:center; font-size: 60%;">
+                                                <td>(parašas)</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

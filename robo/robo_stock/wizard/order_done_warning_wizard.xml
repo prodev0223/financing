@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+        <!--Form-->
+        <record id="form_order_done_warning_wizard" model="ir.ui.view">
+            <field name="name">form.order.done.warning.wizard</field>
+            <field name="model">order.done.warning.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Užsakymo patvirtinimas">
+                    <sheet>
+                        <group string="Užsakymo patvirtinimas">
+                            <div>
+                                <p>
+                                    <field name="warning_message" readonly="1"/>
+                                </p>
+                            </div>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Patvirtinti" class="btn-primary" type="object" name="action_order_close"/>
+                        <button string="Atšaukti" type="object" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+     <data>
+        <record model="ir.actions.server" id="multiple_debt_reconciliation">
+            <field name="name">Skolų suderinimas</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).multiple_debt_reconciliation()
+            </field>
+        </record>
+         <function name="create_partner_debt_actions" model="res.partner"/>
+        <record id="debt_act_wizard_form_view" model="ir.ui.view">
+            <field name="name">debt.act.wizard.form.view</field>
+            <field name="model">debt.act.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Debt Coordination">
+                    <group>
+                        <field name="type"/>
+                        <field name="date" attrs="{'invisible': [('type', '!=', 'unreconciled')], 'required': [('type', '=', 'unreconciled')]}"/>
+                        <field name="date_from" attrs="{'invisible': [('type', '!=', 'all')], 'required': [('type', '=', 'all')]}"/>
+                        <field name="date_to" attrs="{'invisible': [('type', '!=', 'all')], 'required': [('type', '=', 'all')]}"/>
+                    </group>
+                    <group>
+                        <field name="account_type_filter"/>
+                        <field name="account_ids" widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="detail_level"/>
+                        <field name="show_original_amounts"/>
+                        <field name="show_accounts"/>
+                    </group>
+                    <footer>
+                        <button name="generate_debt_act" string="Generate Report" type="object" class="oe_highlight"/>
+                        <button name="action_dynamic_view" string="View" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+     </data>
+ </openerp>

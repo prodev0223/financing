@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="res_company_shareholders_tree" model="ir.ui.view">
+            <field name="name">res.company.shareholder.tree</field>
+            <field name="model">res.company.shareholder</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree editable="bottom" import="0">
+                    <field name="shareholder_name"/>
+                    <field name="shareholder_address"/>
+                    <field name="shareholder_personcode"/>
+                    <field name="shareholder_type"/>
+                    <field name="shareholder_shares" sum="sum_shareholder_shares"/>
+                </tree>
+            </field>
+         </record>
+        <record id="action_open_company_shareholder" model="ir.actions.act_window">
+            <field name="name">Akcininkai</field>
+            <field name="res_model">res.company.shareholder</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo</field>
+            <field name="domain">[]</field>
+            <field name="context">{'robo_header':{}}</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

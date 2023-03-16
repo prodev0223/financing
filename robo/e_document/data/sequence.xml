@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="shareholders_decisions_sequence" model="ir.sequence">
+            <field name="name">AKCININKŲ SPRENDIMAS</field>
+            <field name="code">AKCININKU_SPRENDIMAS</field>
+        </record>
+        <record id="agreements_sequence" model="ir.sequence">
+            <field name="name">Sutartis</field>
+            <field name="padding" eval="4"/>
+            <field name="code">SUTARTIS</field>
+        </record>
+         <record id="compensation_certificate_sequence" model="ir.sequence">
+            <field name="name">Darbuotojų kompensacijų dokumentai</field>
+            <field name="code">employee_compensation</field>
+        </record>
+        <!--NONE OF THESE BELLOW ARE USED. ACTUAL ISAKYMAS SEQUENCE IS DEFINED IN l10n_lt MODULE-->
+        <record id="isakymai_sequence" model="ir.sequence">
+            <field name="name">isakymai</field>
+            <field name="padding" eval="4"/>
+            <field name="prefix">Isakymas </field>
+        </record>
+        <record id="e_document_sequence" model="ir.sequence">
+            <field name="name">document</field>
+            <field name="code">e.document.name.sequence</field>
+            <field name="padding" eval="2"/>
+            <field name="prefix">Document/%(year)s-%(month)s-%(day)s/</field>
+        </record>
+        <record id="cron_reset_document_sequence" model="ir.cron">
+            <field name="name">Reset document number</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">e.document</field>
+            <field name="function">_reset_ir_doc_sequence</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

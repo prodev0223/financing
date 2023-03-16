@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="fiscal_position_eu" model="account.fiscal.position.template">
+            <field name="name">Trade in the EU</field>
+            <field name="auto_apply" eval="True"/>
+            <!--<field name="country_group_id" ref="base.europe"/>-->
+            <field name="not_country_id" ref="base.lt"/>
+            <field name="vat_required" eval="True"/>
+            <field name="chart_template_id" ref="lt_chart_template"/>
+        </record>
+
+        <record id="fiscal_position_lt" model="account.fiscal.position.template">
+            <field name="name">Trade in Lithuania</field>
+            <field name="auto_apply" eval="True"/>
+            <!--<field name="country_id" ref="base.lt"/>-->
+            <field name="vat_required" eval="True"/>
+            <field name="chart_template_id" ref="lt_chart_template"/>
+        </record>
+        
+        <record id="fiscal_position_3rd_countries" model="account.fiscal.position.template">
+            <field name="name">Trade with 3rd coutries</field>
+            <field name="auto_apply" eval="True"/>
+            <field name="not_country_group_id" ref="base.europe"/>
+            <field name="not_country_id" ref="base.lt"/>
+            <field name="vat_required" eval="False"/>
+            <field name="chart_template_id" ref="lt_chart_template"/>
+        </record>
+
+        <record id="fiscal_position_individual" model="account.fiscal.position.template">
+            <field name="name">Trade with individual</field>
+            <field name="auto_apply" eval="True"/>
+            <!--<field name="country_id" ref="base.lt"/>-->
+            <field name="vat_required" eval="False"/>
+            <field name="chart_template_id" ref="lt_chart_template"/>
+        </record>
+
+        <record id="fiscal_position_individual_1" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_individual"/>
+            <field name="tax_src_id" ref="account_tax_pvm49"/>
+            <field name="tax_dest_id" ref="account_tax_103"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_individual_2" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_individual"/>
+            <field name="tax_src_id" ref="account_tax_pvm32"/>
+            <field name="tax_dest_id" ref="account_tax_103"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_individual_3" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_individual"/>
+            <field name="tax_src_id" ref="account_tax_pvm35"/>
+            <field name="tax_dest_id" ref="account_tax_103"/>
+            <field name="product_type">all</field>
+        </record>
+
+        <record id="fiscal_position_eu_1" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_eu"/>
+            <field name="tax_src_id" ref="account_tax_pvm32"/>
+            <field name="tax_dest_id" ref="account_tax_pvm46"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_eu_2" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_eu"/>
+            <field name="tax_src_id" ref="account_tax_pvm33"/>
+            <field name="tax_dest_id" ref="account_tax_pvm46"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_eu_3" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_eu"/>
+            <field name="tax_src_id" ref="account_tax_pvm34"/>
+            <field name="tax_dest_id" ref="account_tax_pvm46"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_eu_4" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_eu"/>
+            <field name="tax_src_id" ref="account_tax_pvm38"/>
+            <field name="tax_dest_id" ref="account_tax_pvm37"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_eu_5" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_eu"/>
+            <field name="tax_src_id" ref="account_tax_pvm35"/>
+            <field name="tax_dest_id" ref="account_tax_pvm62"/>
+            <field name="product_type">product</field>
+        </record>
+        <record id="fiscal_position_eu_6" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_eu"/>
+            <field name="tax_src_id" ref="account_tax_pvm35"/>
+            <field name="tax_dest_id" ref="account_tax_pvm58"/>
+            <field name="product_type">service</field>
+        </record>
+
+        <!--<record id="fiscal_position_3rd_countries_1" model="account.fiscal.position.tax">-->
+            <!--<field name="position_id" ref="fiscal_position_3rd_countries"/>-->
+            <!--<field name="tax_src_id" ref="account_tax_pvm32" />-->
+            <!--<field name="tax_dest_id" ref="account_tax_pvm48" />-->
+        <!--</record>-->
+        <record id="fiscal_position_3rd_countries_1" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_3rd_countries"/>
+            <field name="tax_src_id" ref="account_tax_pvm32"/>
+            <field name="tax_dest_id" ref="account_tax_pvm45"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_3rd_countries_2" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_3rd_countries"/>
+            <field name="tax_src_id" ref="account_tax_pvm33"/>
+            <field name="tax_dest_id" ref="account_tax_pvm45"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_3rd_countries_3" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_3rd_countries"/>
+            <field name="tax_src_id" ref="account_tax_pvm34"/>
+            <field name="tax_dest_id" ref="account_tax_pvm45"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_3rd_countries_4" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_3rd_countries"/>
+            <field name="tax_src_id" ref="account_tax_pvm38"/>
+            <field name="tax_dest_id" ref="account_tax_pvm37"/>
+            <field name="product_type">all</field>
+        </record>
+        <record id="fiscal_position_3rd_countries_5" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_3rd_countries"/>
+            <field name="tax_src_id" ref="account_tax_pvm35"/>
+            <field name="tax_dest_id" ref="account_tax_pvm17"/>
+            <field name="product_type">service</field>
+        </record>
+        <record id="fiscal_position_3rd_countries_6" model="account.fiscal.position.tax.template">
+            <field name="position_id" ref="fiscal_position_3rd_countries"/>
+            <field name="tax_src_id" ref="account_tax_pvm35"/>
+            <field name="tax_dest_id" ref="account_tax_pvm12"/>
+            <field name="product_type">product</field>
+        </record>
+
+        <record id="fiscal_positions_extra_domains" model="ir.ui.view">
+            <field name="name">account.fiscal.position.extra.domains</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="inherit_id" ref="account.view_account_position_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='country_id']" position="after">
+                    <field name="not_country_group_id" domain="[('id', '!=', country_group_id)]"/>
+                    <field name="not_country_id" domain="[('id', '!=', country_id)]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

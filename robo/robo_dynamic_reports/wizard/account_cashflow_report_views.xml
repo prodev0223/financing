@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="dynamic_robo_report_cashflow_view_form" model="ir.ui.view">
+            <field name="name">dynamic.robo.report.cashflow.view.form</field>
+            <field name="model">account.cashflow.report</field>
+            <field name="inherit_id" ref="sl_general_report.robo_report_cashflow_wizard"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="replace">
+                    <group string="Period" colspan="4" col="6">
+                        <group colspan="2" col="2">
+                            <field name="date_range"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="date_from"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="date_to"/>
+                        </group>
+                    </group>
+                    <group string="Filters" colspan="4" col="4">
+                        <group colspan="2" col="2">
+                            <field name="hierarchy_level"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="target_move"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="report_language"/>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//footer" position="replace">
+                    <footer style="text-align: center; margin-top:18%;">
+                        <div>
+                            <p>
+                                <i>
+                                    This report is preliminary. Report amounts may change after closing the financial year.
+                                </i>
+                            </p>
+                        </div>
+                        <button string="View" name="action_view" type="object" class="btn-primary"
+                            style="margin-right: 10px;" default_focus="1" context="{'force_refresh_data': True}"/>
+                        <button string="PDF" name="action_pdf" type="object" class="btn-primary"
+                            style="margin-right: 10px;" context="{'force_refresh_data': True}"/>
+                        <button name="action_xlsx" type="object" class="oe_highlight" string="XLSX"
+                            style="margin-right: 10px;" context="{'force_refresh_data': True}"/>
+                        <button string="Cancel" type="action" name="%(robo.open_reports_action)d"
+                                style="margin-right: 10px;"/>
+                    </footer>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="dynamic_cash_flow_action">
+            <field name="name">Cash flow</field>
+            <field name="res_model">account.cashflow.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="view_id" ref="dynamic_robo_report_cashflow_view_form"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="RoboOnboarding">
+        <div class="o_onboarding_form_container">
+            <div class="robo_onboarding_widget_header robo_onboarding_sheet">
+                <div class="onboarding_status_container">
+                    <span class="onboarding_progress_report">
+                        We are transferring accounting of your company and preparing the system!
+                    </span>
+                </div>
+                <div class="progress robo_onboarding_progress_bar">
+                    <div class="progress-bar progress-bar-striped no_onboarding_progress" role="progressbar"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                        <span/>
+                    </div>
+                </div>
+            </div>
+            <div class="robo_onboarding_task_container_container">
+
+                <t t-if="widget.onboarding_data">
+                    <t t-foreach="widget.onboarding_data" t-as="onboarding_category">
+                        <div class="robo_main_onboarding_data robo_onboarding_todo_data robo_onboarding_sheet">
+                            <div class="category_data_container">
+                                <ul>
+                                    <li t-att-class="'robo_onboarding_category'+(onboarding_category.completed ? ' robo_onboarding_completed' : '')">
+                                        <span class="category-title">
+                                            <t t-if="widget.show_comments and onboarding_category.comment">
+                                                <div class="onboarding-comment">
+                                                    <t t-raw="onboarding_category.comment"/>
+                                                </div>
+                                            </t>
+                                            <t t-esc="onboarding_category.name"/>
+                                        </span>
+                                        <t t-if="onboarding_category.tasks">
+                                            <ul>
+                                                <t t-foreach="onboarding_category.tasks" t-as="onboarding_task">
+                                                    <li t-att-class="'robo_onboarding_task'+(onboarding_task.completed ? ' robo_onboarding_completed' : '')+(onboarding_task.action || onboarding_task.url_link ? ' robo_onboarding_has_action' : '')"
+                                                        t-att-onboarding_action="onboarding_task.action"
+                                                        t-att-onboarding_url_link="onboarding_task.url_link">
+                                                        <div class="task-container">
+                                                            <t t-if="onboarding_task.completed">
+                                                                <img src="/robo_onboarding/static/src/img/checkmark_checked.svg"
+                                                                     alt="Checked circle" title="Completed"/>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <img src="/robo_onboarding/static/src/img/checkmark.svg"
+                                                                     alt="Empty circle" title="Not completed"/>
+                                                            </t>
+                                                            <t t-if="widget.show_comments and onboarding_task.comment and onboarding_task.comment != ''">
+                                                                <div class="onboarding-comment">
+                                                                    <t t-raw="onboarding_task.comment"/>
+                                                                </div>
+                                                            </t>
+                                                            <span>
+                                                                <t t-esc="onboarding_task.name"/>
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                </t>
+                                            </ul>
+                                        </t>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </div>
+        </div>
+    </t>
+
+
+</templates>

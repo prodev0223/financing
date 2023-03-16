@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--Pajamos-->
+        <record id="open_client_invoice_settings" model="ir.actions.act_window.settings">
+            <field name="action" ref="robo.open_client_invoice"/>
+            <field name="cards_template">RecentInvoices</field>
+            <field name="cards_template_subtype"></field>
+            <field name="cards_domain">[('state','!=','cancel')]</field>
+            <field name="cards_force_order">recently_updated DESC NULLS LAST</field>
+            <field name="search_add_custom" eval="True"/>
+            <field name="cards_new_action" ref="robo.new_client_invoice"/>
+            <field name="show_duplicate">True</field>
+        </record>
+        <!--end Pajamos-->
+
+        <!--Islaidos-->
+        <record id="robo_expenses_action_settings" model="ir.actions.act_window.settings">
+            <field name="action" ref="robo.robo_expenses_action"/>
+            <field name="cards_template">RecentInvoices</field>
+            <field name="cards_template_subtype">expenses</field>
+            <field name="cards_domain">[('state','!=','cancel')]</field>
+            <field name="cards_force_order">recently_updated DESC NULLS LAST</field>
+            <field name="search_add_custom" eval="True"/>
+            <field name="cards_new_action" ref="robo.new_supplier_invoice"/>
+            <field name="show_duplicate">True</field>
+        </record>
+        <!--end Islaidos-->
+
+        <!--Customer-->
+        <record id="open_board_clients_action_customer_settings" model="ir.actions.act_window.settings">
+            <field name="action" ref="robo.open_board_clients_action_customer"/>
+            <field name="cards_template">RecentActiveClients</field>
+            <field name="cards_template_subtype">customer</field>
+            <field name="cards_limit">2</field>
+            <field name="cards_domain"></field>
+            <field name="cards_force_order">create_date DESC</field>
+            <field name="search_add_custom" eval="False"/>
+            <field name="cards_new_action" ref="robo.new_client_customer"/>
+            <field name="show_duplicate"></field>
+        </record>
+        <!--end Customer-->
+
+        <!--Supplier-->
+        <record id="open_board_clients_action_supplier_settings" model="ir.actions.act_window.settings">
+            <field name="action" ref="robo.open_board_clients_action_supplier"/>
+            <field name="cards_template">RecentActiveClients</field>
+            <field name="cards_template_subtype">supplier</field>
+            <field name="cards_limit">2</field>
+            <field name="cards_domain"></field>
+            <field name="cards_force_order">create_date DESC</field>
+            <field name="search_add_custom" eval="False"/>
+            <field name="cards_new_action" ref="robo.new_client_supplier"/>
+            <field name="show_duplicate"></field>
+        </record>
+        <!--end Supplier-->
+
+        <!--Cash-->
+        <record id="open_cash_operations_settings" model="ir.actions.act_window.settings">
+            <field name="action" ref="robo.open_cash_operations"/>
+            <field name="search_add_custom" eval="False"/>
+        </record>
+        <!--end Cash-->
+
+    </data>
+</odoo>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_invoice_search_extension_apb_walless" model="ir.ui.view">
+            <field name="name">account.invoice.search.extension.apb.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <filter name="employee" string="Darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '!=', False)]"/>
+                    <filter name="non_employee" string="Ne darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '=', False)]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+        <record id="pajamos_search_extension_apb_walless_front" model="ir.ui.view">
+            <field name="name">account.invoice.search.extension.apb.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_pajamos_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <filter name="employee" string="Darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '!=', False)]"/>
+                    <filter name="non_employee" string="Ne darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '=', False)]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+        <record id="expense_search_extension_apb_walless_front" model="ir.ui.view">
+            <field name="name">account.invoice.search.extension.apb.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <filter name="employee" string="Darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '!=', False)]"/>
+                    <filter name="non_employee" string="Ne darbuotojų sąskaitos" domain="[('partner_id.employee_ids', '=', False)]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

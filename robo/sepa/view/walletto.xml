@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="account_bank_statement_import_walletto_wizard" model="ir.ui.view">
+            <field name="name">account.bank.statement.import.walletto.wizard</field>
+            <field name="model">account.walletto.import</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Import Walletto bank statement">
+                    <group>
+                        <field name="journal_id" options="{'no_open': True, 'no_create': True}"/>
+                    </group>
+                    <group col="4">
+                        <separator string="Select Walletto bank statement file:" colspan="4"/>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;" colspan="4">
+                            Please pay attention to CSV and decimal separators selected.
+                            You may check them by opening the file using a text editor (not Excel).
+                        </div>
+                        <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;" colspan="4"
+                             attrs="{'invisible': [('file_not_csv', '=', False)]}">
+                            It seems you selected a file which is not a CSV file. Import might fail.
+                            <field name="file_not_csv" invisible="1"/>
+                        </div>
+                        <newline/>
+                        <field name="csv_data" filename="csv_fname"/>
+                        <field name="csv_fname" invisible="1"/>
+                        <newline/>
+                        <field name="csv_separator"/>
+                        <field name="decimal_separator"/>
+                        <field name="codepage"/>
+                        <field name="force_date_format"/>
+                        <newline/>
+                        <field name="apply_import_rules"/>
+                        <field name="skip_import_rules_error"
+                               attrs="{'invisible': [('apply_import_rules', '=', False)]}"/>
+                    </group>
+                    <footer>
+                        <button name="csv_import" confirm="The import will happen in the background. You will get a notification when the file is imported or if there is an error. If you import multiple files, they will be processed one by one." string="Import Walletto" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="account_bank_statement_import_walletto" model="ir.actions.act_window">
+            <field name="name">Import Walletto</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.walletto.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="account_bank_statement_import_walletto_wizard"/>
+        </record>
+    </data>
+</odoo>

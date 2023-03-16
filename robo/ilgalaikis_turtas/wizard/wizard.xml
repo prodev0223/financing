@@ -1,0 +1,52 @@
+<odoo>
+    <data>
+        <record id="ilgalaikio_turto_sarasas_wizard_form_view" model="ir.ui.view">
+            <field name="name">ilgalaikio.turto.sarasas.wizard</field>
+            <field name="model">turto.sarasas.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="include_closed_assets"/>
+                        <field name="include_all_open_assets"/>
+                        <field name="advanced_report"/>
+                        <field name="by_department"/>
+                        <field name="asset_department_ids" attrs="{'invisible': [('by_department', '=', False)]}"
+                               widget="many2many_tags"/>
+                        <field name="by_category"/>
+                        <field name="asset_category_ids" attrs="{'invisible': [('by_category', '=', False)]}"
+                               widget="many2many_tags"/>
+                        <field name="force_lang"/>
+                    </group>
+                    <footer>
+                        <button name="check_advanced_report" attrs="{'invisible':[('advanced_report', '!=', True)]}"
+                                string="Eksportuoti Excel" type="object" class="oe_highlight"/>
+                        <button name="check_report" attrs="{'invisible':[('advanced_report', '==', True)]}"
+                                string="Spausdinti" type="object" class="oe_highlight"/>
+                        <button name="xls_export" attrs="{'invisible':[('advanced_report', '==', True)]}"
+                                string="Eksportuoti Excel" type="object" class="oe_highlight"
+                                context="{'xls_report': True}"/>
+                        <button name="cancel" special="cancel" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_ilgalaikio_turto_sarasas">
+            <field name="name">Ilgalaikio turto sąrašas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">turto.sarasas.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="ilgalaikio_turto_sarasas_wizard_form_view"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem
+                name="Ilgalaikio turto sąrašas"
+                id="menu_alignment_committee_accounting"
+                parent="account.menu_finance_legal_statement"
+                sequence="10"
+                action="action_ilgalaikio_turto_sarasas"
+        />
+    </data>
+</odoo>

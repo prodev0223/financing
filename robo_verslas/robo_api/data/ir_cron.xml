@@ -1,0 +1,40 @@
+<odoo>
+    <data noupdate="1">
+        <record id="cron_execute_api_job" model="ir.cron">
+            <field name="name">Execute ROBO API Job</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">robo.api.job</field>
+            <field name="function">cron_execute_api_job</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=23, minute=59, second=59)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_create_ticket_for_failed_jobs" model="ir.cron">
+            <field name="name">Create Accounting Ticket For Failed Jobs</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">robo.api.job</field>
+            <field name="function">cron_create_ticket_for_failed_jobs</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(months=+1, day=1, hour=3)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_attach_invoice_documents" model="ir.cron">
+            <field name="name">Robo API: Attach invoice documents</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">robo.api.job</field>
+            <field name="function">cron_attach_invoice_documents</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=23, minute=59, second=59)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

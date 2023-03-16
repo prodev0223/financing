@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_r_keeper_payment_type" model="ir.ui.view">
+            <field name="name">r.keeper.payment.type.tree</field>
+            <field name="model">r.keeper.payment.type</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1"
+                      decoration-success="configured"
+                      decoration-warning="not create_payment"
+                      decoration-danger="not configured">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="journal_id"/>
+                    <field name="create_payment"/>
+                    <field name="do_reconcile"/>
+                    <field name="configured"/>
+                    <field name="create_refund_invoice"/>
+                    <field name="refund_invoice_product"/>
+                    <field name="cash_payment_type"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="form_r_keeper_payment_type" model="ir.ui.view">
+            <field name="name">r.keeper.payment.type.form</field>
+            <field name="model">r.keeper.payment.type</field>
+            <field name="arch" type="xml">
+                <form string="rKeeper mokėjimo tipai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="configured_text" class="validate_by_accountant_text" nolabel="1"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Mokėjimo tipo pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="code"/>
+                            <field name="journal_id" attrs="{'required': [('cash_payment_type', '=', False)]}"/>
+                            <field name="create_payment"/>
+                            <field name="do_reconcile"/>
+                            <field name="cash_payment_type"/>
+                        </group>
+                        <group string="Kreditavimo informacija">
+                            <field name="create_refund_invoice"/>
+                            <field name="refund_invoice_product" options="{'no_create': True, 'no_open': True}"
+                                   attrs="{'required': [('create_refund_invoice', '=', True)]}"/>
+                            <field name="refund_invoice_tax" options="{'no_create': True, 'no_open': True}"
+                                   attrs="{'required': [('create_refund_invoice', '=', True)]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="form_r_keeper_payment_type_front" model="ir.ui.view">
+            <field name="name">r.keeper.payment.type.form.front</field>
+            <field name="model">r.keeper.payment.type</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="rKeeper mokėjimo tipai" create="1" edit="1" delete="1">
+                    <header>
+                        <field name="configured_text" class="validate_by_accountant_text" nolabel="1"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Mokėjimo tipo pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="code"/>
+                            <field name="create_payment"/>
+                            <field name="do_reconcile"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="search_r_keeper_payment_type" model="ir.ui.view">
+            <field name="name">Mokėjimo tipų paieška</field>
+            <field name="model">r.keeper.payment.type</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="create_refund_invoice"
+                            string="Kurti kreditinę sąskaitą"
+                            domain="[('create_refund_invoice', '=', True)]"/>
+                    <filter name="n_create_refund_invoice"
+                            string="Nekurti kreditinės sąskaitą"
+                            domain="[('create_refund_invoice', '=', False)]"/>
+                    <separator/>
+                    <filter name="do_reconcile" string="Sudengti" domain="[('do_reconcile', '=', True)]"/>
+                    <filter name="n_do_reconcile" string="Nedengti" domain="[('do_reconcile', '=', False)]"/>
+                    <separator/>
+                    <filter name="configured" string="Sukonfigūruota" domain="[('configured', '=', True)]"/>
+                    <filter name="n_configured" string="Trūksta konfigūracijos" domain="[('configured', '=', False)]"/>
+                    <separator/>
+                    <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="code" filter_domain="[('code', 'ilike', self)]"/>
+                    <field name="refund_invoice_product"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_r_keeper_payment_type" model="ir.actions.act_window">
+            <field name="name">Mokėjimų tipai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.payment.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_r_keeper_payment_type"/>
+        </record>
+        <!--MENU ITEMS-->
+        <menuitem
+                id="menu_r_keeper_payment_type"
+                name="Mokėjimų tipai"
+                sequence="3"
+                action="action_open_r_keeper_payment_type"
+                parent="r_keeper_accounting_root"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_holidays_calendar_view" model="ir.ui.view">
+            <field name="name">hr.holidays.calendar.view</field>
+            <field name="model">hr.holidays.report</field>
+            <field name="type">calendar_robo</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <calendar string="Prašymas" color="employee_id" date_start="date_from" date_stop="date_to" mode="month"
+                          quick_add="False" avatar_model="hr.employee">
+                    <field name="leave_name"/>
+                </calendar>
+            </field>
+        </record>
+        <record id="hr_holidays_report_view_tree" model="ir.ui.view">
+            <field name="name">hr.holidays.report.view.tree</field>
+            <field name="model">hr.holidays.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0">
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="leave_name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </tree>
+            </field>
+        </record>
+        <record id="hr_holidays_calendar_view_search" model="ir.ui.view">
+            <field name="name">hr.holidays.report.search</field>
+            <field name="model">hr.holidays.report</field>
+            <field name="arch" type="xml">
+                <search string="Darbuotojai">
+                    <field name="employee_id" string="Darbuotojas"/>
+                    <field name="department_id"/>
+                    <group>
+                        <filter name="department_id" string="Department" context="{'group_by':'department_id'}"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+        <record model="ir.actions.act_window" id="open_employee_calendar">
+            <field name="name">Kalendorius</field>
+            <field name="res_model">hr.holidays.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">calendar_robo,tree_robo</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'calendar_robo', 'view_id': ref('hr_holidays_calendar_view')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('hr_holidays_report_view_tree')})]"
+            />
+            <field name="robo_menu" ref="robo.menu_employees"/>
+            <field name="header" ref="robo.robo_button_darbuotojai"/>
+            <field name="domain">[]
+            </field>
+            <field name="context">{
+                'force_show_switch_buttons': True,
+                'search_default_year': 1,
+                'search_default_group_employee': 1,
+            }
+            </field>
+            <field name="help"></field>
+        </record>
+
+        <menuitem id="menu_employee_calendar_search"
+                  name="Kalendorius"
+                  parent="robo.menu_employees_search"
+                  action="open_employee_calendar"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="kalendorius"
+        />
+    </data>
+</odoo>

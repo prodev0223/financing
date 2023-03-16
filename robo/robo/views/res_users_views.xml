@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_users_form_simple_modif" model="ir.ui.view">
+            <field name="name">res.users.preferences.shortform</field>
+            <field name="model">res.users</field>
+            <field name="robo_front">True</field>
+            <field eval="18" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Keisti mano nustatymus">
+                    <group col="6">
+                        <group colspan="1">
+                            <field name="image" readonly="0" nolabel="1" widget="image" class="oe_left oe_avatar"/>
+                        </group>
+                        <group colspan="4">
+                            <h2><field name="name" readonly="1" class="oe_left"/></h2>
+                        </group>
+                        <group colspan="1">
+                            <button name="preference_change_password" type="object" string="Keisti slaptažodį" class="oe_right oe_highlight"/>
+                        </group>
+                    </group>
+                    <group string="Laiko nustatymai" name="time_settings" col="4" colspan="4">
+                        <group name="preferences" colspan="2">
+                            <field name="tz_offset" invisible="1"/>
+                            <field name="tz" widget="timezone_mismatch" options="{'tz_offset_field': 'tz_offset'}" readonly="0" string="Laiko juosta"/>
+                            <field name="lang" readonly="0"/>
+                            <field name="company_id" options="{'no_create': True, 'no_open': True}" readonly="0" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Security" name="security_settings" col="4" colspan="4">
+                        <group name="preferences" colspan="4">
+                            <group colspan="4">
+                               <field name="enable_2fa" readonly="0"/>
+                            </group>
+                            <group>
+                                <div attrs="{'invisible': ['|', ('enable_2fa', '=', False), ('qr_image_2fa', '=', False),],}"
+                                     colspan="4" style="width: 100%; position: relative" class="qr-code-container">
+                                    <label for="qr_image_2fa" string="Two Factor Authentication QR Code"/>
+                                    <field name="qr_image_2fa" widget="image" readonly="1" nolabel="1" colspan="4"
+                                           class="qr-code-image" style="width: 100%; position: relative"
+                                           attrs="{'invisible': ['|', ('enable_2fa', '=', False), ('qr_image_2fa', '=', False),],}"
+                                    />
+                                </div>
+                            </group>
+                        </group>
+                    </group>
+                    <group string="Informavimas el. paštu" name="messaging" col="4" colspan="4">
+                        <group colspan="2">
+                            <field name="inform_comments" attrs="{'readonly': 0}"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="preference_save" type="object" string="Išsaugoti" class="btn-primary"/>
+                        <button name="preference_cancel" string="Cancel" special="Atšaukti" class="btn-default"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_res_users_my_short" model="ir.actions.act_window">
+            <field name="name">Keisti mano nustatymus</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.users</field>
+            <field name="view_id" ref="view_users_form_simple_modif"/>
+            <field name="target">new</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+        </record>
+
+        <record id="action_res_users_my_view2" model="ir.actions.act_window.view">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_users_form_simple_modif"/>
+            <field name="act_window_id" ref="action_res_users_my_short"/>
+        </record>
+    </data>
+    <data noupdate="1">
+        <function name="set_default_actions" model="res.users"/>
+    </data>
+
+    <record id="view_users_form" model="ir.ui.view">
+        <field name="name">res.users.form</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='access_rights']" position="inside">
+                <group string="Kasos aparatas" name="cash_register" col="2" colspan="2">
+                    <field name='cash_register_journal_ids' options='{"no_create": True, "no_quick_create": True}'
+                           widget="many2many_tags" groups="robo_basic.group_robo_kasos_aparatas"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

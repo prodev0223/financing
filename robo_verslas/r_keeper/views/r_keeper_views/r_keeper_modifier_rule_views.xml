@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_r_keeper_modifier_rule" model="ir.ui.view">
+            <field name="name">r.keeper.modifier.rule.tree</field>
+            <field name="model">r.keeper.modifier.rule</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1"
+                      decoration-success="configured"
+                      decoration-danger="not configured">
+                    <field name="modifier_id"/>
+                    <field name="applied_action"/>
+                    <field name="remove_product_id"/>
+                    <field name="action_quantity"/>
+                    <field name="add_product_id"/>
+                    <field name="location_src_id"/>
+                    <field name="configured"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tree_r_keeper_modifier_rule_front" model="ir.ui.view">
+            <field name="name">r.keeper.modifier.rule.tree.front</field>
+            <field name="model">r.keeper.modifier.rule</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0"
+                      decoration-success="configured"
+                      decoration-danger="not configured">
+                    <field name="modifier_id"/>
+                    <field name="applied_action"/>
+                    <field name="remove_product_id"/>
+                    <field name="action_quantity"/>
+                    <field name="add_product_id"/>
+                    <field name="location_src_id"/>
+                    <field name="configured"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="form_r_keeper_modifier_rule" model="ir.ui.view">
+            <field name="name">r.keeper.modifier.rule.form</field>
+            <field name="model">r.keeper.modifier.rule</field>
+            <field name="arch" type="xml">
+                <form string="rKeeper modifikatorių taisyklės" create="1" edit="1" delete="1">
+                    <header>
+                        <field name="configured_text" class="validate_by_accountant_text" nolabel="1"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Modifikuojamas produktas"/>
+                            <h1 class="mt0">
+                                <field name="modified_product_id" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="modifier_id" options="{'no_open': True, 'no_create': True}" readonly="1"/>
+                            <field name="applied_action"/>
+                            <field name="remove_product_id"
+                                   attrs="{'invisible': [('applied_action', 'in', ['add', 'no_action'])],
+                                           'required': [('applied_action', 'not in', ['add', 'no_action'])]}"/>
+                            <field name="add_product_id"
+                                   attrs="{'invisible': [('applied_action', 'in', ['remove', 'no_action'])],
+                                           'required': [('applied_action', 'not in', ['remove', 'no_action'])]}"/>
+                            <field name="action_quantity"
+                                   attrs="{'invisible': [('applied_action', 'in', ['remove', 'no_action'])]}"/>
+                            <field name="location_src_id"
+                                   attrs="{'invisible': [('applied_action', '=', 'no_action')]}"/>
+                        </group>
+                        <group string="Paaiškinimai">
+                            <div class="alert alert-info" role="alert" style="margin-bottom: 2px;">
+                                Modifikatorių taisyklės nusako koks veiksmas bus atliekamas
+                                su modifikuojamo produkto komplektacija. Galimi veiksmai -
+                                *Produkto pašalinimas iš komplektacijos.
+                                *Produkto pridėjimas prie komplektacijos.
+                                *Komplektacijos produkto sukeitimas kitu produktu.
+                                Pasirinkus produkto sukeitimą arba pridėjimą, privaloma papildomai nurodyti
+                                pridedamą kiekį.
+                            </div>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="form_r_keeper_modifier_rule_front" model="ir.ui.view">
+            <field name="name">r.keeper.modifier.rule.front.form</field>
+            <field name="model">r.keeper.modifier.rule</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="rKeeper modifikatorių taisyklės" create="1" edit="1" delete="1">
+                    <header>
+                        <field name="configured_text" class="validate_by_accountant_text" nolabel="1"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Modifikuojamas produktas"/>
+                            <h1 class="mt0">
+                                <field name="modified_product_id" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="modifier_id" options="{'no_open': True, 'no_create': True}" readonly="1"/>
+                            <field name="applied_action" required="1"/>
+                            <field name="remove_product_id"
+                                   attrs="{'invisible': [('applied_action', 'in', ['add', 'no_action'])],
+                                           'required': [('applied_action', 'not in', ['add', 'no_action'])]}"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="add_product_id"
+                                   attrs="{'invisible': [('applied_action', 'in', ['remove', 'no_action'])],
+                                           'required': [('applied_action', 'not in', ['remove', 'no_action'])]}"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="action_quantity"
+                                   attrs="{'invisible': [('applied_action', 'in', ['remove', 'no_action'])]}"/>
+                            <field name="location_src_id" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'invisible': [('applied_action', '=', 'no_action')]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="search_r_keeper_modifier_rule" model="ir.ui.view">
+            <field name="name">Modifikatorių taisyklių paieška</field>
+            <field name="model">r.keeper.modifier.rule</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="modified_product_id"/>
+                    <field name="remove_product_id"/>
+                    <field name="add_product_id"/>
+                    <field name="modifier_id"/>
+                    <separator/>
+                    <filter name="configured" string="Sukonfigūruota" domain="[('configured', '=', True)]"/>
+                    <filter name="n_configured" string="Nesukonfigūruota" domain="[('configured', '=', False)]"/>
+                    <separator/>
+                    <filter name="not_no_action" string="Atlieka veiksmą"
+                            domain="[('applied_action', '!=', 'no_action')]"/>
+                    <separator/>
+                    <filter name="act_add" string="Veiksmas: Pridėti"
+                            domain="[('applied_action', '=', 'add')]"/>
+                    <filter name="act_remove" string="Veiksmas: Pašalinti"
+                            domain="[('applied_action', '=', 'remove')]"/>
+                    <filter name="act_swap" string="Veiksmas: Sukeisti"
+                            domain="[('applied_action', '=', 'swap')]"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_r_keeper_modifier_rule" model="ir.actions.act_window">
+            <field name="name">Modifikatorių taisyklės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.modifier.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_r_keeper_modifier_rule"/>
+        </record>
+        <record id="action_open_r_keeper_modifier_rule_front" model="ir.actions.act_window">
+            <field name="name">Modifikatorių taikymo taisyklės</field>
+            <field name="res_model">r.keeper.modifier.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree_robo</field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="header_r_keeper_modifier_rule"/>
+            <field name="search_view_id" ref="search_r_keeper_modifier_rule"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_r_keeper_modifier_rule_front')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_r_keeper_modifier_rule_front')})]"/>
+            <field name="context" eval="{
+                'search_default_not_no_action': 1,
+            }"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="action_new_r_keeper_modifier_rule_front" model="ir.actions.act_window">
+            <field name="name">Modifikatorių taikymo taisyklė</field>
+            <field name="res_model">r.keeper.modifier.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="with_settings">True</field>
+        </record>
+        <!--MENU ITEMS-->
+        <menuitem
+                id="menu_r_keeper_modifier_rule"
+                name="Modifikatorių taikymo taisyklės"
+                sequence="2"
+                action="action_open_r_keeper_modifier_rule"
+                parent="r_keeper_modifiers_root"
+        />
+        <menuitem id="menu_r_keeper_modifier_rule_front"
+                  name="Modifikatorių taikymo taisyklės"
+                  parent="r_keeper.r_keeper_root_front"
+                  sequence="6"
+                  robo_front="True"
+                  action="action_open_r_keeper_modifier_rule_front"
+                  groups="r_keeper.group_r_keeper_front_end"
+                  force_web_icon="icon-clipboard-pencil,none,none"
+                  searchable="True"
+                  tags="rkeeper,modifikatorių,taikymo,taisyklės"
+        />
+    </data>
+</odoo>

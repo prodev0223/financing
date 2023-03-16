@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record forcecreate="1" id="darbo_seq_id" model="ir.sequence">
+            <field name="name">AVANSAS</field>
+            <field name="code">AVANSAS</field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">AVANSAS</field>
+        </record>
+
+        <record forcecreate="1" id="darbo_seq_run_id" model="ir.sequence">
+            <field name="name">AVANSAI</field>
+            <field name="code">AVANSAI</field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">AVANSAI</field>
+        </record>
+    </data>
+    <data>
+        <record id="darbo_avansas_view" model="ir.ui.view">
+            <field name="name">darbo.avansas.form</field>
+            <field name="model">darbo.avansas</field>
+            <field name="arch" type="xml">
+                <form string="Darbo avansas">
+                    <header>
+                       <button name="atsaukti" type="object" states="done" string="Atstatyti į juodraštį" confirm="Ar tikrai norite atšaukti? Bus atšauktas susijęs avanso apskaitos įrašas."/>
+                       <button name="atlikti" string="Patvirtinti" type="object" states="draft" class="oe_highlight"/>
+                       <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"blue"}'/>
+                    </header>
+                    <sheet string="Darbo avansas">
+                        <div class=" oe_right oe_button_box">
+                            <field name="account_move_id" invisible="1"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="dk_irasai" string="DK įrašai" Help="Nueiti į DK įrašus" type="object" attrs="{'invisible': [('account_move_id','=',False)]}" icon="fa-bars" widget="statinfo"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="contract_id"/>
+                                <field name="operation_date"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="suma" widget="monetary" options="{'currency_field':'currency_id'}"/>
+                            </group>
+                            <group>
+                                <field name="avansu_politika" required="True"/>
+                                <field name="procentas" attrs="{'invisible':[('avansu_politika','!=', 'percent')]}"/>
+                                <field name="avansu_politika_suma" attrs="{'invisible':[('avansu_politika','!=', 'fixed_sum')]}"/>
+                            </group>
+                            <group>
+                                <field name="advanced_settings"/>
+                                <field name="journal_id" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                                <field name="saskaita_debetas" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                                <field name="saskaita_kreditas" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                                <!--<field name="saskaita_gpm" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>-->
+                                <!--<field name="saskaita_sodra" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>-->
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="darbo_avansas_tree" model="ir.ui.view">
+            <field name="name">darbo.avansas.tree</field>
+            <field name="model">darbo.avansas</field>
+            <field name="arch" type="xml">
+                <tree string="Darbuotojų avansai" colors="blue:state=='draft'">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="contract_id"/>
+                    <field name="operation_date"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="suma" sum="suma"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="avansu_search" model="ir.ui.view">
+            <field name="name">avansu.search</field>
+            <field name="model">darbo.avansas</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Paieška">
+                    <field name="employee_id"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_periodas" string="Pradžios periodas" context="{'group_by':'date_from'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_darbo_avansas">
+            <field name="name">Darbuotojų avansai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">darbo.avansas</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_id" ref="darbo_avansas_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                  Spausk čia, kad sukurtum darbo užmokesčio avansų išmokėjimą.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="meniu_darbo_avansai"
+                  name="Darbuotojų avansai"
+                  parent="l10n_lt_payroll.menu_payment_employee"
+                  sequence="110"
+                  action="action_darbo_avansas"/>
+
+        <record id="darbo_avansas_run_view" model="ir.ui.view">
+            <field name="name">avansas.run.form</field>
+            <field name="model">avansai.run</field>
+            <field name="arch" type="xml">
+                <form string="Darbo avansai">
+                    <header>
+                       <button name="atsaukti" type="object" states="done" string="Atstatyti į juodraštį"/>
+                       <button name="atlikti" string="Generuoti" type="object" states="draft" class="oe_highlight"/>
+                       <button name="patvirtinti" string="Patvirtinti visus" type="object" states="done" class="oe_highlight"/>
+                       <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"blue"}'/>
+                    </header>
+                    <sheet string="Darbo avansai" cols="4" colspan="4">
+                        <group>
+                            <field name="operation_date"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="journal_id"/>
+                            <group colspan="4">
+                                <field name="advanced_settings"/>
+                                <field name="saskaita_debetas" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                                <field name="saskaita_kreditas" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>
+                                <!--<field name="saskaita_gpm" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>-->
+                                <!--<field name="saskaita_sodra" attrs="{'invisible':[('advanced_settings', '=', False)]}"/>-->
+                            </group>
+                        </group>
+                        <group>
+                            <field name="employee_ids" colspan="4">
+                                <tree>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="avansai" colspan="4"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="darbo_avansas_run_tree" model="ir.ui.view">
+            <field name="name">darbo.avansas.run.tree</field>
+            <field name="model">avansai.run</field>
+            <field name="arch" type="xml">
+                <tree string="Darbuotojų avansai" colors="blue:state=='draft'">
+                    <field name="name"/>
+                    <field name="operation_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_darbo_avansai_run">
+            <field name="name">Darbuotojų avansai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">avansai.run</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_id" ref="darbo_avansas_run_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                  Spausk čia, kad sukurtum darbo užmokesčio avansų išmokėjimą.
+                </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="advance_payment_cancel_all">
+            <field name="name">Atšaukti</field>
+            <field name="model_id" ref="l10n_lt_payroll.model_darbo_avansas"/>
+            <field name="code">
+                model.browse(context.get('active_ids', [])).atsaukti()
+            </field>
+        </record>
+        <function name="create_atsaukti_action" model="darbo.avansas"/>
+
+        <menuitem id="meniu_darbo_avansai_run"
+                  name="Avansų suvestinė"
+                  parent="l10n_lt_payroll.menu_payment_employee"
+                  sequence="111"
+                  action="action_darbo_avansai_run"/>
+        
+    </data>
+</odoo>

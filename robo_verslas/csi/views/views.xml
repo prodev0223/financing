@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="csi_data_import_wizard" model="ir.ui.view">
+      <field name="name">Importuoti Duomenis</field>
+      <field name="model">csi.data.import</field>
+      <field name="priority">1</field>
+      <field name="arch" type="xml">
+        <form string="Importuoti Duomenis">
+            <sheet>
+            <group col="2" string="XML Importas">
+                <field name="xml_data" filename="coda_fname"/>
+                <field name="xml_name" invisible="1"/>
+                <button name="xml_parsing" string="Importuoti (XML)" type="object" class="oe_highlight"/>
+            </group>
+            <group col="2" string="Duomenų patikrinimas su XLS">
+                <field name="xls_data" filename="coda_fname"/>
+                <field name="xls_name" invisible="1"/>
+                <a href="csi/static/src/import_examples/csi.xlsx" col="1">Atsisiųsti pavyzdį</a>
+            </group>
+                <group>
+                    <button name="xls_checking" string="Patikrinti (XLS)"
+                            type="object" class="oe_highlight"/>
+                    <button name="xls_checking" string="Taisyti duomenis (XLS)"
+                            type="object" class="oe_highlight" context="{'fix_data': True}"/>
+                </group>
+            </sheet>
+            <footer>
+                <button string="Atšaukti" class="oe_link" special="cancel"/>
+            </footer>
+        </form>
+      </field>
+    </record>
+    <record id="csi_jobs_tree" model="ir.ui.view">
+            <field name="name">csi.jobs</field>
+            <field name="model">csi.jobs</field>
+            <field name="arch" type="xml">
+                <tree string="CSI Darbai"
+                      create="0" delete="0" editable="bottom"
+                        decoration-info="state == 'in_progress'"
+                        decoration-success="state == 'finished'"
+                        decoration-danger="state == 'failed'">
+                    <field name="operation_code" readonly="1"/>
+                    <field name="execution_start_date" readonly="1"/>
+                    <field name="execution_end_date" readonly="1"/>
+                    <field name="state"/>
+                    <field name="fail_message" readonly="1"/>
+                </tree>
+            </field>
+    </record>
+
+    <record id="import_csi_data_action" model="ir.actions.act_window">
+      <field name="name">Importuoti</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">csi.data.import</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+      <field name="view_id" ref="csi_data_import_wizard"/>
+    </record>
+    <record id="open_csi_jobs" model="ir.actions.act_window">
+        <field name="name">Darbai</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">csi.jobs</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="view_id" ref="csi_jobs_tree"/>
+    </record>
+         <menuitem
+                name="CSI"
+                id="csi"
+                sequence="48"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Importuoti Duomenis"
+                id="csi_import"
+                sequence="48"
+                action="import_csi_data_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="csi"
+        />
+        <menuitem
+                name="Darbai"
+                id="csi_jobs"
+                sequence="80"
+                action="open_csi_jobs"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="csi"
+        />
+
+    </data>
+</odoo>

@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="isakymas_del_prastovos_skelbimo_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl prastovos skelbimo</field>
+            <field name="model">e.document</field>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="robo_front" eval="True"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="downtime_duration" invisible="1"/>
+                    <field name="employee_schedule_is_regular" invisible="1"/>
+                    <field name="inform_of_possible_higher_compensation" invisible="1"/>
+                    <button name="action_copy" type="object" string="Kurti kopiją" states="draft,confirm,e_signed"/>
+                </xpath>
+
+                <xpath expr="//header" position="after">
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:6px;" colspan="4"
+                         states="e_signed">
+                        DĖMESIO! Jei įsakymą norėsite pateikti Užimtumo tarnybai dėl galimybės gauti subsidiją, siūlome
+                        atsispausdinti šį įsakymą be pasirašymo žymos ir jį pasirašyti ranka.
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:6px;" colspan="4"
+                         states="e_signed" attrs="{'invisible': [('inform_of_possible_higher_compensation', '=', False)]}">
+                        Attention, from 1 July 2021 Employment Service reimburses 100 percent of employee's salary,
+                        but not more than 0,9 Minimum monthly salary (MMA), and from 1 August 2021 not more than 0,6
+                        Minimum monthly salary (MMA).
+                    </div>
+                </xpath>
+
+                <xpath expr="//button[@class='download_main_button']" position="replace"/>
+
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="employee_id2" required="True" string="Darbuotojas" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="downtime_type" required="True"/>
+                        <field name="downtime_subtype" required="True"/>
+                        <field name="downtime_reason" attrs="{
+                            'invisible': [('downtime_subtype', '!=', 'ordinary')],
+                            'required': [('downtime_subtype', '=', 'ordinary')]
+                            }"/>
+                        <field name="downtime_related_state_declared_emergency" attrs="{
+                            'invisible': [('downtime_subtype', '!=', 'due_to_special_cases')],
+                            'required': [('downtime_subtype', '=', 'due_to_special_cases')]
+                            }" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="date_from" string="Nuo kada" required="True"/>
+                        <field name="date_to" string="Iki kada" required="True"/>
+                        <field name="downtime_pay_selection" required="True" attrs="{
+                            'invisible': [('downtime_subtype', '=', 'ordinary')],
+                            'required': [('downtime_subtype', '!=', 'ordinary')]
+                        }"/>
+                        <field name="float_1" string="Prastovos suma" attrs="{
+                            'invisible': [
+                                '|',
+                                ('downtime_subtype', '=', 'ordinary'),
+                                ('downtime_pay_selection', '!=', 'custom')
+                            ],
+                            'required': [
+                                ('downtime_subtype', '!=', 'ordinary'),
+                                ('downtime_pay_selection', '=', 'custom')
+                            ]
+                        }"/>
+                    </group>
+                    <group colspan="4" string="Darbo laikas prastovos laikotarpiu" attrs="{'invisible': [
+                                ('downtime_type', '!=', 'partial'),
+                                ('downtime_subtype', '=', 'due_to_special_cases')
+                            ]}">
+                        <group colspan="4" attrs="{'invisible': [
+                                '|',
+                                ('downtime_type', '=', 'partial'),
+                                ('downtime_subtype', '=', 'due_to_special_cases')
+                            ]}">
+                            <field name="downtime_come_to_work_times" colspan="4" attrs="{
+                                'invisible': [
+                                    '|',
+                                    ('downtime_type', '=', 'partial'),
+                                    '|',
+                                    ('downtime_duration', 'not in', [1, 2, 3]),
+                                    ('downtime_subtype', '=', 'due_to_special_cases')
+                                ],
+                                'required': [
+                                    ('downtime_type', '!=', 'partial'),
+                                    ('downtime_subtype', '!=', 'due_to_special_cases'),
+                                    ('downtime_duration', 'in', [1, 2, 3]),
+                                ]
+                            }">
+                                <tree editable="bottom" class="robo_tree_in_form" create="0" edit="1" delete="1">
+                                    <field name="date" readonly="1"/>
+                                    <field name="hour_from" widget="float_time"/>
+                                    <field name="hour_to" widget="float_time"/>
+                                    <field name="time_total" widget="float_time" sum="time_total"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group colspan="4" attrs="{'invisible': [('downtime_type', '!=', 'partial')]}">
+                            <field name="downtime_fixed_attendance_ids" nolabel="1" colspan="4" attrs="{
+                                'invisible': [
+                                    '|',
+                                    ('employee_schedule_is_regular', '=', False),
+                                    ('downtime_type', '!=', 'partial')
+                                ],
+                                'required': [
+                                    ('employee_schedule_is_regular', '=', True),
+                                    ('downtime_type', '=', 'partial')
+                                ]
+                            }">
+                                <tree string="Grafikas" editable="bottom" class="robo_tree_in_form">
+                                    <field name="dayofweek"/>
+                                    <field name="hour_from" widget="float_time"/>
+                                    <field name="hour_to" widget="float_time"/>
+                                    <field name="time_total" widget="float_time" sum="time_total"/>
+                                </tree>
+                            </field>
+                            <field name="downtime_reduce_in_time" colspan="4" attrs="{
+                                'invisible': [
+                                    '|',
+                                    ('employee_schedule_is_regular', '=', True),
+                                    ('downtime_type', '!=', 'partial')
+                                ],
+                                'required': [
+                                    ('employee_schedule_is_regular', '=', False),
+                                    ('downtime_type', '=', 'partial')
+                                ]
+                            }"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="isakymas_del_prastovos_skelbimo_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl prastovos skelbimo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'isakymas_del_prastovos_skelbimo_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.isakymas_del_prastovos_skelbimo_form"/>
+        </record>
+
+        <record id="isakymas_del_prastovos_skelbimo_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl prastovos skelbimo</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.isakymas_del_prastovos_skelbimo_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas,prastova,skelbimas,nedarbas,sustabdymas,veikla</field>
+            <field name="groups_id" eval="[
+                (6, 0, [
+                    ref('robo_basic.group_robo_free_manager'),
+                    ref('robo_basic.group_robo_premium_manager'),
+                    ref('robo_basic.group_robo_edocument_manager')
+                    ]
+                )
+            ]"/>
+        </record>
+
+        <record id="isakymas_del_prastovos_skelbimo_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie pasirašytus prastovos įsakymus</field>
+            <field name="description">Informuoti, kuomet būna pasirašomas prastovos įsakymas</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+
+        <record id="isakymas_del_prastovos_skelbimo_template" model="e.document.template">
+            <field name="body" type="html">
+                <style type="text/css">
+                    span.statement {
+                        text-indent: 20px !important;
+                        display: block;
+                    }
+                </style>
+                <div style="padding-left: 20px; page-break-inside: auto;" id="body">
+
+                    <span class="statement">
+                        {% if not signed_user_id or not signed_user_id.employee_ids or not
+                        signed_user_id.employee_ids[0].gender %}
+                                Vadovaudamasi(-s)
+                        {% elif signed_user_id.employee_ids[0].gender == 'male' %}
+                                Vadovaudamasis
+                        {% else %}
+                                Vadovaudamasi
+                        {% endif %}
+
+                        {% if downtime_subtype == 'ordinary' %}
+                            Lietuvos Respublikos Darbo Kodekso 47 straipsnio nuostatomis, dėl {{ downtime_reason }},
+                        {% else %}
+                            Lietuvos Respublikos Darbo Kodekso 47 straipsnio 1 dalies 2 punkto nuostatomis,
+                            remiantis {{ downtime_related_state_declared_emergency_ref_text }},
+                        {% endif %}
+
+                        nuo {{ date_from }} iki {{ date_to }}
+
+                        skelbiu
+
+                        {% if downtime_type == 'full' %}
+                            viso darbo laiko prastovą
+                        {% else %}
+                            dalinę prastovą
+                        {% endif %}
+
+                        {{ kam(employee_id2) }}.
+                    </span>
+
+
+                    {% if downtime_type == 'full' %}
+                        {% if downtime_subtype != 'ordinary' %}
+                            <span class="statement">
+                                Prastovos laikotarpiu darbuotojui d r a u d ž i a m a atvykti į darbovietę.
+                            </span>
+                        {% else %}
+                            {% if downtime_duration in [1, 2, 3] %}
+                                {% for downtime_come_to_work_time in downtime_come_to_work_times %}
+                                    <span class="statement">
+                                        R e i k a l a u j u darbuotojo prastovos metu -
+                                        {{ downtime_come_to_work_time.date }} dieną, nuo
+                                        {{ format_float_to_hours(downtime_come_to_work_time.hour_from) }} iki
+                                        {{ format_float_to_hours(downtime_come_to_work_time.hour_to) }} atvykti į
+                                        darbovietę
+                                    </span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="statement">
+                                    Prastovos metu l e i d ž i u darbuotojui neatvykti į darbovietę, tačiau
+                                    n u r o d a u būti pasirengus atvykti į darbovietę kitą darbo dieną po įmonės
+                                    atsiųsto pranešimo apie prastovos atšaukimą arba esant poreikiui atlikti darbo
+                                    funkcijas.
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if downtime_subtype != 'ordinary' %}
+                        <span class="statement">
+                            {% if downtime_pay_selection == 'mma' %}
+                                Prastovos laikotarpiu į s a k a u darbuotojui mokėti Lietuvos Respublikos patvirtintą
+                                minimaliąją mėnesinę algą, kai darbuotojo darbo sutartyje sulygta visa darbo laiko
+                                norma.
+                            {% elif downtime_pay_selection == 'salary' %}
+                                Prastovos laikotarpiu į s a k a u darbuotojui mokėti sutartyje nustatytą darbo
+                                užmokestį, bet ne daugiau kaip 1,5 minimalaus mėnesinio atlyginimo.
+                            {% else %}
+                                Prastovos laikotarpiu į s a k a u darbuotojui mokėti {{ float_1 }} EUR dydžio
+                                atlyginimą.
+                            {% endif %}
+                        </span>
+                    {% else %}
+                        {% if downtime_duration == 1 %}
+                            <span class="statement">
+                                Prastovos laikotarpiu į s a k a u darbuotojui mokėti vidutinį darbo užmokestį.
+                            </span>
+                        {% else %}
+                            {% for day in range(0, min(downtime_duration, 3)) %}
+                                {% if day == 0 %}
+                                    {% set to_pay = 'vidutinį darbo užmokestį' %}
+                                    {% set line_naming = 'Pirmąją' %}
+                                {% elif day == 1 %}
+                                    {% set to_pay = 'du trečdalius vidutinio darbo užmokesčio' %}
+                                    {% set line_naming = 'Antrąją' %}
+                                {% else %}
+                                    {% set to_pay = 'du trečdalius vidutinio darbo užmokesčio' %}
+                                    {% set line_naming = 'Trečiąją' %}
+                                {% endif %}
+                                <span class="statement">
+                                    {{ line_naming }} prastovos darbo dieną į s a k a u darbuotojui mokėti
+                                    {{ to_pay }}.
+                                </span>
+                            {% endfor %}
+                            {% if downtime_duration &lt; 4 and downtime_come_to_work_times %}
+                                <span class="statement">
+                                    Darbuotojo būvimo darbovietėje metu į s a k a u darbuotojui mokėti vidutinį darbo
+                                    užmokestį.
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                        {% if downtime_duration > 3 %}
+                            <span class="statement">
+                                Likusiu prastovos laikotarpiu į s a k a u darbuotojui mokėti 40% vidutinio darbo
+                                užmokesčio.
+                            </span>
+                        {% endif %}
+                    {% endif %}
+
+                    <span class="statement">{{ extra_text_html }}</span>
+
+                    {% if downtime_type != 'full' %}
+                        {% if employee_schedule_is_regular %}
+                            <span class="statement">{{ downtime_schedule_reduction }}</span>
+                            <span class="statement">
+                                Nurodau darbuotojui dirbti pagal naujai sudarytą darbo laiko grafiką, kuris galios
+                                prastovos laikotarpiu:
+                            </span>
+                            {{ employee_downtime_schedule_table }}
+                        {% else %}
+                            <span class="statement">
+                                N u s t a t a u prastovos laikotarpiu sutrumpinti {{ ko(employee_id2) }} darbo grafiką
+                                {{ format_float_to_hours(downtime_reduce_in_time) }}
+                                {%if downtime_reduce_in_time | int % 10 == 0 %}
+                                    valandų
+                                {% elif downtime_reduce_in_time | int % 100 &gt; 10
+                                    and downtime_reduce_in_time | int % 100 &lt; 20 %}
+                                    valandų
+                                {% elif downtime_reduce_in_time | int % 10 == 1 %}
+                                    valanda
+                                {% else %}
+                                    valandomis
+                                {% endif %}
+                                per savaitę.
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl prastovos skelbimo</field>
+            <field name="footer" type="html">
+                <div style="display: flex; justify-content: flex-end; width: 100%; float:right;">
+                    <table width="65%" align="right" style="float: right; margin-top:25px; border-collapse: separate;
+                        border-spacing: 20px 0;">
+                        <tr style="border:none">
+                            <td style="border:none; text-align: center; width: 70%;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                            <td style="border:none;"><span><br/></span></td>
+                        </tr>
+                        <tr style="border:none;">
+                            <td style="border:none; border-top: 1px solid black; text-align:center;" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                            <td style="border:none; border-top: 1px solid black; text-align:center;" align="center">
+                                <span>(parašas)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.isakymas_del_prastovos_skelbimo_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify;
+                        .img-rounded{
+                            width: 100px;
+                        }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            {% if downtime_type == 'full' %}
+                                <span>ĮSAKYMAS DĖL PRASTOVOS SKELBIMO</span>
+                            {% else %}
+                                <span>ĮSAKYMAS DĖL DALINĖS PRASTOVOS SKELBIMO</span>
+                            {% endif %}
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.vieta"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.isakymas_del_prastovos_skelbimo_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="True"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="sign_mail_channel_ids"
+                   eval="[(4, ref('e_document.isakymas_del_prastovos_skelbimo_mail_channel'))]"/>
+            <field name="date_lim_for_signing_field_name">date_from</field>
+        </record>
+    </data>
+</odoo>

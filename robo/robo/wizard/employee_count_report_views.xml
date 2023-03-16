@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="employee_count_form">
+            <field name="name">employee.count.form</field>
+            <field name="model">employee.count.report</field>
+            <field name="arch" type="xml">
+                <form create="false" edit="false">
+                    <group>
+                        <group col="4" colspan="4">
+                            <group col="4" colspan="4">
+                                <field name="date_from"/>
+                                <newline/>
+                                <field name="date_from_factual"/>
+                                <field name="date_to"/>
+                            </group>
+                            <group col="4" colspan="4">
+                                <field name="employee_count"/>
+                                <field name="show_warning" invisible="1"/>
+                                <span attrs="{'invisible': [('show_warning', '=', False)]}">
+                                    Duomenys formuojami ne už visą periodą
+                                </span>
+                            </group>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Užverti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_employee_count_report">
+            <field name="name">Vidutinis darbuotojų skaičius</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employee.count.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="employee_count_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                name="Vidutinis darbuotojų skaičius"
+                id="menu_employee_count"
+                parent="meniu_kitos_ataskaitos"
+                sequence="1"
+                action="action_employee_count_report"
+                groups="hr.group_hr_manager"
+        />
+    </data>
+</odoo>

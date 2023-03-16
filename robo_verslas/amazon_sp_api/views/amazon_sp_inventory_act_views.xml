@@ -1,0 +1,150 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="amazon_sp_inventory_act_view_tree" model="ir.ui.view">
+            <field name="name">amazon.sp.inventory.act.view.tree</field>
+            <field name="model">amazon.sp.inventory.act</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="1" delete="1" import="0"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state == 'failed'">
+                    <field name="name"/>
+                    <field name="period_start_date"/>
+                    <field name="period_end_date"/>
+                    <field name="write_off_reason"/>
+                    <field name="marketplace_id"/>
+                    <field name="amazon_inventory_type_id"/>
+                    <field name="total_write_off_quantity" sum="total_write_off_quantity"/>
+                    <field name="stock_inventory_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="amazon_sp_inventory_act_view_form" model="ir.ui.view">
+            <field name="name">amazon.sp.inventory.act.view.form</field>
+            <field name="model">amazon.sp.inventory.act</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Amazon SP-API Inventory act" create="0" delete="0">
+                    <header>
+                        <button name="create_inventory_write_off_prep"
+                                states="imported,failed" class="oe_highlight"
+                                type="object" string="Create write-off"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Inventory act"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="write_off_reason"/>
+                            <field name="total_write_off_quantity"/>
+                        </group>
+                        <group colspan="4" col="2" readonly="1">
+                            <group string="Dates" colspan="1" col="2">
+                                <field name="period_start_date"/>
+                                <field name="period_end_date"/>
+                            </group>
+                            <group string="Relational fields" colspan="1" col="2">
+                                <field name="marketplace_id"
+                                       options="{'no_open': True}"/>
+                                <field name="amazon_inventory_type_id"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="stock_inventory_id"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                            </group>
+                        </group>
+                        <group string="Inventory lines">
+                            <field name="amazon_inventory_line_ids" nolabel="1" widget="one2many_list"
+                                   mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Inventory lines"
+                                      create="1" edit="1" delete="1">
+                                    <field name="amazon_product_id"/>
+                                    <field name="asin_product_code"/>
+                                    <field name="write_off_quantity"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="amazon_sp_inventory_act_view_search" model="ir.ui.view">
+            <field name="name">amazon.sp.inventory.act.view.search</field>
+            <field name="model">amazon.sp.inventory.act</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="state_imported" string="State - Imported" domain="[('state','=','imported')]"/>
+                    <filter name="state_created" string="State - Created" domain="[('state','=','created')]"/>
+                    <filter name="state_failed" string="State - Failed" domain="[('state','=','failed')]"/>
+                    <separator/>
+                    <filter name="write_off_reason_cud"
+                            string="Quantity damaged by customer"
+                            domain="[('write_off_reason','=','customerDamagedQuantity')]"/>
+                    <filter name="write_off_reason_wad"
+                            string="Quantity damaged in warehouse"
+                            domain="[('write_off_reason','=','warehouseDamagedQuantity')]"/>
+                    <filter name="write_off_reason_did"
+                            string="Quantity damaged by distributor"
+                            domain="[('write_off_reason','=','distributorDamagedQuantity')]"/>
+                    <filter name="write_off_reason_cad"
+                            string="Quantity damaged by carrier"
+                            domain="[('write_off_reason','=','carrierDamagedQuantity')]"/>
+                    <filter name="write_off_reason_deq"
+                            string="Defective quantity"
+                            domain="[('write_off_reason','=','defectiveQuantity')]"/>
+                    <filter name="write_off_reason_exq"
+                            string="Expired quantity"
+                            domain="[('write_off_reason','=','expiredQuantity')]"/>
+                    <separator/>
+                    <field name="period_start_date"/>
+                    <field name="period_end_date"/>
+                    <field name="stock_inventory_id"/>
+                    <field name="marketplace_id"/>
+                    <field name="amazon_inventory_type_id"/>
+                    <separator/>
+                    <group>
+                        <filter name="group_write_off_reason"
+                                string="Write-off reason" context="{'group_by':'write_off_reason'}"/>
+                        <filter name="group_state" string="State" context="{'group_by':'state'}"/>
+                        <filter name="group_marketplace_id" string="Marketplace"
+                                context="{'group_by':'marketplace_id'}"/>
+                        <filter name="group_amazon_inventory_type_id" string="Inventory type"
+                                context="{'group_by':'amazon_inventory_type_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_amazon_sp_inventory_act_back" model="ir.actions.act_window">
+            <field name="name">Amazon SP-API inventory acts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.inventory.act</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="amazon_sp_inventory_act_view_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_amazon_sp_inventory_acts"
+                name="Inventory acts"
+                groups="group_amazon_sp_api_quantitative_integration"
+                sequence="3"
+                action="action_open_amazon_sp_inventory_act_back"
+                parent="menu_amazon_sp_stock_data_root"
+        />
+    </data>
+</odoo>

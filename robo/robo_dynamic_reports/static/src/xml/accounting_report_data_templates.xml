@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="AccountingReportTable">
+        <table id="data-lines" class="dynamic-report-main-data-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <!-- Empty column for child element buttons -->
+                    <t t-if="any_child_has_child_elements">
+                        <th class="column-header child-element-column empty-cell"/>
+                    </t>
+
+                    <!-- Render title for each column -->
+                    <t t-foreach="columns" t-as="column">
+                        <t t-if="column['shown']">
+                            <th t-attf-class="column-header #{column['is_number'] ? 'amt-head' : ''}">
+                                <div>
+                                    <span class="column-title"><t t-esc="column['name']"/></span>
+                                    <!-- Add sorting arrow -->
+                                    <i class="fa fa-caret-down sorting-arrow sorting-arrow-inactive"/>
+                                </div>
+                            </th>
+                        </t>
+                    </t>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-raw="renderedGroupData"/>   <!-- Render table data -->
+            </tbody>
+        </table>
+    </t>
+
+    <t t-name="AccountingReportGroupDataRow">
+        <t t-set="level" t-value="data.level.value"/>
+        <t t-if="level &gt; 3">
+            <t t-set="row_class" t-value="'data-line'"/></t>
+        <t t-else="">
+            <t t-set="row_class" t-value="'group-title-row data-group-expanded group-title-border-top group-name-row'"/>
+        </t>
+
+        <tr t-attf-class="#{action_id ? 'data-row-with-action' : ''} #{row_class}"
+            t-attf-action="#{action_id ? action_id : None}"
+            t-attf-record="#{record_ids ? record_ids : None}"
+            t-attf-group-level="#{group_level}"
+            t-attf-group="#{group_id}"
+            t-attf-style="#{data.code.value ? '' : 'font-weight: bold;'} font-size:#{max_group_level-level+11}px;">
+
+            <td>
+                <span style="color: rgba(0,0,0,0);">
+                    <t t-esc="'..'.repeat(level or 0)"/>
+                </span>
+                <span t-esc="data.code.value or ''" class="py-mline"/>
+            </td>
+            <td>
+                <span style="color: rgba(0,0,0,0);">
+                    <t t-esc="'..'.repeat(level or 0)"/>
+                </span>
+                <span t-esc="data.name.value or ''" class="py-mline"/>
+            </td>
+            <td class="text-right">
+                <t t-if="!data.label.value and data.balance.value">
+                    <span class="amt">
+                        <t t-esc="renderMonetaryValue(data.balance.value, data.balance.currency_id)"/>
+                    </span>
+                </t>
+            </td>
+        </tr>
+    </t>
+
+    <t t-name="AccountingReportProfitLossDataRow">
+        <t t-set="level" t-value="data.level.value"/>
+
+        <tr t-attf-class="#{action_id ? 'data-row-with-action' : ''} data-line"
+            t-attf-action="#{action_id ? action_id : None}"
+            t-attf-record="#{record_ids ? record_ids : None}"
+            t-attf-group-level="#{group_level}"
+            t-attf-group="#{group_id}"
+            t-attf-style="#{level &gt; 3 ? '' : 'font-weight: bold;'} font-size:#{max_group_level-level+12}px;">
+
+            <td>
+                <span t-esc="data.code.value or ''" class="py-mline"/>
+            </td>
+            <td>
+                <span t-esc="data.name.value or ''" class="py-mline"/>
+            </td>
+            <td class="text-right">
+                <t t-if="!data.label.value and data.balance.value">
+                    <span class="amt">
+                        <t t-esc="renderMonetaryValue(data.balance.value, data.balance.currency_id)"/>
+                    </span>
+                </t>
+            </td>
+        </tr>
+    </t>
+</templates>

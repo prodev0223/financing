@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+       <record id="account_invoice_analytic_code_mo" model="ir.ui.view">
+            <field name="name">account.invoice.required.analytic.mo</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']//field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_invoice_supplier_analytic_code_mo" model="ir.ui.view">
+            <field name="name">account.invoice.required.analytic.mo</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']//field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="required">0</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_open']" position="attributes">
+                    <attribute name="context">{'skip_consignation_account_force': True}</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_invoice_supplier_consignation" model="ir.ui.view">
+            <field name="name">account_invoice_supplier_consignation</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_open']" position="attributes">
+                    <attribute name="context">{'skip_consignation_account_force': True}</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="robo_stock.open_robo_stock_product">
+            <field name="name">Produktai</field>
+            <field name="res_model">product.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="robo_stock.robo_stock_product_tree"/>
+            <field name="domain">[]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_stock.robo_stock_product_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('stock.product_template_kanban_stock_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_stock.robo_stock_product_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+            <field name="header" ref="robo_stock.robo_stock_header_product"/>
+            <field name="context" eval="{
+                'default_type': 'product',
+                'search_default_consumable': 1,
+                'default_purchase_method': 'purchase',
+                'default_categ_id': ref('l10n_lt.product_category_1'),
+                'search_add_custom': False,
+                'showDuplicate': True,
+                }"/>
+        </record>
+    </data>
+</odoo>

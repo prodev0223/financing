@@ -1,0 +1,230 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="amazon_sp_order_view_tree" model="ir.ui.view">
+            <field name="name">amazon.sp.order.view.tree</field>
+            <field name="model">amazon.sp.order</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="1" delete="1" import="0"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-warning="state == 'ext_cancel'"
+                      decoration-danger="state == 'failed'"
+                      decoration-muted="invoiced_externally">
+                    <field name="ext_order_id"/>
+                    <field name="marketplace_id"/>
+                    <field name="factual_order_date"/>
+                    <field name="purchase_date"/>
+                    <field name="control_amount" sum="control_amount"/>
+                    <field name="order_amount_shipping" sum="order_amount_shipping"/>
+                    <field name="order_amount_discount" sum="order_amount_discount"/>
+                    <field name="order_amount_principal_display" sum="order_amount_principal_display"/>
+                    <field name="order_amount_total_display" sum="order_amount_total_display"/>
+                    <field name="currency_id"/>
+                    <field name="state"/>
+                    <field name="external_state"/>
+                    <field name="order_type"/>
+                    <field name="refund_order"/>
+                    <field name="invoiced_externally" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="amazon_sp_order_view_form" model="ir.ui.view">
+            <field name="name">amazon.sp.order.view.form</field>
+            <field name="model">amazon.sp.order</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Amazon SP-API order" create="0" delete="0" edit="0">
+                    <header>
+                        <button name="button_create_invoice"
+                                states="imported,failed,ext_cancel" class="oe_highlight"
+                                type="object" string="Create invoice"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Order ID"/>
+                            <h1 class="mt0">
+                                <field name="ext_order_id" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group colspan="4" col="2" readonly="1">
+                            <group string="Other identifiers" colspan="1" col="2">
+                                <field name="ext_replacement_order_id"
+                                       attrs="{'invisible': [('ext_replacement_order_id', '=', False)]}"/>
+                                <field name="seller_order_id"
+                                       attrs="{'invisible': [('seller_order_id', '=', False)]}"/>
+                                <field name="marketplace_code"/>
+                                <field name="currency_code"/>
+                                <field name="origin_country_code" groups="base.group_system"/>
+                                <field name="destination_country_code" groups="base.group_system"/>
+                                <field name="origin_country_id" options="{'no_create': True}"/>
+                                <field name="destination_country_id" options="{'no_create': True}"/>
+                            </group>
+                            <group string="Other fields" colspan="1" col="2">
+                                <field name="external_state"/>
+                                <field name="order_type"/>
+                                <field name="fulfillment_channel"/>
+                                <field name="number_of_items_unshipped"/>
+                                <field name="invoiced_externally"/>
+                            </group>
+                            <group string="Refund order information" colspan="1" col="2">
+                                <field name="refund_order"/>
+                                <field name="refunded_order_id"/>
+                                <field name="refunding_order_id"/>
+                            </group>
+                            <group string="Relational fields" colspan="1" col="2">
+                                <field name="marketplace_id"/>
+                                <field name="partner_id"/>
+                                <field name="currency_id"/>
+                                <field name="invoice_id"/>
+                                <field name="amazon_sp_tax_rule_id"/>
+                            </group>
+                        </group>
+                        <group colspan="4" col="2" readonly="1">
+                            <group string="Timestamps" colspan="1" col="2">
+                                <field name="factual_order_date"/>
+                                <field name="purchase_date"/>
+                                <field name="earliest_ship_date"/>
+                                <field name="latest_ship_date"/>
+                                <field name="earliest_delivery_date"/>
+                                <field name="latest_delivery_date"/>
+                            </group>
+                            <group string="Amounts" colspan="1" col="2">
+                                <field name="control_amount"/>
+                                <field name="order_amount_shipping"/>
+                                <field name="order_amount_discount"/>
+                                <field name="order_amount_principal_display"/>
+                                <field name="order_amount_total_display"/>
+                            </group>
+                        </group>
+                        <group string="Order lines">
+                            <field name="amazon_order_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Order lines"
+                                      decoration-info="state == 'imported'"
+                                      decoration-success="state == 'created'"
+                                      decoration-danger="state == 'failed'"
+                                      create="1" edit="1" delete="1">
+                                    <field name="name"/>
+                                    <field name="amazon_product_id"/>
+                                    <field name="asin_product_code"/>
+                                    <field name="ext_product_code"/>
+                                    <field name="quantity"/>
+                                    <field name="price_unit_untaxed"/>
+                                    <field name="total_amount_untaxed"/>
+                                    <field name="total_tax_amount"/>
+                                    <field name="total_amount_taxed"/>
+                                    <field name="line_type"/>
+                                    <field name="state" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="amazon_sp_order_view_search" model="ir.ui.view">
+            <field name="name">amazon.sp.order.view.search</field>
+            <field name="model">amazon.sp.order</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="state_imported" string="State - Imported" domain="[('state', '=', 'imported')]"/>
+                    <filter name="state_created" string="State - Created" domain="[('state', '=', 'created')]"/>
+                    <filter name="state_failed" string="State - Failed" domain="[('state', '=', 'failed')]"/>
+                    <separator/>
+                    <filter name="refund_order" string="Refunds" domain="[('refund_order', '=', True)]"/>
+                    <filter name="non_refund_order" string="Sales" domain="[('refund_order', '=', False)]"/>
+                    <separator/>
+                    <filter name="invoiced_externally" string="Invoiced externally"
+                            domain="[('invoiced_externally', '=', True)]"/>
+                    <filter name="non_invoiced_externally" string="Not invoiced externally"
+                            domain="[('invoiced_externally', '=', False)]"/>
+                    <separator/>
+                    <filter name="mfn_channel" string="Fulfilled by seller"
+                            domain="[('fulfillment_channel', '=', 'MFN')]"/>
+                    <filter name="afn_channel" string="Fulfilled by Amazon"
+                            domain="[('fulfillment_channel', '=', 'AFN')]"/>
+                    <separator/>
+                    <field name="ext_order_id"/>
+                    <field name="marketplace_code"/>
+                    <separator/>
+                    <field name="partner_id"/>
+                    <field name="currency_id"/>
+                    <field name="marketplace_id"/>
+                    <field name="invoice_id"/>
+                    <separator/>
+                    <filter name="this_month" string="This month"
+                            domain="['|',
+                            '&amp;',
+                                ('factual_order_day', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                ('factual_order_day', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                                ('factual_order_day', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                ('factual_order_day', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Previous month"
+                            domain="['|',
+                            '&amp;',
+                                ('factual_order_day', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                ('factual_order_day', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                                ('factual_order_day', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                ('factual_order_day', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="This year"
+                            domain="['|',
+                            '&amp;',
+                                ('factual_order_day', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                ('factual_order_day', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                                ('factual_order_day', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                ('factual_order_day', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Previous year"
+                            domain="['|',
+                            '&amp;',
+                                ('factual_order_day', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                ('factual_order_day', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                                ('factual_order_day', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                ('factual_order_day', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <group>
+                        <filter name="group_state" string="State"
+                                context="{'group_by':'state'}"/>
+                        <filter name="group_partner" string="Partner"
+                                context="{'group_by':'partner_id'}"/>
+                        <filter name="group_currency" string="Currency"
+                                context="{'group_by':'currency_id'}"/>
+                        <filter name="group_marketplace" string="Marketplace"
+                                context="{'group_by':'marketplace_id'}"/>
+                        <filter name="group_invoice" string="Invoice"
+                                context="{'group_by':'invoice_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--ACTION-->
+        <record id="action_open_amazon_sp_order_back" model="ir.actions.act_window">
+            <field name="name">Amazon SP-API orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.order</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="amazon_sp_order_view_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_amazon_sp_orders"
+                name="Orders"
+                sequence="1"
+                action="action_open_amazon_sp_order_back"
+                parent="menu_amazon_sp_data_root"
+        />
+    </data>
+</odoo>

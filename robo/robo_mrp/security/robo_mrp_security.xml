@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="stock_move_rule_mrp_manager" model="ir.rule">
+            <field name="name">Production Manager can do everything on production move</field>
+            <field name="model_id" ref="stock.model_stock_move"/>
+            <field name="groups" eval="[(4, ref('mrp.group_mrp_manager'))]"/>
+            <field name="domain_force">['|', ('location_id.usage', '=', 'production'), ('location_dest_id.usage', '=', 'production'),]
+            </field>
+        </record>
+    </data>
+</odoo>

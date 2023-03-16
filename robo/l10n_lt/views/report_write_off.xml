@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="report_write_off"
+                model="report.l10n_lt.report_write_off_template"
+                string="Write-off_act"
+                report_type="qweb-html"
+                name="l10n_lt.report_write_off_template"
+                file="l10n_lt.report_write_off_template"
+        />
+        <template id="report_write_off_template">
+            <style type="text/css">
+                .center
+                {
+                text-align: center;
+                margin-left:auto;
+                margin-right:auto;
+                }
+            </style>
+            <t t-call="report.html_container">
+                <div class="page xls_front" id="main">
+                    <div class="center">
+                        <table style="margin-left:auto; margin-right:auto; border-style: none; width: 100%;"
+                               align="center">
+                            <tr align="center">
+                                <td colspan="4" style="font-size: 20px; font-weight: bold;">
+                                    Beviltiškų skolų PVM tikslinimo dokumentas Nr. <span t-esc="name"/>
+                                </td>
+                            </tr>
+                            <tr align="center">
+                                <td colspan="4" style="padding-top: 2em;">
+                                    <span t-esc="date_string"/>
+                                </td>
+                            </tr>
+                            <tr align="left">
+                                <td style="padding-top: 4em; font-weight: bold;">Pardavėjas</td>
+                                <td>&#160;</td>
+                                <td style="font-weight: bold;">Pirkėjas</td>
+                                <td>&#160;</td>
+                            </tr>
+                            <tr align="left">
+                                <td style="padding-top: 1em;">Pavadinimas:</td>
+                                <td><span t-esc="company.name"/></td>
+                                <td>Pavadinimas:</td>
+                                <td><span t-esc="partner.name"/></td>
+                            </tr>
+                            <tr align="left">
+                                <t t-if="is_company_vat_payer">
+                                    <td style="padding-top: 1em;">PVM kodas*:</td>
+                                    <td>
+                                        <t t-if="company.vat">
+                                            <span t-esc="company.vat"/>
+                                        </t>
+                                        <t t-elif="not company.vat">-</t>
+                                    </td>
+                                </t>
+                                <t t-elif="not is_company_vat_payer">
+                                    <td style="padding-top: 1em;">Įmonės kodas*:</td>
+                                    <td>
+                                        <span t-esc="company.company_registry"/>
+                                    </td>
+                                </t>
+                                <t t-if="is_partner_vat_payer">
+                                    <td>PVM kodas*:</td>
+                                    <td><span t-esc="partner.vat"/></td>
+                                </t>
+                                <t t-elif="not is_partner_vat_payer">
+                                    <t t-if="is_partner_a_company and partner.kodas">
+                                        <td style="padding-top: 1em;">Įmonės kodas*:</td>
+                                        <td>
+                                            <span t-esc="partner.kodas"/>
+                                        </td>
+                                    </t>
+                                    <t t-elif="not is_partner_a_company and partner.kodas">
+                                        <td style="padding-top: 1em;">Asmens kodas*:</td>
+                                        <td>
+                                            <span t-esc="partner.kodas"/>
+                                        </td>
+                                    </t>
+                                    <t t-elif="not partner.kodas and partner_license_number">
+                                        <td>Individualios veiklos pažymos Nr.*: </td>
+                                        <td>
+                                            <span t-esc="partner_license_number"/>
+                                        </td>
+                                    </t>
+                                </t>
+                            </tr>
+                            <tr align="left">
+                                <td colspan="4" style="padding-top: 4em;">
+                                    Pardavimo PVM tikslinimas dėl skolos pripažinimo beviltiška.
+                                </td>
+                            </tr>
+                            <tr align="left">
+                                <td colspan="4" style="padding-top: 4em;">Skolos suma (be PVM):
+                                    <span style="font-weight: bold;" t-esc="total_write_off_no_tax"/> EUR</td>
+                            </tr>
+                            <tr align="left">
+                                <td colspan="4" style="padding-top: 1em;">Pardavimo PVM suma:
+                                    <span style="font-weight: bold;" t-esc="total_vat"/> EUR</td>
+                            </tr>
+                            <tr align="left">
+                                <td colspan="4" style="padding: 4em 1em 0em 0em">Skola susidarė pagal**:</td>
+                            </tr>
+                            <tr align="left">
+                                <td colspan="2" style="border: 1px solid black; font-weight: bold; padding: 0.5em;">
+                                    Sąskaita Faktūra
+                                </td>
+                                <td style="border: 1px solid black; font-weight: bold; padding: 0.5em;">
+                                    Data
+                                </td>
+                                <td style="border: 1px solid black; font-weight: bold; padding: 0.5em;">
+                                    Užskaityta SF suma
+                                </td>
+                            </tr>
+                            <p t-foreach="invoices" t-as="invoice">
+                                <tr align="left">
+                                    <td colspan="2" style="border: 1px solid black; padding: 0.5em;">
+                                        <t t-esc="invoice.number"/>
+                                    </td>
+                                    <td style="border: 1px solid black; padding: 0.5em;">
+                                        <t t-esc="invoice.date_invoice"/>
+                                    </td>
+                                    <td style="border: 1px solid black; padding: 0.5em;">
+                                        <t t-esc="total_write_off_invoice[invoice.id]"/>
+                                    </td>
+                                </tr>
+                            </p>
+                            <tr align="left">
+                                <td colspan="4" style="padding-top: 8em; font-weight: bold;">Pastabos:</td>
+                            </tr>
+                            <tr align="left">
+                                <td colspan="4" style="padding-top: 1em;">
+                                    * jeigu dokumento išrašymo momentu pardavėjas ar pirkėjas išregistruoti iš PVM
+                                    mokėtojų, nurodomas įmonės kodas, asmens kodas ar individualios veiklos vykdymo
+                                    pažymos numeris;
+                                </td>
+                            </tr>
+                            <tr align="left">
+                                <td colspan="4" style="padding-top: 1em;">
+                                    ** nurodomi apskaitos dokumentų, pagal kuriuos prekės (paslaugos) buvo patiektos,
+                                    išrašymo datos, serijos ir numeriai, jeigu tai įmanoma padaryti pagal apskaitos
+                                    duomenis, arba kiti duomenys (jeigu neįmanoma tiksliai nustatyti) apie išrašytus
+                                    apskaitos dokumentus (laikotarpis, kuriuo buvo patiektos prekės ar suteiktos
+                                    paslaugos, ir kita).
+                                </td>
+                            </tr>
+                            <tr align="left">
+                                <td colspan="2" style="padding-top: 8em;">
+                                    <b>Direktorius(-ė)</b> <span t-esc="company.vadovas.name"/></td>
+                                <td colspan="2" style="border-bottom: 1px solid black;"></td>
+                            </tr>
+                            <tr align="left">
+                                <td colspan="2" style="padding-top: 2em;">
+                                    <b>Buhalteris(-ė)</b> <span t-esc="accountant.name"/></td>
+                                <td colspan="2" style="border-bottom: 1px solid black;"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

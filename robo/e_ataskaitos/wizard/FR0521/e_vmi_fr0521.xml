@@ -1,0 +1,60 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="form_e_vmi_fr0521" model="ir.ui.view">
+            <field name="name">form.e.vmi.fr0521</field>
+            <field name="model">e.vmi.fr0521</field>
+            <field name="arch" type="xml">
+                <form string="FR0521" version="7.0">
+                    <sheet>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="fuel_line_ids" widget="one2many_list" nolabel="1">
+                                <tree delete="0" create="0" edit="1"
+                                      options="{'reload_on_button': True}" editable="bottom"
+                                      class="robo_tree_in_form">
+                                    <field name="name"/>
+                                    <field name="type"/>
+                                    <field name="quantity"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="button_generate_report" type="object" string="Generuoti"/>
+                        <button name="button_generate_send_report" type="object" string="Siųsti į VMI"/>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="form_e_vmi_fr0521_download" model="ir.ui.view">
+            <field name="name">form.e.vmi.fr0521.download</field>
+            <field name="model">e.vmi.fr0521</field>
+            <field name="arch" type="xml">
+                <form string="FR0521">
+                    <sheet>
+                        <group string="Atsisiųsti FR0521">
+                            <field name="generated_file" nolabel="1" filename="file_name"/>
+                            <field name="file_name" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--ACTION-->
+        <record id="create_fr0521_wizard_action" model="ir.actions.server">
+            <field name="name">FR0521</field>
+            <field name="model_id" ref="e_ataskaitos.model_e_vmi_fr0521"/>
+            <field name="code">
+                action = env.get('e.vmi.fr0521').action_create_wizard()
+            </field>
+        </record>
+    </data>
+</odoo>

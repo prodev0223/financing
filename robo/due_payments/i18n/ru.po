@@ -1,0 +1,175 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* due_payments
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-03 09:47+0000\n"
+"PO-Revision-Date: 2022-03-03 09:47+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: due_payments
+#: model:mail.template,body_html:due_payments.apr_email_template_res_partner_after_invoice
+msgid "\n"
+"                    <p>Dear business partner,</p>\n"
+"                    <p></p>\n"
+"                    <p>We are contacting you with regards to ${object.env.context.get('invoice')|safe}.\n"
+"                    We wanted to remind you that total amount to pay is ${object.env.context.get('amount')|safe}\n"
+"                    and the earliest missed payment was\n"
+"                    <span style=\"text-decoration: underline;\">due to be paid on ${object.env.context.get('date_due')|safe}</span>.</p>\n"
+"                    <p></p>\n"
+"                    <p>We kindly ask that this payment be made as soon as possible. Here are all the details you will need to make a transfer to settle your balance:</p>\n"
+"\n"
+"                    ${object.env.context.get('payment_details')|safe}\n"
+"\n"
+"                    <p>We look forward to your swift response. Please feel free to contact us if we can be of any assistance.</p>\n"
+"\n"
+"                    <p>Thanks once again for your business.</p>\n"
+"                    <p></p>\n"
+"                    <p>Regards,</p>\n"
+"                    <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+msgstr "\n"
+"                    <p>Уважаемый бизнес партнер,</p>\n"
+"                    <p></p>\n"
+"                    <p>Мы хотели бы напомнить вам о ${object.env.context.get('invoice')|safe},\n"
+"                    сумма к оплате составляет ${object.env.context.get('amount')|safe},\n"
+"                    этот инвойс\n"
+"                    <span style=\"text-decoration: underline;\">должен был быть выплачен до ${object.env.context.get('date_due')|safe}</span>.</p>\n"
+"                    <p></p>\n"
+"                    <p>Осуществляйте платежи на основании приведенной ниже информации:</p>\n"
+"\n"
+"                    ${object.env.context.get('payment_details')|safe}\n"
+"\n"
+"                    <p>Пожалуйста, произведите оплату как можно скорее. Если у вас есть какие-либо вопросы о представленных задолженностях, пожалуйста, свяжитесь с нами.</p>\n"
+"\n"
+"                    <p>Спасибо</p>\n"
+"                    <p></p>\n"
+"                    <p>С Уважением,</p>\n"
+"                    <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:262
+#, python-format
+msgid "BIC"
+msgstr "БИК"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:260
+#, python-format
+msgid "Bank code"
+msgstr "Код банка"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:259
+#, python-format
+msgid "Bank name"
+msgstr "Название банка"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:263
+#, python-format
+msgid "Beneficiary"
+msgstr "Получатель"
+
+#. module: due_payments
+#: model:mail.template,body_html:due_payments.mail_template_data_notification_email_default
+msgid "\n"
+"${object.body | safe}\n"
+"<p>\n"
+"</p>\n"
+"\n"
+"% if ctx.get('robo_chat'):\n"
+"<div itemscope=\"\" itemtype=\"http://schema.org/EmailMessage\">\n"
+"    <div itemprop=\"potentialAction\" itemscope=\"\" itemtype=\"http://schema.org/ViewAction\">\n"
+"        <link itemprop=\"target\" href=\"${ctx['button_access']['url']}\">\n"
+"        <link itemprop=\"url\" href=\"${ctx['button_access']['url']}\">\n"
+"        <meta itemprop=\"name\" content=\"Atidaryti\">\n"
+"    </div>\n"
+"</div>\n"
+"<div>\n"
+"<a href=\"${ctx['button_access']['url']}\" style=\"padding: 8px 12px; font-size: 12px; color: #FFFFFF; text-decoration: none !important; font-weight: 400; background-color: #3498DB; border: 0px solid #3498DB; border-radius:3px\">Atidaryti</a>\n"
+"</div>\n"
+"% endif\n"
+""
+msgstr "\n"
+"${object.body | safe}\n"
+"<p>\n"
+"</p>\n"
+"\n"
+"% if ctx.get('robo_chat'):\n"
+"<div itemscope=\"\" itemtype=\"http://schema.org/EmailMessage\">\n"
+"    <div itemprop=\"potentialAction\" itemscope=\"\" itemtype=\"http://schema.org/ViewAction\">\n"
+"        <link itemprop=\"target\" href=\"${ctx['button_access']['url']}\">\n"
+"        <link itemprop=\"url\" href=\"${ctx['button_access']['url']}\">\n"
+"        <meta itemprop=\"name\" content=\"Платить\">\n"
+"    </div>\n"
+"</div>\n"
+"<div>\n"
+"<a href=\"${ctx['button_access']['url']}\" style=\"padding: 8px 12px; font-size: 12px; color: #FFFFFF; text-decoration: none !important; font-weight: 400; background-color: #3498DB; border: 0px solid #3498DB; border-radius:3px\">Atidaryti</a>\n"
+"</div>\n"
+"% endif\n"
+""
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:466
+#, python-format
+msgid "sąskaitas %s, kurių bendra"
+msgstr "инвойсы %s"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:464
+#, python-format
+msgid "sąskaitą %s, kurios"
+msgstr "инвойсе %s"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:264
+#, python-format
+msgid "Registration number"
+msgstr "Код компании"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:261
+#, python-format
+msgid "Account number"
+msgstr "Номер банковского счета"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:265
+#, python-format
+msgid "VAT code"
+msgstr "Код НДС"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:466
+#: code:addons/due_payments/model/res_partner.py:539
+#: code:addons/due_payments/model/res_partner.py:610
+#, python-format
+msgid "sąskaitas %s, kurių bendra"
+msgstr "инвойсы %s"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:464
+#: code:addons/due_payments/model/res_partner.py:537
+#: code:addons/due_payments/model/res_partner.py:608
+#, python-format
+msgid "sąskaitą %s, kurios"
+msgstr "инвойсе %s"
+
+#. module: due_payments
+#: model:mail.template,subject:due_payments.apr_email_template_res_partner_after_invoice
+#: model:mail.template,subject:due_payments.apr_email_template_res_partner_before_invoice
+#: model:mail.template,subject:due_payments.apr_email_template_res_partner_on_date_invoice
+msgid "Payment reminder from "
+msgstr "Напоминание об оплате от "

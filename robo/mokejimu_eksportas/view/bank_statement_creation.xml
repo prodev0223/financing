@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.actions.server" id="invoice_bank_statement_action">
+            <field name="name">Sukurti bankinį išrašą</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).call_multiple_invoice_export_wizard()
+            </field>
+        </record>
+        <record id="res_partner_bank_front_form" model="ir.ui.view">
+            <field name="name">res.partner.bank.front.form</field>
+            <field name="model">res.partner.bank</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="acc_number"/>
+                        <field name="bank_id"/>
+                        <field name="partner_id" invisible="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <function name="create_acc_invoice_action" model="account.invoice"/>
+        <record id="account_invoice_export_wizard_form" model="ir.ui.view">
+            <field name="name">account.invoice.export.wizard.form</field>
+            <field name="model">account.invoice.export.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <field name="show_move_line_warning" invisible="1"/>
+                        <field name="show_unpaid_e_invoice_banner" invisible="1"/>
+                        <field name="show_outstanding_invoice_banner" invisible="1"/>
+                        <field name="show_non_iban_account_warning" invisible="1"/>
+                        <field name="has_multiple_bank_accounts" invisible="1"/>
+                        <!--Various alerts used in the wizard-->
+                        <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;"
+                             attrs="{'invisible': [('show_non_iban_account_warning', '=', False)]}">
+                            <field name="non_iban_account_warning"/>
+                        </div>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                             attrs="{'invisible': [('show_move_line_warning', '=', False)]}">
+                            Apačioje pateikti apmokami žurnalo elementai
+                            turi susijusias sąskaitas faktūras.
+                            Juos rekomenduojame apmokėti iš sąskaitų faktūrų vedlio,
+                            kad būtų išlaikomas nuoseklumas
+                            <br/>
+                            <field name="move_line_warning"/>
+                        </div>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                             attrs="{'invisible': [('show_unpaid_e_invoice_banner', '=', False)]}">
+                            Apačioje pateiktas elektronines sąskaitas
+                            už Jums suteiktas paslaugas rasite ir
+                            galėsite apmokėti prisijungę prie elektroninės bankininkystės,
+                            pasirinkę "Mokėjimai" ir "E. sąskaitos".
+                            Rekomenduojame sudaryti automatinio apmokėjimo sutartį,
+                            kad mėnesinių mokėjimų nereiktų atlikti rankiniu būdu.
+                            <br/>
+                            <field name="unpaid_e_invoice_names"/>
+                        </div>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                             attrs="{'invisible': [('show_outstanding_invoice_banner', '=', False)]}">
+                            Apačioje pateiktos sąskaitos turi nepriskirtų mokėjimų.
+                            Patikrinkite sąskaitas faktūras prieš atlikdami mokėjimą.
+                            <br/>
+                            <field name="outstanding_invoice_names"/>
+                        </div>
+                        <group>
+                            <field string="Bankas" name="journal_id" colspan="2"
+                                   domain="[('type', '=', 'bank'),
+                                            ('import_file_type', 'in', ['sepa', 'revolut']),
+                                            ('bank_acc_number', '!=', False),
+                                            ('bank_id', '!=', False)]"
+                                   widget="selection"
+                                   context="{'display_bank_account': True}"
+                                   required="1"/>
+                            <field name="date_to_use"/>
+                            <field name="international_priority"/>
+                            <field name="group_lines"/>
+                            <field name="skip_full_export_warning"
+                                   attrs="{'invisible': [('show_skip_full_export_warning', '=', False)]}"/>
+                            <field name="show_skip_full_export_warning" invisible="1"/>
+                        </group>
+                        <div class="alert alert-info" role="alert" style="margin-bottom: 2px;"
+                             attrs="{'invisible': [('has_multiple_bank_accounts', '=', False)]}">
+                            <i class="fa fa-solid fa-exclamation" style="color:red"/>
+                            - If you see this sign in front of the payable line, it means that the partner has more than
+                            one bank account. Make sure payments are made to the correct bank account.
+                        </div>
+                        <group>
+                            <field name="payable_lines" nolabel="1" options="{'always_reload': True}"
+                                   mode="tree,kanban" widget="one2many_list">
+                                <tree create="0" class="robo_tree_in_form">
+                                    <field name="html_warning_icon" widget="HtmlWarningIcon"
+                                           attrs="{'invisible': [('has_multiple_bank_accounts', '=', False)]}"/>
+                                    <field name="date" string="Data"/>
+                                    <field name="name" string="Mokėjimo paskirtis" required="1"/>
+                                    <field name="ref" string="Aprašymas"/>
+                                    <field name="info_type" string="Mokėjimo paskirties struktūra" required="1"/>
+                                    <field name="partner_id" string="Partneris"
+                                           context="{'form_view_ref': 'robo.new_clients_supplier_form'}"/>
+                                    <field name="bank_account_id" domain="[('partner_id', '=', partner_id)]"
+                                           string="Banko sąskaita"
+                                           context="{'form_view_ref': 'mokejimu_eksportas.res_partner_bank_front_form',
+                                           'default_partner_id': partner_id}"/>
+                                    <field name="amount" sum="amount" string="Suma"/>
+                                    <field name="currency_id" string="Valiuta"
+                                           options="{'no_open':True, 'no_create':True}"/>
+                                    <field name="has_multiple_bank_accounts" invisible="1"/>
+                                </tree>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <field name="date" string="Data"/>
+                                            <field name="name" string="Mokėjimo paskirtis" required="1"/>
+                                            <field name="ref" string="Aprašymas"/>
+                                            <field name="info_type" required="1"
+                                                   string="Mokėjimo paskirties struktūra"/>
+                                            <field name="partner_id" string="Partneris"
+                                                   context="{'form_view_ref': 'robo.new_clients_supplier_form'}"/>
+                                            <field name="bank_account_id" domain="[('partner_id', '=', partner_id)]"
+                                                   string="Banko sąskaita"
+                                                   context="{
+                                                   'form_view_ref': 'mokejimu_eksportas.res_partner_bank_front_form',
+                                                   'default_partner_id': partner_id
+                                               }"/>
+                                            <field name="amount" sum="amount" string="Suma"/>
+                                            <field name="currency_id" string="Valiuta"
+                                                   options="{'no_open':True, 'no_create':True}"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                                <kanban class="o_kanban_mobile" quick_create="false" create="false">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="bank_account_id"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <strong>
+                                                            <span>
+                                                                <t t-esc="record.partner_id.value or '-'"/>
+                                                            </span>
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-8 text-muted">
+                                                        <span>
+                                                            <t t-esc="record.date.value"/>
+                                                            <t t-esc="record.name.value"/>
+                                                            <t t-esc="record.bank_account_id.value"/>
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-xs-4 text-muted">
+                                                        <span class="text-right">
+                                                            <t t-esc="record.amount.value"/>
+                                                            <t t-esc="record.currency_id.value"/>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </group>
+                        <footer>
+                            <field name="show_group_transfer" invisible="1"/>
+                            <field name="download" invisible="1"/>
+                            <field name="api_integrated_journal" invisible="1"/>
+                            <field name="api_full_integration" invisible="1"/>
+                            <button name="send_to_bank" string="Siųsti į banką" type="object" class="oe_highlight"
+                                    style="background-color: rgb(70,136,71) !important;"
+                                    attrs="{'invisible': ['|', '|', ('api_integrated_journal', '=', False),
+                                                          ('api_full_integration', '=', False),
+                                                          ('show_non_iban_account_warning', '=', True)]}"/>
+                            <button name="send_to_bank" string="Siųsti į banką (grupinis)"
+                                    type="object" class="oe_highlight" context="{'group_transfer': True}"
+                                    style="background-color: rgb(70,136,71) !important;"
+                                    attrs="{'invisible': ['|', '|', '|', ('api_integrated_journal', '=', False),
+                                                          ('api_full_integration', '=', False),
+                                                          ('show_group_transfer', '=', False),
+                                                          ('show_non_iban_account_warning', '=', True)]}"/>
+                            <button name="download_sepa" string="Atsiųsti XML" type="object" class="oe_highlight"
+                                    attrs="{'invisible': ['|', ('download', '=', False),
+                                                          ('show_non_iban_account_warning', '=', True)]}"/>
+                            <button name="download_sepa" string="Atsiųsti XML (grupinis)" type="object"
+                                    class="oe_highlight" context="{'group_transfer': True}"
+                                    attrs="{'invisible': ['|', '|', ('download', '=', False),
+                                                          ('show_group_transfer', '=', False),
+                                                          ('show_non_iban_account_warning', '=', True)]}"/>
+                            <button name="send_to_bank" string="Siųsti į banką" type="object" class="oe_highlight"
+                                    style="background-color: rgb(70,136,71) !important;"
+                                    attrs="{'invisible': ['|', '|', ('api_integrated_journal', '=', False),
+                                                          ('api_full_integration', '=', False),
+                                                          ('show_non_iban_account_warning', '=', False)]}"
+                                    confirm="Bent vienos eilutės banko sąskaita nėra IBAN formato. Ar norite tęsti?"/>
+                            <button name="send_to_bank" string="Siųsti į banką (grupinis)" type="object"
+                                    class="oe_highlight" context="{'group_transfer': True}"
+                                    style="background-color: rgb(70,136,71) !important;"
+                                    attrs="{'invisible': ['|', '|', '|', ('api_integrated_journal', '=', False),
+                                                          ('api_full_integration', '=', False),
+                                                          ('show_group_transfer', '=', False),
+                                                          ('show_non_iban_account_warning', '=', False)]}"
+                                    confirm="Bent vienos eilutės banko sąskaita nėra IBAN formato. Ar norite tęsti?"/>
+                            <button name="download_sepa" string="Atsiųsti XML" type="object" class="oe_highlight"
+                                    attrs="{'invisible': ['|', ('download', '=', False),
+                                                          ('show_non_iban_account_warning', '=', False)]}"
+                                    confirm="Bent vienos eilutės banko sąskaita nėra IBAN formato. Ar norite tęsti?"/>
+                            <button name="download_sepa" string="Atsiųsti XML (grupinis)" type="object"
+                                    class="oe_highlight" context="{'group_transfer': True}"
+                                    attrs="{'invisible': ['|', '|', ('download', '=', False),
+                                                          ('show_group_transfer', '=', False),
+                                                          ('show_non_iban_account_warning', '=', False)]}"
+                                    confirm="Bent vienos eilutės banko sąskaita nėra IBAN formato. Ar norite tęsti?"/>
+                            <button name="button_create_bank_statement" string="Sukurti mokėjimo ruošinį" type="object"
+                                    groups="robo_basic.group_robo_premium_manager"
+                                    class="oe_highlight" context="{'sepa_export': True, 'front_statement': True}"/>
+                            <button name="button_create_bank_statement" string="Sukurti bankinį išrašą" type="object"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    class="oe_highlight" context="{'sepa_export': True}"/>
+                            <button string="Atšaukti" class="btn-default" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="account_invoice_export_line_form" model="ir.ui.view">
+            <field name="name">account.invoice.export.line.form</field>
+            <field name="model">invoice.export.line</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimo eilutė">
+                    <sheet>
+                        <group>
+                            <field name="partner_id" options="{'no_open':True, 'no_create':True}"/>
+                            <field name="ref"/>
+                            <field name="date"/>
+                            <field name="bank_account_id"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   domain="[('partner_id', '=', partner_id)]"/>
+                            <field name="amount"/>
+                            <field name="invoice_ids" widget="many2many_tags"/>
+                            <field name="aml_ids" widget="many2many_tags"/>
+                            <field name="currency_id" options="{'no_open':True, 'no_create':True}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.server" id="account_move_line_bank_statement_action">
+            <field name="name">Generuoti mokėjimą</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="code">
+                action = model.browse(context.get('active_ids', [])).call_multiple_invoice_export_wizard()
+            </field>
+        </record>
+        <record id="bank_sepa_export_rules_form" model="ir.ui.view">
+            <field name="name">bank.sepa.export.rule.form</field>
+            <field name="model">res.bank</field>
+            <field name="inherit_id" ref="base.view_res_bank_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="inside">
+                    <field name="sepa_export_rules_code"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+    <data noupdate="1">
+        <function name="create_account_move_line_bank_action" model="account.move.line"/>
+    </data>
+</odoo>

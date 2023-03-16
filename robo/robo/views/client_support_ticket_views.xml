@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_client_ticket_view_tree" model="ir.ui.view">
+            <field name="name">robo.client.ticket.view.tree</field>
+            <field name="model">client.support.ticket</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0" create="0" decoration-info="state == 'open'"
+                      decoration-success="state == 'closed'">
+                    <field name="number"/>
+                    <field name="subject"/>
+                    <field name="reason"/>
+                    <field name="message_last_post" string="Atnaujinta"/>
+                    <field name="last_person"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="robo_client_ticket_view_kanban" model="ir.ui.view">
+            <field name="name">robo.client.ticket.view.kanban</field>
+            <field name="model">client.support.ticket</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban create="0">
+                    <field name="number"/>
+                    <field name="subject"/>
+                    <field name="reason"/>
+                    <field name="message_last_post" string="Atnaujinta"/>
+                    <field name="last_person"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-7 short_name">
+                                        <strong>
+                                            <span>
+                                                <field name="subject"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                    <div class="col-xs-5 pull-right text-right">
+                                        <strong>
+                                            <field name="state"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-muted">
+                                        <span>
+                                            <field name="number"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span class="pull-right text-right">
+                                            <field name="reason"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="robo_client_ticket_view_form" model="ir.ui.view">
+            <field name="name">robo.client.ticket.view.form</field>
+            <field name="model">client.support.ticket</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form create="false">
+                    <header>
+                        <button name="close_ticket" type="object" states="open" string="Uždaryti"
+                                class="oe_highlight"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <button name="reopen_ticket" type="object" states="closed" string="Atidaryti"
+                                class="oe_highlight"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="open,closed"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1 class="o_row">
+                                <field name="subject" placeholder="Tema..."/>
+                            </h1>
+                        </div>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="open_linked_record" type="object" string="Atidaryti įrašą" icon="fa-link"
+                                    class="oe_stat_button"  attrs="{'invisible': [('goto_button_visible', '=', False)]}"/>
+                        </div>
+                        <field name="goto_button_visible" invisible="1"/>
+                        <group>
+                            <group>
+                                <field name="number"/>
+                                <field name="reason"/>
+                            </group>
+                            <group>
+                                <field name="last_person"/>
+                                <field name="message_last_post" string="Atnaujinta"/>
+                            </group>
+                        </group>
+                        <div class="oe_chatter">
+                            <field name="allow_posting_widget" invisible="1"/>
+                            <field name="message_ids" widget="robo_client_ticket_thread"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="robo_client_ticket_view_search">
+            <field name="name">Tickets filtrai</field>
+            <field name="model">client.support.ticket</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Search tickets">
+                    <field name="number"/>
+                    <field name="subject"/>
+                    <field name="state"/>
+                    <field name="user_id"/>
+                    <filter name="my_tickets" string="Mano užklausos" domain="[('user_id','=', uid)]"/>
+                    <separator/>
+                    <filter name="open" string="Sprendžiama" domain="[('state','=','open')]"/>
+                    <filter name="closed" string="Uždaryta" domain="[('state','=','closed')]"/>
+                    <group expand="0" string="Group By">
+                        <filter name="groupby_user" string="Naudotojas" domain="[]" context="{'group_by' : 'user_id'}" />
+                        <filter name="groupby_product" string="Kategorija" domain="[]" context="{'group_by' : 'reason'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="robo_client_ticket_action">
+            <field name="name">Užklausos</field>
+            <field name="res_model">client.support.ticket</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">tree_robo,kanban,form</field>
+            <field name="search_view_id" ref="robo.robo_client_ticket_view_search"/>
+            <field name="robo_menu" ref="robo.menu_start"/>
+            <field name="with_settings">True</field>
+            <field name="header" ref="robo_header_help_ticket"/>
+            <!--            <field name="context" eval="{'robo_header': {'robo_help_header': True}}"/>-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_client_ticket_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_client_ticket_view_form')})]"/>
+        </record>
+
+        <record id="robo_client_ticket_action_settings" model="ir.actions.act_window.settings">
+            <field name="action" ref="robo.robo_client_ticket_action"/>
+            <field name="cards_template"></field>
+            <field name="cards_template_subtype"></field>
+            <field name="cards_domain"></field>
+            <field name="cards_force_order"></field>
+            <field name="search_add_custom">False</field>
+            <field name="cards_new_action"/>
+            <field name="show_duplicate">False</field>
+        </record>
+    </data>
+</odoo>

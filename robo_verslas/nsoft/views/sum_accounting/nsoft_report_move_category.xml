@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_nsoft_report_move_category" model="ir.ui.view">
+            <field name="name">tree.nsoft.report.move.category</field>
+            <field name="model">nsoft.report.move.category</field>
+            <field name="arch" type="xml">
+                <tree string="nSoft Aktų tipai"
+                      create="1" edit="1" delete="1">
+                    <field name="name"/>
+                    <field name="report_type"/>
+                    <field name="account_id"/>
+                    <field name="journal_id"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_nsoft_report_move_category" model="ir.actions.act_window">
+            <field name="name">nSoft Aktų tipai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.report.move.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_nsoft_report_move_category"/>
+        </record>
+        <!--Forms-->
+        <record id="form_nsoft_report_move_category" model="ir.ui.view">
+            <field name="name">form.nsoft.report.move.category</field>
+            <field name="model">nsoft.report.move.category</field>
+            <field name="arch" type="xml">
+                <form string="nSoft Aktų kategorijos" create="0" edit="1" delete="0">
+                    <sheet>
+                        <div>
+                            <label string="Pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="report_type" readonly="1"/>
+                            <field name="account_id" required="1"/>
+                            <field name="journal_id" required="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Aktų tipai"
+                id="menu_nsoft_report_move_category"
+                sequence="44"
+                action="action_open_nsoft_report_move_category"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nsoft_sum_accounting"
+        />
+    </data>
+</odoo>

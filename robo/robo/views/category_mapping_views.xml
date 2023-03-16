@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="category_mapping_search_view">
+            <field name="name">category.mapping.search.view</field>
+            <field name="priority" eval="99"/>
+            <field name="model">category.mapping</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id" string="Tiekėjas"/>
+                    <field name="category_id" string="Išlaidų kategorija"/>
+                    <filter name="confirmed" string="Patvirtinta" domain="[('confirmed', '=', True)]"/>
+                    <filter name="active" string="Atmesta" domain="[('active', '=', False)]"/>
+                    <group>
+                        <filter name="group_by_partner" string="Tiekėjas" context="{'group_by': 'partner_id'}"/>
+                        <filter name="group_by_category" string="Išlaidų kategorija" context="{'group_by': 'category_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="category_mapping_tree_view">
+            <field name="name">category.mapping.tree.view</field>
+            <field name="priority" eval="99"/>
+            <field name="model">category.mapping</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree editable="top" import="0" delete="0" decoration-success="confirmed" decoration-danger="not active">
+                    <field name="partner_id" string="Tiekėjas" context="{'form_view_ref': 'robo.new_clients_customer_form','default_supplier':1}" attrs="{'readonly': [('confirmed', '=', True)]}"/>
+                    <field name="category_id" string="Išlaidų kategorija" widget="selection" domain="[('child_id', '=', False), ('name', '!=', 'Neapibrėžta')]" attrs="{'readonly': [('confirmed', '=', True)]}"/>
+                    <field name="confirmed" invisible="1"/>
+                    <field name="active" invisible="1"/>
+                    <button name="approve" type="object" string="Patvirtinti" icon="icon-check one_and_half_size" attrs="{'invisible': [('confirmed', '=', True)]}" groups="robo_basic.group_robo_premium_accountant"/>
+                    <button name="decline" type="object" string="Atšaukti" icon="icon-cross2 one_and_half_size" attrs="{'invisible': [('active', '=', False)]}"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_category_mapping">
+            <field name="name">Išlaidų skirstymas</field>
+            <field name="res_model">category.mapping</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo</field>
+            <field name="context">{'robo_header':{}}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('category_mapping_tree_view')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <menuitem id="menu_cost_allocation"
+                  parent="robo.menu_kita"
+                  name="Cost allocation"
+                  sequence="45"
+                  action="open_category_mapping"
+                  robo_front="True"
+                  force_web_icon="icon-cash-euro,none,none"
+                  groups="robo.group_cost_allocation"
+                  searchable="True"
+                  tags="cost,allocation"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,107 @@
+header .demo_banner{
+  color: white;
+  background-color: @robo-navbar-color;
+  text-align: center;
+}
+
+.blur_menu{
+  filter: blur(4px);
+}
+
+;
+  .info_block {
+    position: fixed;
+    overflow-y: auto;
+    z-index: 1000;
+    opacity: 1;
+    background: rgba(81, 105, 123, .2);
+    //animation: fadeIn .25s;
+    width: 100%;
+    height: 100%;
+    //display: flex;
+    //align-items: flex-start;
+    //justify-content: center;
+    overflow-y: auto;
+    .message_board {
+      position: absolute;//relative
+      top: 0;
+      left: 28%;
+      text-align: center;
+      width: 400px;
+      //media query
+      margin: auto;
+      margin-top: 48px;
+      margin-bottom: 48px;
+      cursor: default;
+      text-align: center;
+      border: 2px solid #cdd4d9;
+      border-radius: 5px;
+      z-index: 999;
+      box-shadow: 4px 4px rgba(6, 41, 66, .1);
+      background-color: #fff;
+      @media (max-width: @screen-md-max){
+        left: 23%
+      }
+      @media (max-width: @screen-xs-max) {
+       width: 250px;
+       left: 5%;
+       margin: 20px auto;
+      }
+      .blur_main_message{
+            //media query
+            padding: 40px 24px 0 24px;
+            font-size: 30px;
+            line-height: 36px;
+            margin-bottom: 12px;
+            color: @robo-blue;
+            font-family: @robo-header-font;
+            @media (max-width: @screen-xs-max) {
+             font-size: 20px;
+              line-height: 24px;
+            }
+      }
+    }
+    .blur_img{
+      padding: 24px 12px;
+      > span{
+        font-size: 86px;
+        @media (max-width: @screen-xs-max) {
+          font-size: 50px;
+        }
+      }
+      span + span{
+         margin-left: 20px;
+      }
+      //img{
+      //  max-width: 280px;
+      //}
+    }
+    .blur_button{
+      a{
+        //font-weight: bold;
+        background-color: @robo-upload-done !important; //@robo-light-blue !important;
+        font-size: 20px;
+        padding: 0 1em;
+        line-height: 40px;
+        &:active,&.active{
+          background-color: darken(@robo-upload-done,5%) !important;
+        }
+      }
+
+    }
+
+}
+
+.enterprice_icon{
+  margin-left: 10px;
+  color: @robo-upload-accepted;
+}
+
+.grey-blur{
+        background-color: rgba(255,255,255, 0.15);
+    filter: blur(1px);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+}

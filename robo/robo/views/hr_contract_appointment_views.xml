@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="contract_appointment_form">
+            <field name="name">Sutartys</field>
+            <field name="model">hr.contract.appointment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group string="Bendra informacija" name="general">
+                                <field name="contract_id" readonly="1" string="Darbo sutarties nr."
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="name" string="Priedo nr." readonly="1"/>
+                                <field name="job_id" string="Pareigos" options="{'no_open': True, 'no_create': True}"
+                                       readonly="1"/>
+                                <field name="department_id" string="Padalinys" readonly="1"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="use_npd" string="Naudoti NPD" readonly="1"/>
+                                <field name="sodra_papildomai" string="Papildomas sodros kaupimas" readonly="1"/>
+                                <field name="sodra_papildomai_type" string="Sodros kaupimo būdas" readonly="1" attrs="{'invisible': ['|', ('sodra_papildomai', '=', False), ('date_start', '&lt;', '2019-01-01')], 'required': [('date_start', '!=', False),('sodra_papildomai','=', True), ('date_start', '&gt;', '2018-12-31')]}" context="{'date': date_start}" options="{'no_open': False, 'no_create': True}"/>
+                            </group>
+                            <group string="Sutarties detalės" name="contract">
+                                <field name="struct_id" string="Metodika" options="{'no_open': True, 'no_create': True}"
+                                       readonly="1"/>
+                                <field name="schedule_template_id" string="Darbo grafikas" readonly="1"
+                                       context="{'form_view_ref': 'robo.schedule_form_view'}"/>
+                                <label for="trial_date_start" string="Bandomasis laikotarpis"/>
+                                <div>
+                                    <field name="trial_date_start" class="oe_inline" readonly="1"/>
+                                    -
+                                    <field name="trial_date_end" readonly="1" class="oe_inline"/>
+                                </div>
+                                <label for="date_start" string="Laikotarpis"/>
+                                <div>
+                                    <field name="date_start" readonly="1" class="oe_inline"/>
+                                    -
+                                    <field name="date_end" readonly="1" class="oe_inline"/>
+                                </div>
+                            </group>
+                            <group string="Atlyginimas" name="payment">
+                                <field name="wage" string="Atlyginimas (bruto)" readonly="1"/>
+                                <field name="hide_neto" invisible="1"/>
+                                <field name="neto_monthly" string="Atlyginimas (neto)" readonly="1"
+                                       attrs="{'invisible': [('hide_neto', '=', True)]}"/>
+                                <field name="hypothetical_hourly_wage" string="Menamas valandinis atlygis"
+                                       readonly="1"/>
+                                <field name="avansu_politika" string="Avansų politika" readonly="1"/>
+                                <field name="avansu_politika_suma" string="Avanso suma" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

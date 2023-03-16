@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="simplefin_account_invoice_extend" model="ir.ui.view">
+            <field name="name">account.invoice.extend.simplefin</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='reporting_amount_untaxed']" position="after">
+                    <field name="show_coverage_amount" invisible="1"/>
+                    <field name="reporting_amount_coverage" string="Coverage amount"
+                           attrs="{'invisible': [('show_coverage_amount', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_stage_form" model="ir.ui.view">
+        <field name="name">robo.crm.stage.form</field>
+        <field name="model">crm.stage</field>
+        <field name="priority" eval="1"/>
+        <field name="robo_front">True</field>
+        <field name="inherit_id" ref="crm.crm_stage_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="replace">
+                <form string="Etapas">
+                    <group>
+                        <group>
+                            <field name="name" string="Etapo pavadinimas"/>
+                            <field name="team_id" string="Komanda" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="fold" string="Rodyti suskleistą"/>
+                        </group>
+                        <group>
+                            <field name="on_change" string="Pakeisti tikimybę automatiškai"/>
+                            <field name="probability" attrs="{'invisible': [('on_change', '=', False)]}" string="Tikimybė"/>
+                        </group>
+                    </group>
+                    <separator string="Reikalavimai"/>
+                    <field name="requirements" nolabel="1"/>
+                </form>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,18 @@
+<odoo>
+    <data>
+        <record id="gemma_health_institution_info" model="ir.ui.view">
+            <field name="name">gemma.health.institution.info</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_activity_form']" position="after">
+                    <field name="health_institiution_type_name"/>
+                    <field name="health_institiution_id_code"/>
+                </xpath>
+                <xpath expr="//field[@name='use_latest_product_price']" position="after">
+                       <field name="allow_exclude_data_from_du_aspi_report"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

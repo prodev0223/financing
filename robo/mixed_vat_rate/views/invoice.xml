@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="backend_mixed_vat_rate_split">
+            <field name="name">split.invoice.tax</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_draft']" position="after">
+                    <button name="action_split_tax" type="object" string="Išskaidyti mokesčius"
+                            attrs="{'invisible': ['|', ('split_tax', '=', True),
+                                                  '|', ('type', 'not in', ('in_invoice', 'in_refund')),
+                                                       ('state', 'not in', ('open', 'paid'))]}"
+                            groups="robo_basic.group_robo_premium_accountant"/>
+                    <button name="action_make_taxes_nondeductible" type="object" string="Pakeisti PVM į neatskaitomą"
+                            attrs="{'invisible': ['|', ('type', 'not in', ('in_invoice', 'in_refund')),
+                                                       ('state', 'not in', ('open', 'paid'))]}"
+                            groups="robo_basic.group_robo_premium_accountant"/>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="split_tax" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="invoice_tree_expenses_mixed_vat" model="ir.ui.view">
+            <field name="name">account.invoice.tree.expenses.extend.split.vat</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="split_tax"/>
+                </xpath>
+                <xpath expr="//field[@name='residual_signed']" position="after">
+                    <field name="apparent_tax_amount" groups="mixed_vat_rate.extended_invoice_tax_amounts"/>
+                    <field name="non_deductible_tax_amount" groups="mixed_vat_rate.extended_invoice_tax_amounts"/>
+                    <field name="deductible_tax_amount" groups="mixed_vat_rate.extended_invoice_tax_amounts"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_invoice_search_extension" model="ir.ui.view">
+            <field name="name">view.account.invoice.search.extension</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='status']" position="after">
+                    <filter name="not_split_tax" string="Neišskaidyti mokesčiai"
+                            domain="[('split_tax', '=', False),
+                                     ('type', 'in', ('in_invoice', 'in_refund')),
+                                     ('state', 'in', ('open', 'paid'))]"/>
+                    <separator/>
+                    <filter name="nondeductax" string="Su neatskaitomais mokesčiais"
+                            domain="[('tax_line_ids.tax_id.nondeductible', '=', True)]"/>
+                    <filter name="deductax" string="Su atskaitomais mokesčiais"
+                            domain="[('tax_line_ids.tax_id.nondeductible', '=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.actions.server" id="invoice_split_tax_action">
+            <field name="name">Išskaidyti mokesčius</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).action_split_tax()
+            </field>
+        </record>
+        <function name="create_invoice_action_split_vat" model="account.invoice"/>
+        <record model="ir.actions.server" id="invoice_make_taxes_nondeductible_action">
+            <field name="name">Pakeisti PVM į neatskaitomą</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).action_make_taxes_nondeductible()
+            </field>
+        </record>
+        <function name="create_invoice_action_tax_nondeductible" model="account.invoice"/>
+    </data>
+</odoo>

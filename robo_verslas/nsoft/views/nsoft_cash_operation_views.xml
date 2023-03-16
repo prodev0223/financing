@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="nsoft_cash_operation_view_tree" model="ir.ui.view">
+            <field name="name">nsoft.cash.operation.view.tree</field>
+            <field name="model">nsoft.cash.operation</field>
+            <field name="arch" type="xml">
+                <tree string="nSoft Cash operation"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state == 'failed'"
+                      create="1" edit="1" delete="1">
+                    <field name="ext_document_id"/>
+                    <field name="ext_cashier_id"/>
+                    <field name="operation_date"/>
+                    <field name="operation_type"/>
+                    <field name="amount" sum="amount"/>
+                    <field name="payment_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_nsoft_cash_operation" model="ir.actions.act_window">
+            <field name="name">nSoft Cash operations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.cash.operation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="nsoft_cash_operation_view_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="nsoft_cash_operation_view_form" model="ir.ui.view">
+            <field name="name">nsoft.cash.operation.view.form</field>
+            <field name="model">nsoft.cash.operation</field>
+            <field name="arch" type="xml">
+                <form string="nSoft Cash operation" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_account_payments_prep" type="object"
+                                string="Create account payment"
+                                states="imported,failed" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Delete"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box" states="partially_reconciled,reconciled">
+                            <button class="oe_stat_button" name="action_open_journal_entries" string="DK Įrašai"
+                                    type="object" groups="account.group_account_manager" icon="fa-bars"/>
+                        </div>
+                        <div>
+                            <label string="Operation ID"/>
+                            <h1 class="mt0">
+                                <field name="ext_document_id" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group string="Main fields" readonly="1">
+                            <field name="ext_cashier_id"/>
+                            <field name="operation_date"/>
+                            <field name="operation_type"/>
+                            <field name="amount"/>
+                        </group>
+                        <group string="Systemic fields" readonly="1">
+                            <field name="point_of_sale_id" options="{'no_create': True}"/>
+                            <field name="payment_id" options="{'no_create': True}"/>
+                            <field name="cashier_mapper_id" options="{'no_create': True}"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+        <record id="nsoft_cash_operation_view_search" model="ir.ui.view">
+            <field name="name">nsoft.cash.operation.view.search</field>
+            <field name="model">nsoft.cash.operation</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="state_created" string="State: Created" domain="[('state', '=', 'created')]"/>
+                    <filter name="state_open" string="State: Imported" domain="[('state', '=', 'imported')]"/>
+                    <filter name="state_failed" string="State: Failed" domain="[('state', '=', 'failed')]"/>
+                    <separator/>
+                    <filter name="out_ops" string="Out operations" domain="[('operation_type', '=', 2)]"/>
+                    <filter name="in_ops" string="In operations" domain="[('operation_type', '=', 1)]"/>
+                    <separator/>
+                    <filter name="this_month" string="This month"
+                            domain="['&amp;',
+                            ('operation_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('operation_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Previous month"
+                            domain="['&amp;',
+                            ('operation_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('operation_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="This year"
+                            domain="['&amp;',
+                             ('operation_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('operation_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Previous year"
+                            domain="['&amp;',
+                             ('operation_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('operation_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <field name="ext_document_id" filter_domain="[('ext_document_id', 'ilike', self)]"/>
+                    <field name="ext_cashier_id" filter_domain="[('ext_cashier_id', 'ilike', self)]"/>
+                    <field name="point_of_sale_id"/>
+                    <field name="cashier_mapper_id"/>
+                    <field name="payment_id"/>
+                </search>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Cash operations"
+                id="menu_nsoft_cash_operations"
+                sequence="44"
+                action="action_open_nsoft_cash_operation"
+                groups="nsoft.group_nsoft_cash_operations"
+                parent="nsoft_data_menu"
+        />
+    </data>
+</odoo>

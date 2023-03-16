@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="sodra_sd12">
+            <field name="name">sd12.sodra.form</field>
+            <field name="model">e.sodra.sd12</field>
+            <field name="arch" type="xml">
+             <form string="SD12">
+                 <div class="alert alert-warning" role="alert" style="margin-bottom:10px;" colspan="4">
+                     Attention: If a leave was successfully sent to SoDra (Indicated by line being grayed-out) it doesn't necessarily mean it got handled successfully too.
+                 </div>
+                 <group>
+                     <field name="registration_date" />
+                     <field name="date_from" required="1"/>
+                     <field name="date_to" required="1"/>
+                     <field name="remove_sent_leaves"/>
+                 </group>
+                 <group col="4">
+                     <field name="leave_ids" nolabel="1">
+                         <tree create="0" editable="bottom" decoration-muted="is_leave_sent_to_sodra == True"
+                               widget="one2many_list" options="{'reload_on_button': True}">
+                             <field name="employee_id" required="1"/>
+                             <field name="leave_id" invisible="1"/>
+                             <field name="is_leave_sent_to_sodra" invisible="1"/>
+                             <field name="leave_start" required="1"/>
+                             <field name="leave_end" required="1"/>
+                         </tree>
+                     </field>
+                 </group>
+                 <footer>
+                     <button name="sd12_generate" string="Generuoti ir siųsti į SoDrą" type="object"
+                             class="btn-primary"/>
+                     <button name="sd12_generate" string="Tik generuoti" type="object" class="btn-primary"
+                             context="{'do_not_send_to_sodra': True}"/>
+                     <button string="Close" class="btn-default" special="cancel" />
+                 </footer>
+              </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_sodra_sd12_wizard">
+          <field name="name">SODRA SD-12</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">e.sodra.sd12</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="view_id" ref="sodra_sd12"/>
+          <field name="target">new</field>
+        </record>
+
+        <record model="ir.ui.view" id="sodra_sd12_download">
+            <field name="name">sd12.sodra.download.form</field>
+            <field name="model">sd12.download</field>
+            <field name="arch" type="xml">
+             <form string="SD-12 Download">
+                 <group>
+                     <field name="file" nolabel="1" filename="file_name"/>
+                     <field name="file_name" invisible="1"/>
+                     <field name="url" invisible="1"/>
+                 </group>
+                 <group>
+                     <button name="open" type="object" string="Pasirašyti" class="oe_highlight"/>
+                 </group>
+                 <footer>
+                     <button string="Close" class="btn-default" special="cancel" />
+                 </footer>
+              </form>
+            </field>
+        </record>
+        <record id="action_sodra_sd12_wizard_create" model="ir.actions.server">
+            <field name="name">SD12</field>
+            <field name="model_id" ref="sodra.model_e_sodra_sd12"/>
+            <field name="code">
+                    action = env.get('e.sodra.sd12').action_create_wizard()
+            </field>
+        </record>
+        <menuitem
+                  name="SD-12"
+                  id="meniu_e_ataskaitos_SODRA_sd12"
+                  parent="meniu_e_ataskaitos_SODRA_root"
+                  sequence="6"
+                  action="action_sodra_sd12_wizard_create"
+                  />
+        <record id="noninsurable_period_form_view" model="ir.ui.view">
+            <field name="name">noninsurable.period.form.view</field>
+            <field name="model">noninsurable.period</field>
+            <field name="arch" type="xml">
+                <form string="Non-insurable Period">
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="codes" widget="many2many_tags"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="noninsurable_period_tree_view" model="ir.ui.view">
+            <field name="name">noninsurable.period.tree.view</field>
+            <field name="model">noninsurable.period</field>
+            <field name="arch" type="xml">
+                <tree string="Document template">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="codes"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_noninsurable_period">
+            <field name="name">Non-insurable period</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">noninsurable.period</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="noninsurable_period_tree_view"/>
+        </record>
+        <menuitem
+                name="Sodra"
+                id="menu_sodra_config"
+                parent="account.menu_finance_configuration"
+                sequence="15"
+        />
+        <menuitem
+                name="Non-insurable period"
+                id="menu_noninsurable_period"
+                parent="sodra.menu_sodra_config"
+                sequence="15"
+                action="action_noninsurable_period"
+        />
+    </data>
+</odoo>

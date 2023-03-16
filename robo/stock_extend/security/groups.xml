@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="stock.group_stock_manager" model="res.groups">
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Pilnas atsargų valdymas: gamybos, komplektacijų kūrimas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_stock')"/>
+        </record>
+        <record id="group_robo_stock" model="res.groups">
+            <field name="name">Atsargų apskaita</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Prieiga prie produktų, jų pakuočių, kategorijų, serijos numerių,
+                antrinių matavimo vienetų, leidžiama atlikti atsargų nurašymą</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_stock')"/>
+            <field name="implied_ids" eval="[(5, 0, 0), (4, ref('stock.group_stock_user')), (4, ref('purchase.group_purchase_user')), (4, ref('stock.group_stock_multi_warehouses')), (4, ref('stock.group_stock_multi_locations'))]"/>
+        </record>
+    </data>
+</odoo>

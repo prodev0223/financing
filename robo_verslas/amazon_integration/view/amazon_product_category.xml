@@ -1,0 +1,87 @@
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_amazon_product_category" model="ir.ui.view">
+            <field name="name">tree.amazon.product.category</field>
+            <field name="model">amazon.product.category</field>
+            <field name="arch" type="xml">
+                <tree string="Produktų kategorijos"
+                      decoration-info="state == 'working'"
+                      decoration-warning="state == 'warning'"
+                      create="1" edit="1" delete="1">
+                    <field name="name"/>
+                    <field name="external_id"/>
+                    <field name="group_from_product"/>
+                    <field name="marketplace_id"/>
+                    <field name="product_category_id"/>
+                    <field name="category_type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Forms-->
+        <record id="form_amazon_product_category" model="ir.ui.view">
+            <field name="name">form.amazon.product.category</field>
+            <field name="model">amazon.product.category</field>
+            <field name="arch" type="xml">
+                <form string="Amazon produktų kategorijos">
+                    <header>
+                        <button name="button_create_invoice" type="object" states="imported,failed"
+                                string="Sukurti sąskaitą faktūrą" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                        attrs="{'invisible': [('activated', '=', True)]}">
+                            Prieš aktyvuodami produkto kategoriją, būtinai patikrinkite ar kategorijos
+                            rūšis (Produktai/Paslaugos) yra nustatyta tinkamai!
+                    </div>
+                    <sheet>
+                        <div>
+                            <label string="Kategorijos pavadinimas"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline" readonly="True"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="external_id"/>
+                            <field name="marketplace_id"/>
+                            <field name="group_from_product"/>
+                            <field name="product_category_id"/>
+                            <field name="category_type"/>
+                            <field name="activated"/>
+                        </group>
+                        <group string="Kategorijos produktai">
+                            <field name="amazon_product_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Kategorijos produktai"
+                                      decoration-info="state == 'imported'"
+                                      decoration-success="state == 'created'"
+                                      decoration-danger="state == 'failed'"
+                                      create="1" edit="1" delete="1"
+                                      class="robo_tree_in_form">
+                                    <field name="product_name"/>
+                                    <field name="product_id"/>
+                                    <field name="brand"/>
+                                    <field name="model"/>
+                                    <field name="product_group"/>
+                                    <field name="state" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_amazon_product_category" model="ir.actions.act_window">
+            <field name="name">Amazon produktų kategorijos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.product.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_amazon_product_category"/>
+        </record>
+    </data>
+</odoo>

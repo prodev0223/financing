@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="go_to_res_users_front_end" model="ir.ui.view">
+            <field name="name">Go to Res.Users front end</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="user_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='robo_group']" position="after">
+                    <div colspan="2" style="text-align: center">
+                        <button style="text-align: center padding-top:0" type="object" string="Tvarkyti prieigą" name="open_user_card" groups="robo_user_management.group_user_manager"
+                            class="oe_link" attrs="{'invisible': [('user_id', '=', False)]}"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

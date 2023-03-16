@@ -1,0 +1,84 @@
+<odoo>
+    <data>
+        <!--Tree-->
+        <record id="tree_front_stock_location_path" model="ir.ui.view">
+            <field name="name">form.front.stock.location.path</field>
+            <field name="model">stock.location.path</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree string="Sandėlio išskirstymo taisyklės" create="0" import="0">
+                    <field name="location_from_id"/>
+                    <field name="location_dest_id"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="form_front_stock_location_path" model="ir.ui.view">
+            <field name="name">form.front.stock.location.path</field>
+            <field name="model">stock.location.path</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Sandėlio išskirstymo taisyklės">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive"
+                                    groups="stock.group_adv_location">
+                                <field name="active" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Taisyklės pavadinimas"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Atsargų vietos">
+                                <field name="location_from_id"/>
+                                <field name="location_dest_id"/>
+                            </group>
+                            <group string="Detalės">
+                                <field name="auto"/>
+                                <field name="picking_type_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <label for="delay" string="Vėlavimas"/>
+                                <div>
+                                    <field name="delay" class="oe_inline"/> diena(-os)
+                                </div>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_stock_location_path" model="ir.actions.act_window">
+            <field name="name">Sandėlio išskirstymo taisyklės</field>
+            <field name="res_model">stock.location.path</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="tree_front_stock_location_path"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_front_stock_location_path')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_front_stock_location_path')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="menu_advanced_stock_locations"/>
+            <field name="header" ref="header_stock_location_path"/>
+        </record>
+        <record id="action_open_stock_location_path_new" model="ir.actions.act_window">
+            <field name="name">Išskirstymo taisyklės</field>
+            <field name="res_model">stock.location.path</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="form_front_stock_location_path"/>
+        </record>
+    </data>
+</odoo>

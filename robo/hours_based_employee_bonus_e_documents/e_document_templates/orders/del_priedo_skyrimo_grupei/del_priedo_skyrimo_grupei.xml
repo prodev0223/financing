@@ -1,0 +1,219 @@
+<odoo>
+    <data>
+        <record id="isakymas_del_priedo_skyrimo_grupei_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl priedo skyrimo</field>
+            <field name="model">e.document</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="e_document.isakymas_del_priedo_skyrimo_grupei_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_3']" position="after">
+                    <field name="count_bonus_by_hours"/>
+                </xpath>
+                <xpath expr="//field[@name='e_document_line_ids']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('count_bonus_by_hours', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='e_document_line_ids']" position="after">
+                    <field name="hours_based_bonus_line_ids" nolabel="1" widget="one2many_list"
+                           options="{'no_open': True}" attrs="{'invisible': [('count_bonus_by_hours', '!=', True)]}">
+                        <tree string="Valandomis remto priedo eilutės" editable="bottom" open="0" class="robo_tree_in_form">
+                            <field name="employee_id2" required="1" string="Darbuotojo vardas"
+                                   options="{'no_open': True, 'no_create':True}"/>
+                            <field name="valandinis_bruto"/>
+                            <field name="normal_hours" widget="float_time"/>
+                            <field name="night_hours" widget="float_time"/>
+                            <field name="float_1"/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+        <record id="e_document.isakymas_del_priedo_skyrimo_grupei_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    {% if (count_bonus_by_hours and len(hours_based_bonus_line_ids) > 1) or (not count_bonus_by_hours and len(e_document_line_ids) > 1) %}
+                        Skiriu darbuotojų grupei piniginį {{ bonus_input_type }} priedą prie
+                        {{ date_3.__getslice__(0, 7)}}
+                        mėnesio darbo užmokesčio už laikotarpį {{ date_1 }} - {{ date_2 }}.
+                    <br/>
+                    {{ compute_text_1 }} {{ extra_text_html }}
+                    {% else %}
+                        {% if count_bonus_by_hours and len(hours_based_bonus_line_ids) == 1 %}
+                            Skiriu {{ kam(hours_based_bonus_line_ids[0].employee_id2.job_id.display_name, 'aa') }}
+                            {{ kam(hours_based_bonus_line_ids[0].employee_id2.display_name, 'Aa') }}
+                            {{ hours_based_bonus_line_ids[0].float_1 }} EUR {{ bonus_input_type }} priedą prie
+                            {{ date_3.__getslice__(0, 7)}} mėnesio darbo užmokesčio
+                            už laikotarpį {{ date_1 }} - {{ date_2 }}. {{ extra_text_html }}
+                        {% elif not count_bonus_by_hours and len(e_document_line_ids) == 1 %}
+                            Skiriu
+                            {% if e_document_line_ids[0].employee_id2.job_id %}
+                                {{ kam(e_document_line_ids[0].employee_id2.job_id.display_name, 'aa') }}
+                            {% endif %}
+                            {{ kam(e_document_line_ids[0].employee_id2.display_name, 'Aa') }}
+                            {{ e_document_line_ids[0].float_1 }} EUR {{ bonus_input_type }} priedą prie
+                            {{ date_3.__getslice__(0, 7)}} mėnesio darbo užmokesčio
+                            už laikotarpį {{ date_1 }} - {{ date_2 }}. {{ extra_text_html }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </field>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS
+                                DĖL PRIEDO SKYRIMO
+                                {% if (count_bonus_by_hours and len(hours_based_bonus_line_ids) > 1) or (not count_bonus_by_hours and len(e_document_line_ids) > 1) %}
+                                GRUPEI
+                                {% endif %}
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                    </span>
+                                                </p>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p>
+                                                    <span>{{ manager_id }}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                                <br/>
+                                <span>ĮSAKYMAS
+                                    DĖL PRIEDO SKYRIMO
+                                    {% if (count_bonus_by_hours and len(hours_based_bonus_line_ids) > 1) or (not count_bonus_by_hours and len(e_document_line_ids) > 1) %}
+                                    GRUPEI
+                                    {% endif %}
+                                </span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span t-field="doc.employee_id.work_location"/>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        Skiriu darbuotojų grupei piniginį {{ bonus_input_type }} priedą prie {{ date_3.__getslice__(0,
+                        7)}} mėnesio darbo užmokesčio už laikotarpį {{ date_1 }} - {{ date_2 }}.
+                        <br/>
+                        {{ compute_text_1 }} {{ extra_text_html }}
+                    </div>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="65%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{manager_job_id}} {{ manager_id }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

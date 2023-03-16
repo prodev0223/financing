@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="cheque_form">
+            <field name="name">cheque</field>
+            <field name="model">hr.expense</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Expenses" class="robo_islaidos_form">
+                    <header>
+                        <button name="submit_cheque_with_action" states="draft" string="Patvirtinti" type="object"
+                                class="oe_highlight o_expense_submit"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done" readonly="0"/>
+                    </header>
+                    <div class="alert alert-info robo_need_action_alert" role="alert"
+                         style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('state','!=', 'imported')]}"
+                    >
+                        <div>
+                            <h4>Kaip apmokėjote?</h4>
+                        </div>
+                        <button name="app_exp_own" string="Asmeninės lėšos" type="object" style="margin-left:15px;"/>
+                        <button name="app_exp_company" string="Įmonės lėšos" type="object" style="margin-left:15px;"/>
+                    </div>
+                    <field name="nbr_of_attachments" invisible="1"/>
+                    <field name="user_attachment_ids" invisible="1"/>
+                    <field name="attachment_drop_lock" invisible="1"/>
+                    <widget type="robo_attach_files"/>
+                    <!--<field name="user_attachment_ids" widget="robo_attach_files"/>-->
+
+                    <sheet class="position_relative">
+                        <field name="unique_wizard_id" invisible="1"/>
+                        <div class="oe_title">
+                            <label class="" for="name" string="Aprašymas"/>
+                            <h1 class="robo_title_input">
+                                <field name="name" string="Aprašymas" placeholder="pvz.: pietūs su klientu"/>
+                            </h1>
+                        </div>
+                        <div class="empty-space"/>
+                        <label class='' for="payment_mode" string="Kaip apmokėjote?"
+                               attrs="{'invisible': [('state','=','imported')]}"/>
+                        <div>
+                            <field name="payment_mode" widget="radio" options="{'horizontal': true}"
+                                   attrs="{'readonly': [('state','!=','draft')], 'invisible': [('state','=','imported')]}"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="product_id" string="Kas pirkta?" domain="[('can_be_expensed', '=', True)]"
+                                       context="{'default_can_be_expensed': 1}"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="unit_amount" invisible="1"/>
+                                <div>
+                                    <label for="paid_amount_with_tax" class="oe_inline" string="Litro kaina su PVM"
+                                           attrs="{'invisible':[('is_fuel','=',False)]}"/>
+                                    <label for="paid_amount_with_tax" attrs="{'invisible':[('is_fuel','=',True)]}"/>
+                                </div>
+                                <field name="paid_amount_with_tax" required="1" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}" help="Bendra čekio suma"
+                                       nolabel="1"/>
+                                <field name="original_vat" string="Pradinė PVM suma" invisible="1"/>
+                                <field name="currency_id" string="Valiuta" groups="base.group_multi_currency"
+                                       options="{'no_open': True, 'no_create': True}" required="1"/>
+                                <field name="quantity" string="Kiekis"
+                                       attrs="{'invisible':[('is_fuel','=',False)], 'required':[('is_fuel','=',True)]}"/>
+                                <field name="product_uom_id" widget="selection" class="oe_inline"
+                                       groups="product.group_uom" invisible="1"/>
+                                <field name="tax_ids" string="Mokesčiai" domain="[('type_tax_use', '=', 'purchase')]"
+                                       widget="many2many_tags" groups="base.group_no_one"
+                                       options="{'no_open': True, 'no_create': True}" invisible="1"/>
+                                <field name="is_fuel" invisible="1"/>
+                                <field name="reference" string="Čekio nr." required="1" attrs="{
+                                                    'readonly': [('state','!=','draft')],
+                                                    }"/>
+                                <!--<field name="reference" string="Sąskaitos nr." invisible="1" attrs="{'readonly':[('state','!=','draft')]}"/>-->
+                            </group>
+                            <group>
+                                <field name="date" string="Data"/>
+                                <field name="account_id" string="Sąskaita"
+                                       options="{'no_open': True, 'no_create': True}" invisible="1"/>
+                                <field name="employee_id" string="Darbuotojas"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       attrs="{'invisible':[('payment_mode','!=','own_account')]}"
+                                       groups="robo_basic.group_robo_premium_manager,robo.group_menu_kita_analitika,robo.group_robo_see_all_expenses"/>
+                                <field name="partner_id" string="Tiekėjas"
+                                       options="{'no_open': True, 'no_create': False}"
+                                       context="{'form_view_ref': 'robo.new_clients_customer_form', 'default_supplier':1}"
+                                       attrs="{'readonly': ['|',('state','not in',('draft'))]}"/>
+                                <!--attrs="{'invisible':[('payment_mode','=','own_account')], 'required': [('payment_mode','=','company_account')]}"/>-->
+                                <field name="sheet_id" invisible="1"/>
+                                <field attrs="{'readonly': [('state','!=','draft')]}" name="analytic_account_id"
+                                       string="Analitinė sąskaita" groups="analytic.group_analytic_accounting"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field attrs="{'readonly': [('state','!=','draft')]}" name="company_id"
+                                       string="Kompanija" groups="base.group_multi_company"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="total_amount" string="Iš viso" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}" invisible="1"/>
+                                <!--<label for="payment_mode" invisible="1"/>-->
+                                <!--<div>-->
+                                <!--<field name="payment_mode" widget="radio" invisible="1" />-->
+                                <!--</div>-->
+                                <label for="representation"/>
+                                <div>
+                                    <field attrs="{'readonly': ['|','|',('is_expense_country_LT','=',False),('state','!=','draft'),('is_fuel','=',True)]}"
+                                           name="representation"/>
+                                </div>
+                                <label for="is_expense_country_LT"/>
+                                <div>
+                                    <field name="is_expense_country_LT"
+                                           attrs="{'readonly': [('state','!=','draft')]}"/>
+                                </div>
+
+                            </group>
+                        </group>
+                        <div class="robo_comment_non_deductable">
+                            <span>*Čekyje be sąskaitos faktūros bus taikomas neatskaitomas PVM</span>
+                        </div>
+                        <!--<div class="dragDrop_above">-->
+                        <!--<field name="attachment" widget="dragDrop" filename="name_attachment"-->
+                        <!--filemime="mime_attachment"-->
+                        <!--attrs="{'readonly': [('state','!=','draft')], 'required': [('state','=','draft')]}"/>-->
+                        <!--<field name="name_attachment" invisible="1"/>-->
+                        <!--<field name="mime_attachment" invisible="1"/>-->
+                        <!--</div>-->
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="new_cheque_action">
+            <field name="name">Čekis (be sąskaitos)</field>
+            <field name="res_model">hr.expense</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <!--<field name="domain">[('payment_mode','=','own_account')]</field>-->
+            <field name="robo_menu" ref="robo.menu_islaidos"/>
+            <field name="header" ref="robo.robo_button_islaidos"/>
+            <field name="context" eval="{
+                'search_default_to_report': 1,
+                'default_payment_mode': 'own_account',
+                'robo_header': {},
+                }"/>
+            <field name="help"></field>
+            <field name="view_id" ref="robo.cheque_form"/>
+        </record>
+    </data>
+</odoo>

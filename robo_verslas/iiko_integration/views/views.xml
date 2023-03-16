@@ -1,0 +1,1927 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+         <record id="iiko_cashier" model="ir.config_parameter">
+             <field name="key">iiko_cashier</field>
+              <field name="value"> </field>
+             <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+         </record>
+        <record id="iiko_corporal_partners" model="res.partner">
+            <field name="name">Fiziniai asmenys</field>
+            <field name="kodas">iiko-corporal-partners</field>
+        </record>
+
+        <record id="iiko_liquidity_cash" model="account.account">
+             <field name="name">Pinigai Kasoje IIKO</field>
+             <field name="code">2723</field>
+             <field name="reconcile" eval="False"/>
+             <field name="user_type_id" ref="account.data_account_type_liquidity"/>
+         </record>
+          <record id="ikko_cash_oepration_journal" model="account.journal">
+             <field name="name">IIKO Kasos operacijos</field>
+             <field name="code">IKINC</field>
+             <field name="type">cash</field>
+             <field name="default_debit_account_id" ref="iiko_liquidity_cash"/>
+             <field name="default_credit_account_id" ref="iiko_liquidity_cash"/>
+         </record>
+        <!--Products-->
+         <record id="iiko_food_product_category" model="product.category">
+             <field name="name">IIKO-MAISTAS</field>
+             <field name="code">IIKO-MAISTAS</field>
+             <field name="parent_id" eval="False"/>
+             <field name="property_cost_method">standard</field>
+         </record>
+
+        <record id="iiko_food_prime_cost_account" model="account.account">
+             <field name="name">IIKO Maisto atsargos</field>
+             <field name="code">20101</field>
+             <field name="reconcile" eval="False"/>
+             <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+         </record>
+
+         <record id="iiko_food_product" model="product.template">
+             <field name="name">IIKO-MAISTAS</field>
+             <field name="default_code">IIKO-MAISTAS</field>
+             <field name="type">service</field>
+             <field name="acc_product_type">service</field>
+             <field name="categ_id" ref="iiko_food_product_category"/>
+
+             <field name="property_account_income_id" search="[('code','=','5001')]"/>
+             <field name="property_account_prime_cost_id" search="[('code','=','6001')]"/>
+             <field name="property_account_expense_id" ref="iiko_food_prime_cost_account"/>
+
+         </record>
+             <record id="iiko_discount_product_category" model="product.category">
+             <field name="name">IIKO-NUOLAIDOS-PRODUKTAI</field>
+             <field name="code">IIKO-NUOLAIDOS-PRODUKTAI</field>
+             <field name="parent_id" eval="False"/>
+             <field name="property_cost_method">standard</field>
+         </record>
+         <record id="iiko_discount_product" model="product.template">
+             <field name="name">IIKO-NUOLAIDOS</field>
+             <field name="default_code">IIKO-NUOLAIDOS</field>
+             <field name="type">service</field>
+             <field name="acc_product_type">service</field>
+             <field name="categ_id" ref="iiko_discount_product_category"/>
+             <field name="property_account_income_id" search="[('code','=','509')]"/>
+         </record>
+         <record id="iiko_other_product_category" model="product.category">
+             <field name="name">IIKO-KITI-PRODUKTAI</field>
+             <field name="code">IIKO-KITI-PRODUKTAI</field>
+             <field name="parent_id" eval="False"/>
+             <field name="property_cost_method">standard</field>
+         </record>
+
+        <record id="iiko_other_prime_cost_account" model="account.account">
+             <field name="name">IIKO kitų produktų atsargos</field>
+             <field name="code">20102</field>
+             <field name="reconcile" eval="False"/>
+             <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+         </record>
+         <record id="iiko_other_product" model="product.template">
+             <field name="name">IIKO-KITI-PRODUKTAI</field>
+             <field name="default_code">IIKO-KITI-PRODUKTAI</field>
+             <field name="type">service</field>
+             <field name="acc_product_type">service</field>
+             <field name="categ_id" ref="iiko_other_product_category"/>
+
+              <field name="property_account_income_id" search="[('code','=','5001')]"/>
+             <field name="property_account_prime_cost_id" search="[('code','=','6001')]"/>
+             <field name="property_account_expense_id" ref="iiko_other_prime_cost_account"/>
+         </record>
+
+         <record id="iiko_tare_product_category" model="product.category">
+             <field name="name">IIKO-TARA</field>
+             <field name="code">IIKO-TARA</field>
+             <field name="parent_id" eval="False"/>
+             <field name="property_cost_method">standard</field>
+         </record>
+
+        <record id="iiko_tare_prime_cost_account" model="account.account">
+             <field name="name">IIKO taros atsargos</field>
+             <field name="code">2081</field>
+             <field name="reconcile" eval="False"/>
+             <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+         </record>
+         <record id="iiko_tare_product" model="product.template">
+             <field name="name">IIKO-TARA</field>
+             <field name="default_code">IIKO-TARA</field>
+             <field name="type">service</field>
+             <field name="acc_product_type">service</field>
+             <field name="categ_id" ref="iiko_tare_product_category"/>
+
+              <field name="property_account_income_id" ref="iiko_tare_prime_cost_account"/>
+             <field name="property_account_prime_cost_id" search="[('code','=','652')]"/>
+             <field name="property_account_expense_id" ref="iiko_tare_prime_cost_account"/>
+         </record>
+
+         <record id="iiko_alco_product_category" model="product.category">
+             <field name="name">IIKO-ALKO</field>
+             <field name="code">IIKO-ALKO</field>
+             <field name="parent_id" eval="False"/>
+             <field name="property_cost_method">standard</field>
+         </record>
+            <record id="iiko_alco_prime_cost_account" model="account.account">
+             <field name="name">IIKO alkoholinių gėrimų atsargos</field>
+             <field name="code">20103</field>
+             <field name="reconcile" eval="False"/>
+             <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+         </record>
+         <record id="iiko_alco_product" model="product.template">
+             <field name="name">IIKO-ALKO</field>
+             <field name="default_code">IIKO-ALKO</field>
+             <field name="type">service</field>
+             <field name="acc_product_type">service</field>
+             <field name="categ_id" ref="iiko_alco_product_category"/>
+              <field name="property_account_income_id" search="[('code','=','5001')]"/>
+             <field name="property_account_prime_cost_id" search="[('code','=','6001')]"/>
+             <field name="property_account_expense_id" ref="iiko_alco_prime_cost_account"/>
+         </record>
+
+         <record id="iiko_food_mapping" model="iiko.global.product.mapping">
+             <field name="name">Maistas ir gaivieji gėrimai</field>
+             <field name="accounting_group_code">1</field>
+             <field name="product_id" ref="iiko_food_product"/>
+         </record>
+         <record id="iiko_other_mapping" model="iiko.global.product.mapping">
+             <field name="name">Kiti Produktai</field>
+             <field name="accounting_group_code">KIT</field>
+             <field name="product_id" ref="iiko_other_product"/>
+         </record>
+         <record id="iiko_tare_mapping" model="iiko.global.product.mapping">
+             <field name="name">Tara</field>
+             <field name="accounting_group_code">6</field>
+             <field name="product_id" ref="iiko_tare_product"/>
+         </record>
+         <record id="iiko_alco_mapping" model="iiko.global.product.mapping">
+             <field name="name">Alkoholiniai gėrimai</field>
+             <field name="accounting_group_code">ALK</field>
+             <field name="product_id" ref="iiko_alco_product"/>
+         </record>
+         <record id="iiko_discount_mapping" model="iiko.global.product.mapping">
+             <field name="name">Nuolaidos</field>
+             <field name="accounting_group_code">DSCNT</field>
+             <field name="product_id" ref="iiko_discount_product"/>
+         </record>
+           <record id="iiko_inventory_journal" model="account.journal">
+             <field name="name">IIKO Inventorizacijos</field>
+             <field name="code">IKINV</field>
+             <field name="type">general</field>
+         </record>
+           <record id="iiko_writeoff_journal" model="account.journal">
+             <field name="name">IIKO Nurašymai</field>
+             <field name="code">IKWRO</field>
+             <field name="type">general</field>
+         </record>
+           <record id="iiko_realisation_journal" model="account.journal">
+             <field name="name">IIKO Realizacijos</field>
+             <field name="code">IKREA</field>
+             <field name="type">general</field>
+         </record>
+<!--Products-->
+          <record id="iiko_wolt_account" model="account.account">
+             <field name="name">IIKO Wolt</field>
+             <field name="code">2415</field>
+             <field name="reconcile" eval="True"/>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+           <record id="iiko_wolt_journal" model="account.journal">
+             <field name="name">IIKO Wolt</field>
+             <field name="code">IKWOLT</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="iiko_wolt_account"/>
+             <field name="default_credit_account_id" ref="iiko_wolt_account"/>
+         </record>
+          <record id="iiko_crd_account" model="account.account">
+             <field name="name">IIKO Banko Kortelės</field>
+             <field name="code">2416</field>
+             <field name="reconcile" eval="True"/>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+           <record id="iiko_crd_journal" model="account.journal">
+             <field name="name">IIKO Banko Kortelės</field>
+             <field name="code">IKCRD</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="iiko_crd_account"/>
+             <field name="default_credit_account_id" ref="iiko_crd_account"/>
+         </record>
+          <record id="iiko_cash_journal" model="account.journal">
+             <field name="name">IIKO Grynieji</field>
+             <field name="code">IKCSH</field>
+             <field name="type">cash</field>
+             <field name="default_debit_account_id" ref="iiko_liquidity_cash"/>
+             <field name="default_credit_account_id" ref="iiko_liquidity_cash"/>
+         </record>
+
+          <record id="cron_recreate_iiko_data" model="ir.cron">
+            <field name="name">Recreate IIKO Data</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">iiko.csv.import.wizard</field>
+            <field name="function">cron_recreate</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=23, minute=59, second=59)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+    </data>
+    <data>
+        <record id="xls_iiko_invoice_form" model="ir.ui.view">
+            <field name="name">xls.iiko.invoice.form</field>
+            <field name="model">xls.iiko.invoice</field>
+            <field name="arch" type="xml">
+                <form string="XLS sąskaita sąskaita" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_invoices" type="object" states="imported,failed,warning" string="Sukurti Sąskaitą faktūrą" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Sąskaitos Pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="number" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="date_invoice"/>
+                            <field name="partner_id"/>
+                            <field name="amount_total"/>
+                            <field name="amount_vat"/>
+                            <field name="invoice_id"/>
+                        </group>
+                        <notebook>
+                        <page string="Sąskaitos eilutės">
+                            <field name="ext_invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Pardavimai"
+                                          create="1" edit="1" delete="1"
+                                          decoration-info="state == 'imported'"
+                                          decoration-success="state == 'created'"
+                                          decoration-danger="state in ['failed', 'warning']">
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="price_unit_w_vat"/>
+                                        <field name="amount_total"/>
+                                        <field name="amount_vat"/>
+                                        <field name="tax_id"/>
+                                        <field name="state"/>
+                                    </tree>
+                                <form string="Eilutė" create="1" edit="1" delete="1">
+                            <div>
+                                <label string="Išorinis produkto kodas"/>
+                                <h1 class="mt0">
+                                    <field name="product_id" class="oe_inline"/>
+                                </h1>
+                            </div>
+                                <group>
+                                        <field name="quantity"/>
+                                        <field name="price_unit_w_vat"/>
+                                        <field name="amount_total"/>
+                                        <field name="amount_vat"/>
+                                        <field name="tax_id"/>
+                                        <field name="state"/>
+                                </group>
+                            </form>
+                            </field>
+                        </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="pp_csv_iiko_invoice_form" model="ir.ui.view">
+            <field name="name">pp.csv.iiko.invoice.form</field>
+            <field name="model">pp.csv.iiko.invoice</field>
+            <field name="arch" type="xml">
+                <form string="CSV sąskaita sąskaita" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_invoices" type="object" states="imported,failed,warning" string="Sukurti Sąskaitą faktūrą" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Sąskaitos Pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="number" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="is_confirmed"/>
+                            <field name="warehouse_code"/>
+                            <field name="seller_name"/>
+                            <field name="seller_code"/>
+                            <field name="ext_number"/>
+                            <field name="date_invoice"/>
+                            <field name="partner_id"/>
+                            <field name="amount_total"/>
+                            <field name="amount_vat"/>
+                            <field name="invoice_id"/>
+                        </group>
+                        <notebook>
+                        <page string="Sąskaitos eilutės">
+                            <field name="ext_invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Pardavimai"
+                                          create="1" edit="1" delete="1"
+                                          decoration-info="state == 'imported'"
+                                          decoration-success="state == 'created'"
+                                          decoration-danger="state in ['failed', 'warning']">
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="price_unit_w_vat"/>
+                                        <field name="amount_total"/>
+                                        <field name="amount_vat"/>
+                                        <field name="tax_id"/>
+                                        <field name="state"/>
+                                    </tree>
+                                <form string="Eilutė" create="1" edit="1" delete="1">
+                            <div>
+                                <label string="Išorinis produkto kodas"/>
+                                <h1 class="mt0">
+                                    <field name="product_id" class="oe_inline"/>
+                                </h1>
+                            </div>
+                                <group>
+                                        <field name="quantity"/>
+                                        <field name="price_unit_w_vat"/>
+                                        <field name="amount_total"/>
+                                        <field name="amount_vat"/>
+                                        <field name="tax_id"/>
+                                        <field name="state"/>
+                                </group>
+                            </form>
+                            </field>
+                        </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="order_csv_iiko_payment_form" model="ir.ui.view">
+            <field name="name">order_csv_iiko_payment_form</field>
+            <field name="model">order.csv.iiko.payment</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimas" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="move_creation_prep" type="object" states="imported,failed,warning" string="Sukurti žurnalo įrašą" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Užsakymo numeris"/>
+                        <h1 class="mt0">
+                            <field name="ext_order_id" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="payment_amount"/>
+                            <field name="payment_date"/>
+                            <field name="receipt_id"/>
+                            <field name="cash_register_id"/>
+                            <field name="shift_id"/>
+                            <field name="is_valid"/>
+                            <field name="residual"/>
+                            <field name="payment_type_id"/>
+                            <field name="move_id"/>
+                            <field name="reconciliation_move"/>
+                        </group>
+                        <notebook>
+                        <page string="Eilutės už kurias mokėta">
+                            <field name="order_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Pardavimai"
+                                          create="1" edit="1" delete="1"
+                                          decoration-info="state == 'imported'"
+                                          decoration-success="state == 'created'"
+                                          decoration-danger="state in ['failed', 'warning']">
+                                        <field name="line_number"/>
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="price_unit_w_vat"/>
+                                        <field name="amount_total"/>
+                                        <field name="amount_vat"/>
+                                        <field name="tax_id"/>
+                                        <field name="state"/>
+                                        <field name="line_date"/>
+                                        <field name="invoice_id"/>
+                                        <field name="ext_order_id"/>
+                                    </tree>
+                                <form string="Eilutė" create="1" edit="1" delete="1">
+                            <div>
+                                <label string="Išorinis produkto kodas"/>
+                                <h1 class="mt0">
+                                    <field name="product_id" class="oe_inline"/>
+                                </h1>
+                            </div>
+                                <group>
+                                        <field name="line_number"/>
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="price_unit_w_vat"/>
+                                        <field name="amount_total"/>
+                                        <field name="amount_vat"/>
+                                        <field name="tax_id"/>
+                                        <field name="state"/>
+                                        <field name="line_date"/>
+                                </group>
+                            </form>
+                            </field>
+                        </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="iiko_global_product_mapping_form" model="ir.ui.view">
+            <field name="name">iiko_global_product_mapping</field>
+            <field name="model">iiko.global.product.mapping</field>
+            <field name="arch" type="xml">
+                <form string="Eilutė" create="1" edit="1" delete="1">
+                <sheet>
+                    <div>
+                        <label string="Pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="accounting_group_code"/>
+                        <field name="product_id"/>
+                    </group>
+                </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_move_form" model="ir.ui.view">
+            <field name="name">iiko.csv.act.move</field>
+            <field name="model">iiko.csv.act.move</field>
+            <field name="arch" type="xml">
+                <form string="Eilutė" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="prepare_moves" type="object" string="Sukurti įrašą" class="oe_highlight" states="active"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Akto tipas"/>
+                        <h1 class="mt0">
+                            <field name="act_type" class="oe_inline" readonly="1"/>
+                        </h1>
+                    </div>
+                        <group>
+                        <field name="date" readonly="1"/>
+                        <field name="move_id" readonly="1"/>
+                        <field name="forced_account_id"/>
+                        <field name="total_amount"/>
+                        <field name="global_mapping_id" readonly="1"/>
+                     </group>
+                        <group string="Nurašymo eilutės" attrs="{'invisible': [('act_type', '!=', 'writeoff')]}">
+                        <field name="writeoff_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                            </field>
+                            </group>
+                        <group string="Realizacijos eilutės"  attrs="{'invisible': [('act_type', '!=', 'realisation')]}">
+                        <field name="realisation_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                            </field>
+                            </group>
+                        <group string="Inventorizacijos eilutės"  attrs="{'invisible': [('act_type', '!=', 'inventory')]}">
+                        <field name="inventory_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                            </field>
+                            </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="iiko_cashflow_movemets_form" model="ir.ui.view">
+            <field name="name">iiko.csv.cashflow.movements</field>
+            <field name="model">iiko.csv.cashflow.movements</field>
+            <field name="arch" type="xml">
+                <form string="Eilutė" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_moves" type="object" string="Sukurti įrašą" class="oe_highlight" states="active"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Operacijos numeris"/>
+                        <h1 class="mt0">
+                            <field name="number" class="oe_inline" readonly="1"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="date" readonly="1"/>
+                            <field name="transfer_amount" class="oe_inline" readonly="1"/>
+                            <field name="operation_type" class="oe_inline" readonly="1"/>
+                            <field name="move_id" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+                </record>
+
+        <record id="order_csv_iiko_line_form" model="ir.ui.view">
+            <field name="name">order_csv_iiko_line_form</field>
+            <field name="model">order.csv.iiko.line</field>
+            <field name="arch" type="xml">
+                <form string="Eilutė" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_invoices_action" type="object" string="Sukurti sąskaitą faktūrą"
+                                states="imported,failed,warning"
+                                class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Eilutės numeris"/>
+                        <h1 class="mt0">
+                            <field name="line_number" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="price_unit_w_vat"/>
+                            <field name="amount_total"/>
+                            <field name="amount_vat"/>
+                            <field name="tax_id"/>
+                            <field name="line_date"/>
+                            <field name="partner_id"/>
+                            <field name="invoice_id"/>
+                            <field name="corrected_invoice_id" attrs="{'invisible': [('corrected_invoice_id', '=', False)]}"/>
+                            <field name="refund_invoice_id" attrs="{'invisible': [('refund_invoice_id', '=', False)]}"/>
+                            </group>
+                        <group name="Susiję mokėjimai">
+                            <field name="order_payment_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Pardavimai"
+                                          create="1" edit="1" delete="1"
+                                          decoration-info="state == 'imported'"
+                                          decoration-success="state == 'created'"
+                                          decoration-danger="state in ['failed', 'warning']">
+                                        <field name="ext_order_id"/>
+                                        <field name="payment_type_id"/>
+                                        <field name="payment_amount"/>
+                                        <field name="move_id"/>
+                                        <field name="payment_date"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="iiko_payment_type_form" model="ir.ui.view">
+            <field name="name">iiko_payment_type_form</field>
+            <field name="model">iiko.payment.type</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimo tipas" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <button name="recompute_fields" type="object" string="Perskaičiuoti laukus"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="payment_type_name" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="payment_type_code"/>
+                            <field name="is_active"/>
+                            <field name="partner_id"/>
+                            <field name="do_reconcile"/>
+                            <field name="journal_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="iiko_real_act_line_form" model="ir.ui.view">
+            <field name="name">iiko_real_act_line_form</field>
+            <field name="model">iiko.csv.realisation.act.line</field>
+            <field name="arch" type="xml">
+                <form create="1" edit="1" delete="1">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Numeris"/>
+                        <h1 class="mt0">
+                            <field name="number" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="nomenclature_type_name"/>
+                            <field name="prime_cost_wo_vat"/>
+                            <field name="date"/>
+                            <field name="act_move_id"/>
+                            <field name="global_mapping_id"/>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="prime_cost_unit_wo_vat"/>
+                            <field name="move_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="iiko_writeoff_act_line_form" model="ir.ui.view">
+            <field name="name">iiko_writeoff_act_line_form</field>
+            <field name="model">iiko.csv.writeoff.act.line</field>
+            <field name="arch" type="xml">
+                <form create="1" edit="1" delete="1">
+                                    <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Numeris"/>
+                        <h1 class="mt0">
+                            <field name="number" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="nomenclature_type_name"/>
+                            <field name="prime_cost_wo_vat"/>
+                            <field name="date"/>
+                            <field name="act_move_id"/>
+                            <field name="global_mapping_id"/>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="prime_cost_unit_wo_vat"/>
+                            <field name="move_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="iiko_inventory_line_form" model="ir.ui.view">
+            <field name="name">iiko_inventory_line_form</field>
+            <field name="model">iiko.csv.inventory.line</field>
+            <field name="arch" type="xml">
+                <form create="1" edit="1" delete="1">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Numeris"/>
+                        <h1 class="mt0">
+                            <field name="number" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="balance_sum"/>
+                            <field name="balance_quantity"/>
+                            <field name="date"/>
+                            <field name="act_move_id"/>
+                            <field name="global_mapping_id"/>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="prime_cost"/>
+                            <field name="move_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="iiko_cash_register_form" model="ir.ui.view">
+            <field name="name">iiko_cash_register_form</field>
+            <field name="model">iiko.cash.register</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimo tipas" create="1" edit="1" delete="1">
+                    <sheet>
+                    <div>
+                        <label string="Pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="cash_register_name" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="cash_register_number"/>
+                            <field name="partner_id"/>
+                            <field name="location_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="order_csv_iiko_invoice_form" model="ir.ui.view">
+            <field name="name">order.csv.iiko.invoice.form</field>
+            <field name="model">order.csv.iiko.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Sąskaita" create="1" edit="1" delete="1">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Numeris"/>
+                        <h1 class="mt0">
+                            <field name="invoice_number" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="date_invoice"/>
+                            <field name="partner_name" readonly="1"/>
+                            <field name="partner_code" readonly="1"/>
+                            <field name="partner_vat" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="amount_total"/>
+                            <field name="receipt_id"/>
+                            <field name="amount_vat"/>
+                        </group>
+                        <group>
+                        <notebook>
+                        <page string="Sąskaitos eilutės">
+                            <field name="order_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Pardavimai"
+                                          create="1" edit="1" delete="1"
+                                          decoration-info="state == 'imported'"
+                                          decoration-success="state == 'created'"
+                                          decoration-danger="state in ['failed', 'warning']">
+                                          <field name="ext_order_id"/>
+                                        <field name="line_number"/>
+                                        <field name="cash_register_id"/>
+                                        <field name="receipt_id"/>
+                                        <field name="line_date"/>
+                                        <field name="amount_total"/>
+                                        <field name="amount_vat"/>
+                                        <field name="state"/>
+                                    </tree>
+                            </field>
+                        </page>
+                            <page string="Sąskaitos mokėjimai">
+                            <field name="order_payment_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Pardavimai"
+                                          create="1" edit="1" delete="1"
+                                          decoration-info="state == 'imported'"
+                                          decoration-success="state == 'created'"
+                                          decoration-danger="state in ['failed', 'warning']">
+                                            <field name="ext_order_id"/>
+                                            <field name="payment_type_id"/>
+                                            <field name="payment_amount"/>
+                                            <field name="payment_date"/>
+                                            <field name="cash_register_id"/>
+                                            <field name="residual"/>
+                                            <field name="state"/>
+                                    </tree>
+                            </field>
+                        </page>
+                        </notebook>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+
+
+        <record id="iiko_xls_import_data_wizard" model="ir.ui.view">
+            <field name="name">iiko.xls.import.wizard</field>
+            <field name="model">iiko.xls.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="XLS Duomenų importas">
+                <div>
+                    <p>
+                        Naudojantis šiuo vedliu galite importuoti XLS failus į sistemą.<br/>
+                        Papildomai galite pasirinkti norimą analitinę sąskaitą arba produktą, <br/>
+                        kurie bus pritaikyti sukurtiems įrašams.
+                    </p>
+                </div>
+                    <group col="2">
+                        <field name="xls_data" filename="xls_name"/>
+                        <field name="account_analytic_id"/>
+                        <field name="product_id"/>
+                    </group>
+                <footer>
+                    <button string="Importuoti Duomenis" name="data_import" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="iiko_csv_import_data_wizard" model="ir.ui.view">
+            <field name="name">iiko.csv.import.wizard</field>
+            <field name="model">iiko.csv.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="CSV Duomenų importas">
+                <div>
+                    <p>
+                        Naudojantis šiuo vedliu galite importuoti CSV failus į sistemą.<br/>
+                        Papildomai galite pasirinkti norimą analitinę kuri bus pritaikyta sukurtiems įrašams.
+                        <br/><br/>
+                        <b>PASTABA: Sąskaitas importuokite prieš užsakymus, kitu atvėju galite sugadinti duomenis!</b>
+                    </p>
+                </div>
+                    <group col="2">
+                        <field name="csv_data" filename="csv_name"/>
+                        <field name="account_analytic_id"/>
+                    </group>
+                <footer>
+                    <button string="Importuoti Duomenis" name="data_import" type="object" class="btn-primary"/>
+                    <button string="Taisyti datas" name="data_import" context="{'fix': True}" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="xls_iiko_invoice_tree" model="ir.ui.view">
+            <field name="name">xls.iiko.invoice.tree</field>
+            <field name="model">xls.iiko.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO Sąskaitos faktūros"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state in ['failed', 'warning']" create="1" edit="1" delete="1">
+                    <field name="number"/>
+                    <field name="date_invoice"/>
+                    <field name="partner_id"/>
+                    <field name="amount_vat"/>
+                    <field name="amount_total"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="csv_iiko_invoice_tree" model="ir.ui.view">
+            <field name="name">csv.iiko.invoice.tree</field>
+            <field name="model">pp.csv.iiko.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO Sąskaitos faktūros"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state in ['failed', 'warning']" create="1" edit="1" delete="1">
+                    <field name="number"/>
+                    <field name="date_invoice"/>
+                    <field name="partner_id"/>
+                    <field name="amount_vat"/>
+                    <field name="amount_total"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="csv_iiko_order_payment_tree" model="ir.ui.view">
+            <field name="name">csv.iiko.payment.tree</field>
+            <field name="model">order.csv.iiko.payment</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO Mokėjimai"
+                      decoration-info="state in ['open', 'partially_reconciled', 'active']"
+                      decoration-success="state == 'reconciled'"
+                      decoration-danger="state in ['warning']" create="1" edit="1" delete="1">
+                    <field name="ext_order_id"/>
+                    <field name="payment_type_id"/>
+                    <field name="payment_amount"/>
+                    <field name="payment_date"/>
+                    <field name="cash_register_id"/>
+                    <field name="residual"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="iiko_payment_type_tree" model="ir.ui.view">
+            <field name="name">iiko.payment.type</field>
+            <field name="model">iiko.payment.type</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO Mokėjimų tipai"
+                      decoration-success="state == 'active'"
+                      decoration-danger="state in ['warning']" create="1" edit="1" delete="1">
+                    <field name="payment_type_name"/>
+                    <field name="payment_type_code"/>
+                    <field name="is_active"/>
+                    <field name="do_reconcile"/>
+                    <field name="journal_id"/>
+                    <field name="partner_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="iiko_cash_register_tree" model="ir.ui.view">
+            <field name="name">iiko.cash.register.tree</field>
+            <field name="model">iiko.cash.register</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO Kasos aparatai" decoration-success="cash_register_number and cash_register_name">
+                    <field name="cash_register_number"/>
+                    <field name="cash_register_name"/>
+                    <field name="location_id"/>
+                    <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="csv_iiko_order_lines_tree" model="ir.ui.view">
+            <field name="name">order.csv.iiko.line</field>
+            <field name="model">order.csv.iiko.line</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO Mokėjimai" decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state in ['failed', 'warning']"
+                      create="1" edit="1" delete="1">
+                    <field name="ext_order_id"/>
+                    <field name="line_number"/>
+                    <field name="cash_register_id"/>
+                    <field name="receipt_id"/>
+                    <field name="line_date"/>
+                    <field name="amount_total" string="Eilutės suma"/>
+                    <field name="amount_vat"/>
+                    <field name="state"/>
+                    <field name="discount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="csv_iiko_order_invoice_tree" model="ir.ui.view">
+            <field name="name">order.csv.iiko.invoice</field>
+            <field name="model">order.csv.iiko.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO Sąskaitos" decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state in ['failed', 'warning', 'fix_children']"
+                      create="1" edit="1" delete="1">
+                    <field name="invoice_number"/>
+                    <field name="date_invoice"/>
+                    <field name="partner_name"/>
+                    <field name="partner_code"/>
+                    <field name="partner_vat"/>
+                    <field name="amount_total"/>
+                    <field name="receipt_id"/>
+                    <field name="amount_vat"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="iiko_product_mapping_tree" model="ir.ui.view">
+            <field name="name">iiko.global.product.mapping</field>
+            <field name="model">iiko.global.product.mapping</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO apskaitos tipai"
+                      create="1" edit="1" delete="1">
+                    <field name="accounting_group_code"/>
+                    <field name="product_id"/>
+                </tree>
+            </field>
+        </record>
+        <record id="iiko_inventory_act_tree" model="ir.ui.view">
+            <field name="name">iiko.csv.inventory.line</field>
+            <field name="model">iiko.csv.inventory.line</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO Inventorizacijos eilutės"
+                      create="1" edit="1" delete="1"
+                decoration-primary="state == 'waiting'"
+                        decoration-info="state == 'active'"
+                      decoration-success="state == 'created'">
+                    <field name="product_id"/>
+                    <field name="accounting_group_code"/>
+                    <field name="date"/>
+                    <field name="prime_cost_unit"/>
+                    <field name="balance_quantity"/>
+                    <field name="balance_sum"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="iiko_writeoff_act_tree" model="ir.ui.view">
+            <field name="name">iiko.csv.writeoff.act.line</field>
+            <field name="model">iiko.csv.writeoff.act.line</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO nurašymo eilutės"
+                      create="1" edit="1" delete="1"
+                decoration-primary="state == 'waiting'"
+                        decoration-info="state == 'active'"
+                      decoration-success="state == 'created'">
+                    <field name="product_id"/>
+                    <field name="accounting_group_code"/>
+                    <field name="date"/>
+                    <field name="prime_cost_unit_wo_vat"/>
+                    <field name="prime_cost_wo_vat"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+            <record id="iiko_realisation_act_tree" model="ir.ui.view">
+            <field name="name">iiko.csv.realisation.act.line</field>
+            <field name="model">iiko.csv.realisation.act.line</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO realizacijos eilutės"
+                      create="1" edit="1" delete="1"
+                      decoration-primary="state == 'waiting'"
+                        decoration-info="state == 'active'"
+                      decoration-success="state == 'created'">
+                    <field name="product_id"/>
+                    <field name="accounting_group_code"/>
+                    <field name="date"/>
+                    <field name="prime_cost_unit_wo_vat"/>
+                    <field name="prime_cost_wo_vat"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="iiko_act_tree" model="ir.ui.view">
+            <field name="name">iiko.csv.act.move</field>
+            <field name="model">iiko.csv.act.move</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO aktų žurnalo įrašai"
+                      create="1" edit="1" delete="1"
+                        decoration-info="state == 'active'"
+                      decoration-success="state == 'created'">
+                    <field name="date"/>
+                    <field name="act_type"/>
+                    <field name="global_mapping_id"/>
+                    <field name="move_id"/>
+                    <field name="forced_account_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+            <record id="csv_iiko_cashflow_op_tree" model="ir.ui.view">
+            <field name="name">iiko.csv.cashflow.movements</field>
+            <field name="model">iiko.csv.cashflow.movements</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO kasos operacijos"
+                      create="1" edit="1" delete="1"
+                        decoration-info="state == 'active'"
+                      decoration-success="state == 'created'">
+                    <field name="date"/>
+                    <field name="number"/>
+                    <field name="transfer_amount"/>
+                    <field name="operation_type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="iiko_jobs_tree" model="ir.ui.view">
+            <field name="name">iiko.jobs</field>
+            <field name="model">iiko.jobs</field>
+            <field name="arch" type="xml">
+                <tree string="IIKO Darbai"
+                      create="0" delete="0" editable="bottom"
+                        decoration-info="state == 'in_progress'"
+                        decoration-success="state == 'finished'"
+                        decoration-danger="state == 'failed'">
+                    <field name="file_code" readonly="1"/>
+                    <field name="execution_start_date" readonly="1"/>
+                    <field name="execution_end_date" readonly="1"/>
+                    <field name="state"/>
+                    <field name="fail_message" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="open_xls_import_wizard_iiko" model="ir.actions.act_window">
+            <field name="name">XLS Duomenų Importavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.xls.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+
+        <record id="open_csv_import_wizard_iiko" model="ir.actions.act_window">
+            <field name="name">CSV Duomenų Importavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.csv.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+
+        <record id="xls_iiko_invoice_action" model="ir.actions.act_window">
+            <field name="name">XLS Sąskaitos Faktūros</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">xls.iiko.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="xls_iiko_invoice_tree"/>
+        </record>
+        <record id="csv_iiko_invoice_action" model="ir.actions.act_window">
+            <field name="name">CSV Sąskaitos Faktūros</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pp.csv.iiko.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="csv_iiko_invoice_tree"/>
+        </record>
+        <record id="csv_iiko_order_payment_action" model="ir.actions.act_window">
+            <field name="name">CSV Užsakymų mokėjimai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">order.csv.iiko.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="csv_iiko_order_payment_tree"/>
+        </record>
+        <record id="iiko_cash_register_action" model="ir.actions.act_window">
+            <field name="name">Kasos aparatai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.cash.register</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="iiko_cash_register_tree"/>
+        </record>
+            <record id="iiko_payment_type_action" model="ir.actions.act_window">
+            <field name="name">Mokėjimų tipai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.payment.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="iiko_payment_type_tree"/>
+        </record>
+        <record id="csv_iiko_order_lines_action" model="ir.actions.act_window">
+            <field name="name">Užsakymų Eilutės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">order.csv.iiko.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="csv_iiko_order_lines_tree"/>
+        </record>
+        <record id="csv_iiko_order_invoice_action" model="ir.actions.act_window">
+            <field name="name">Užsakymų Sąskaitos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">order.csv.iiko.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="csv_iiko_order_invoice_tree"/>
+        </record>
+        <record id="iiko_product_mapping_action" model="ir.actions.act_window">
+            <field name="name">Produktų apskaitos kategorijos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.global.product.mapping</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="iiko_product_mapping_tree"/>
+        </record>
+        <record id="iiko_inventory_act_action" model="ir.actions.act_window">
+            <field name="name">Inventorizacijos aktų eilutės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.csv.inventory.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="iiko_inventory_act_tree"/>
+        </record>
+        <record id="iiko_writeoff_act_action" model="ir.actions.act_window">
+            <field name="name">Nurašymų aktų eilutės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.csv.writeoff.act.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="iiko_writeoff_act_tree"/>
+        </record>
+        <record id="iiko_realisation_act_action" model="ir.actions.act_window">
+            <field name="name">Realizacijos aktų eilutės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.csv.realisation.act.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="iiko_realisation_act_tree"/>
+        </record>
+        <record id="iiko_act_action" model="ir.actions.act_window">
+            <field name="name">Aktai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.csv.act.move</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="iiko_act_tree"/>
+        </record>
+
+        <record id="csv_iiko_cashflow_op_action" model="ir.actions.act_window">
+            <field name="name">Kasos Operacijos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.csv.cashflow.movements</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="csv_iiko_cashflow_op_tree"/>
+        </record>
+
+        <record id="open_iiko_jobs" model="ir.actions.act_window">
+            <field name="name">Darbai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">iiko.jobs</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="iiko_jobs_tree"/>
+        </record>
+
+        <menuitem
+                name="IIKO"
+                id="iiko_menu"
+                sequence="48"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Excel Sąskaitos"
+                id="iiko_xls_root"
+                sequence="46"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_menu"
+        />
+        <menuitem
+                name="Sąskaitos faktūros"
+                id="xls_iiko_invoice"
+                sequence="40"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_xls_root"
+                action="xls_iiko_invoice_action"
+        />
+
+        <menuitem
+                name="Pardavimai (Užsakymai CSV)"
+                id="iiko_csv_order_root"
+                sequence="46"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_menu"
+        />
+        <menuitem
+                name="Užsakymų Mokėjimai"
+                id="iiko_payments"
+                sequence="43"
+                groups="robo_basic.group_robo_premium_accountant"
+                action="csv_iiko_order_payment_action"
+                parent="iiko_csv_order_root"
+        />
+        <menuitem
+                name="Užsakymų Sąskaitos"
+                id="iiko_invoice_order"
+                sequence="43"
+                groups="robo_basic.group_robo_premium_accountant"
+                action="csv_iiko_order_invoice_action"
+                parent="iiko_csv_order_root"
+        />
+        <menuitem
+                name="Užsakymų Eilutės"
+                id="iiko_order_lines"
+                sequence="43"
+                groups="robo_basic.group_robo_premium_accountant"
+                action="csv_iiko_order_lines_action"
+                parent="iiko_csv_order_root"
+        />
+
+        <menuitem
+                name="Pirkimai (Važtaraštis CSV)"
+                id="iiko_csv_pp_root"
+                sequence="46"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_menu"
+        />
+            <menuitem
+                name="Sąskaitos faktūros"
+                id="csv_iiko_invoice"
+                sequence="41"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_csv_pp_root"
+                action="csv_iiko_invoice_action"
+        />
+        <menuitem
+                name="Pinigų srautai"
+                id="iiko_settings_cashflow"
+                sequence="46"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_menu"
+        />
+            <menuitem
+                name="Kasos operacijos"
+                id="iiko_settings_cashflow_operations"
+                sequence="46"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_settings_cashflow"
+                action="csv_iiko_cashflow_op_action"
+        />
+        <menuitem
+                name="Aktai"
+                id="iiko_settings_act"
+                sequence="46"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_menu"
+        />
+        <menuitem
+                name="Realizacijos aktų eilutės"
+                id="iiko_realisation_acts"
+                sequence="44"
+                groups="robo_basic.group_robo_premium_accountant"
+                action="iiko_realisation_act_action"
+                parent="iiko_settings_act"
+        />
+        <menuitem
+                name="Nurašymo aktų eilutės"
+                id="iiko_writeoff_acts"
+                sequence="44"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_settings_act"
+                action="iiko_writeoff_act_action"
+        />
+        <menuitem
+                name="Inventorizacijos aktų eilutės"
+                id="iiko_inventory_acts"
+                sequence="44"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_settings_act"
+                action="iiko_inventory_act_action"
+        />
+        <menuitem
+                name="Aktai"
+                id="iiko_parent_acts"
+                action="iiko_act_action"
+                sequence="44"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_settings_act"
+        />
+        <menuitem
+                name="Bendri nustatymai"
+                id="iiko_settings_root"
+                sequence="46"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_menu"
+        />
+        <menuitem
+                name="Mokėjimo tipai"
+                id="iiko_payment_types"
+                sequence="44"
+                action="iiko_payment_type_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_settings_root"
+        />
+        <menuitem
+                name="Kasos aparatai"
+                id="iiko_cash_register"
+                sequence="45"
+                action="iiko_cash_register_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_settings_root"
+        />
+        <menuitem
+                name="Produktų apskaitos kategorijos"
+                id="iiko_product_mapping"
+                sequence="45"
+                action="iiko_product_mapping_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_settings_root"
+        />
+
+        <menuitem
+                name="Importas"
+                id="iiko_import_root"
+                sequence="50"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_menu"
+        />
+        <menuitem
+                name="Importuoti XLS failus"
+                id="iiko_xls_import"
+                sequence="46"
+                action="open_xls_import_wizard_iiko"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_import_root"
+        />
+        <menuitem
+                name="Importuoti CSV failus"
+                id="iiko_csv_import"
+                sequence="47"
+                action="open_csv_import_wizard_iiko"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_import_root"
+        />
+            <menuitem
+                name="Darbai"
+                id="iiko_job_root"
+                sequence="80"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_menu"
+        />
+        <menuitem
+                name="Darbai"
+                id="iiko_jobs"
+                sequence="80"
+                action="open_iiko_jobs"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="iiko_job_root"
+        />
+
+        <record model="ir.ui.view" id="product_template_extend_iiko">
+            <field name="name">product.template.extend.iiko</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_account_expense_id']" position="after">
+                    <field name="property_account_prime_cost_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="iiko_order_sale_search">
+            <field name="name">Užsakymų paieška</field>
+            <field name="model">order.csv.iiko.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="imported" string="Būsena: Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="created" string="Būsena: Sąskaita sukurta sistemoje" domain="[('state','=','created')]"/>
+                    <filter name="failed" string="Būsena: Nepavyko sukurti sąskaitos" domain="[('state','=','failed')]"/>
+                    <filter name="warning" string="Būsena: Importuota su įspėjimais" domain="[('state','=','warning')]"/>
+                    <filter name="discount" string="Nuolaidų eilutės" domain="[('discount', '=', True)]"/>
+                    <separator/>
+                    <field name="receipt_id" filter_domain="[('receipt_id','ilike',self)]"/>
+                    <field name="line_number" filter_domain="[('line_number','ilike',self)]"/>
+                    <field name="ext_order_id" filter_domain="[('ext_order_id','ilike',self)]"/>
+                    <field name="product_id"/>
+                    <field name="invoice_id"/>
+                    <field name="partner_id"/>
+                    <field name="ext_order_id"/>
+                    <separator/>
+                    <field name="line_date" string="Data nuo" filter_domain="[('line_date', '&gt;=', self)]"/>
+                    <field name="line_date" string="Data iki" filter_domain="[('line_date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('line_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('line_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('line_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('line_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('line_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('line_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('line_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('line_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('line_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('line_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('line_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('line_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('line_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('line_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('line_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('line_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Data" context="{'group_by':'line_date'}"/>
+                        <filter name="partner_id" string="Partneris"
+                                context="{'group_by':'partner_id'}"/>
+                        <filter name="invoice_id" string="Sąskaita"
+                                context="{'group_by':'invoice_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="iiko_order_payment_search">
+            <field name="name">Užsakymų mokėjimų paieška</field>
+            <field name="model">order.csv.iiko.payment</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="open" string="Būsena: Laukiama sudengimo" domain="[('state','=','open')]"/>
+                    <filter name="rec" string="Būsena: Sudengta" domain="[('state','=','reconciled')]"/>
+                    <filter name="part_rec" string="Būsena: Sudengta dalinai" domain="[('state','=','partially_reconciled')]"/>
+                    <filter name="active" string="Būsena: Panaudojama" domain="[('state','=','active')]"/>
+                    <filter name="warning" string="Būsena: Trūksta konfigūracijos" domain="[('state','=','warning')]"/>
+                    <filter name="cancel" string="Būsena: Atšauktas" domain="[('state','=','canceled')]"/>
+                    <separator/>
+                    <field name="move_id"/>
+                    <field name="receipt_id" filter_domain="[('receipt_id','ilike',self)]"/>
+                    <field name="shift_id" filter_domain="[('shift_id','ilike',self)]"/>
+                    <field name="ext_order_id" filter_domain="[('ext_order_id','ilike',self)]"/>
+                    <separator/>
+                    <field name="payment_date" string="Data nuo" filter_domain="[('payment_date', '&gt;=', self)]"/>
+                    <field name="payment_date" string="Data iki" filter_domain="[('payment_date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('payment_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('payment_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Mokėjimo data" context="{'group_by':'payment_date'}"/>
+                        <filter name="payment_type_id" string="Mokėjimo tipas"
+                                context="{'group_by':'payment_type_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="iiko_pp_invoice_search">
+            <field name="name">Sąskaitų paieška</field>
+            <field name="model">pp.csv.iiko.invoice</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="imported" string="Būsena: Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="created" string="Būsena: Sąskaita sukurta sistemoje" domain="[('state','=','created')]"/>
+                    <filter name="failed" string="Būsena: Nepavyko sukurti sąskaitos" domain="[('state','=','failed')]"/>
+                    <filter name="warning" string="Būsena: Importuota su įspėjimais" domain="[('state','=','warning')]"/>
+                    <separator/>
+                    <field name="partner_id"/>
+                    <field name="invoice_id"/>
+                    <field name="number" filter_domain="[('number','ilike',self)]"/>
+                    <separator/>
+                    <field name="date_invoice" string="Data nuo" filter_domain="[('date_invoice', '&gt;=', self)]"/>
+                    <field name="date_invoice" string="Data iki" filter_domain="[('date_invoice', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_invoice', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_invoice', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Sąskaitos data" context="{'group_by':'date_invoice'}"/>
+                        <filter name="partner_id" string="Partneris"
+                                context="{'group_by':'partner_id'}"/>
+                        <filter name="invoice_id" string="Sąskaita"
+                                context="{'group_by':'invoice_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="iiko_cashflow_search">
+            <field name="name">Kasos operacijų paieška</field>
+            <field name="model">iiko.csv.cashflow.movements</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="active" string="Būsena: Importuota" domain="[('state','=','active')]"/>
+                    <filter name="created" string="Būsena: Sukurta" domain="[('state','=','created')]"/>
+                    <filter name="out" string="Tipas: Pinigų išėmimas" domain="[('operation_type','=','out')]"/>
+                    <filter name="in" string="Tipas: Pinigų įnešimas" domain="[('operation_type','=','in')]"/>
+                    <separator/>
+                    <field name="operation_type"/>
+                    <field name="move_id"/>
+                    <field name="number" filter_domain="[('number','ilike',self)]"/>
+                    <separator/>
+                    <field name="date" string="Data nuo" filter_domain="[('date', '&gt;=', self)]"/>
+                    <field name="date" string="Data iki" filter_domain="[('date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Data" context="{'group_by':'date'}"/>
+                        <filter name="move_id" string="Žurnalo įrašas"
+                                context="{'group_by':'move_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="iiko_realisation_act_line_search">
+            <field name="name">Realizacijos aktų eilučių paieška</field>
+            <field name="model">iiko.csv.realisation.act.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="active" string="Būsena: Laukiama įtraukos" domain="[('state','=','warning')]"/>
+                    <filter name="created" string="Būsena: Įtraukta" domain="[('state','=','active')]"/>
+                    <filter name="created" string="Būsena: Buhalterinis įrašas sukurtas" domain="[('state','=','created')]"/>
+                    <separator/>
+                    <field name="product_id"/>
+                    <field name="move_id"/>
+                    <field name="act_move_id"/>
+                    <field name="global_mapping_id"/>
+                    <field name="number" filter_domain="[('number','ilike',self)]"/>
+                    <separator/>
+                    <field name="date" string="Data nuo" filter_domain="[('date', '&gt;=', self)]"/>
+                    <field name="date" string="Data iki" filter_domain="[('date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Data" context="{'group_by':'date'}"/>
+                        <field name="product_id" context="{'group_by':'product_id'}"/>
+                        <field name="move_id" context="{'group_by':'move_id'}"/>
+                        <field name="act_move_id" context="{'group_by':'act_move_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="iiko_writeoff_act_line_search">
+            <field name="name">Nurašymo aktų eilučių paieška</field>
+            <field name="model">iiko.csv.writeoff.act.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="active" string="Būsena: Laukiama įtraukos" domain="[('state','=','warning')]"/>
+                    <filter name="created" string="Būsena: Įtraukta" domain="[('state','=','active')]"/>
+                    <filter name="created" string="Būsena: Buhalterinis įrašas sukurtas" domain="[('state','=','created')]"/>
+                    <separator/>
+                    <field name="product_id"/>
+                    <field name="move_id"/>
+                    <field name="act_move_id"/>
+                    <field name="global_mapping_id"/>
+                    <field name="number" filter_domain="[('number','ilike',self)]"/>
+                    <separator/>
+                    <field name="date" string="Data nuo" filter_domain="[('date', '&gt;=', self)]"/>
+                    <field name="date" string="Data iki" filter_domain="[('date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Data" context="{'group_by':'date'}"/>
+                        <field name="product_id" context="{'group_by':'product_id'}"/>
+                        <field name="move_id" context="{'group_by':'move_id'}"/>
+                        <field name="act_move_id" context="{'group_by':'act_move_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="iiko_inventory_act_line_search">
+            <field name="name">Inventorizacijos aktų eilučių paieška</field>
+            <field name="model">iiko.csv.inventory.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="active" string="Būsena: Laukiama įtraukos" domain="[('state','=','warning')]"/>
+                    <filter name="created" string="Būsena: Įtraukta" domain="[('state','=','active')]"/>
+                    <filter name="created" string="Būsena: Buhalterinis įrašas sukurtas" domain="[('state','=','created')]"/>
+                    <separator/>
+                    <field name="product_id"/>
+                    <field name="global_mapping_id"/>
+                    <field name="move_id"/>
+                    <field name="act_move_id"/>
+                    <field name="number" filter_domain="[('number','ilike',self)]"/>
+                    <separator/>
+                    <field name="date" string="Data nuo" filter_domain="[('date', '&gt;=', self)]"/>
+                    <field name="date" string="Data iki" filter_domain="[('date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Data" context="{'group_by':'date'}"/>
+                        <field name="product_id" context="{'group_by':'product_id'}"/>
+                        <field name="move_id" context="{'group_by':'move_id'}"/>
+                        <field name="act_move_id" context="{'group_by':'act_move_id'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="iiko_act_search">
+            <field name="name">Aktų paieška</field>
+            <field name="model">iiko.csv.act.move</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="active" string="Būsena: Laukiama" domain="[('state','=','active')]"/>
+                    <filter name="created" string="Būsena: Sukurta" domain="[('state','=','created')]"/>
+                    <separator/>
+                    <field name="journal_id"/>
+                    <field name="global_mapping_id"/>
+                    <field name="forced_account_id"/>
+                    <field name="act_type"/>
+                    <separator/>
+                    <field name="date" string="Data nuo" filter_domain="[('date', '&gt;=', self)]"/>
+                    <field name="date" string="Data iki" filter_domain="[('date', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_date" string="Data" context="{'group_by':'date'}"/>
+                        <field name="journal_id" context="{'group_by':'journal_id'}"/>
+                        <field name="global_mapping_id" context="{'group_by':'global_mapping_id'}"/>
+                        <field name="act_type" context="{'group_by':'act_type'}"/>
+                    </group>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

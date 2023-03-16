@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="gpais_setting_wizard_view_form" model="ir.ui.view">
+            <field name="name">gpais.setting.wizard.view.form</field>
+            <field name="model">gpais.setting.wizard</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form>
+                    <group string="GPAIS nustatymai" col="4" colspan="4" name="gpais_settings">
+                        <group col="6" colspan="4">
+                            <field name="gpais_registras_alyva"/>
+                            <field name="gpais_registras_alyva_data"
+                                   attrs="{'invisible': [('gpais_registras_alyva', '=', 0)],
+                                           'required': [('gpais_registras_alyva', '!=', 0)]}"/>
+                        </group>
+                        <group col="6" colspan="4">
+                            <field name="gpais_registras_pakuotes"/>
+                            <field name="gpais_registras_pakuotes_data"
+                                   attrs="{'invisible': [('gpais_registras_pakuotes', '=', 0)],
+                                           'required': [('gpais_registras_pakuotes', '!=', 0)]}"/>
+                        </group>
+                        <group col="6" colspan="4">
+                            <field name="gpais_registras_transportas"/>
+                            <field name="gpais_registras_transportas_data"
+                                   attrs="{'invisible': [('gpais_registras_transportas', '=', 0)],
+                                           'required': [('gpais_registras_transportas', '!=', 0)]}"/>
+                        </group>
+                        <group col="6" colspan="4">
+                            <field name="gpais_registras_elektra"/>
+                            <field name="gpais_registras_elektra_data"
+                                   attrs="{'invisible': [('gpais_registras_elektra', '=', 0)],
+                                           'required': [('gpais_registras_elektra', '!=', 0)]}"/>
+                        </group>
+                        <group col="6" colspan="4">
+                            <field name="gpais_registras_baterijos"/>
+                            <field name="gpais_registras_baterijos_data"
+                                   attrs="{'invisible': [('gpais_registras_baterijos', '=', 0)],
+                                           'required': [('gpais_registras_baterijos', '!=', 0)]}"/>
+                        </group>
+                        <group col="6" colspan="4">
+                            <field name="gpais_registras_gaminiai"/>
+                            <field name="gpais_registras_gaminiai_data"
+                                   attrs="{'invisible': [('gpais_registras_gaminiai', '=', 0)],
+                                           'required': [('gpais_registras_gaminiai', '!=', 0)]}"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="gpais_default_veiklos_budas" widget="selection" colspan="2"
+                                   attrs="{'required': [('gpais_report_package_on_reception', '=', True)]}"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="gpais_report_package_on_reception" colspan="2"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="gpais_skip_misregistered_elements" colspan="2"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="gpais_testing" colspan="2"/>
+                        </group>
+
+                    </group>
+                    <notebook>
+                        <page string="EEI" attrs="{'invisible': [('gpais_registras_elektra', '=', 0)]}">
+                            <group>
+                                <field name="gpais_registration_lines_eei"
+                                       nolabel="1"
+                                       widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree editable="bottom">
+                                        <field name="klasifikacija" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="buitine_iranga"/>
+                                        <field name="activity_own_need"/>
+                                        <field name="activity_b2c"/>
+                                        <field name="activity_b2b"/>
+                                        <field name="activity_remote"/>
+                                        <field name="activity_export_broker"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Batterijos" attrs="{'invisible': [('gpais_registras_baterijos', '=', 0)]}">
+                            <group>
+                                <field name="gpais_registration_lines_battery"
+                                       nolabel="1"
+                                       widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree editable="bottom">
+                                        <field name="rusis"/>
+                                        <field name="klasifikacija" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="chemine_sudetis" widget="selection"/>
+                                        <field name="imontuota"/>
+                                        <field name="activity_own_need"/>
+                                        <field name="activity_b2c"/>
+                                        <field name="activity_b2b"/>
+                                        <field name="activity_remote"/>
+                                        <field name="activity_export_broker"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Prekinis vienetas" attrs="{'invisible': [('gpais_registras_pakuotes', '=', 0)]}">
+                            <group>
+                                <field name="gpais_registration_lines_package"
+                                       nolabel="1"
+                                       widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree editable="bottom">
+                                        <field name="material_type"/>
+                                        <field name="use_type"/>
+                                        <field name="uzstatine"/>
+                                        <field name="activity_own_need"/>
+                                        <field name="activity_b2c"/>
+                                        <field name="activity_b2b"/>
+                                        <field name="activity_remote"/>
+                                        <field name="activity_export_broker"/>
+                                        <field name="activity_export"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Transporto priemonė"
+                              attrs="{'invisible': [('gpais_registras_transportas', '=', 0)]}">
+                            <group>
+                                <field name="gpais_registration_lines_transport"
+                                       nolabel="1"
+                                       widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree editable="bottom">
+                                        <field name="klasifikacija"/>
+                                        <field name="activity_own_need"/>
+                                        <field name="activity_b2c"/>
+                                        <field name="activity_b2b"/>
+                                        <field name="activity_remote"/>
+                                        <field name="activity_export_broker"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Gaminys" attrs="{'invisible': [('gpais_registras_gaminiai', '=', 0)]}">
+                            <group>
+                                <field name="gpais_registration_lines_goods"
+                                       nolabel="1"
+                                       widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree editable="bottom">
+                                        <field name="klasifikacija"/>
+                                        <field name="activity_own_need"/>
+                                        <field name="activity_b2c"/>
+                                        <field name="activity_b2b"/>
+                                        <field name="activity_remote"/>
+                                        <field name="activity_export_broker"/>
+                                        <field name="activity_export"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Alyva" attrs="{'invisible': [('gpais_registras_alyva', '=', 0)]}">
+                            <group>
+                                <field name="gpais_registration_lines_oil"
+                                       nolabel="1"
+                                       widget="one2many_list" mode="tree,kanban"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree editable="bottom">
+                                        <field name="klasifikacija"/>
+                                        <field name="activity_own_need"/>
+                                        <field name="activity_b2c"/>
+                                        <field name="activity_b2b"/>
+                                        <field name="activity_remote"/>
+                                        <field name="activity_export_broker"/>
+                                        <field name="activity_export"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button name="set_company_info" string="Išsaugoti ir Uždaryti" type="object"
+                                class="oe_highlight" style="margin-right: 10px;"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="open_gpais_setting_wizard" model="ir.actions.act_window">
+            <field name="name">GPAIS Nustatymai</field>
+            <field name="res_model">gpais.setting.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_front" eval="1"/>
+            <field name="view_id" ref="robo_gpais.gpais_setting_wizard_view_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

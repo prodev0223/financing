@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="action_representation_expense_act" model="ir.actions.act_window">
+            <field name="name">Representation expense act</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">reprezentacines.ataskaita.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="reprezentacines_ataskaita_wizard_view" model="ir.ui.view">
+            <field name="name">reprezentacines.ataskaita.wizard.view</field>
+            <field name="model">reprezentacines.ataskaita.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Representation expense act">
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="account_75_1" invisible="0"/>
+                        <field name="account_25_1" invisible="0"/>
+                    </group>
+                    <footer>
+                        <button string="Generate" name="generate" type="object" default_focus="1"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <menuitem name="Representation expense act"
+                  id="menu_representation_expense_act"
+                  parent="account.menu_finance_legal_statement"
+                  action="action_representation_expense_act"
+                  sequence="20"/>
+    </data>
+</odoo>

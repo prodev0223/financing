@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="new_job_form" model="ir.ui.view">
+            <field name="name">form.hr.job.apb_walless</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="robo.new_job_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='special_job_type']" position="after">
+                    <field name="use_royalty" groups="robo_basic.group_robo_premium_accountant"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

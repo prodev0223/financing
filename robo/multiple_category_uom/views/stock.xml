@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="stock_picking_move_secondary_uom" model="ir.ui.view">
+            <field name="name">stock.move.secondary.uom</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="secondary_uom_qty"/>
+                    <field name="secondary_uom_id" options="{'no_open': True, 'no_create': True}" domain="[('id', 'in', secondary_uom_domain and secondary_uom_domain[0][2])]"/>
+                    <field name="secondary_uom_domain" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="robo_stock_picking_move_secondary_uom" model="ir.ui.view">
+            <field name="name">robo.stock.move.secondary.uom</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="robo_stock.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="secondary_uom_qty"/>
+                    <field name="secondary_uom_id" options="{'no_open': True, 'no_create': True}" domain="[('id', 'in', secondary_uom_domain and secondary_uom_domain[0][2])]"/>
+                    <field name="secondary_uom_domain" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

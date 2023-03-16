@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_e_document_manager" model="res.groups">
+            <field name="name">Edocument manager</field>
+        </record>
+        <record id="e_document.e_document_premium_manager" model="ir.rule">
+            <field name="name">eDocument CEO</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(6, 0, [ref('group_e_document_manager'),ref('robo_basic.group_robo_edocument_manager'),ref('robo_basic.group_robo_premium_manager')])]"/>
+        </record>
+
+        <record id="group_do_administratore" model="res.groups">
+            <field name="name">DO administratorė</field>
+            <field name="implied_ids"
+                   eval="[(4, ref('hr.group_hr_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_help">Leidžiama kurti naujus darbuotojus, matyti analitiką ir visus žiniaraščius</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+
+        <!--Edocuments-->
+
+        <record id="robo.robo_button_darbuotojai_new" model="robo.header.items">
+            <field name="group_ids" eval="[(4, ref('doarchitects.group_do_administratore'))]"/>
+        </record>
+
+        <record id="analytic_line_administratore" model="ir.rule">
+            <field name="name">Administratore analytic lines</field>
+            <field name="model_id" ref="account.model_account_analytic_line"/>
+            <field name="domain_force">[(1, '=', 1),]
+            </field>
+            <field name="groups" eval="[(4, ref('doarchitects.group_do_administratore'))]"/>
+        </record>
+
+        <record id="group_analytic_account_refresh" model="res.groups">
+            <field name="name">Projektai: Leisti atnaujinti analitiką</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama atnaujinti analitines sumas</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_projects')"/>
+        </record>
+    </data>
+</odoo>

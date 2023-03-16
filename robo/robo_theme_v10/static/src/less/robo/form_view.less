@@ -1,0 +1,675 @@
+@robo-sheet-padding-y: 24px;
+@robo-sheet-padding-x: 16px;
+@robo-sheet-width-sm: (@screen-sm-min - @robo-sheet-padding-x - @robo-page-margin-xs); //752
+@robo-sheet-width-md: (@screen-md-min - @robo-sheet-padding-x - 4 - @robo-page-margin-lg); //972
+@robo-sheet-width-lg: (@screen-lg-min - @robo-sheet-padding-x - 4 - 8 - @robo-page-margin-lg*1.5); //1072
+@robo-sheet-width-xl: (@screen-xl-min - @robo-sheet-padding-x - 4 - 8 - @robo-page-margin-lg*2);
+@screen-phone-max: (480px-1);
+
+//mixins
+.robo-sheet-media() {
+  @media (min-width: @screen-sm-min) {
+    width: @robo-sheet-width-sm;
+  }
+  @media (min-width: @screen-md-min) {
+    width: @robo-sheet-width-md;
+  }
+  @media (min-width: @screen-lg-min) {
+    width: @robo-sheet-width-lg;
+  }
+  @media (min-width: @screen-xl-min) {
+    width: @robo-sheet-width-xl;
+  }
+
+  .robo-menu-fit &{
+      @media (min-width: @screen-sm-min) {
+        width: @robo-sheet-width-sm;
+      }
+      @media (min-width: @screen-md-min) {
+        width: @robo-sheet-width-md+ @robo-page-margin-lg;
+      }
+      @media (min-width: @screen-lg-min) {
+        width: @robo-sheet-width-lg+@robo-page-margin-lg;
+      }
+      @media (min-width: @screen-xl-min) {
+        width: @robo-sheet-width-xl+@robo-page-margin-lg;
+      }
+  }
+}
+
+//end mixins
+
+//form_view layout
+
+.o_content .o_form_view {
+
+  &.robo_pajamos_form, &.robo_islaidos_form {
+    @media (max-width: @screen-xs-min) {
+        .o_form_sheet_bg .o_form_sheet .o_group tr {
+          text-align: center;
+
+          td div.o_address_format span {
+            justify-content: center;
+          }
+        }
+    }
+  }
+
+  @media (min-width: @screen-sm-min) {
+    .o-flex-display;
+    .o-flex-flow(column, nowrap);
+    min-height: 100%;
+  }
+  &.o_form_nosheet {
+    display: block;
+    padding: @robo-sheet-padding-y @robo-sheet-padding-x;
+
+    &.o_list_editable_form {
+        padding: 0 @robo-sheet-padding-x;
+    }
+
+    .o_form_statusbar {
+      //ROBO: we have only one case in Darbo apskaitos ziniarastis, where state position is not right?
+      margin: -@robo-sheet-padding-y -@robo-sheet-padding-x 0 -@robo-sheet-padding-x;
+    }
+  }
+  .oe_chatter{
+    .o-flex(0, 0, auto);
+    max-width: unset;
+    .robo-sheet-media;
+  }
+
+  .o_form_sheet_bg {
+    .o-flex(0, 0, auto);
+    padding-bottom: @robo-sheet-padding-x/2;
+    @media (min-width: @screen-sm-min) {
+      padding: @robo-sheet-padding-x/2 0;
+    }
+    .o_form_sheet {
+      margin-right: auto;
+      margin-left: auto;
+      padding: @robo-sheet-padding-y @robo-sheet-padding-x;
+      .robo-sheet-media;
+      > .navbar-header, > .navbar-collapse {
+        margin-right: 0;
+        margin-left: 0;
+      }
+
+    }
+  }
+  > .alert {
+    &.alert-info {
+      .robo-sheet-media;
+      margin: 2px auto;
+    }
+  }
+  .o_form_field{
+    &.o_form_field_radio.o_horizontal{
+      @media (max-width: @screen-sm-max){
+        .o-flex-flow(column, wrap);
+      }
+
+    }
+  }
+  > .alert{ //if alert not inside sheet
+    .robo-sheet-media;
+    margin: 0 auto;
+  }
+    .extend_statusbar {
+        @media (min-width: 768px) {
+          width: 750px !important;
+        }
+        @media (min-width: 992px) {
+          width: 990px !important;
+        }
+        @media (min-width: 1200px) {
+          width: 1200px !important;
+        }
+   }
+  .o_form_statusbar {
+    .o-flex(0, 0, auto);
+    .o-flex-display;
+    .o-justify-content(space-between);
+    margin-right: auto;
+    margin-left: auto;
+    padding: @robo-sheet-padding-y 0;
+    .robo-sheet-media;
+    > .o_statusbar {
+      &_buttons, &_status {
+        .o-flex-display;
+        .o-align-items(center);
+        .o-align-content(space-around);
+      }
+    }
+    > .o_form_field {
+      .o-align-self(center);
+      margin-bottom: 0;
+    }
+    > .o_statusbar_buttons {
+      .o-flex-flow(row, wrap);
+      > .btn {
+        margin: 2px 3px 2px 0;
+      }
+      > .btn-group {
+        > .dropdown-toggle {
+          .my-btn(@robo-navbar-color) !important;
+          .o-border-radius(@robo-border-radius) !important;
+          border: none !important;
+          &:after {
+            content: "";
+            display: inline-block;
+            width: 0;
+            height: 0;
+            vertical-align: middle;
+            border-bottom: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid;
+            -moz-transform: scale(0.9999);
+            margin-left: 5px;
+          }
+        }
+        > .dropdown-menu {
+          padding-top: 0;
+          padding-bottom: 0;
+          min-width: 100px;
+          > li {
+            > .btn {
+              min-width: 100%;
+              margin-bottom: 3px;
+            }
+          }
+        }
+      }
+    }
+    > .o_statusbar_status {
+      > .dropdown-toggle {
+        .my-btn(@robo-dark-blue) !important;
+        border-radius: 5px;
+        border: none !important;
+      }
+      .o-flex-flow(row-reverse, wrap-reverse);
+      .o-align-items(stretch);
+      position: relative;
+      //overflow-x: hidden; strange-behaviour
+    }
+  }
+  .oe_button_box {
+    //margin: -@robo-sheet-padding-y -@robo-sheet-padding-x;
+    text-align: right;
+    position: relative;
+    > .oe_stat_button, > .o_dropdown_more {
+      .o-flex(0, 0, auto);
+      width: 33.33%;
+      color: @robo-blue;
+      @media (min-width: @screen-sm-min) {
+        width: 20%;
+      }
+      @media (min-width: @screen-md-min) {
+        width: 14.28%;
+      }
+      @media (min-width: @screen-md-min) {
+        width: 12.5%;
+      }
+      &:hover,&:focus{
+        background-color: white;
+        color: black;
+      }
+    }
+    > .o_dropdown_more {
+      position: absolute;
+      top: 100%;
+      left: auto;
+      bottom: auto;
+      right: 0;
+      //min-width: 0;
+      > li {
+        > .oe_stat_button {
+          width: 100% !important;
+          &:hover,&:focus{
+            background-color: @robo-item-hover-background;
+            color: black;
+          }
+        }
+      }
+    }
+    .oe_title {
+      @media (max-width: @screen-phone-max) {
+        word-break: break-all;
+      }
+      @media (min-width: @screen-xs) {
+        padding-right: 45px;
+      }
+    }
+    .oe_avatar {
+      margin-bottom: 10px;
+      > img {
+        max-width: 90px;
+        max-height: 90px;
+      }
+      & + .oe_title {
+        padding-right: 100px;
+      }
+    }
+
+  }
+  .o_group_col(@n, @i: 1) when (@i <= @n) {
+    .o_group_col_@{i} {
+      width: 100%;
+    }
+    .o_group_col(@n, (@i+1));
+  }
+
+  .o_group {
+    @media (max-width: @screen-sm-max) {
+      .o_group_col(12);
+    }
+    .js_payment_info{
+      @media (max-width: @screen-phone-max) {
+        display: none;
+      }
+    }
+    &.o_inner_group:not(.no-right-td-padding) {
+      > tbody {
+        > tr {
+          > td {
+            padding: 0 45px 0 0;
+          }
+        }
+      }
+      @media (max-width: @screen-phone-max) {
+        display: block;
+        margin-bottom: 20px;
+        > tbody {
+          display: block;
+          > tr {
+            .o-flex-display;
+            .o-flex-flow(row, wrap);
+            > td {
+              .o-flex(1, 0, auto);
+              display: block;
+              max-width: 100%;
+              padding: 0;
+              width: auto !important;
+              &.o_td_label {
+                width: 94% !important;
+                line-height: 0.8;
+              }
+              .o_form_field {
+                margin-bottom: 10px;
+                &.o_form_field_boolean {
+                  margin-right: 0;
+                }
+              }
+              .o_form_input_dropdown {
+                width: auto;
+                max-width: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+    @media (min-width: @screen-xs-min) {
+      .o_form_field {
+        &.o_text_overflow {
+          //.o_form_view .o_group .o_form_field.o_text_overflow
+          width: 1px !important;
+          min-width: 100%;
+        }
+      }
+
+      .o_form_label {
+        margin-bottom: 5px;
+      }
+    }
+    .o_form_label {
+      @media (max-width: @screen-phone-max) {
+        margin-top: 3px;
+        &.o_form_label_empty {
+          display: none;
+        }
+      }
+    }
+    .oe_chatter {
+      .o-flex(1000, 0, auto);
+      padding: 16px;
+      margin-left: auto;
+      margin-right: auto;
+      .robo-sheet-media;
+      > .navbar-header, > .navbar-collapse {
+        margin-right: -16px;
+        margin-left: -16px;
+        @media (min-width: @screen-sm-min) {
+          margin-right: 0;
+          margin-left: 0;
+        }
+      }
+    }
+    .o_form_sheet {
+      > .o_kanban_selection {
+        float: right;
+        .dropdown-menu {
+          right: 0;
+          left: auto;
+        }
+      }
+    }
+  }
+}
+
+.modal {
+  .modal-dialog {
+    .o_form_view {
+      .o_form_statusbar{
+          padding: 16px;
+          .o-flex-display;
+          .o-justify-content(space-between);
+        > .o_statusbar {
+          &_buttons, &_status {
+            .o-flex(0, 0, auto);
+
+          }
+        }
+
+      }
+      .o_group {
+        .o_form_field{
+          width: 90%;
+
+          &.oe_form_field_html_text, &.o_form_field_many2many, &.o_form_field_image {
+            width: 100%;
+          }
+        }
+        &.o_inner_group {
+          > tbody > tr > td.o_td_label {
+            @media (max-width: @screen-sm-max) {
+              min-width: 100px;
+            }
+          }
+        }
+      }
+    }
+    &.modal-sm {
+      .o_form_view {
+        .o_group {
+          > tbody > tr > td {
+            .o-flex(1, 0, auto);
+            display: block;
+            max-width: 100%;
+            padding: 0;
+            width: auto !important;
+            &.o_td_label {
+              width: 94% !important;
+              line-height: 0.8;
+            }
+            .o_form_field {
+              margin-bottom: 10px;
+              &.o_form_field_boolean {
+                margin-right: 0;
+              }
+            }
+            .o_form_input_dropdown {
+              width: auto;
+              max-width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+//end form_view layout
+//form view
+  .o_form_view{
+    .o_form_statusbar{
+      position: relative;
+      > .o_statusbar_status{
+        > .o_arrow_button{
+          min-height: 33px;
+          font-size: 11px;
+          font-weight: bold;
+          position: relative;
+          padding-left: 22px;
+          color: #a8a8a8; //TODO: change;
+          .o-transition(all, 0.2s, ease, 0s);
+          &:first-child{
+            padding-right: 16px;
+          }
+          &:last-child{
+            padding-left: 15px;
+            border-left: 1px solid #e2e2e0; //TODO: change;
+          }
+          &:active{
+            box-shadow: none;
+          }
+          &.disabled{
+            opacity: 1.0;
+            cursor: auto;
+            pointer-events: auto;
+            color: #666666; //TODO: change;
+            border-left: 1px solid #e2e2e0; //TODO: change;
+          }
+          &:before, &:after{
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: auto;
+            bottom: auto;
+            right: -10px;
+            border-top: 16.5px solid transparent;
+            border-bottom: 16.5px solid transparent;
+            border-right: none;
+            border-left: 11px solid #ffffff; //TODO: change;
+            .o-transition(border, 0.2s, ease, 0s);
+          }
+          &:not(.disabled){
+            &:hover, &:active, &:focus{
+              color: white;//TODO: change;
+              background-color: #21b799;//TODO: change;
+              &:after{
+                border-left-color: #21b799; //TODO: change;
+              }
+            }
+          }
+          &:before{
+             right: -11px;
+             border-left-color: #e2e2e0; //TODO: change;
+          }
+          &.btn-primary{
+            &.disabled{
+              color: #666666; //TODO: change;
+              background-color: #f3f3f2; //TODO: change;
+              &:before{
+                border-left-color: #e2e2e0;
+              }
+              &:after{
+                border-left-color: #f3f3f2;
+              }
+            }
+          }
+        }
+        .o-status-more{
+          position: absolute;
+          top: 100%;
+          right: 0;
+          left: auto;
+          //bottom: auto;
+          //right: 0;
+          min-width: 100px;
+          > li{
+            > button{
+              width: 100%;
+              text-align: left;
+            }
+          }
+        }
+      }
+    }
+    //button_box (boxes like archive, active)
+    //end button_box (boxes like archive, active)
+
+    .o_form_label {
+      @media (max-width: @screen-xs-max) {
+        font-size: 15px
+      }
+      @media (max-width: @screen-phone-max) {
+        font-size: 12px;
+        font-weight: normal;
+        //color: #8f8f8f;
+      }
+    }
+    .o_group{
+      &.o_label_nowrap{
+        .o_form_label{
+          @media (max-width: @screen-sm-max){
+             white-space: normal;
+          }
+        }
+      }
+      &.o_td_label{
+        .o_form_label{
+          @media(max-width: @screen-phone-max) {
+            font-weight: normal;
+          }
+        }
+      }
+    }
+  }
+//end
+
+// Robo Forms style ======================================================================
+.o_web_client .o_form_view {
+  background: @robo-background-color;
+  .o_form_required {
+    &.o_form_input, .o_form_input, &.o_form_textarea, .o_form_textarea {
+      background-color: @robo-required-field-color;
+    }
+  }
+  .o_form_field.o_form_field_many2one .o_external_button {
+    background-color: transparent !important;
+    border: none !important;
+    &:hover {
+      background-color: transparent !important;
+      color: black !important;
+    }
+    &:active {
+      .box-shadow(none) !important;
+    }
+  }
+  //status bar
+  ul.oe_form_status li, ul.oe_form_status_clickable li {
+    &, &.oe_active {
+      background: transparent !important;
+      &:last-child {
+        border: none;
+      }
+      > .arrow span {
+        background: transparent !important;
+      }
+      &.oe_active > .label {
+        color: @robo-navbar-color !important;
+      }
+    }
+  }
+  //buttons on the header - change above in o_web_client
+  > header {
+    background: @robo-background-color;
+    > button {
+      &:not(.btn-primary):not(.btn-link):not(.oe_highlight) {
+        .robo-control-panel-button-style !important;
+      }
+      &.btn-primary, &.oe_highlight {
+        .my-btn(@robo-second-button-color);
+      }
+    }
+    border: none;
+    padding-right: 10px;
+  }
+  .o_form_sheet_bg {
+    background-color: @robo-background-color;
+  }
+  //increase subtotals
+  //.oe_subtotal_robo {
+  //  font-size: 1.1em;
+  //  .o_form_label {
+  //    font-size: 1.1em;
+  //  }
+  //}
+}
+
+//if fields are empty, I try to increase size
+.o_form_view .o_form_field {
+  min-height: 1.3em;
+}
+
+//fields
+//many2many tags
+.o_form_field_many2manytags .o_tag_color_10 {
+  background-color: @robo-blue-primary;
+  line-height: 1.5;
+}
+
+// .o_form_view .o_form_field_many2manytags .badge > .o_badge_text {
+//   max-width: 100%;
+// }
+//
+
+//nice tree view inside form
+.robo_nice_tree_in_form_mixin() {
+
+//  @media (max-width: @screen-sm-min) {
+//    width: calc(100vw - (38px * 2) - 40px) !important;
+//  }
+
+  thead {
+    background-color: white;
+    tr {
+      border-bottom: 1px solid @robo-light-blue;
+    }
+    th {
+      &:hover, &:active, &:focus {
+        background-color: white;
+        color: @robo-blue;
+      }
+      color: @robo-blue;
+      font-weight: normal;
+      &[data-id="invoice_line_tax_ids"] {
+        @media (min-width: @screen-sm-min) {
+          width: 25%;
+        }
+      }
+    }
+  }
+  .table-striped > tbody {
+    .o_form_field_x2many_list_row_add a {
+      color: #8497a5;
+      &:hover {
+        color: @robo-blue;
+      }
+    }
+    > tr {
+      background-color: white;
+      border-bottom: 1px solid #eeeeee;
+  }
+
+  }
+}
+.o_form_view{
+  .robo_form_tree{
+    .robo_nice_tree_in_form_mixin !important;
+  }
+
+  .o_form_sheet .oe_chatter {
+    max-width: 100%;
+  }
+}
+
+.modal-dialog .modal-content {
+    border-radius: 10px;
+
+    .modal-body .o_view_manager_content .o_form_view {
+        background: #FFF !important;
+    }
+}

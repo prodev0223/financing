@@ -1,0 +1,462 @@
+<odoo>
+    <data>
+        <template id="stock.report_deliveryslip">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="sl_general_report.report_delivery_document" t-lang="o.partner_id.lang"/>
+            </t>
+        </template>
+        <template id="sl_general_report.report_delivery_document">
+            <style type="text/css">
+                body.container {
+                margin-left: 7px !important;
+                }
+                h3 {
+                text-align: center;
+                }
+                .centras{
+                text-align: center;
+                margin-left:auto;
+                margin-right:auto;
+                }
+                .virsus{
+                border-top: 1px solid black;
+                }
+                .desine{
+                float: right;
+                width: 300px;
+                text-align: justify
+                }
+                .lentele{
+                border: 1px solid black;
+                }
+
+            </style>
+            <t t-call="report.html_container">
+                <t t-call="report.external_layout">
+                    <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+                    <t t-set="tipas" t-value="o.picking_type_id.code"/>
+                    <div class="page">
+                        <div class="row">
+                            <div class="col-xs-7">
+                                <h2>
+                                    <span>Važtaraštis</span>
+                                    <span style="padding-left: 10px;" t-field="o.name"/>
+                                </h2>
+                            </div>
+                            <div class="col-xs-4" style="float: right;">
+                                <t t-if="o.create_date">
+                                    <p class="oe_inline">
+                                        <strong>Data:</strong>
+                                    </p>
+                                    <span t-field="o.create_date"
+                                          t-field-options="{&quot;format&quot;: &quot;yyyy-MM-dd&quot;}"/>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="row mt32">
+                            <div class="col-xs-4">
+                                <strong>Siuntėjas:</strong>
+                                <t t-if="tipas == 'incoming'">
+                                    <p>
+                                        <strong>
+                                            <span t-field="o.partner_id.name"/>
+                                        </strong>
+                                    </p>
+                                    <span t-esc="o.partner_id"
+                                          t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                                    <p t-if="o.partner_id.kodas">
+                                        <span class="comp_code">Įmonės kodas:</span>
+                                        <span t-field="o.partner_id.kodas"/>
+                                    </p>
+                                </t>
+                                <t t-if="tipas != 'incoming'">
+                                    <p>
+                                        <strong>
+                                            <span t-field="o.sudo().company_id.name"/>
+                                        </strong>
+                                    </p>
+                                    <span t-esc="o.sudo().company_id.partner_id"
+                                          t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                                    <p t-if="o.sudo().company_id.partner_id.kodas">
+                                        <span class="comp_code">Įmonės kodas:</span>
+                                        <span t-field="o.sudo().company_id.partner_id.kodas"/>
+                                    </p>
+                                </t>
+                            </div>
+                            <div class="col-xs-4">
+                                <strong>Vežėjas:</strong>
+                                <t t-if="o.partner_id_carrier">
+                                    <p>
+                                        <strong>
+                                            <span t-field="o.partner_id_carrier"/>
+                                        </strong>
+                                    </p>
+                                    <span t-esc="o.partner_id_carrier"
+                                          t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                                    <p t-if="o.partner_id_carrier.kodas">
+                                        <span class="comp_code">Įmonės kodas:</span>
+                                        <span t-field="o.partner_id_carrier.kodas"/>
+                                    </p>
+                                </t>
+                                <t t-if="not o.partner_id_carrier">
+                                    <p>
+                                        <strong>
+                                            <span t-field="o.company_id.partner_id"/>
+                                        </strong>
+                                    </p>
+                                    <span t-esc="o.company_id.partner_id"
+                                          t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                                    <p t-if="o.company_id.partner_id.kodas">
+                                        <span class="comp_code">Įmonės kodas:</span>
+                                        <span t-field="o.company_id.partner_id.kodas"/>
+                                    </p>
+                                </t>
+                                <t t-if="o.transport_id">
+                                    <strong>Transportas:</strong>
+                                    <span style="padding-left: 5px;" t-field="o.transport_id"/>
+                                </t>
+                            </div>
+                            <div class="col-xs-4">
+                                <strong>Gavėjas:</strong>
+                                <t t-if="tipas == 'outgoing'">
+                                    <p t-if="o.partner_id.parent_id">
+                                        <strong>
+                                            <span t-field="o.partner_id.parent_id.display_name"/>
+                                        </strong>
+                                    </p>
+                                    <p t-if="not o.partner_id.parent_id">
+                                        <strong>
+                                            <span t-field="o.partner_id.display_name"/>
+                                        </strong>
+                                    </p>
+                                    <span t-if="o.partner_id.parent_id" t-esc="o.partner_id.parent_id"
+                                          t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                                    <span t-if="not o.partner_id.parent_id" t-esc="o.partner_id"
+                                          t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                                    <p t-if="o.partner_id.kodas">
+                                        <span class="comp_code">Įmonės kodas:</span>
+                                        <span t-field="o.partner_id.kodas"/>
+                                    </p>
+                                </t>
+                                <t t-if="tipas != 'outgoing'">
+                                    <p>
+                                        <strong>
+                                            <span t-field="o.sudo().company_id.name"/>
+                                        </strong>
+                                    </p>
+                                    <span t-esc="o.sudo().company_id.partner_id"
+                                          t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                                    <p t-if="o.sudo().company_id.partner_id.kodas">
+                                        <span class="comp_code">Įmonės kodas:</span>
+                                        <span t-field="o.sudo().company_id.partner_id.kodas"/>
+                                    </p>
+                                </t>
+                            </div>
+                        </div>
+                        <br/>
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th name="td_sched_date_h">
+                                        <strong>Išsiuntimo data</strong>
+                                    </th>
+                                    <th>
+                                        <strong>Pakrovimo adresas</strong>
+                                    </th>
+                                    <th>
+                                        <strong>Pristatymo adresas</strong>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td name="td_sched_date">
+                                        <span t-field="o.min_date"
+                                              t-field-options="{&quot;format&quot;: &quot;yyyy-MM-dd HH:MM:00&quot;}"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="tipas != 'incoming'">
+                                            <span t-field="o.warehouse_address_id_text"/>
+                                        </t>
+                                        <t t-if="tipas == 'incoming'">
+                                            <span t-field="o.dest_address_id_text"/>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <t t-if="tipas != 'incoming'">
+                                            <span t-field="o.dest_address_id_text"/>
+                                        </t>
+                                        <t t-if="tipas == 'incoming'">
+                                            <span t-field="o.warehouse_address_id_text"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <t t-if="o.sale_id">
+                            <span>Užsakymo numeris:</span>
+                            <span t-field="o.sale_id.name"/>
+                            <br/>
+                        </t>
+                        <t t-if="o.sale_id.client_order_ref">
+                            <span>Kliento nuoroda:</span>
+                            <span t-field="o.sale_id.client_order_ref"/>
+                            <br/>
+                        </t>
+                        <table class="table table-condensed" t-if="not o.pack_operation_ids">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <strong>Produktas</strong>
+                                    </th>
+                                    <th class="text-right">
+                                        <strong>Kiekis</strong>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.move_lines" t-as="move">
+                                    <td>
+                                        <!--<span t-field="move.product_id"/><br/><span t-field="move.product_id.description_picking"/>-->
+                                        <span t-field="move.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="move.product_uom_qty"/>
+                                        <span t-field="move.product_uom"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <t t-set="show_package" t-value="any(o.pack_operation_pack_ids.mapped('id'))"/>
+                        <table class="table table-condensed" t-if="o.pack_operation_ids">
+                            <t t-set="has_serial_number"
+                               t-value="o.pack_operation_ids.filtered('pack_lot_ids') or show_package"/>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <strong>Produktas</strong>
+                                    </th>
+                                    <th t-if="has_serial_number">
+                                        <strong>SN</strong>
+                                    </th>
+                                    <!--<th><strong>Status</strong></th>-->
+                                    <th t-if="show_package">
+                                        <strong>Pakuotė</strong>
+                                    </th>
+                                    <th class="text-right">
+                                        <strong>Kiekis</strong>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.pack_operation_product_ids" t-as="pack_operation">
+
+                                    <!--<t t-if="pack_operation.product_id">-->
+                                    <td t-if="pack_operation.product_description">
+                                        <span t-field="pack_operation.product_description"/>
+                                    </td>
+                                    <td t-if="not pack_operation.product_description">
+                                        <span t-field="pack_operation.product_id"/><br/><span t-field="pack_operation.product_id.description_picking"/>
+                                    </td>
+                                    <td t-if="has_serial_number">
+                                        <table class="table table-condensed" t-if="pack_operation.pack_lot_ids">
+                                            <tr t-foreach="pack_operation.pack_lot_ids" t-as="packlot">
+                                                <td>
+                                                    <span t-field="packlot.lot_id"/>
+                                                    <t t-if="not packlot.lot_id">
+                                                        <span t-field="packlot.lot_name"/>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <span t-field="packlot.qty"/>
+                                                    <t t-if="o.picking_type_id.use_existing_lots and o.state!='done'">/
+                                                        <span t-field="packlot.qty_todo"/>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td t-if="show_package">
+                                        <span t-field="pack_operation.package_id"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-if="o.state != 'done' and pack_operation.qty_done &gt; 0">
+                                            <span t-field="pack_operation.qty_done"/>
+                                            <span t-field="pack_operation.product_uom_id"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-field="pack_operation.product_qty"/>
+                                            <span t-field="pack_operation.product_uom_id"/>
+                                        </t>
+                                    </td>
+                                    <!--</t>-->
+                                </tr>
+                                <t t-foreach="o.pack_operation_pack_ids" t-as="package">
+                                    <tr t-foreach="package.package_id.quant_ids" t-as="pack_quant">
+                                        <td>
+                                            <span t-field="pack_quant.product_id"/>
+                                        </td>
+                                        <td t-if="has_serial_number">
+                                            <span t-field="pack_quant.lot_id"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="pack_quant.package_id"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="pack_quant.qty"/>
+                                            <span t-field="pack_quant.product_uom_id"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div>
+
+                        </div>
+                        <div class="row">
+                            <br/>
+                            <br/>
+                        </div>
+                        <div style="float: left; width:30%">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none; text-align:left">
+                                        <span>Siuntėjas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="display:inline-block; width:30%">
+                            <table class="centras" align="center" width="60%">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <span>
+                                            <br/>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none" align="center">
+                                        <span>(parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="float: right; width:30%">
+                            <table width="80%">
+                                <tr style="border-style:none">
+                                    <td t-if="tipas != 'incoming'"
+                                        style="border-style:none; margin-left:auto; margin-right:auto; text-align:center">
+                                        <span t-esc="user.display_name"/>
+                                    </td>
+                                    <t t-if="tipas == 'incoming'">
+                                        <br/>
+                                    </t>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none;text-align:center" align="center">
+                                        <span>(vardas, pavardė)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <br/>
+                        </div>
+                        <div style="float: left; width:30%">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none; text-align:left">
+                                        <span>Vežėjas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="display:inline-block; width:30%">
+                            <table class="centras" align="center" width="60%">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <span>
+                                            <br/>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none" align="center">
+                                        <span>(parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="float: right; width:30%">
+                            <table width="80%">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto">
+                                        <span>
+                                            <br/>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none;text-align:center" align="center">
+                                        <span>(vardas, pavardė)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <br/>
+                        </div>
+                        <div style="float: left; width:30%">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none; text-align:left">
+                                        <span>Gavėjas</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="display:inline-block; width:30%">
+                            <table class="centras" align="center" width="60%">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <span>
+                                            <br/>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none" align="center">
+                                        <span>(parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="float: right; width:30%">
+                            <table width="80%">
+                                <tr style="border-style:none">
+                                    <td t-if="tipas == 'incoming'"
+                                        style="border-style:none; margin-left:auto; margin-right:auto; text-align:center">
+                                        <span t-esc="user.display_name"/>
+                                    </td>
+                                    <t t-if="tipas != 'incoming'">
+                                        <br/>
+                                    </t>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none;text-align:center" align="center">
+                                        <span>(vardas, pavardė)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="row" t-if="o.note">
+                            <br/>
+                            <b><span t-field="o.note"/></b>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

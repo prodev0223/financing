@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_account_asset_write_off_wizard_form" model="ir.ui.view">
+            <field name="name">account.asset.write.off.wizard</field>
+            <field name="model">account.asset.write.off.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="account_asset_ids" invisible="1"/>
+                        <field name="account_types_domain" invisible="1"/>
+                        <field name="account_close" options="{'no_open': 1, 'no_create': 1}"/>
+                        <field name="writeoff_date"/>
+                    </group>
+                    <footer>
+                        <button name="write_off" string="Write Off" type="object" class="oe_highlight"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

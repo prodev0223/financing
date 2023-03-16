@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//t[@t-set='display_discount']" position="replace">
+                <t t-set="display_discount" t-value="o.print_display_discount and any([l.discount_manilla for l in o.invoice_line_ids])"/>
+            </xpath>
+            <xpath expr="//t[@t-if='display_discount']" position="replace">
+                <t t-if="display_discount">
+                    <td class="text-right">
+                        <span t-esc="'%d' % round(l.discount_manilla)"/>
+                    </td>
+                </t>
+            </xpath>
+        </template>
+    </data>
+</odoo>

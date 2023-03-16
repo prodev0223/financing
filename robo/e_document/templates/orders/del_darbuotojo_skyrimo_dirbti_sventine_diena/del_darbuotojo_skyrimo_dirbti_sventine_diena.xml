@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl darbuotojo skyrimo dirbti šventinę dieną</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="job_id2" options="{'no_create': True, 'no_open': True}"
+                               string="Darbuotojo(-s) pareigos"
+                               required="0" invisible="1"/>
+                        <field name="employee_id2"
+                               options="{'no_create': True, 'no_open': True}" string="Darbuotojo(-s) Vardas Pavardė"
+                               required="True" invisible="0"/>
+                        <field name="date_4" options="{'no_create': True, 'no_open': True}"
+                               string="Šventinės dienos data" required="True" invisible="0"/>
+                        <field name="text_5" options="{'no_create': True, 'no_open': True}"
+                               string="Bonusas už darbą" required="True" invisible="0"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl darbuotojo skyrimo dirbti šventinę dieną</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_form"/>
+        </record>
+
+
+        <record id="isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl darbuotojo skyrimo dirbti šventinę dieną</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="False"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas,darbuotojo skyrimas,dirbti šventinę dieną</field>
+            <field name="groups_id" eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+
+        <record id="isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Vadovaudamasis(-i) Lietuvos Respublikos darbo kodekso 119 straipsnio 2 dalimi ir 144 straipsnio 4
+                    dalimi s k i r i u {{kam(job_id2, 'aa')}} {{kam(employee_id2, 'Aa')}} dirbti šventinę dieną {{
+                    date_4 }}.
+                    Į s a k a u už darbą šventinę dieną {{ date_4 }} darbuotojui(-ai) sumokėti {{ text_5 }} eurų.
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl darbuotojo skyrimo dirbti šventinę dieną</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>ĮSAKYMAS
+                                DĖL DARBUOTOJO {{ko(employee_id2.upper(), 'AA')}} SKYRIMO DIRBTI ŠVENTINĘ DIENĄ
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                    </span>
+                                                </p>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p>
+                                                    <span>{{ manager_id }}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                                <br/>
+                                <span>ĮSAKYMAS
+                                    DĖL DARBUOTOJO {{ko(employee_id2.upper(), 'AA')}} SKYRIMO DIRBTI ŠVENTINĘ DIENĄ
+                                </span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span t-field="doc.employee_id.work_location"/>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        Vadovaudamasis(-i) Lietuvos Respublikos darbo kodekso 119 straipsnio 2 dalimi ir 144 straipsnio
+                        4 dalimi s k i r i u {{kam(job_id2, 'aa')}} {{kam(employee_id2, 'Aa')}} dirbti šventinę dieną {{
+                        date_4 }}.
+                        Į s a k a u už darbą šventinę dieną {{ date_4 }} darbuotojui(-ai) sumokėti {{ text_5 }} eurų.
+                        {{ extra_text_html }}
+                    </div>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="65%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{manager_job_id}} {{ manager_id }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_workflow()</field>
+            <field name="date_from_field_name">date_4</field>
+            <field name="date_to_field_name">date_4</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="date_lim_for_signing_field_name">date_4</field>
+        </record>
+    </data>
+</odoo>

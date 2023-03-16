@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="work_schedule_e_doc_business_trip_extra_days_worked_override" model="ir.ui.view">
+            <field name="name">work.schedule.e.doc.business.trip.extra.days.worked.override</field>
+            <field name="model">e.document.business.trip.employee.line</field>
+            <field name="inherit_id" ref="e_document.employee_business_trip_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='extra_worked_day_ids']" position="before">
+                    <label for="extra_worked_day_ids" string="Pasirinkite dienas, už kurias mokėti dienpinigius"/>
+                </xpath>
+                <xpath expr="//field[@name='extra_worked_day_ids']" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='extra_worked_day_ids']//field[@name='worked']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                    <attribute name="readonly">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='overtime_compensation']" position="attributes">
+                    <attribute name="attrs">{'invisible': True, 'readonly': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='journey_amount_to_be_compensated']" position="after">
+                    <div style="height:20px"></div>
+                    <span colspan="4" style="font-weight: bold; margin-top: 20px !important;">Darbo laikas komandiruotės metu nustatomas darbo grafike</span>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="dynamic_accounting_report_view_form" model="ir.ui.view">
+            <field name="name">dynamic.accounting.report.view.form</field>
+            <field name="model">accounting.report</field>
+            <field name="inherit_id" ref="robo.robo_report_balance_wizard"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='force_lang']" position="replace">
+                    <field name="report_language" attrs="{'invisible': [('activity_form','=','vsi')]}"/>
+                </xpath>
+                <xpath expr="//button[@name='check_report']" position="replace">
+                    <button string="View" name="action_view" type="object" class="btn-primary"
+                            style="margin-right: 10px;" context="{'balansas': True, 'force_refresh_data': True}"
+                            default_focus="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="dynamic_robo_report_view_form" model="ir.ui.view">
+            <field name="name">dynamic.robo.report.view.form</field>
+            <field name="model">accounting.report</field>
+            <field name="inherit_id" ref="robo.robo_report_wizard"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='force_lang']" position="replace">
+                    <field name="report_language" attrs="{'invisible': [('activity_form','=','vsi')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='date_from']" position="before">
+                    <field name="date_range"/>
+                </xpath>
+                <xpath expr="//button[@name='check_report']" position="replace">
+                    <button string="View" name="action_view" type="object" class="btn-primary"
+                            style="margin-right: 10px;" context="{'pelnas': True, 'force_refresh_data': True}"
+                            default_focus="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema elementFormDefault="qualified" version="1.0"
+			targetNamespace="urn:x-gpais:vvs:zurnalas"
+			xmlns:gpais="urn:x-gpais:bendra"
+			xmlns:kls="urn:x-gpais:kls"
+			xmlns:zrn="urn:x-gpais:vvs:zurnalas"
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:import schemaLocation="gpais-klasifikatoriai.xsd" namespace="urn:x-gpais:kls"/>
+	<xsd:import schemaLocation="gpais.xsd" namespace="urn:x-gpais:bendra"/>
+	
+	<xsd:complexType name="IrasuSarasas">
+        <xsd:sequence>
+            <xsd:element name="subjektas" type="gpais:Subjektas"/>
+            <xsd:element name="salinamiIrasai" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:sequence>
+                    	<xsd:element name="salinamas" type="zrn:SalinamasIrasas" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="irasai" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:sequence>
+                    	<xsd:element name="irasas" type="zrn:Irasas" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="IrasoIdentifikatorius">
+    	<xsd:annotation>
+            <xsd:documentation xml:lang="lt">Įrašo identifikatorius turi būti unikalus tarp visų duoto subjekto įrašų identifikatorių</xsd:documentation>
+        </xsd:annotation>
+    	<xsd:sequence/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="SalinamasIrasas">
+		<xsd:attribute name="id" type="gpais:id" use="required"/> 
+	</xsd:complexType>
+    
+	<xsd:complexType name="Irasas">
+		<xsd:sequence>
+			<xsd:element name="registracijosId" type="gpais:id"/>
+            <xsd:element name="produktoKodas" type="gpais:produktoKodas"/>
+			<xsd:element name="tiekimoRinkaiData" type="xsd:string"/>
+			
+			<xsd:element name="gavimoBudas" type="kls:CL140"/>
+			<xsd:element name="veiklosBudas" type="kls:CL118"/>
+            <xsd:element name="kiekis" type="gpais:kiekisVienetais">
+            	<xsd:annotation>
+		            <xsd:documentation xml:lang="lt">EEI srauto atveju nurodomas kiekis gali būti trupmeninis. Kitų srautų atveju nurodomas kiekis turi būti sveikas skaičius</xsd:documentation>
+		        </xsd:annotation>
+            </xsd:element>
+			<xsd:element name="dokumentoNr" type="gpais:pavadinimas"  minOccurs="0"/>
+			<xsd:element name="dokumentoData" type="xsd:string"  minOccurs="0" />
+			<xsd:element name="pastaba" type="gpais:komentaras" minOccurs="0" />
+        </xsd:sequence>
+		<xsd:attribute name="id" type="gpais:id" use="required"/> 
+	</xsd:complexType>
+	
+    <xsd:element name="subjektas" type="gpais:Subjektas"/>
+    <xsd:element name="irasuSarasas" type="zrn:IrasuSarasas"/>
+    <xsd:element name="salinamas" type="zrn:SalinamasIrasas"/>
+    <xsd:element name="irasas" type="zrn:Irasas"/>
+    
+</xsd:schema>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_see_api_imported_invoice" model="res.groups">
+            <field name="name">Mato visas sąskaitas, importuotas per API</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomos visos per ROBO API importuotos sąskaitos-faktūros</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_basic.group_robo_manage_all_partners')),
+                          (4, ref('robo_basic.group_robo_see_income'))]"/>
+        </record>
+    </data>
+</odoo>

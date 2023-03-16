@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="braintree_customer_view_form" model="ir.ui.view">
+            <field name="name">braintree.customer.view.form</field>
+            <field name="model">braintree.customer</field>
+            <field name="arch" type="xml">
+                <form string="Braintree customer">
+                    <header>
+                        <button name="button_update_from_braintree"
+                                type="object" class="oe_highlight"
+                                string="Synchronize"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box">
+                            <button name="action_open_transactions" class="oe_stat_button" icon="fa-bars" type="object"
+                                    string="View transactions">
+                            </button>
+                        </div>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="first_name" readonly="True"/>
+                            <field name="last_name" readonly="True"/>
+                        </h1>
+                        <group>
+                            <field name="email"/>
+                            <field name="partner_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="braintree_customer_view_tree" model="ir.ui.view">
+            <field name="name">braintree.customer.view.tree</field>
+            <field name="model">braintree.customer</field>
+            <field name="arch" type="xml">
+                <tree string="Braintree customers">
+                    <field name="first_name"/>
+                    <field name="last_name"/>
+                    <field name="email"/>
+                    <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="braintree_customer_action" model="ir.actions.act_window">
+            <field name="name">Braintree customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">braintree.customer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5,0,0),
+                          (0,0,{'view_mode':'tree', 'view_id': ref('braintree_customer_view_tree')}),
+                          (0,0,{'view_mode':'form', 'view_id': ref('braintree_customer_view_form')})]"/>
+            <field name="target">current</field>
+        </record>
+    </data>
+</odoo>

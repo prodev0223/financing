@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Forms-->
+        <record id="form_mrp_production_copy_wizard" model="ir.ui.view">
+            <field name="name">form.mrp.production.copy.wizard</field>
+            <field name="model">mrp.production.copy.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Gamybų kopijavimo vedlys">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                            Šiame vedlyje galite atlikti masinę gamybų kopiją. Kopijuojant gamybą
+                            galite pasikeisti jos kiekį, datą, žaliavų ir gaminių lokacijas
+                            koreguojant konkrečią eilutę.
+                        </div>
+                        <group string="Gamybų sąrašąs">
+                            <field name="production_line_copy_ids" nolabel="1"
+                                   widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree edit="1" create="0" delete="1" editable="bottom">
+                                    <field name="display_name"/>
+                                    <field name="dst_product_id" required="1"
+                                           domain="[('bom_ids', '!=', False)]"
+                                           options="{'no_open': True, 'no_create': True}"/>
+                                    <field name="dst_bom_id" required="1"
+                                           domain="['&amp;', '|',
+                                                    ('product_id', '=', dst_product_id),
+                                                    '&amp;',
+                                                    ('product_tmpl_id.product_variant_ids', '=', dst_product_id),
+                                                    ('product_id', '=', False),
+                                                    ('type', '=', 'normal')]"
+                                           options="{'no_open': True, 'no_create': True}"/>
+                                    <field name="dst_quantity"/>
+                                    <field name="dst_planned_date" required="1"/>
+                                    <field name="dst_location_src_id" required="1"/>
+                                    <field name="dst_location_dst_id" required="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Kopijuoti" name="copy_productions" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="form_mrp_production_copy_wizard_done" model="ir.ui.view">
+            <field name="name">form.mrp.production.copy.wizard</field>
+            <field name="model">mrp.production.copy.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Gamybų kopijavimo vedlys">
+                    <sheet>
+                        <div class="alert alert-success" role="alert" style="margin-bottom:10px;" colspan="4">
+                            Gamybos nukopijuotos sėkmingai!
+                        </div>
+                        <group string="Gamybų sąrašąs">
+                            <field name="production_line_copy_ids" nolabel="1"
+                                   widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree edit="0" create="0" delete="0" editable="bottom">
+                                    <field name="display_name"/>
+                                    <field name="dst_production_id"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Grįžti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </odoo>
+</data>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="mrp_production_surplus_reserve_form" model="ir.ui.view">
+            <field name="name">mrp.production.surplus.reserve.form</field>
+            <field name="model">mrp.production.surplus.reserve</field>
+            <field name="arch" type="xml">
+                <form string="Rezervuoti atsargas su pertekliumi?">
+                    <group>
+                        <p>
+                            Rezervavimas nepavyko - turima mažiau atsargų nei planuojama sunaudoti.
+                            Galite naudoti perteklinį rezervavimą -
+                            paspaudus mygtuką "Rezervuoti su pertekliumi" bus sukurti reikalingi atsargų judėjimai
+                            ir atsargos bus užrezervuotos su pertekliumi.
+                        </p>
+                    </group>
+                    <footer>
+                        <button name="process" string="Rezervuoti su pertekliumi" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

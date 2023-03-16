@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <template id="report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//div[@class='robo_company_logo']" position="replace">
+                <div class="robo_company_logo" style="position: absolute; top: 40px; left: 15px;">
+                    <t t-if="o.journal_id.logo_web">
+                        <img class="main_logo_header" t-att-src="'data:image/png;base64,%s' % o.journal_id.logo_web"/>
+                    </t>
+                    <t t-else="">
+                        <img class="main_logo_header" t-if="o.company_id.logo_web" t-att-src="'data:image/png;base64,%s' % o.company_id.logo_web"/>
+                    </t>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

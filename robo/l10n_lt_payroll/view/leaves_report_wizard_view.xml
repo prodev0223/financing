@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_leaves_report_simplified_wizard_form" model="ir.ui.view">
+            <field name="name">hr.leaves.report.wizard.employee.form</field>
+            <field name="model">hr.leaves.report.wizard.employee</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="employee_id" invisible="1"/>
+                        <field name="type"/>
+                        <field name="all_employees" groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"/>
+                        <field name="only_active_employees" groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                               attrs="{'invisible': [('all_employees','=', False)]}"/>
+                    </group>
+                    <footer>
+                        <button name="export" string="Eksportuoti" type="object" class="oe_highlight" context="{'xls_report': True}"/>
+                        <button name="export" string="Spausdinti" type="object" class="oe_highlight"/>
+                        <button name="cancel" string="Atšaukti" special="cancel" class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_leaves_report_simplified_wizard" model="ir.actions.act_window">
+            <field name="name">Atostogų suvestinė</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.leaves.report.wizard.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+
+        <record id="hr_leaves_report_wizard_form" model="ir.ui.view">
+            <field name="name">hr.leaves.report.wizard.form</field>
+            <field name="model">hr.leaves.report.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="employee_ids"/>
+                        <field name="holiday_status_ids"/>
+                    </group>
+                    <footer>
+                        <button name="export" string="Eksportuoti" type="object" class="oe_highlight" context="{'xls_report': True}"/>
+                        <button name="export" string="Spausdinti" type="object" class="oe_highlight"/>
+                        <button name="cancel" string="Atšaukti" special="cancel" class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_leaves_report_wizard" model="ir.actions.act_window">
+            <field name="name">Atostogų suvestinė</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.leaves.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem
+            name="Atostogų suvestinė"
+            parent="meniu_payrol_reports"
+            action="action_leaves_report_wizard"
+            id="menu_leaves_report_wizard"/>
+    </data>
+</odoo>

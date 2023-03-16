@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_nurasymo_aktas_templ_trans" inherit_id="nurasymo_aktas.report_nurasymo_aktas_templ_trans">
+            <xpath expr="//div[@id='report_name']" position="replace">
+                <div id="report_name">
+                    <t t-if="o.surplus">
+                        <strong><t t-if="o.state != 'done'">PRELIMINARUS </t>
+                            RASTŲ ATSARGŲ PERTEKLIAUS PAJAMAVIMO AKTAS NR.
+                            <span t-field="o.number"/>
+                        </strong>
+                    </t>
+                    <t t-else="">
+                        <strong><t t-if="o.state != 'done'">PRELIMINARUS </t>
+                            SUNAUDOTŲ MEDŽIAGŲ NURAŠYMO AKTAS NR.
+                            <span t-field="o.number"/>
+                        </strong>
+                    </t>
+                </div>
+            </xpath>
+            <xpath expr="//div[@id='total']" position="replace">
+                <t t-if="o.surplus">
+                    <div id="total">Iš viso pagal šį aktą rasta atsargų už:</div>
+                </t>
+                <t t-else="">
+                    <div id="total">Iš viso pagal šį aktą nurašoma už:</div>
+                </t>
+            </xpath>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="wizard_change_line_vals_form" model="ir.ui.view">
+            <field name="name">invoice.change.line.wizard.form</field>
+            <field name="model">invoice.change.line.wizard</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Keisti sąskaitos eilutės analitiką">
+                    <group string="Eilutės informacija">
+                        <field name="product_id" string="Paslauga"
+                           context="{'form_view_ref': 'robo.new_product_form'}"
+                           options="{'no_create': True, 'no_open': True}"/>
+                        <field name="name" required="True"/>
+                        <field name="account_id" required="True"/>
+                        <field name="quantity" required="True"/>
+                        <field name="parent_force_taxes" invisible="1"/>
+                        <field name="price_include" invisible="1"/>
+                        <field name="type_tax_use" invisible="1"/>
+                        <field name="invoice_line_tax_ids" string="PVM" widget="many2many_tags"
+                               domain="[('price_include', '=', price_include), ('type_tax_use', '=', type_tax_use)]"
+                               groups="robo_basic.group_robo_vat"
+                               options="{'no_create': True}" attrs="{'required': 0, 'invisible': [('parent_force_taxes', '=', True)]}"/>
+                        <field name="price_unit" required="True"/>
+                        <field name="deferred"/>
+                        <field name="amount_depends" context="{'direct_trigger_amount_depends': True}"/>
+                        <field name="has_picking" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button name="change_vals" type="object" string="Keisti" class="oe_highlight"/>
+                        <button name="change_vals" type="object"
+                                string="Keisti (priverstinai)"
+                                context="{'skip_stock': True}"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('has_picking', '=', False)]}"
+                                confirm="Šis veiksmas nemodifikuos susijusio važtaraščio, ar tikrai norite tęsti?"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

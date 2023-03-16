@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <menuitem id="integration_main_menu"
+                  name="Integracijos (API)"
+                  parent="account.menu_finance"
+                  sequence="20"
+        />
+
+        <!--REVOLUT Menus-->
+        <menuitem id="revolut_api_main_menu"
+                  name="Revolut"
+                  parent="integration_main_menu"
+                  sequence="20"
+        />
+        <menuitem id="revolut_api_transaction_menu"
+                  name="Transakcijos"
+                  parent="revolut_api_main_menu"
+                  action="sepa.revolut_api_transaction_action"
+                  sequence="10"
+        />
+        <menuitem id="revolut_api_transaction_leg_menu"
+                  name="Transaction legs"
+                  parent="revolut_api_main_menu"
+                  action="sepa.revolut_api_transaction_leg_action"
+                  sequence="12"
+        />
+        <menuitem id="revolut_account_menu"
+                  name="Sąskaitos"
+                  parent="revolut_api_main_menu"
+                  action="revolut_account_action"
+                  sequence="20"
+        />
+        <menuitem id="revolut_api_menu"
+                  name="Nustatymai"
+                  parent="revolut_api_main_menu"
+                  action="revolut_api_action"
+                  sequence="50"
+        />
+
+        <!--PAYPAL Menus-->
+        <menuitem id="paypal_api_main_menu"
+                  name="Paypal"
+                  parent="integration_main_menu"
+                  sequence="10"
+        />
+        <menuitem id="paypal_api_menu"
+                  name="Nustatymai"
+                  parent="paypal_api_main_menu"
+                  sequence="10"
+                  action="paypal_api_action"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <report
+                id="account_invoices_sl"
+                model="account.invoice"
+                string="Invoices"
+                report_type="qweb-pdf"
+                name="saskaitos.report_invoice"
+                file="saskaitos.report_invoice"
+                attachment_use="False"
+                attachment=""
+        />
+        <!--attachment="(object.state in ('open','paid')) and ((object.number or '').replace('/','')+'.pdf')"-->
+        <record id="paperformat_a4_narrow_invoice" model="report.paperformat">
+            <field name="name">European A4 narrow (invoice)</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top" eval="5"/>
+            <field name="header_spacing" eval="5"/>
+            <field name="margin_left" eval="7"/>
+            <field name="margin_right" eval="7"/>
+            <field name="margin_bottom" eval="20"/>
+            <field name="dpi" eval="96"/>
+        </record>
+        <!--DO NOT UPDATE ON EVERY REINSTALL-->
+        <record id="saskaitos.account_invoices_sl" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="paperformat_a4_narrow_invoice"/>
+            <!--<field name="print_report_name">(object.number or 'išankstinė-' + str(object.id)) + '.pdf'</field>-->
+            <field name="attachment_use" eval="False"/>
+        </record>
+        <!---->
+        <!--<record id="report.paperformat_euro" model="report.paperformat">-->
+            <!--<field name="margin_top" eval="55.0"/>-->
+            <!--<field name="header_spacing" eval="50.0"/>-->
+        <!--</record>-->
+        <!--<record id="report_acc_invoice" model="ir.actions.report.xml">-->
+        <!--<field name="model">account.invoice</field>-->
+        <!--<field name="name">Invoice</field>-->
+        <!--<field name="report_type">qweb-pdf</field>-->
+        <!--<field name="type">ir.actions.report.xml</field>-->
+        <!--<field name="report_name">saskaitos.report_invoice</field>-->
+        <!--</record>-->
+
+        <!--Can be noupdate in certain databases!-->
+        <record id="account.email_template_edi_invoice" model="mail.template">
+            <field name="name">Sąskaita faktūra</field>
+            <field name="email_from">${('noreply@robolabs.lt')|safe}</field>
+            <field name="subject">${object.company_id.name|safe} ${'invoice' if object.partner_lang in ['en_US'] else 'sąskaita'|safe} ${object.number or ''|safe}</field>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="email_cc"></field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="reply_to">${user.email}</field>
+            <field name="report_template" ref="saskaitos.account_invoices_sl"/>
+            <field name="report_name">${(object.number or object.proforma_number or 'isankstine').replace('/','_')}</field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="robo_company_template_wrap" eval="True"/>
+            <field name="body_html"><![CDATA[
+% if object.partner_lang in ['en_US']:
+    <p>Greetings,</p>
+    %if object.state in ['proforma','proforma2']:
+        <p>
+        You will find the attached invoice<b>${' ' + object.proforma_number if object.proforma_number else ''|safe}</b>
+        in the email, totaling <b>${'{0:.2f}'.format(object.amount_total)|safe}${object.currency_id.name|safe}</b>.
+        </p>
+    %else:
+        <p>
+        You will find the attached invoice <b>${object.number or ''|safe}</b> in the email, totaling <b>
+        ${'{0:.2f}'.format(object.amount_total)|safe}${object.currency_id.name|safe}</b>.
+        </p>
+    %endif
+    %if object.state=='paid':
+        <p><span>Please note, that this invoice has already been paid.</span></p>
+    %elif object.date_due:
+        <p><span>Please pay the invoice by ${object.date_due|safe}.</span></p>
+    %endif
+    <p>Thank you,</p>
+% else:
+    <p>Sveiki,</p>
+    %if object.state in ['proforma','proforma2']:
+        <p>laiške rasite pridėtą išankstinę sąskaitą faktūrą<b>
+        ${' ' + object.proforma_number if object.proforma_number else ''|safe}</b>, kurios bendra suma <b>
+        ${object.amount_total|safe}${object.currency_id.name|safe}</b>.
+        </p>
+    %else:
+        <p>laiške rasite pridėtą sąskaitą faktūrą <b>${object.number or ''|safe}</b>, kurios bendra suma <b>
+        ${'{0:.2f}'.format(object.amount_total)|safe}${object.currency_id.name|safe}</b>.
+        </p>
+    %endif
+    %if object.state=='paid':
+        <p><span>Informuojame, kad ši sąskaita jau apmokėta.</span></p>
+    %elif object.date_due:
+        <p><span>Prašome sąskaitą apmokėti iki ${object.date_due|safe}.</span></p>
+    %endif
+    <p>Dėkui,</p>
+%endif
+<p>
+    %if user.name:
+        <span>${user.name}</span>
+    %endif
+    %if user.email:
+        <br/>
+        <span>${user.email}</span>
+    %endif
+    %if user.employee_ids[0]:
+        %if user.employee_ids[0].mobile_phone:
+            <br/>
+            <span>${user.employee_ids[0].mobile_phone}</span>
+        %endif
+        %if user.employee_ids[0].work_phone:
+        <br/>
+            <span>${user.employee_ids[0].work_phone}</span>
+        %endif
+    %elif user.phone:
+        <br/>
+        <span>${user.phone}</span>
+    %endif
+</p>
+]]></field>
+        </record>
+        <!--ROBO: DO not remove classes-->
+        <template id="report_invoice_document">
+
+            <t t-call="saskaitos.external_invoice_layout">
+
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_lang})"/>
+                <t t-set="invoice-color" t-value="o.state"/>
+                <t t-set="vat_payer" t-value="o.company_id.with_context(date=o.date_invoice).vat_payer"/>
+                <t t-set="vat_payer_code" t-value="o.company_id.with_context(date=o.date_invoice).vat"/>
+                <t t-set="print_only_foreign_currency" t-value="o.company_id.invoice_print_only_foreign_currency"/>
+                <t t-set="invoice_decimal_precision" t-value="o.company_id.invoice_decimal_precision"/>
+                <t t-set="custom_invoice_color_details" t-value="o.company_id.custom_invoice_color_details"/>
+                <t t-set="custom_invoice_color_text" t-value="o.company_id.custom_invoice_color_text"/>
+
+                <div class="page report_invoice_page">
+                    <style type="text/css">
+                        .robo-custom-border{
+                            border-top: 2px solid <t t-esc="custom_invoice_color_details"/>!important;
+                        }
+                        .robo-custom-text{
+                            color: <t t-esc="custom_invoice_color_text"/>!important;
+                            font-size: 18px;
+                        }
+                    </style>
+                    <div class="row" style="min-height: 40px;">
+                        <div class="robo_company_logo" style="position: absolute; top: 40px; left: 15px;">
+                            <t t-if="o.company_id.partner_id.image_preserved">
+                                <img class="main_logo_header"
+                                     t-att-src="'data:image/png;base64,%s' % o.company_id.partner_id.image_preserved"/>
+                            </t>
+                            <t t-elif="o.company_id.logo_web">
+                                <img class="main_logo_header"
+                                     t-att-src="'data:image/png;base64,%s' % o.company_id.logo_web"/>
+                            </t>
+                        </div>
+                        <div style="position: absolute;
+                                    right: 15px;
+                                    top: 40px;
+                                    height:40px;
+                                    width: fit-content;
+                                    line-height: 40px;
+                                    text-align: right;"
+                                    t-if="o.state == 'paid' and o.company_id.show_paid_invoice_state_on_printing">
+                            <span style="font-weight: bold;
+                                         font-size: 22px;
+                                         border: 2px solid green;
+                                         text-transform: uppercase;
+                                         color: green !important;
+                                         float: right;
+                                         padding: 2px 8px;">
+                                Paid</span>
+                        </div>
+                    </div>
+                    <h2>
+                        <t t-if="not o.invoice_header">
+                            <span name="invoice_header" t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid') and not vat_payer">
+                                Invoice
+                            </span>
+                            <span name="vat_invoice_header" t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid') and vat_payer">
+                                VAT Invoice
+                            </span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'proforma2' and not o.proforma_print_commercial_offer">PRO-FORMA</span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'proforma2' and o.proforma_print_commercial_offer">COMMERCIAL OFFER</span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                            <span t-if="o.type == 'out_refund' and not vat_payer">Refund</span>
+                            <span t-if="o.type == 'out_refund' and vat_payer">VAT Refund</span>
+                            <span t-if="o.type == 'in_refund'">Supplier Refund</span>
+                            <span t-if="o.type == 'in_invoice'">Supplier Invoice</span>
+                        </t>
+                        <t t-else="">
+                            <span t-field="o.invoice_header"/>
+                        </t>
+                    </h2>
+
+                    <div class="report_invoice_reference">
+                        <h3>
+                            <t t-if="o.number">
+                                <p>Nr.
+                                    <span t-field="o.number"/>
+                                </p>
+                            </t>
+                            <t t-elif="o.move_name">
+                                <p>Nr.
+                                    <span t-field="o.move_name"/>
+                                </p>
+                            </t>
+                            <t t-if="o.type == 'out_invoice' and o.state == 'proforma2'">
+                                <p>Nr.
+                                    <span t-esc="o.proforma_number"/>
+                                </p>
+                            </t>
+                        </h3>
+                    </div>
+                    <div class="invoice_dates row mt32">
+                        <div class="col-xs-offset-8 col-xs-4 text-left">
+                            <p t-if="o.date_invoice">
+                                Data:
+                                <t t-if="o.partner_lang == 'lt_LT'">
+                                    <span t-field="o.date_invoice"/>
+                                </t>
+                                <t t-else="">
+                                    <!--Force European date format-->
+                                    <span t-esc="datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d').strftime('%Y-%m-%d')"/>
+                                </t>
+                            </p>
+                            <p t-if="o.date_invoice and datetime.datetime.strptime(o.operacijos_data, '%Y-%m-%d') &lt; datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d') and o.type in ['in_refund', 'in_invoice']">
+                                Išrašymo data:
+                                <t t-if="o.partner_lang == 'lt_LT'">
+                                    <span t-field="o.operacijos_data"/>
+                                </t>
+                                <t t-else="">
+                                    <!--Force European date format-->
+                                    <span t-esc="datetime.datetime.strptime(o.operacijos_data, '%Y-%m-%d').strftime('%Y-%m-%d')"/>
+                                </t>
+                            </p>
+                            <p t-if="o.date_due and o.type == 'out_invoice'">
+                                Apmokėti iki:
+                                <t t-if="o.partner_lang == 'lt_LT'">
+                                    <span t-field="o.date_due"/>
+                                </t>
+                                <t t-else="">
+                                    <!--Force European date format-->
+                                    <span t-esc="datetime.datetime.strptime(o.date_due, '%Y-%m-%d').strftime('%Y-%m-%d')"/>
+                                </t>
+                            </p>
+                        </div>
+                    </div>
+                    <t t-if="o.type in ['out_invoice', 'out_refund']">
+                    <div class="companies">
+                        <div class="left">
+                            <h3 class="company_type">Pardavėjas</h3>
+                            <p>
+                                <strong>
+                                    <span t-field="o.company_id.name"/>
+                                </strong>
+                            </p>
+                            <p t-if="o.company_id.name">
+                                <span t-esc="o.company_id.partner_id"
+                                      t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                            </p>
+                            <p t-if="o.company_id.company_registry">
+                                <span class="comp_code">Įmonės kodas:</span>
+                                <span t-field="o.company_id.company_registry"/>
+                            </p>
+                            <p t-if="vat_payer and vat_payer_code">
+                                <span class="comp_pvm">PVM mokėtojo kodas:</span>
+                                <span t-field="o.company_id.vat"/>
+                            </p>
+                            <p>
+                                <t t-foreach="o.company_id.sudo().bank_journal_ids" t-as="bankas">
+                                    <t t-if="bankas.display_on_footer and bankas.bank_acc_number">
+                                        <p t-if="bankas.bank_id.name">
+                                            <span class="comp_bank">Bankas:</span>
+                                            <span t-field="bankas.bank_id.name"/>
+                                        </p>
+                                        <p t-if="bankas.bank_id.bic">
+                                            <span class="comp_bic">BIC:</span>
+                                            <span t-field="bankas.bank_id.bic"/>
+                                        </p>
+                                        <p t-if="bankas.bank_acc_number">
+                                            <span class="account_nr">A/s. Nr.</span>
+                                            <span t-field="bankas.bank_acc_number"/>
+                                        </p>
+                                    </t>
+                                </t>
+                            </p>
+                        </div>
+                        <div class="right">
+                            <h3 class="company_type">Pirkėjas</h3>
+                            <p>
+                                <strong>
+                                    <span t-field="o.partner_id.name"/>
+                                </strong>
+                            </p>
+                            <p t-if="o.partner_id.name">
+                                <span t-esc="o.partner_id"
+                                      t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                            </p>
+                            <p t-if="o.partner_id.kodas">
+<!--                                <span t-if="o.partner_company_type=='person'" class="comp_code">Asmens kodas:</span>-->
+<!--                                <span t-if="o.partner_company_type=='company'" class="comp_code">Įmonės kodas:</span>-->
+                                <span class="comp_code">Įmonės / Asmens kodas:</span>
+                                <span t-field="o.partner_id.kodas"/>
+                            </p>
+                            <p t-if="o.partner_id.vat">
+                                <span class="comp_code">PVM mokėtojo kodas:</span>
+                                <span t-field="o.partner_id.vat"/>
+                            </p>
+
+                        </div>
+                    </div>
+                    </t>
+                    <t t-else="">
+                        <div class="companies">
+                        <div class="left">
+                            <h3 class="company_type">Pardavėjas</h3>
+                            <p>
+                                <strong>
+                                    <span t-field="o.partner_id.name"/>
+                                </strong>
+                            </p>
+                            <p t-if="o.partner_id.name">
+                                <span t-esc="o.partner_id"
+                                      t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                            </p>
+                            <p t-if="o.partner_id.kodas">
+                                <span class="comp_code">Įmonės kodas:</span>
+                                <span t-field="o.partner_id.kodas"/>
+                            </p>
+                            <p t-if="o.partner_id.vat">
+                                <span class="comp_code">PVM mokėtojo kodas:</span>
+                                <span t-field="o.partner_id.vat"/>
+                            </p>
+
+                        </div>
+                        <div class="right">
+                            <h3 class="company_type">Pirkėjas</h3>
+                            <p>
+                                <strong>
+                                    <span t-field="o.company_id.name"/>
+                                </strong>
+                            </p>
+                            <p t-if="o.company_id.name">
+                                <span t-esc="o.company_id.partner_id"
+                                      t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                            </p>
+                            <p t-if="o.company_id.company_registry">
+                                <span class="comp_code">Įmonės kodas:</span>
+                                <span t-field="o.company_id.company_registry"/>
+                            </p>
+                            <p t-if="vat_payer and vat_payer_code">
+                                <span class="comp_pvm">PVM mokėtojo kodas:</span>
+                                <span t-field="o.company_id.vat"/>
+                            </p>
+                            <p>
+                                <t t-foreach="o.company_id.sudo().bank_journal_ids" t-as="bankas">
+                                    <t t-if="bankas.display_on_footer and bankas.bank_acc_number">
+                                        <p t-if="bankas.bank_id.name">
+                                            <span class="comp_bank">Bankas:</span>
+                                            <span t-field="bankas.bank_id.name"/>
+                                        </p>
+                                        <p t-if="bankas.bank_id.bic">
+                                            <span class="comp_bic">BIC:</span>
+                                            <span t-field="bankas.bank_id.bic"/>
+                                        </p>
+                                        <p t-if="bankas.bank_acc_number">
+                                            <span class="account_nr">A/s. Nr.</span>
+                                            <span t-field="bankas.bank_acc_number"/>
+                                        </p>
+                                    </t>
+                                </t>
+                            </p>
+                        </div>
+                    </div>
+                    </t>
+                    <!-- Is there a discount on at least one line? -->
+                    <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
+
+                    <div class="mt32" t-if="o.invoice_type != 'internal'">
+                        <t t-if="o.show_payment_url">
+                            <a target="_blank" t-att-href="o.invoice_payment_url" style="
+                                    background-color: #c1ecff;
+                                    border: 2px solid #337ab7;
+                                    color: #3498dc;
+                                    padding: 6px 12px;
+                                    border-radius: 2px;
+                                    font-size: 16px;
+                                    float: right;
+                                    margin-bottom: 5px;">
+                                <div style="font-weight: bold; display: inline-block">
+                                    Apmokėti dabar
+                                </div>
+                            </a>
+                        </t>
+                        <table class="table table-condensed invoice_lines">
+                            <t t-if="o.state in ['proforma', 'proforma2']">
+                                <t t-if="o.company_id.proforma_show_price_vat_incl">
+                                    <t t-set="incl_vat" t-value="True"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="incl_vat" t-value="False"/>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <t t-if="o.price_include_selection=='inc' and o.company_id.invoice_vat_printing_method=='B2C'">
+                                    <t t-set="incl_vat" t-value="True"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="incl_vat" t-value="False"/>
+                                </t>
+                            </t>
+                            <thead t-attf-class="robo-custom-text invoice_{{o.state}}">
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-right">Kiekis</th>
+                                    <t t-if="o.proforma_vat_visibility == 'show_without' and not o.margin_scheme_used">
+                                        <th class="text-right">Vnt. kaina (be PVM)</th>
+                                    </t>
+                                    <t t-elif="o.proforma_vat_visibility == 'show_with'">
+                                        <th class="text-right">Vnt. kaina (su PVM)</th>
+                                    </t>
+                                    <t t-elif="o.proforma_vat_visibility == 'dont_show' or not vat_payer">
+                                        <th class="text-right">Vnt. kaina</th>
+                                    </t>
+                                    <t t-else="">
+                                        <th t-if="not incl_vat and not o.margin_scheme_used" class="text-right">Vnt. kaina (be PVM)</th>
+                                        <th t-if="incl_vat" class="text-right">Vnt. kaina (su PVM)</th>
+                                    </t>
+
+                                    <th class="text-right" t-if="display_discount">
+                                        <t t-if="discount_type == 'perc'">
+                                            Nuol.(%)
+                                        </t>
+                                        <t t-if="discount_type == 'currency'">
+                                            Nuol.
+                                        </t>
+                                    </th>
+                                    <th t-if="detect_tax_lines(o) and o.invoice_type == 'invoice' and o.state not in ['proforma', 'proforma2'] and not o.margin_scheme_used"
+                                        class="text-right">
+                                        Mokesčiai
+                                    </th>
+
+                                    <t t-if="o.proforma_vat_visibility == 'show_without' and not o.margin_scheme_used">
+                                        <th class="text-right">Suma be PVM</th>
+                                    </t>
+                                    <t t-elif="o.proforma_vat_visibility == 'show_with'">
+                                        <th class="text-right">Suma su PVM</th>
+                                    </t>
+                                    <t t-elif="o.proforma_vat_visibility == 'dont_show' or not vat_payer">
+                                        <th class="text-right">Suma</th>
+                                    </t>
+                                    <t t-else="">
+                                        <th t-if="not incl_vat and not o.margin_scheme_used" class="text-right">Suma be PVM</th>
+                                        <th t-if="incl_vat" class="text-right">Suma su PVM</th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody class="invoice_tbody robo-custom-border">
+                                <tr t-foreach="o.invoice_line_ids" t-as="l">
+                                    <td>
+                                        <span t-field="l.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="l.print_qty"/>
+                                        <span t-if="o.invoice_type == 'invoice'" t-field="l.uom_id"
+                                              groups="product.group_uom"/>
+                                    </td>
+
+
+                                    <td class="text-right invoice_line_price_unit">
+                                        <t t-if="o.proforma_vat_visibility == 'show_with' or o.proforma_vat_visibility == 'dont_show'">
+                                            <t t-if="print_only_foreign_currency">
+                                                <span t-field="l.price_unit_tax_included_discount"
+                                                      t-options='{"widget": "float", "precision": invoice_decimal_precision}'/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-field="l.price_unit_tax_included_discount_company"
+                                                      t-options='{"widget": "float", "precision": invoice_decimal_precision}'/>
+                                            </t>
+                                        </t>
+                                        <t t-elif="o.proforma_vat_visibility == 'show_without' and not o.margin_scheme_used">
+                                            <t t-if="print_only_foreign_currency">
+                                                <span t-field="l.price_unit_tax_excluded"
+                                                      t-options='{"widget": "float", "precision": invoice_decimal_precision}'/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-field="l.price_unit_tax_excluded_company"
+                                                      t-options='{"widget": "float", "precision": invoice_decimal_precision}'/>
+                                            </t>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-if="(not incl_vat or display_discount and discount_type == 'currency') and not o.margin_scheme_used">
+                                                <t t-if="print_only_foreign_currency">
+                                                    <span t-field="l.price_unit_tax_excluded"
+                                                          t-options='{"widget": "float", "precision": invoice_decimal_precision}'/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="l.price_unit_tax_excluded_company"
+                                                        t-options='{"widget": "float", "precision": invoice_decimal_precision}'/>
+                                                </t>
+                                            </t>
+                                            <t t-if="incl_vat">
+                                                <t t-if="print_only_foreign_currency">
+                                                    <span t-field="l.price_unit_tax_included_discount"
+                                                          t-options='{"widget": "float", "precision": invoice_decimal_precision}'/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="l.price_unit_tax_included_discount_company"
+                                                          t-options='{"widget": "float", "precision": invoice_decimal_precision}'/>
+                                                </t>
+                                            </t>
+                                        </t>
+                                    </td>
+
+                                    <t t-if="display_discount">
+                                        <td t-if="discount_type=='perc'" class="text-right">
+                                            <span t-field="l.discount"/>
+                                        </td>
+                                        <td t-if="discount_type=='currency'" class="text-right">
+                                            <t t-if="print_only_foreign_currency">
+                                                <span t-esc="formatLang(l.print_discount_currency, 2, o.partner_lang)"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="formatLang(l.print_discount_company_currency, 2, o.partner_lang)"/>
+                                            </t>
+                                        </td>
+                                    </t>
+                                    <td t-if="detect_tax_lines(o) and o.invoice_type == 'invoice' and o.state not in ['proforma', 'proforma2'] and not o.margin_scheme_used"
+                                        class="text-right">
+                                        <t t-if="is_vat_object(l) == True">
+                                            PVM
+                                        </t>
+                                        <span t-esc="tax_names(l)"/>
+                                    </td>
+
+                                    <td class="text-right">
+                                        <t t-if="o.proforma_vat_visibility == 'show_with' or o.proforma_vat_visibility == 'dont_show'">
+                                            <t t-if="print_only_foreign_currency">
+                                                <span t-field="l.print_total_with_tax_amount"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-field="l.print_total_with_tax_amount_company"/>
+                                            </t>
+                                        </t>
+                                        <t t-elif="o.proforma_vat_visibility == 'show_without' or not vat_payer">
+                                            <t t-if="print_only_foreign_currency">
+                                                <span t-field="l.print_price_subtotal"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-field="l.print_price_subtotal_company"/>
+                                            </t>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-if="not incl_vat and not o.margin_scheme_used">
+                                                <t t-if="print_only_foreign_currency">
+                                                    <span t-field="l.print_price_subtotal"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="l.print_price_subtotal_company"/>
+                                                </t>
+                                            </t>
+                                            <t t-if="incl_vat">
+                                                <t t-if="print_only_foreign_currency">
+                                                    <span t-field="l.print_total_with_tax_amount"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="l.print_total_with_tax_amount_company"/>
+                                                </t>
+                                            </t>
+                                        </t>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row invoice_additional">
+                            <t t-if="(o.state not in ['proforma', 'proforma2'] or not o.company_id.proforma_show_price_vat_incl or display_discount and discount_type == 'currency') and vat_payer">
+                                <t t-if="o.invoice_type == 'imt'">
+                                    <div class="col-xs-6 pull-right invoice_imt">
+                                        <table class="table table-condensed"
+                                               style="margin-top:15px; white-space: nowrap;page-break-inside: avoid">
+                                            <tr class="border-robo-invoice robo-custom-border">
+                                                <td>
+                                                    <strong>Apmokestinamoji vertė:</strong>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="o.amount_untaxed"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="white-space: normal">
+                                                    <span>PVM tarifas</span>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="o.imt_tax_rate"/>
+                                                    %
+                                                </td>
+                                            </tr>
+                                            <tr class="border-robo-invoice robo-custom-border">
+                                                <td>
+                                                    <strong>PVM:</strong>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="o.imt_tax_amount"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </t>
+                                <t t-if="o.invoice_type == 'invoice'">
+                                    <div class="col-xs-6 pull-left" style="max-width:50%">
+                                        <p class="invoice_comment" t-if="o.comment">
+                                            <span>
+                                                <strong>PASTABA:</strong>
+                                            </span>
+                                            <span t-field="o.comment"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-xs-6 pull-right invoice_pvm">
+                                        <table class="table table-condensed mt16"
+                                               style="white-space: nowrap;page-break-inside: avoid">
+                                            <t t-if="o.proforma_vat_visibility != 'dont_show'">
+                                            <tr class="border-robo-invoice robo-custom-border" t-if="(o.state not in ['proforma', 'proforma2'] or not o.company_id.proforma_show_price_vat_incl) and not o.margin_scheme_used">
+                                                <td>
+                                                    <span t-attf-class="invoice_{{o.state}}">Suma be PVM:</span>
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-if="print_only_foreign_currency">
+                                                        <span t-field="o.print_amount_untaxed"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-field="o.print_amount_untaxed_company"/>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                            <t t-if="o.tax_line_ids and not o.margin_scheme_used">
+                                                <tr>
+                                                    <td style="white-space: normal" t-if="len(o.tax_line_ids) == 1">
+                                                        PVM
+                                                        <span t-esc="', '.join([ lt.tax_id.description if lt.tax_id and lt.tax_id.description else lt.name or '' for lt in o.tax_line_ids ])"/>
+                                                    </td>
+                                                    <td style="white-space: normal" t-if="len(o.tax_line_ids) &gt; 1">
+                                                        PVM
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <t t-if="print_only_foreign_currency">
+                                                            <span t-field="o.print_amount_tax"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-field="o.print_amount_tax_company"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="not o.tax_line_ids and not o.margin_scheme_used">
+                                                <tr>
+                                                    <td>
+                                                        <span>PVM 0%:</span>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <t t-if="print_only_foreign_currency">
+                                                            <span t-field="o.print_amount_tax"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-field="o.print_amount_tax_company"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <tr class="border-robo-invoice robo-custom-border">
+                                                <td>
+                                                    <span t-attf-class="invoice_{{o.state}}">Suma su PVM:</span>
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-if="print_only_foreign_currency">
+                                                        <span t-field="o.print_amount_total"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-field="o.print_amount_total_company"/>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-robo-invoice robo-custom-border">
+                                                <td>
+                                                    <span t-attf-class="invoice_{{o.state}}">Viso mokėti:</span>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="o.print_amount_total_signed"/>
+                                                </td>
+                                            </tr>
+                                            </t>
+                                            <t t-else="">
+                                                <tr class="border-robo-invoice robo-custom-border">
+                                                <td>
+                                                    <span t-attf-class="invoice_{{o.state}}">Viso mokėti:</span>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="o.print_amount_total_signed"/>
+                                                </td>
+                                            </tr>
+                                            </t>
+                                        </table>
+                                    </div>
+                                </t>
+                                <t t-if="o.print_detailed_taxes and not o.margin_scheme_used">
+                                    <div class="col-xs-6 invoice_detail_taxes">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tax</th>
+                                                    <th class="text-right">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr t-foreach="o.tax_line_ids" t-as="t">
+                                                    <td>
+                                                        <span t-field="t.name"/>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <span t-field="t.amount"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </t>
+                            </t>
+                            <t t-if="o.state in ['proforma', 'proforma2'] and o.company_id.proforma_show_price_vat_incl or not vat_payer">
+                                <div class="col-xs-6 pull-left" style="max-width:50%">
+                                    <p class="invoice_comment" t-if="o.comment">
+                                        <span>
+                                            <strong>PASTABA:</strong>
+                                        </span>
+                                        <span t-field="o.comment"/>
+                                    </p>
+                                </div>
+                                <div class="col-xs-6 pull-right invoice_proforma_total">
+                                    <table class="table table-condensed">
+                                        <tr class="border-black">
+                                            <td>
+                                                <strong>Suma:</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="o.print_amount_total_signed"/>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-black">
+                                            <td>
+                                                <strong>Viso mokėti:</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="o.print_amount_total_signed"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                    <!--Add internal invoice view-->
+                    <!--<div class="row" t-if="i.invoice_type == 'internal'">-->
+                    <!---->
+                    <!--</div>-->
+                    <p class="invoice_fiscal_position_note pull-left" t-if="o.fiscal_position_id"
+                       style="max-width:50%">
+                        <span t-field="o.fiscal_position_id.note"/>
+                    </p>
+                    <table t-if="o.invoice_type == 'invoice'" class="table table-condensed invoice_amount_words">
+                        <tr class="border-black">
+                            <td>
+                                <div class="amount_words">
+                                    <strong>Suma žodžiais:</strong>
+                                    <span t-esc="suma(o.amount_total, o.partner_lang, o.currency_id.name)"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <t t-if="float_compare_custom(partner_balance)">
+                        <div class="col-xs-offset-6">
+                            <table class="table table-condensed mt8">
+                                <thead t-attf-class="robo-custom-text invoice_{{o.state}}">
+                                    <tr>
+                                        <t t-if="float_compare_custom(partner_balance) > 0">
+                                            <th>Likusi mokėtina suma</th>
+                                        </t>
+                                        <t t-else="">
+                                            <th>Likusi permoka</th>
+                                        </t>
+                                        <th class="text-right"><span t-esc="abs(partner_balance)"/> <span t-esc="company_currency_symbol()"/></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="invoice_tbody robo-custom-border"><tr/></tbody>
+                            </table>
+                        </div>
+                    </t>
+                    <!--check if we have any descriptions for printing-->
+                    <t t-set="show_description" t-value="0"/>
+                    <t t-foreach="tax_descriptions(o)" t-as="t">
+                        <t t-if="t.show_description and o.state not in ['proforma','proforma2'] and t.long_description">
+                            <t t-set="show_description" t-value="1"/>
+                        </t>
+                    </t>
+                    <t t-if="show_description == 1">
+                        <div class="mt64" style="clear:both">
+                            <p t-foreach="tax_descriptions(o)" t-as="t" style="page-break-inside: avoid">
+                                <t t-if="t.show_description and o.state not in ['proforma','proforma2']">
+                                    <span t-field="t.long_description" style="clear:both"/>
+                                </t>
+                            </p>
+                        </div>
+                    </t>
+                    <t t-if="o.company_id.print_invoice_presenter">
+                    <div style="width:100%" class="mt32">
+                    <table width="100%">
+                        <tr style="border-style:none;page-break-inside: avoid">
+                            <td style="text-align:left; border-style:none;">
+                                <span style="text-align:left;">Sąskaitą išrašė:</span>
+                                <t t-if="o.user_id.employee_ids">
+                                    <span t-field="o.user_id.employee_ids[0].job_id"/>
+                                </t>
+                                <span t-field="o.user_id"/>
+                            </td>
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align:center">
+                            </td>
+                        </tr>
+                        <tr style="border-style:none;page-break-inside: avoid">
+                            <td style="border-style:none; border-top-style:none; border-top-width:none"/>
+                            <td style="border-style:none; border-top-style:solid; border-top-width:thin; text-align:center" align="center">
+                                <span>(Išrašiusio asmens parašas)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                </t>
+                    <t t-if="(o.state not in ['proforma','proforma2'] and o.company_id.company_invoice_text) or (o.company_id.company_invoice_proforma_text and o.state in ['proforma','proforma2'])">
+                        <div class="col-xs-12">
+                            <t t-if="o.state not in ['proforma','proforma2'] and o.company_id.company_invoice_text">
+                                <div class="mt16">
+                                    <p>
+                                        <span t-field="o.company_id.company_invoice_text" style="font-style: italic;"/>
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-elif="o.state in ['proforma','proforma2'] and ((o.company_id.company_proforma_invoice_text_different_from_regular and o.company_id.company_invoice_text) or o.company_id.company_invoice_proforma_text)">
+                                <div class="mt16">
+                                    <p>
+                                        <span t-if="not o.company_id.company_proforma_invoice_text_different_from_regular" t-field="o.company_id.company_invoice_text" style="font-style: italic;"/>
+                                        <span t-if="o.company_id.company_proforma_invoice_text_different_from_regular" t-field="o.company_id.company_invoice_proforma_text" style="font-style: italic;"/>
+                                    </p>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                    <!--<p class="invoice_comment" t-if="o.comment">-->
+                    <!--<span t-field="o.comment"/>-->
+                    <!--</p>-->
+                    <!--<p class="invoice_fiscal_position_note" t-if="o.fiscal_position_id">-->
+                    <!--<span t-field="o.fiscal_position_id.note"/>-->
+                    <!--</p>-->
+                </div>
+            </t>
+        </template>
+        <!--<template id="contact" inherit_id="base.contact">-->
+        <!--<xpath expr="//span[@itemprop='streetAddress']" position="replace">-->
+        <!--<span itemprop="streetAddress" t-raw="address.replace('\n', options.get('no_tag_br') and ', ' or ('&lt;br/&gt;%s' % ('' if options.get('no_marker') else '&amp;nbsp; &amp;nbsp; ')), 1).replace('\n',' ')"/>-->
+        <!--</xpath>-->
+        <!--</template>-->
+        <template id="report_invoice">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="saskaitos.report_invoice_document" t-lang="o.partner_lang"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

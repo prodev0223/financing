@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="open_robo_packages_search_view">
+            <field name="name">Robo packages search</field>
+            <field name="model">product.package.default</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Packages">
+                    <field name="package_id"/>
+                    <field name="product_tmpl_id"/>
+                    <field name="partner_id"/>
+                </search>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="open_robo_packages_tree">
+            <field name="name">robo.package.default.tree</field>
+            <field name="model">product.package.default</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Pakuotės" import="0" editable="top">
+                    <field name="package_id" context="{'form_view_ref': 'robo_package.product_package'}"/>
+                    <field name="product_tmpl_id" context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="partner_id" context="{'form_view_ref': 'robo.new_clients_customer_form'}"/>
+                    <field name="qty_in_pack"/>
+                    <field name="package_category"/>
+                    <field name="material_type"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_package_default_form">
+            <field name="name">product.package.default.form</field>
+            <field name="model">product.package.default</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="package_id" context="{'form_view_ref': 'robo_package.product_package'}"/>
+                                <field name="product_tmpl_id" context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"/>
+                                <field name="qty_in_pack"/>
+                            </group>
+                            <group>
+                                <field name="date_from" class="oe_inline"/>
+                                <field name="date_to" class="oe_inline"/>
+                            </group>
+                            <group>
+                                <field name="package_category" class="oe_inline"/>
+                                <field name="material_type" class="oe_inline"/>
+                                <field name="weight" class="oe_inline"/>
+                            </group>
+                            <group>
+                                <field name="partner_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="open_robo_packages_kanban" model="ir.ui.view">
+            <field name="priority" eval="99"/>
+            <field name="robo_front">True</field>
+            <field name="name">product.package.default.kanban</field>
+            <field name="model">product.package.default</field>
+            <field name="arch" type="xml">
+                <kanban string="Pakuotės" import="0" create="0">
+                    <field name="package_id" context="{'form_view_ref': 'robo_package.product_package'}"/>
+                    <field name="product_tmpl_id" context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"/>
+                      <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <strong><t t-esc="record.package_id.value"/></strong>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span>Produktas: <t t-esc="record.product_tmpl_id.value"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                      </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="open_robo_packages" model="ir.actions.act_window">
+            <field name="name">Pakuotės</field>
+            <field name="res_model">product.package.default</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="view_id" ref="open_robo_packages_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('open_robo_packages_tree')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('open_robo_packages_kanban')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('product_package_default_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+            <field name="header" ref="robo_package_header"/>
+        </record>
+
+        <menuitem id="menu_robo_packages"
+                  parent="robo_stock.menu_robo_stock"
+                  name="Pakuotės"
+                  sequence="5"
+                  action="open_robo_packages"
+                  groups="stock_extend.group_robo_stock"
+                  robo_front="True"
+                  force_web_icon="icon-recycle,none,none"
+                  searchable="True"
+                  tags="atsargų,pakuotės"
+        />
+
+        <record model="ir.ui.view" id="robo_stock_picking_form_with_packages">
+            <field name="name">stock.picking.form.packages</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page string="Pakuotės" name='packages' attrs="{'invisible': [('error','=',True)]}">
+                        <field name="error" invisible="1"/>
+                        <group>
+                            <field name="use_default_package" attrs="{'invisible': [('has_cancels','=',True)]}"/>
+                            <field name="has_cancels" invisible="1"/>
+                            <field name="review_packages" invisible="1"/>
+                            <button string="Patvirtinti pakuotes" name="action_packaged_reviewed" type="object"
+                                    attrs="{'invisible': ['|', ('review_packages', '=', False),
+                                                               ('has_cancels', '=', False)]}"/>
+                        </group>
+                        <field name="picking_package_lines_ids" mode="tree,kanban"
+                               attrs="{'invisible': [('use_default_package', '=', True)]}">
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <field name="product_tmpl_id" options='{"no_open": True, "no_create": True}'
+                                               attrs="{'required': [('third_category','=', False)]}"
+                                               context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"/>
+                                        <field name="product_uom_qty"/>
+                                        <field name="package_id" options='{"no_open": True, "no_create": True}'/>
+                                        <field name="qty_package"/>
+                                        <field name="third_category" invisible="1"/>
+                                    </group>
+
+                                </sheet>
+                            </form>
+                            <tree editable="bottom">
+                                <field name="product_tmpl_id" attrs="{'required': [('third_category','=', False)]}" context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"/>
+                                <field name="product_uom_qty"/>
+                                <field name="package_id"/>
+                                <field name="qty_package"/>
+                                <field name="third_category" invisible="1"/>
+                            </tree>
+
+                            <kanban class="o_kanban_mobile">
+                                <field name="product_tmpl_id" attrs="{'required': [('third_category','=', False)]}" context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"/>
+                                <field name="product_uom_qty"/>
+                                <field name="package_id"/>
+                                <field name="qty_package"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                             <div class="row">
+                                                <div class="col-xs-12">
+                                                    <span>
+                                                        <t t-esc="record.package_id.value"/>:
+                                                        <t t-esc="record.qty_package.value"/>
+                                                    </span>
+                                                </div>
+                                             </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 text-muted">
+                                                    <strong>
+                                                        <span>
+                                                            <t t-esc="record.product_tmpl_id.value"/>:
+                                                            <field name="product_uom_qty"/>
+                                                        </span>
+                                                    </strong>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+
+                        </field>
+                        <field name="picking_package_lines_default" attrs="{'invisible': [('use_default_package', '=', False)]}"/>
+
+                        <!--<field name="cancel_childs"/>-->
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="robo_stock_product_form_with_packages">
+            <field name="name">robo.stock.product.form.package</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page name="packages" string="Pakuotės">
+                        <field name="product_package_default_ids" string="Produkto pakuotės"
+                               context="{'form_view_ref': 'robo_package.product_package_default'}" mode="tree,kanban">
+                            <tree editable="bottom">
+                                <field name="package_id"/>
+                                <field name="qty_in_pack"/>
+                                <field name="package_category" string="Kategorija"/>
+                                <field name="material_type" string="Rūšis"/>
+                                <field name="use_type"/>
+                                <field name="recycling_type"/>
+                                <field name="weight" string="Kg"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="partner_id"/>
+                            </tree>
+                            <kanban>
+                                 <field name="package_id"/>
+                                <field name="qty_in_pack"/>
+                                <field name="package_category" string="Kategorija"/>
+                                <field name="material_type" string="Rūšis"/>
+                                <field name="use_type"/>
+                                <field name="recycling_type"/>
+                                <field name="weight" string="Kg"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="partner_id"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <strong>
+                                                        <span>
+                                                            <t t-esc="record.package_id.value"/>:
+                                                            <t t-esc="record.qty_in_pack.value"/>:
+                                                        </span>
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 text-muted">
+                                                    <span>
+                                                        <t t-esc="record.package_category.value"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 text-muted">
+                                                    <span>
+                                                        <t t-esc="record.weight.value"/>Kg
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <field name="package_id" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="qty_in_pack"/>
+                                        <field name="package_category" string="Kategorija"/>
+                                        <field name="material_type" string="Rūšis"/>
+                                        <field name="use_type"/>
+                                        <field name="recycling_type"/>
+                                        <field name="weight" string="Kg"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                        <field name="partner_id" context="{'form_view_ref': 'robo.new_clients_customer_form'}"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_package">
+            <field name="name">product.package.form</field>
+            <field name="model">product.package</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group col="4" colspan="4">
+                                <field name="package_category" class="oe_inline"/>
+                                <field name="use_type" class="oe_inline"/>
+                                <field name="material_type" class="oe_inline"/>
+                                <field name="recycling_type" class="oe_inline"/>
+                                <field name="combined_material" class="oe_inline"
+                                       attrs="{'invisible': [('material_type', '!=', 'kombinuota')], 'required': [('material_type', '=', 'kombinuota')]}"/>
+                            </group>
+                            <group>
+                                <field name="weight" class="oe_inline"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_package_tree_view">
+            <field name="name">product.package.tree</field>
+            <field name="model">product.package</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="package_category"/>
+                    <field name="material_type"/>
+                    <field name="weight"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_package_search_view">
+            <field name="name">product.package.search</field>
+            <field name="model">product.package</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="package_category"/>
+                    <field name="material_type"/>
+                    <field name="weight"/>
+                </search>
+            </field>
+        </record>
+
+        <!--REPORT-->
+        <record id="view_report_product_packages_pivot" model="ir.ui.view">
+            <field name="name">report.product.packages.pivot</field>
+            <field name="model">report.product.packages</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Pakuotės" create="false" delete="false">
+                    <!--<field name="picking_id" type="col"/>-->
+                    <field name="date" type="col"/>
+                    <!--<field name="product_tmpl_id" type="row"/>-->
+                    <!--<field name="partner_id" type="col"/>-->
+                    <field name="product_qty" type="measure"/>
+                    <field name="qty_of_packages" type="measure"/>
+                    <field name="weight_of_packages" type="measure"/>
+                    <field name="package_id" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="view_report_product_package_search" model="ir.ui.view">
+            <field name="name">report.product.packages.search</field>
+            <field name="model">report.product.packages</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Pakuotės">
+                    <field name="product_tmpl_id"/>
+                    <field name="package_id"/>
+                    <group>
+                        <filter name="positive" string="Teigiami kiekiai" domain="[('qty_of_packages', '&gt;', 0)]"/>
+                        <separator/>
+                        <filter name="first_category" string="Pirminės" domain="[('package_category', '=', 'pirmine')]"/>
+                        <filter name="second_category" string="Antrinės" domain="[('package_category', '=', 'antrine')]"/>
+                        <filter name="third_category" string="Tretinės" domain="[('package_category', '=', 'tretine')]"/>
+                        <separator/>
+                        <filter name="in" string="Importas" domain="[('package_direction', '=', 'in')]"/>
+                        <filter name="int" string="Vidiniai" domain="[('package_direction', '=', 'int')]"/>
+                        <filter name="out_lt" string="Į Lietuvos rinką" domain="[('package_direction', '=', 'out_lt')]"/>
+                        <filter name="out_kt" string="Į kitas šalis" domain="[('package_direction', '=', 'out_kt')]"/>
+                        <filter name="in_lt" string="Įvežta iš Lietuvos" domain="[('package_direction', '=', 'in_lt')]"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="open_report_product_packages" model="ir.actions.act_window">
+            <field name="name">Pakuotės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">report.product.packages</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+            <!--<field name="search_view_id" ref="view_report_intrastat_search"/>-->
+        </record>
+
+        <!--Wizard-->
+        <record id="robo_package_report_wizard_form_view" model="ir.ui.view">
+            <field name="name">product.package.wizard.wizard</field>
+            <field name="model">product.package.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+
+                            <div attrs="{'invisible': [('show_button', '=', False)]}" class="alert alert-info">
+                                <label string="Dėmesio. Šiems važtaraščiams būtina suvesti pakuotes ir patvirtinti. Nepatvirtinti važtaraščiai nepateks į ataskaitas."/>
+                                <field name="show_button" invisible="1"/>
+                                <button name="open_pickings" type="object" string="Atidaryti važtaraščius"/>
+                            </div>
+
+                        <group string="Filtrai">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="package_direction" attrs="{'required': True}"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:5%;">
+                            <button name="check_report" string="Peržiūrėti" type="object" class="oe_highlight" style="margin-right: 10px;"/>
+                            <button name="xls_export" string="Excel" type="object" class="oe_highlight"
+                                    context="{'xls_report': True}" style="margin-right: 10px;"/>
+                            <button string="Atšaukti" class="oe_highlight" type="action"
+                                    name="%(robo.open_reports_action)d"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_package_report_wizard">
+            <field name="name">Pakuočių ataskaita</field>
+            <field name="res_model">product.package.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="robo.front_wizard_default_header"/>
+            <field name="view_id" ref="robo_package_report_wizard_form_view"/>
+            <field name="robo_menu" ref="robo_stock.menu_robo_stock"/>
+        </record>
+
+        <menuitem id="menu_package_search_report"
+                  name="Pakuočių ataskaita"
+                  groups="robo_package.robo_package_reports"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_package_report_wizard"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="pakuočių,ataskaita"
+        />
+
+    </data>
+
+    <template id="robo_product_package_default_table">
+        <div class="table-responsive">
+            <table class="o_list_view table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th>Produktas</th>
+                        <th>Produkto kiekis</th>
+                        <th>Pakuotė</th>
+                        <th>Pakuočių kiekis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-raw='table_body'/>
+                </tbody>
+            </table>
+        </div>
+    </template>
+    <template id="robo_product_package_default_line">
+        <tr>
+            <td><t t-esc='product'/></td>
+            <td class="o_list_number"><t t-esc="product_uom_qty"/></td>
+            <td><t t-esc='package'/></td>
+            <td class="o_list_number"><t t-esc='qty_package'/></td>
+        </tr>
+    </template>
+
+</odoo>

@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_r_keeper_sale_line" model="ir.ui.view">
+            <field name="name">r.keeper.sale.line.tree</field>
+            <field name="model">r.keeper.sale.line</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1"
+                      decoration-success="state in ['created', 'created_inventory']"
+                      decoration-info="state == 'imported'"
+                      decoration-danger="state in ['failed', 'failed_inventory']">
+                    <field name="doc_number"/>
+                    <field name="sale_date"/>
+                    <field name="product_id"/>
+                    <field name="product_code"/>
+                    <field name="quantity" sum="quantity"/>
+                    <field name="amount_wo_vat" sum="amount_wo_vat"/>
+                    <field name="amount_vat" sum="amount_vat"/>
+                    <field name="amount_w_vat" sum="amount_w_vat"/>
+                    <field name="tax_id"/>
+                    <field name="point_of_sale_id"/>
+                    <field name="pos_code"/>
+                    <field name="line_type"/>
+                    <field name="state"/>
+                    <field name="production_state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tree_r_keeper_sale_line_front" model="ir.ui.view">
+            <field name="name">r.keeper.sale.line.tree.front</field>
+            <field name="model">r.keeper.sale.line</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0"
+                      decoration-success="state in ['created', 'created_inventory']"
+                      decoration-info="state == 'imported'"
+                      decoration-danger="state in ['failed', 'failed_inventory']">
+                    <field name="doc_number"/>
+                    <field name="sale_date"/>
+                    <field name="product_id"/>
+                    <field name="product_code"/>
+                    <field name="quantity" sum="quantity"/>
+                    <field name="amount_wo_vat" sum="amount_wo_vat"/>
+                    <field name="amount_vat" sum="amount_vat"/>
+                    <field name="tax_id"/>
+                    <field name="point_of_sale_id"/>
+                    <field name="pos_code"/>
+                    <field name="line_type"/>
+                    <field name="state"/>
+                    <field name="production_state"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="form_r_keeper_sale_line" model="ir.ui.view">
+            <field name="name">r.keeper.sale.line.form</field>
+            <field name="model">r.keeper.sale.line</field>
+            <field name="arch" type="xml">
+                <form string="rKeeper pardavimai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_invoices_prep" type="object"
+                                class="oe_highlight" string="Kurti sąskaitą"
+                                attrs="{'invisible': ['|', ('zero_amount_sale', '=', True),
+                                       ('invoice_id', '!=', False)]}"/>
+                        <button name="create_inventory_write_off_prep" type="object"
+                                class="oe_highlight" string="Kurti atsargų nurašymą"
+                                attrs="{'invisible': ['|', ('zero_amount_sale', '=', False),
+                                       ('inventory_id', '!=', False)]}"/>
+                        <button name="create_production_prep" type="object"
+                                class="oe_highlight" string="Kurti gamybą"
+                                attrs="{'invisible': [('allow_production_creation', '=', False)]}"/>
+                        <button name="confirm_related_productions" type="object"
+                                class="oe_highlight" string="Rezervuoti gamybą"
+                                attrs="{'invisible': ['|', ('mrp_production_id', '=', False),
+                                        ('production_state', '!=', 'failed_to_reserve')]}"/>
+                        <button name="recompute_fields" type="object" string="Perskaičiuoti laukus"
+                                class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Dokumento numeris"/>
+                            <h1 class="mt0">
+                                <field name="doc_number" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="doc_date"/>
+                            <field name="sale_date"/>
+                            <field name="tax_id"
+                                   attrs="{'invisible': [('tax_id', '=', False)]}"/>
+                            <field name="invoice_id"
+                                   attrs="{'invisible': [('invoice_id', '=', False)]}"/>
+                            <field name="inventory_id"
+                                   attrs="{'invisible': [('inventory_id', '=', False)]}"
+                                   context="{'form_view_ref': 'robo_stock.robo_stock_inventory_form'}"/>
+                            <field name="zero_amount_sale" invisible="1"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Pardavimo sumos" colspan="1" col="2">
+                                <field name="quantity"/>
+                                <field name="pu_wo_vat"/>
+                                <field name="pu_w_vat"/>
+                                <field name="amount_wo_vat"/>
+                                <field name="amount_vat"/>
+
+                            </group>
+                            <group string="Produkto informacija" colspan="1" col="2">
+                                <field name="product_name"/>
+                                <field name="product_code"/>
+                                <field name="product_type"/>
+                                <field name="product_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Pardavimo taškas" colspan="1" col="2">
+                                <field name="pos_code"/>
+                                <field name="point_of_sale_id" readonly="1"/>
+
+                            </group>
+                            <group string="Papildoma informacija" colspan="1" col="2">
+                                <field name="extra_data"/>
+                                <field name="payment_completed"/>
+                                <field name="force_taxes" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Gamybos/nurašymo informacija">
+                            <field name="production_state" readonly="1"/>
+                            <field name="allow_production_creation" invisible="1"/>
+                            <field name="mrp_production_id"
+                                   context="{'form_view_ref': 'robo_mrp.robo_mrp_production_form_view'}"
+                                   attrs="{'invisible': [('mrp_production_id', '=', False)]}"/>
+                            <field name="picking_id" readonly="1"
+                                   attrs="{'invisible': [('picking_id', '=', False)]}"/>
+                        </group>
+                        <group string="Pardavimo modifikatorių informacija"
+                               attrs="{'invisible': [('r_keeper_sale_line_modifier_ids', '=', False)]}">
+                            <field name="r_keeper_sale_line_modifier_ids" nolabel="1"
+                                   options="{'always_reload': True}" widget="one2many_list">
+                                <tree create="0" edit="0">
+                                    <field name="r_keeper_modifier_id"/>
+                                    <field name="modifier_code"/>
+                                    <field name="modified_quantity"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="form_r_keeper_sale_line_front" model="ir.ui.view">
+            <field name="name">r.keeper.sale.line.form.front</field>
+            <field name="model">r.keeper.sale.line</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="rKeeper pardavimai" create="0" edit="0" delete="0">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Dokumento numeris"/>
+                            <h1 class="mt0">
+                                <field name="doc_number" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="doc_date"/>
+                            <field name="sale_date"/>
+                            <field name="invoice_id"
+                                   attrs="{'invisible': [('invoice_id', '=', False)]}"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Pardavimo sumos" colspan="1" col="2">
+                                <field name="quantity"/>
+                                <field name="pu_wo_vat"/>
+                                <field name="pu_w_vat"/>
+                                <field name="amount_wo_vat"/>
+                                <field name="amount_vat"/>
+
+                            </group>
+                            <group string="Produkto informacija" colspan="1" col="2">
+                                <field name="product_name"/>
+                                <field name="product_code"/>
+                                <field name="product_type"/>
+                                <field name="product_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Pardavimo taškas" colspan="1" col="2">
+                                <field name="pos_code"/>
+                                <field name="point_of_sale_id" readonly="1"/>
+
+                            </group>
+                            <group string="Papildoma informacija" colspan="1" col="2">
+                                <field name="extra_data"/>
+                                <field name="payment_completed"/>
+                                <field name="force_taxes" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Gamybos/nurašymo informacija">
+                            <field name="production_state" readonly="1"/>
+                            <field name="allow_production_creation" invisible="1"/>
+                            <field name="mrp_production_id" readonly="1"
+                                   attrs="{'invisible': [('mrp_production_id', '=', False)]}"/>
+                            <field name="picking_id" readonly="1"
+                                   attrs="{'invisible': [('picking_id', '=', False)]}"/>
+                        </group>
+                        <group string="Pardavimo modifikatorių informacija"
+                               attrs="{'invisible': [('r_keeper_sale_line_modifier_ids', '=', False)]}">
+                            <field name="r_keeper_sale_line_modifier_ids" nolabel="1"
+                                   options="{'always_reload': True}" widget="one2many_list">
+                                <tree create="0" edit="0">
+                                    <field name="r_keeper_modifier_id"/>
+                                    <field name="modifier_code"/>
+                                    <field name="modified_quantity"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--PIVOT-->
+        <record id="pivot_r_keeper_sale_line_front" model="ir.ui.view">
+            <field name="name">r.keeper.sale.line.pivot.front</field>
+            <field name="model">r.keeper.sale.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Pardavimai">
+                    <field name="quantity" type="measure"/>
+                    <field name="amount_wo_vat" type="measure"/>
+                    <field name="amount_vat" type="measure"/>
+                    <field name="amount_w_vat" type="measure"/>
+                    <field name="zero_sale_prime_cost" type="measure"/>
+                    <field name="sale_date" type="row"/>
+                    <field name="point_of_sale_id" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="search_r_keeper_sale_line" model="ir.ui.view">
+            <field name="name">Pardavimų paieška</field>
+            <field name="model">r.keeper.sale.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="imported" string="Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="created" string="Sąskaita sukurta sistemoje" domain="[('state','=','created')]"/>
+                    <filter name="failed" string="Nepavyko sukurti sąskaitos" domain="[('state','=','failed')]"/>
+                    <filter name="created_inv" string="Nurašymas sukurtas sistemoje"
+                            domain="[('state','=','created_inventory')]"/>
+                    <filter name="failed_inv" string="Nepavyko sukurti nurašymo"
+                            domain="[('state','=','failed_inventory')]"/>
+                    <filter name="updated" string="Atnaujinta"
+                            domain="[('state','=','updated')]"/>
+                    <separator/>
+                    <filter name="not_produced" string="Negaminta"
+                            domain="[('production_state', '=', 'not_produced')]"/>
+                    <filter name="failed_to_create" string="Gaminimas nepavyko"
+                            domain="[('production_state', '=','failed_to_create')]"/>
+                    <filter name="failed_to_reserve" string="Rezervavimas nepavyko"
+                            domain="[('production_state', '=','failed_to_reserve')]"/>
+                    <filter name="produced" string="Pagaminta"
+                            domain="[('production_state', '=', 'produced')]"/>
+                    <separator/>
+                    <filter name="zero_amount_sales" string="Nulinių sumų pardavimai"
+                            domain="[('zero_amount_sale', '=', True)]"/>
+                    <separator/>
+                    <filter name="bom_at_date" string="Turi komplektaciją pardavimo datai"
+                            domain="[('has_bom_at_sale_date', '=', True)]"/>
+                    <filter name="no_bom_at_date" string="Neturi komplektacijos pardavimo datai"
+                            domain="[('has_bom_at_sale_date', '=', False)]"/>
+                    <separator/>
+                    <field name="sale_date"/>
+                    <field name="doc_number" filter_domain="[('doc_number', 'ilike', self)]"/>
+                    <field name="product_code" filter_domain="[('product_code', 'ilike', self)]"/>
+                    <field name="product_id"/>
+                    <field name="pos_code" filter_domain="[('pos_code', 'ilike', self)]"/>
+                    <field name="point_of_sale_id"/>
+                    <field name="mrp_production_id"/>
+                    <field name="message_ids" string="Komentarai"
+                           filter_domain="[('message_ids.body', '=ilike', self)]"/>
+                    <separator/>
+                    <filter name="has_modifiers" string="Turi modifikatorių"
+                            domain="[('r_keeper_sale_line_modifier_ids', '!=', False)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="['|', '&amp;',
+                            ('sale_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('sale_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('sale_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('sale_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"
+                    />
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['|', '&amp;',
+                            ('sale_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('sale_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('sale_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('sale_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"
+                    />
+                    <filter name="this_year" string="Šie metai"
+                            domain="['|', '&amp;',
+                            ('sale_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                            ('sale_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('sale_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                            ('sale_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"
+                    />
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="['|', '&amp;',
+                            ('sale_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                            ('sale_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('sale_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                            ('sale_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"
+                    />
+                    <group>
+                        <filter name="group_product_id" string="Produktas"
+                                context="{'group_by':'product_id'}"/>
+                        <filter name="group_pos_id" string="Pardavimo taškas"
+                                context="{'group_by':'point_of_sale_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_r_keeper_sale_line" model="ir.actions.act_window">
+            <field name="name">Pardavimai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.sale.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_r_keeper_sale_line"/>
+        </record>
+        <record id="action_open_r_keeper_sale_line_front" model="ir.actions.act_window">
+            <field name="name">Pardavimai</field>
+            <field name="res_model">r.keeper.sale.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree_robo,pivot</field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="header_r_keeper_base"/>
+            <field name="search_view_id" ref="search_r_keeper_sale_line"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_r_keeper_sale_line_front')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_r_keeper_sale_line_front')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('pivot_r_keeper_sale_line_front')}),]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="action_recompute_fields_multi_sale" model="ir.actions.server">
+            <field name="name">Perskaičiuoti laukus</field>
+            <field name="model_id" ref="r_keeper.model_r_keeper_sale_line"/>
+            <field name="code">
+                if user.is_manager():
+                action = object.browse(context.get('active_ids', False)).recompute_fields()
+            </field>
+        </record>
+        <function name="create_action_recompute_fields_multi_sale" model="r.keeper.sale.line"/>
+        <record id="action_create_invoices_prep_multi" model="ir.actions.server">
+            <field name="name">Kurti sąskaitas faktūras</field>
+            <field name="model_id" ref="r_keeper.model_r_keeper_sale_line"/>
+            <field name="code">
+                if user.is_manager():
+                action = object.browse(context.get('active_ids', False)).create_invoices_prep()
+            </field>
+        </record>
+        <function name="create_action_create_invoices_prep_multi" model="r.keeper.sale.line"/>
+        <record id="action_recalculate_selected_sale_bom" model="ir.actions.server">
+            <field name="name">Perskaičiuoti susijusias komplektacijas (Pasirinkti įrašai)</field>
+            <field name="model_id" ref="r_keeper.model_r_keeper_sale_line"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).calculate_has_bom_at_date()
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('r_keeper.tree_r_keeper_sale_line_front')])]"/>
+        </record>
+        <function name="create_action_recalculate_selected_sale_bom" model="r.keeper.sale.line"/>
+        <record id="action_recalculate_all_sale_bom" model="ir.actions.server">
+            <field name="name">Perskaičiuoti susijusias komplektacijas (Visi įrašai)</field>
+            <field name="model_id" ref="r_keeper.model_r_keeper_sale_line"/>
+            <field name="code">
+                action = object.with_context(all_records=True).calculate_has_bom_at_date()
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('r_keeper.tree_r_keeper_sale_line_front')])]"/>
+        </record>
+        <function name="create_action_recalculate_all_sale_bom" model="r.keeper.sale.line"/>
+
+        <!--MENU ITEMS-->
+        <menuitem
+                id="menu_r_keeper_sale_line"
+                name="Pardavimai"
+                sequence="1"
+                action="action_open_r_keeper_sale_line"
+                parent="r_keeper_accounting_root"
+        />
+        <menuitem id="menu_r_keeper_sale_line_front"
+                  name="Pardavimai"
+                  parent="r_keeper.r_keeper_root_front"
+                  sequence="3"
+                  robo_front="True"
+                  action="action_open_r_keeper_sale_line_front"
+                  groups="r_keeper.group_r_keeper_front_end"
+                  force_web_icon="icon-clipboard-check,none,none"
+                  searchable="True"
+                  tags="rkeeper,pardavimai"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,30 @@
+<template>
+
+
+    <div t-extend="CalendarView.quick_create" class="o_calendar_quick_create">
+        <t t-jquery="div.form-group" t-operation="replace">
+            <div class="form-group">
+                <label for='name' class='control-label'>Aprašymas:</label>
+                <input type='text' name='name'/>
+            </div>
+        </t>
+    </div>
+
+    <t t-extend="CalendarView.buttons">
+        <t t-jquery=".o_calendar_buttons" t-operation="replace">
+            <div class="o_calendar_buttons">
+                <button t-if="widget.options.action_buttons !== false &amp;&amp; widget.is_action_enabled('create') &amp;&amp; ((widget.field_widget &amp;&amp; (widget.field_widget.open_popup_add)) || (!widget.field_widget))" type="button" class="o_calendar_button_new o_highlight"><t t-esc="widget.options.create_text || _t('Create')"/></button>
+
+                <button class="o_calendar_button_prev btn btn-sm btn-primary"><span class="fa fa-arrow-left"/></button>
+                <button class="o_calendar_button_today btn btn-sm btn-primary">Šiandien</button>
+                <button class="o_calendar_button_next btn btn-sm btn-primary"><span class="fa fa-arrow-right"/></button>
+
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="o_calendar_button_day btn btn-sm btn-default">Diena</button>
+                    <button type="button" class="o_calendar_button_week btn btn-sm btn-default">Savaitė</button>
+                    <button type="button" class="o_calendar_button_month btn btn-sm btn-default">Mėnesis</button>
+                </div>
+            </div>
+        </t>
+    </t>
+</template>

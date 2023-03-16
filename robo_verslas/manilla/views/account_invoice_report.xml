@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <!--Override invoice report pivot row field and group by product_id-->
+        <record id="account_invoice_report_view_pivot_main" model="ir.ui.view">
+            <field name="name">robo.invoice.report</field>
+            <field name="model">account.invoice.report</field>
+            <field name="inherit_id" ref="robo.account_invoice_report_view_pivot_main"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="before">
+                    <field name="product_id" string="Produktas" type="row"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,74 @@
+<odoo>
+    <data>
+        <record id="quant_import_table_tree" model="ir.ui.view">
+            <field name="name">quant.import.table.tree</field>
+            <field name="model">quant.import.table</field>
+            <field name="arch" type="xml">
+                <tree string="Atsargų importas">
+                    <field name="product_id"/>
+                    <field name="location_id"/>
+                    <field name="qty"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="quant_import_table_form" model="ir.ui.view">
+            <field name="name">quant.import.table.form</field>
+            <field name="model">quant.import.table</field>
+            <field name="arch" type="xml">
+                <form string="Atsargų importas">
+                    <header>
+                        <button name="add_qtys" type="object" string="Importuoti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="location_id"/>
+                            <field name="serial_number"/>
+                            <field name="package"/>
+                            <field name="qty"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_quant_import">
+            <field name="name">Atsargų importas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">quant.import.table</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_id" ref="quant_import_table_tree"/>
+        </record>
+        <menuitem action="action_quant_import"
+                  id="import_likuciai"
+                  parent="base.menu_administration"
+                  sequence="22"/>
+        <record id="stock_import_company_settings_extend" model="ir.ui.view">
+            <field name="name">stock.import.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='importas']" position="inside">
+                    <div class="import-element-container">
+                        <a href="robo_stock/static/src/import_examples/Atsargų_likučiai.xlsx"
+                           class="import-download-container">
+                            <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                            <span>Atsargų likučiai</span>
+                        </a>
+                        <field style="border-radius: 4px !important;" name="import_stock" string="Importuoti"/>
+                    </div>
+                    <div class="import-element-container">
+                        <a href="robo_stock/static/src/import_examples/Vidiniai_važtaraščiai.xlsx"
+                           class="import-download-container">
+                            <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                            <span>Vidiniai važtaraščiai</span>
+                        </a>
+                        <field style="border-radius: 4px !important;" name="import_pickings" string="Importuoti"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_approval_enabled_group" model="res.groups">
+            <field name="name">Invoice approval enabled</field>
+            <field name="robo_front" eval="False"/>
+        </record>
+
+        <record id="invoice_approval_auditor" model="res.groups">
+            <field name="name">Invoice approval auditor</field>
+            <field name="robo_front" eval="False"/>
+        </record>
+
+        <record id="invoice_approval_approver" model="res.groups">
+            <field name="name">Invoice approval approver</field>
+            <field name="robo_front" eval="False"/>
+            <field name="implied_ids" eval="[(4, ref('invoice_approval_workflow.invoice_approval_auditor'))]"/>
+        </record>
+
+        <record id="invoice_approval_administrator" model="res.groups">
+            <field name="name">Invoice approval administrator</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžia vartotojui atlikti visus veiksmus su sąskaitų tvirtinimu</field>
+            <field name="robo_front_only_shown_to_super" eval="False"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+            <field name="implied_ids" eval="[(4, ref('invoice_approval_workflow.invoice_approval_approver'))]"/>
+        </record>
+
+<!--        <record id="robo_basic.group_robo_premium_manager" model="res.groups">-->
+<!--            <field name="implied_ids"-->
+<!--                   eval="[(4, ref('invoice_approval_workflow.invoice_approval_administrator'))]"/>-->
+<!--        </record>-->
+    </data>
+</odoo>

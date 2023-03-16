@@ -1,0 +1,177 @@
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_amazon_order" model="ir.ui.view">
+            <field name="name">tree.amazon.order</field>
+            <field name="model">amazon.order</field>
+            <field name="arch" type="xml">
+                <tree string="Amazon užsakymai"
+                      decoration-info="state == 'imported'"
+                      decoration-success="state == 'created'"
+                      decoration-warning="state == 'ext_cancel'"
+                      decoration-danger="state == 'failed'"
+                      create="1" edit="1" delete="1">
+                    <field name="order_id"/>
+                    <field name="order_date"/>
+                    <field name="partner_id"/>
+                    <field name="marketplace_id"/>
+                    <field name="order_amount_total_display" sum="order_amount_total_display"/>
+                    <field name="order_amount_shipping" sum="order_amount_shipping"/>
+                    <field name="order_amount_principal_display" sum="order_amount_principal_display"/>
+                    <field name="order_amount_discount" sum="order_amount_discount"/>
+                    <field name="refund_order"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Forms-->
+        <record id="form_amazon_order" model="ir.ui.view">
+            <field name="name">form.amazon.order</field>
+            <field name="model">amazon.order</field>
+            <field name="arch" type="xml">
+                <form string="Amazon užsakymai">
+                    <header>
+                        <button name="invoice_creation_prep" type="object" states="imported,failed"
+                                string="Sukurti sąskaitą faktūrą" class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Užsakymo ID"/>
+                            <h1 class="mt0">
+                                <field name="order_id" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group string="Pagrindinė informacija">
+                            <field name="partner_id"/>
+                            <field name="order_time"/>
+                            <field name="order_date"/>
+                            <field name="ext_order_status"/>
+                            <field name="currency_id"/>
+                            <field name="refund_order"/>
+                            <field name="refunded_order_id"/>
+                            <field name="refunding_order_id"/>
+                            <field name="invoice_id" attrs="{'invisible': [('invoice_id', '=', False)]}"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Užsakymo sumos" colspan="1" col="2">
+                                <field name="order_amount_total"/>
+                                <field name="order_amount_shipping"/>
+                                <field name="order_amount_principal"/>
+                                <field name="order_amount_discount"/>
+                            </group>
+                            <group string="Identifikacijos laukeliai" colspan="1" col="2">
+                                <field name="marketplace_code"/>
+                                <field name="currency_code"/>
+                                <field name="fulfillment_channel"/>
+                                <field name="marketplace_name"/>
+                            </group>
+                        </group>
+                        <group string="Užsakymo eilutės">
+                            <field name="amazon_order_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree string="Užsakymo eilutės"
+                                      decoration-info="state == 'imported'"
+                                      decoration-success="state == 'created'"
+                                      decoration-danger="state == 'failed'"
+                                      create="1" edit="1" delete="1"
+                                      class="robo_tree_in_form">
+                                    <field name="ext_line_name"/>
+                                    <field name="amazon_product_id"/>
+                                    <field name="asin_product_code"/>
+                                    <field name="ext_product_code"/>
+                                    <field name="quantity"/>
+                                    <field name="line_amount"/>
+                                    <field name="amount_tax"/>
+                                    <field name="line_type"/>
+                                    <field name="state" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_amazon_order" model="ir.actions.act_window">
+            <field name="name">Amazon užsakymai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_amazon_order"/>
+        </record>
+        <!--Searches-->
+        <record id="search_amazon_order" model="ir.ui.view">
+            <field name="name">Amazon užsakymų Paieška</field>
+            <field name="model">amazon.order</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="import" string="Būsena - Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="create" string="Būsena - Sukurta" domain="[('state','=','created')]"/>
+                    <filter name="fail" string="Būsena - Atšaukta išorinėje sistemoje"
+                            domain="[('state','=','ext_cancel')]"/>
+                    <filter name="fail2" string="Būsena - Klaida kuriant sąskaitą" domain="[('state','=','failed')]"/>
+                    <separator/>
+                    <filter name="refund_order" string="Grąžinimai" domain="[('refund_order','=', True)]"/>
+                    <filter name="non_refund_order" string="Pardavimai" domain="[('refund_order','=', False)]"/>
+                    <separator/>
+                    <field name="order_id" filter_domain="[('order_id', 'ilike', self)]"/>
+                    <field name="marketplace_code" filter_domain="[('marketplace_code', 'ilike', self)]"/>
+                    <separator/>
+                    <field name="partner_id"/>
+                    <field name="currency_id"/>
+                    <field name="marketplace_id"/>
+                    <field name="invoice_id"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="['|',
+                            '&amp;',
+                                ('order_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                ('order_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                                ('order_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                ('order_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['|',
+                            '&amp;',
+                                ('order_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                ('order_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                                ('order_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                ('order_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai"
+                            domain="['|',
+                            '&amp;',
+                                ('order_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                ('order_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                                ('order_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                ('order_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="['|',
+                            '&amp;',
+                                ('order_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                ('order_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                                ('order_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                ('order_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_partner" string="Partneris" context="{'group_by':'partner_id'}"/>
+                        <filter name="group_currency" string="Valiuta" context="{'group_by':'currency_id'}"/>
+                        <filter name="group_marketplace" string="Prekiavietė"
+                                context="{'group_by':'marketplace_id'}"/>
+                        <filter name="group_invoice" string="Sąskaita faktūra" context="{'group_by':'invoice_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

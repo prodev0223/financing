@@ -1,0 +1,35 @@
+<odoo>
+    <data>
+        <record id="form_enable_banking_connector" model="ir.ui.view">
+            <field name="name">enable.banking.connector.form</field>
+            <field name="model">enable.banking.connector</field>
+            <field name="inherit_id" ref="sepa.form_enable_banking_connector"/>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <record id="sepa.action_open_enable_banking_connector" model="ir.actions.act_window">
+            <field name="robo_front" eval="1"/>
+            <field name="context">{'robo_header':{}, 'active_test': False}</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('sepa.tree_enable_banking_connector')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('sepa.form_enable_banking_connector')})]"
+            />
+        </record>
+        <record id="sepa.action_open_enable_banking_connector_manager" model="ir.actions.act_window">
+            <field name="robo_front" eval="1"/>
+            <field name="context">{'robo_header':{}, 'active_test': False}</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('sepa.tree_enable_banking_connector')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('sepa.form_enable_banking_connector')})]"
+            />
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="mail_template_robo_custom_manager_rule" model="ir.rule">
+            <field name="name">mail.template.robo.custom.manager.rule</field>
+            <field name="model_id" ref="mail.model_mail_template"/>
+            <field name="domain_force">[
+                ('robo_custom', '=', True),
+                ('model_id.robo_editable_mail_templates', '=', True)
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+    </data>
+</odoo>

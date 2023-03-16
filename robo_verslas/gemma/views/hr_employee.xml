@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="hr_employee_front_gemma_extension" model="ir.ui.view">
+            <field name="name">hr.employee.front.gemma.extension</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='next_medical_certificate_date']" position="after">
+                    <field name="next_medical_knowledge_certificate_date"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

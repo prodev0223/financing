@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <template id="report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//div[@class='companies']//div[@class='left']//p[5]" position="replace">
+                <p>
+                    <t t-if="o.journal_id.bank_journal_ids">
+                        <t t-foreach="o.journal_id.sudo().bank_journal_ids" t-as="bankas">
+                            <t t-if="bankas.bank_acc_number">
+                                <p t-if="bankas.bank_id.name">
+                                    <span class="comp_bank">Bankas:</span>
+                                    <span t-field="bankas.bank_id.name"/>
+                                </p>
+                                <p t-if="bankas.bank_id.bic">
+                                    <span class="comp_bic">BIC:</span>
+                                    <span t-field="bankas.bank_id.bic"/>
+                                </p>
+                                <p t-if="bankas.bank_acc_number">
+                                    <span class="account_nr">A/s. Nr.</span>
+                                    <span t-field="bankas.bank_acc_number"/>
+                                </p>
+                            </t>
+                        </t>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="o.company_id.sudo().bank_journal_ids" t-as="bankas">
+                            <t t-if="bankas.display_on_footer and bankas.bank_acc_number">
+                                <p t-if="bankas.bank_id.name">
+                                    <span class="comp_bank">Bankas:</span>
+                                    <span t-field="bankas.bank_id.name"/>
+                                </p>
+                                <p t-if="bankas.bank_id.bic">
+                                    <span class="comp_bic">BIC:</span>
+                                    <span t-field="bankas.bank_id.bic"/>
+                                </p>
+                                <p t-if="bankas.bank_acc_number">
+                                    <span class="account_nr">A/s. Nr.</span>
+                                    <span t-field="bankas.bank_acc_number"/>
+                                </p>
+                            </t>
+                        </t>
+                    </t>
+                </p>
+            </xpath>
+        </template>
+    </data>
+</odoo>

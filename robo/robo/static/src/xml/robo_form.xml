@@ -1,0 +1,46 @@
+<template>
+    <t t-name="FormRenderingStatusBar_DropDown">
+        <div class="btn-group">
+            <a aria-expanded="false" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" href="#">Action</a>
+            <ul class="dropdown-menu" role="menu"/>
+
+        </div>
+
+    </t>
+    <t t-name="WidgetButton.RoboFormActionButton">
+        <button type="button" t-attf-class="btn btn-sm #{widget.node.attrs.class or ''}"
+            t-att-style="widget.node.attrs.style"
+            t-att-tabindex="widget.node.attrs.tabindex"
+            t-att-autofocus="widget.node.attrs.autofocus"
+            t-att-accesskey="widget.node.attrs.accesskey">
+            <t t-if="widget.node.attrs.icon">
+                <span t-attf-class="#{widget.node.attrs.icon}"/>
+            </t>
+            <t t-if="widget.string" t-esc="widget.string"/>
+        </button>
+    </t>
+
+    <t t-name="FormRendering.button.delete">
+        <button_d type="button_d" icon='icon-trash2' class="remove_item" t-att-string="label"></button_d>
+    </t>
+    <t t-name="FormRendering.button.duplicate">
+        <button_dupl type="button_dupl" icon='icon-copy' class="duplicate_item" t-att-string="label"></button_dupl>
+    </t>
+
+    <div class="o_form_statusbar" t-name="FormRenderingStatusBar">
+        <div class="o_statusbar_buttons"/>
+    </div>
+
+    <t t-name="Sidebar_mobile">
+        <t t-set="section" t-value="'other'"/>
+        <div t-if="widget.items[section]" class="sidebar-mobile text-center">
+            <t t-foreach="widget.items[section]" t-as="item" t-att-class="item.classname">
+                <a t-if="item.icon" t-att-class="item.icon" t-att-data-section="section" t-att-data-index="item_index" t-att-title="item.title">
+                </a>
+            </t>
+        </div>
+    </t>
+     <t t-name="Sidebar.roboFront">
+        <div></div>
+    </t>
+</template>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_contract_termination_attachment">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="robo.report_contract_termination_attachment_document" t-lang="vals['lang']"/>
+                </t>
+            </t>
+        </template>
+    </data>
+    <data>
+        <template id="report_contract_termination_attachment_document">
+            <div class="page report_invoice_page">
+                <div class="col-xs-12" style="font-size: 16px">
+                    <p style="text-indent: 1em;">
+                        <strong>„<span t-field="o.company_id.display_name"/>“</strong>,
+                        įmonės kodas <strong><span t-field="o.company_id.company_registry"/></strong>,
+                        reg. adresas <strong><span t-field="o.company_id.street"/>,
+                        <span t-field="o.company_id.city"/></strong>,
+                        atstovaujama <strong><span t-esc="ceo_job_ad"/> <span t-esc="ceo_name_ad"/></strong>,
+                        toliau vadinama – <strong>„Darbdaviu“</strong>,
+                    </p>
+                    <p style="text-indent: 1em;">ir</p>
+                    <p style="text-indent: 1em;">
+                        <strong><span t-field="o.name"/></strong>,
+                        asmens kodas <strong><span t-field="o.identification_id"/></strong>,
+                        gyvenanti(s) adresu
+                        <strong>
+                            <t t-if="o.street"><span t-field="o.street"/>, </t>
+                            <t t-if="o.city"><span t-field="o.city"/>, </t>
+                            <t t-if="o.country_id"><span t-field="o.country_id.name"/>, </t>
+                        </strong>
+                        toliau vadinama(s) – <strong>„Darbuotoju“</strong>,
+                    </p><br/>
+                    <p style="margin-top: 2em;">
+                        Darbo sutartis <strong>Nr.<span t-esc="vals['contract_number']"/></strong>,
+                        tarp šalių sudaryta <strong><span t-esc="vals['contract_start_date']"/></strong>, nutraukta:
+                    </p>
+                    <p>
+                        <strong><span t-esc="vals['contract_termination_date']"/></strong>
+                        pagal <strong><span t-esc="vals['dk_article']"/></strong>
+                        - <span t-esc="vals['dk_article_name']"/>.
+                    </p><br/>
+                    <p style="margin-top: 5em;">
+                        <p>Darbdavys ___________________ <span t-esc="vals['representative']"/></p><br/>
+                        <p>A.V.</p><br/>
+                        <p>Darbuotojas ___________________ <span t-field="o.name"/></p>
+                    </p><br/>
+                    <p style="margin-top: 2em;">
+                        Šis nutraukimas sudarytas dviem vienodą juridinę galią turinčiais egzemplioriais,
+                        po vieną kiekvienai šaliai ir yra neatskiriama darbo sutarties dalis.
+                    </p>
+                </div>
+            </div>
+        </template>
+    </data>
+</odoo>

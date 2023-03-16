@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_bank_statement" model="ir.ui.view">
+            <field name="name">account.bank.statement.auto</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='button_cancel']" position="before">
+                    <field name="reported_front" invisible="1"/>
+                    <button name="show_front" string="Rodyti vadovui" type="object"
+                            attrs="{'invisible': [('reported_front', '=', True)]}"/>
+                    <field name="informed" invisible="1"/>
+                    <button name="inform" string="Informuoti vadovą apie mokėjimo ruošinį" type="object"
+                            attrs="{'invisible': ['|', ('informed', '=', True), ('reported_front', '=', False)]}"/>
+                    <button name="auto_process_reconciliation" string="Priverstinis sudengimas" states="open" type="object"/>
+                </xpath>
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="auto_partner_id" states="open"/>
+                    <field name="auto_account_id" states="open"/>
+                </xpath>
+                <xpath expr="//div[@name='button_box']" position="before">
+                    <field name="artificial_statement" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('artificial_statement', '=', False)]}">
+                        <div>Šis išrašas yra dirbtinis, jis buvo sukurtas sistemos
+                            užpildant tuščias dienas tarp banko išrašų.
+                            Jeigu manote, kad šią dieną turėjo būti transakcijų,
+                            iš naujo įkelkite periodą kuriame yra įtraukta ši diena.</div>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="balance_end_factual" groups="base.group_system"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//button[@name='set_not_duplicate']" position="after">
+                    <field name="bank_export_state_html" widget="BankExportState" string=""/>
+                    <field name="bank_export_state" invisible="1"/>
+				</xpath>
+            </field>
+        </record>
+
+        <act_window id="action_bank_statement_merge"
+                    res_model="account.bank.statement.merge.wizard"
+                    src_model="account.bank.statement"
+                    target="new"
+                    multi="True"
+                    key2="client_action_multi"
+                    view_mode="form"
+                    groups="robo_basic.group_robo_premium_accountant"
+                    name="Sujungti"/>
+
+        <record model="ir.actions.server" id="show_front_server_action">
+            <field name="name">Rodyti vadovui</field>
+            <field name="model_id" ref="robo.model_account_bank_statement"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).show_front()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+
+        <function name="show_front_action" model="account.bank.statement"/>
+
+        <record id="extend_view_bank_statement_tree" model="ir.ui.view">
+            <field name="name">account.bank.statement.tree.extend</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+					<field name="partial_statement"/>
+                    <field name="artificial_statement" invisible="1"/>
+                    <field name="bank_export_state_html" widget="BankExportState" string=""/>
+				</xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">artificial_statement</attribute>
+                </xpath>
+			</field>
+		</record>
+    </data>
+</odoo>

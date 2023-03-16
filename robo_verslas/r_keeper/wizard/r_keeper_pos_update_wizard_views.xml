@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Form-->
+        <record id="from_r_keeper_pos_update_wizard" model="ir.ui.view">
+            <field name="name">form.r.keeper.pos.update.wizard</field>
+            <field name="model">r.keeper.pos.update.wizard</field>
+            <field name="arch" type="xml">
+                <form string="rKeeper pardavimo taškų atnaujinimas">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                            Šiame vedlyje galite perkelti produktų informaciją į pasirinktus rKeeper pardavimo
+                            taškus. Jeigu pardavimo taškas jau turi perkeliamą produktą, jo informacija
+                            bus atnaujinta, kitu atveju produkto eilutė bus sukuriama.
+                        </div>
+                        <div class="alert alert-danger" role="alert" style="margin-bottom:0px;" colspan="4">
+                            <i><b>PASTABA </b></i> Nepamirškite atnaujinti pardavimo taškų informacijos
+                            rKeeper serveryje! Po produktų perkėlimo nueikite į konkretų pardavimo tašką,
+                            arba sąraše pasižymėkite norimus pardavimo taškus ir spauskite 'Veiksmas' ->
+                            'Eksportuoti į rKeeper serverį'. Kai produktas bus atnaujintas bent viename
+                            pardavimo taške, produktui bus nuimamas 'Reikia atnaujinti' požymis, tad įsitikinkite
+                            kad atnaujinote visus norimus pardavimo taškus.
+                        </div>
+                        <group>
+                            <field name="product_ids" readonly="1" widget="many2many_tags"/>
+                            <field name="point_of_sale_ids" widget="many2many_tags"
+                                   options="{'no_open': True, 'no_create': True}" required="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Atnaujinti duomenis"
+                                name="update_points_of_sale" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </odoo>
+</data>

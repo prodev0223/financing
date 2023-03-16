@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="robo_onboarding.RoboOnboardingStatusBar" inherit_id="robo_theme_v10.webclient_bootstrap"
+                  name="Robo onboarding status bar">
+            <xpath expr="//div[@class='o_main_content'][last()]" position="inside">
+                <t t-if="show_robo_onboarding">
+                    <div class="onboarding_status_banner">
+                        <a t-attf-href="{{robo_onboarding_action_id}}">
+                            <div>
+                                <div class="onboarding_status_bar">
+                                    <span>
+                                        We are integrating your company! Progress:
+<!--                                        <t t-esc="robo_onboarding_tasks_completed"/>/<t t-esc="robo_onboarding_tasks_total"/>-->
+                                    </span>
+                                </div>
+                                <div class="progress robo_onboarding_progress_bar">
+                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"
+                                        t-att-aria-valuenow="robo_onboarding_completion_percentage"
+                                        t-attf-style="width: #{robo_onboarding_completion_percentage}%">
+                                        <t t-if="robo_onboarding_completion_percentage">
+                                            <span><t t-esc="robo_onboarding_completion_percentage"/>%</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span style="color:black !important; position:absolute; left: 48%;">0%</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </t>
+            </xpath>
+        </template>
+    </data>
+</odoo>

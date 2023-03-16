@@ -1,0 +1,15 @@
+<odoo>
+    <data>
+        <record id="group_robo_threaded_api" model="res.groups">
+            <field name="name">Robo API: Foninis rėžimas</field>
+       </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('robo_api.group_robo_threaded_api'))]"/>
+        </record>
+
+        <record id="robo_basic.group_robo_premium_accountant" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('robo_api.group_robo_threaded_api'))]"/>
+        </record>
+    </data>
+</odoo>

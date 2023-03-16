@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="res_users_front_end_tree_view" model="ir.ui.view">
+            <field name="name">res.users.front.end.tree</field>
+            <field name="model">res.users</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree create="1" editable="top" edit="0" delete="1" import="0">
+                    <field name="name"/>
+                    <field name="login"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="res_users_front_end_form_view" model="ir.ui.view">
+            <field name="name">res.users.front.end.form</field>
+            <field name="model">res.users</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form edit="1" create="1">
+                    <header>
+                        <field name="signup_valid" invisible="1"/>
+                        <field name="state" attrs="{'invisible': True}"/>
+                        <field name="show_reset_2fa_button" attrs="{'invisible': True}"/>
+                        <button string="Išsiųsti slaptažodžio nustatymo/atstatymo instrukcijas"
+                                confirm="There is already an active password change link sent. Are you sure you want to send another one?"
+                                type="object" name="action_reset_password_front"
+                                attrs="{'invisible': [('signup_valid', '!=', True)]}"/>
+                        <button string="Išsiųsti slaptažodžio nustatymo/atstatymo instrukcijas"
+                                type="object" name="action_reset_password_front"
+                                attrs="{'invisible': [('signup_valid', '=', True)]}"/>
+                        <button string="Atstatyti prisijungimą dviem veiksmais"
+                                confirm="Jūs turėtumėte įsitikinti ir patvirtinti tapatybę asmens, kuris paprašė atstatyti prisijungimo dviem veiksmais duomenis, prieš atliekant šį veiksmą."
+                                type="object" name="action_reset_2fa_credentials"
+                                attrs="{'invisible': ['|', ('show_reset_2fa_button', '=', False), ('state', '!=', 'active')]}"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="1">
+                            <div class="alert alert-success text-center o_form_header" attrs="{'invisible': [('signup_valid', '!=', True)]}">
+                                <a class="close" data-dismiss="alert" href="#" aria-hidden="true">x</a>
+                                <div attrs="{'invisible': [('state', '!=', 'active')]}">
+                                    <strong>A password reset has been requested for this user. An email containing the reset link has been sent</strong>
+                                </div>
+                                <div attrs="{'invisible': [('state', '!=', 'new')]}">
+                                    <strong>An invitation email containing the subscription link has been sent</strong>
+                                </div>
+                            </div>
+                            <div class="oe_button_box" name="button_box">
+                                <button name="toggle_robo_active" type="object" class="oe_stat_button" icon="fa-check">
+                                    <field name="active" widget="boolean_button"
+                                           options="{&quot;terminology&quot;: &quot;active&quot;}"/>
+                                </button>
+                            </div>
+                            <h1 style="text-align: center">
+                                <field name="name" nolabel="1" readonly="True"/>
+                            </h1>
+                            <h3 style="text-align: center; color: gray;">
+                                <field name="login" nolabel="1" placeholder="Prisijungimas"/>
+                            </h3>
+                            <div class="alert alert-danger" role="alert" style="text-align: center; font-size: 1.2em; margin-top: 1.1em" colspan="4">
+                                ATTENTION! Consult with your accountant before enabling additional rights for an employee.<br/>
+                                Some rights might grant access to confidential information about other employees (e.g. salaries).
+                            </div>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Teisių valdymas">
+                                <notebook>
+                                    <page string="Paprastas">
+                                        <group colspan="4" col="2" style="margin-bottom: 20px;">
+                                            <field name="main_user_rights_group"/>
+                                            <field name="cash_register_journal_ids" widget="many2many_tags"
+                                                   options='{"no_create": True, "no_quick_create": True}'
+                                                   groups="robo_basic.group_robo_kasos_aparatas"/>
+                                        </group>
+                                        <!--Dynamically generated-->
+                                        <group name="dynamic_user_rights_container"/>
+                                        <div class="oe_chatter" >
+                                            <field name="message_ids" groups="robo_basic.group_robo_premium_accountant" widget="robo_mail_thread" options="{'readonly': True}"/>
+                                        </div>
+                                    </page>
+                                    <page string="Išplėstinis" groups="base.group_system">
+                                        <group colspan="4" col="2">
+                                            <field name="force_global_readonly_access" groups="base.group_system"/>
+                                        </group>
+                                        <group>
+                                            <field name="ir_model_access_override_ids" nolabel="1" groups="base.group_system" attrs="{'readonly': [('force_global_readonly_access', '=', True)]}">
+                                                <tree editable="bottom" open="0" import="0">
+                                                    <field name="model_id"
+                                                           options="{'no_create': True, 'no_open': True}"/>
+                                                    <field name="allow_create"/>
+                                                    <field name="allow_read"/>
+                                                    <field name="allow_write"/>
+                                                    <field name="allow_unlink"/>
+                                                </tree>
+                                            </field>
+                                        </group>
+                                    </page>
+                                </notebook>
+                            </page>
+                            <page string="Žinučių nustatymai">
+                                <group colspan="4" col="4" string="Vartotojo žinučių nustatymai">
+                                    <group colspan="2" col="2">
+                                        <field name="inform_comments" string="Informuoti apie buhalterio paliktus komentarus"/>
+                                        <field name="default_message_receiver"/>
+                                    </group>
+                                    <group string="Informavimas el. paštu" colspan="4" col="4"
+                                           groups="robo_basic.group_robo_premium_manager">
+                                        <field name="robo_front_mail_channel_ids" nolabel="1"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               domain="[('robo_front', '=', True)]">
+                                            <tree class="robo_tree_in_form" open="0" edit="0">
+                                                <field name="name" readonly="1"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="res_users_front_end_view_action" model="ir.actions.act_window">
+            <field name="name">Naudotojai</field>
+            <field name="res_model">res.users</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('res_users_front_end_tree_view')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('res_users_front_end_form_view')})]"/>
+            <field name="domain">[('has_accountant_rights', '=', False)]</field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="context">{'robo_header':{}}</field>
+        </record>
+
+        <record id="view_users_form" model="ir.ui.view">
+            <field name="name">res.users.form.view.extend</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_reset_password']" position="replace">
+                    <field name="signup_valid" invisible="1"/>
+                    <button string="Išsiųsti slaptažodžio nustatymo/atstatymo instrukcijas"
+                            confirm="There is already an active password change link sent. Are you sure you want to send another one?"
+                            type="object" name="action_reset_password"
+                            attrs="{'invisible': [('signup_valid', '!=', True)]}"/>
+                    <button string="Išsiųsti slaptažodžio nustatymo/atstatymo instrukcijas"
+                            type="object" name="action_reset_password"
+                            attrs="{'invisible': [('signup_valid', '=', True)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="res_users_company_settings_button" model="ir.ui.view">
+            <field name="name">res.users.company.settings.button</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside">
+                    <button name="%(res_users_front_end_view_action)d" string="Naudotojai" type="action"
+                            class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_res_users_settings_search"
+                  name="Naudotojai"
+                  parent="robo.menu_company_settings_search"
+                  action="res_users_front_end_view_action"
+                  groups="robo_basic.group_robo_premium_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="naudotojai,vartotojai"
+        />
+
+    </data>
+
+    <data noupdate="1">
+        <!--THIS RECORD MUST HAVE NOUPDATE 1 OR IT WONT WORK-->
+        <record id="dynamic_front_end_groups_view" model="ir.ui.view">
+            <field name="name">Front end user groups</field>
+            <field name="model">res.users</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="res_users_front_end_form_view"/>
+            <field name="arch" type="xml">
+                <!--Dynamically generated-->
+                <xpath expr="//group[@name='dynamic_user_rights_container']" position="replace"/>
+            </field>
+        </record>
+
+        <function name="_update_user_groups_view" model="res.groups"/>
+    </data>
+</odoo>

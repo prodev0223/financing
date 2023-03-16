@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_timesheets_report_wizard_form_view" model="ir.ui.view">
+            <field name="name">laiko.ziniarastis.report.wizard</field>
+            <field name="model">timesheets.report.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="Filtrai">
+                            <field name="year" string="Metai"/>
+                            <field name="month" string="Mėnuo"/>
+                            <field name="department_id" string="Padalinys"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                            <field name="download_for_all_employees"/>
+                            <field name="employee_ids" widget="many2many_tags" options="{'no_create': True}"
+                                   attrs="{'invisible': [('download_for_all_employees','=',True)]}"
+                                   domain="[('id', 'in', employee_domain and employee_domain[0][2])]"/>
+                            <field name="employee_domain" invisible="1"/>
+                        </group>
+                        <footer style="text-align: center; margin-top:15%;">
+                            <button name="download" string="Excel" type="object" class="oe_highlight"
+                                    style="margin-right: 10px;"/>
+                            <button name="%(robo.open_reports_action)d" type="action" string="Atšaukti"
+                                    class="oe_highlight" style="margin-right: 10px;"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_timesheets_report">
+            <field name="name">Laiko žiniaraštis</field>
+            <field name="res_model">timesheets.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="header" ref="front_wizard_default_header"/>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="view_id" ref="robo_timesheets_report_wizard_form_view"/>
+        </record>
+
+         <menuitem id="menu_timesheets_search_report"
+                  name="Laiko žiniaraštis"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="open_timesheets_report"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="laiko,žiniaraštis"
+        />
+    </data>
+</odoo>

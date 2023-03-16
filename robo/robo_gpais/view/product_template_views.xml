@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_template_gpais_ext" model="ir.ui.view">
+            <field name="name">product.template.gpais</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='default_code']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('product_variant_count', '&gt;', 1)],
+                                             'required': [('gpais_product_type', '!=', False),
+                                                          ('gpais_use_forced_product_code', '=', False)]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='default_code']" position="after">
+                    <field name="gpais_use_forced_product_code"
+                           attrs="{'invisible': [('type', '!=', 'product')]}"/>
+                    <field name="gpais_product_code" readonly="True"
+                           attrs="{'invisible': [('gpais_use_forced_product_code', '=', True)]}"/>
+                    <field name="gpais_forced_product_code"
+                           attrs="{'invisible': [('gpais_use_forced_product_code', '=', False)],
+                                   'required': [('gpais_use_forced_product_code', '=', True)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='product_electronics_category']" position="replace">
+                    <field name="gpais_product_type"
+                           attrs="{'invisible': [('type', '!=', 'product')],
+                                   'required': [('gpais_use_forced_product_code', '=', True)]}"/>
+                    <field name="gpais_buitine_iranga"
+                           attrs="{'invisible': ['|', ('type', '!=', 'product'),
+                                                      ('gpais_product_type', '!=', 'elektronineIranga')]}"/>
+                    <field name="date_to_market_from"
+                           attrs="{'invisible': ['|', '|', ('type', '!=', 'product'),
+                                                           ('gpais_use_forced_product_code', '=', True),
+                                                           ('gpais_product_type', '=', False)],
+                                   'required': [('gpais_product_type', '!=', False),
+                                                ('gpais_use_forced_product_code', '=', False)]}"/>
+                    <field name="date_to_market_until"
+                           attrs="{'invisible': ['|', '|', ('type', '!=', 'product'),
+                                                           ('gpais_use_forced_product_code', '=', True),
+                                                           ('gpais_product_type', '=', False)]}"/>
+                    <field name="klasifikacija" domain="[('product_type', '=', gpais_product_type)]"
+                           options="{'no_open': True, 'no_create': True}"
+                           attrs="{'required': [('gpais_product_type', '!=', False),
+                                                ('gpais_product_type', '!=', 'prekinisVienetas')],
+                                   'invisible': ['|', ('gpais_product_type', '=', False),
+                                                      ('gpais_product_type', '=', 'prekinisVienetas')]}"/>
+                    <field name="gpais_product_origin"
+                           attrs="{'required': [('gpais_product_type', '!=', False)],
+                                   'invisible': [('gpais_product_type', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page string="Užstatinės pakuotės"
+                          attrs="{'invisible': ['|', ('gpais_use_forced_product_code','=',True),
+                                                     ('gpais_product_type', '!=', 'prekinisVienetas')]}">
+                        <field name="uzstatine_pakuote_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="code"/>
+                                <field name="material_type"/>
+                                <field name="use_type"/>
+                                <field name="org_code"/>
+                                <field name="qty"/>
+                                <field name="date_from"/>
+                                <field name="end_date"/>
+                            </tree>
+                            <form>
+                                <group>
+                                    <field name="code"/>
+                                    <field name="use_type"/>
+                                    <field name="org_code"/>
+                                    <field name="qty"/>
+                                    <field name="date_from"/>
+                                    <field name="end_date"/>
+                                </group>
+                            </form>
+                        <group>
+                            <button name="action_open_deposit_package_deletion_wizard" string="Ištrinti įrašus"
+                                    type="object" class="oe_highlight"
+                                    attrs="{'invisible': [('num_deposit_lines', '=', 0)]}"/>
+                            <field name="num_deposit_lines" invisible="1"/>
+                        </group>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="robo_stock_product_form_with_packages" model="ir.ui.view">
+            <field name="name">robo.stock.product.form.package</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='packages']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('gpais_use_forced_product_code', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='packages']/field[@name='product_package_default_ids']"
+                       position="attributes">
+                    <attribute name="options">{'always_reload': True, 'reload_on_button': True}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='packages']/field[@name='product_package_default_ids']/tree"
+                       position="replace">
+                    <tree editable="bottom" delete="false" class="robo_tree_in_form">
+                        <field name="package_id"/>
+                        <field name="qty_in_pack"/>
+                        <field name="package_category" string="Kategorija"/>
+                        <field name="material_type" string="Rūšis"/>
+                        <field name="use_type"/>
+                        <field name="recycling_type"/>
+                        <field name="weight" string="Kg"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <button name="button_call_deletion_wizard" icon="fa-trash" type="object" string="Ištrinti"/>
+                    </tree>
+                </xpath>
+                <xpath expr="//notebook/page[@name='packages']/field[@name='product_package_default_ids']"
+                       position="after">
+                    <group>
+                        <button name="action_open_package_deletion_wizard" string="Ištrinti įrašus" type="object"
+                                class="oe_highlight" attrs="{'invisible': [('num_package_lines', '=', 0)]}"/>
+                        <field name="num_package_lines" invisible="1"/>
+                    </group>
+
+                </xpath>
+            </field>
+        </record>
+        <record id="product_battery_gpais_deletion_ext" model="ir.ui.view">
+            <field name="name">product.battery.deletion.gpais</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_electronics.product_template_electronics_report_ext"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_battery_line_ids']" position="after">
+                        <group>
+                            <button name="action_open_battery_deletion_wizard" string="Ištrinti įrašus" type="object"
+                                    class="oe_highlight" attrs="{'invisible': [('num_battery_lines', '=', 0)]}"/>
+                            <field name="num_battery_lines" invisible="1"/>
+                        </group>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

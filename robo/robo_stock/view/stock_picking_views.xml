@@ -1,0 +1,625 @@
+<odoo>
+    <data>
+        <!--Tree-->
+        <record id="robo_stock_picking_tree" model="ir.ui.view">
+            <field name="name">robo.stock.picking.tree</field>
+            <field name="model">stock.picking</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel' or cancel_state == 'error'"
+                      decoration-danger="(state not in ('cancel', 'done') and min_date &lt; current_date) or cancel_state == 'partial_error'"
+                      string="Važtaraščiai" create="0" import="false" default_order="min_date DESC">
+                    <field name="cancel_state" invisible="1"/>
+                    <field name="name" string="Numeris"/>
+                    <field name="location_dest_id" string="Pristatymo vieta" can_create="true" can_write="true"/>
+                    <field name="partner_id" string="Partneris" on_change="1" can_create="true" can_write="true"/>
+                    <field name="date" invisible="1" string="Data"/>
+                    <field name="min_date" string="Suplanuota data"/>
+                    <field name="origin" string="Susijęs dokumentas"/>
+                    <field name="supplier_note" string="Tiekėjo numeris"/>
+                    <field name="group_id" invisible="1" can_create="true" can_write="true"/>
+                    <field name="backorder_id" can_create="true" can_write="true" string="Pradinis važtaraštis"/>
+                    <field name="state" string="Būsena"/>
+                    <field name="priority" invisible="1"/>
+                    <field name="picking_type_id" invisible="1" on_change="1" can_create="true" can_write="true"/>
+                    <field name="products_inside" invisible='1'/>
+                    <field name="weight" invisible="1"/>
+                    <field name="weight_uom_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="robo_stock_picking_form" model="ir.ui.view">
+            <field name="name">robo.stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Važtaraštis" class="robo_stock_operation">
+                    <header>
+                        <button name="action_confirm" states="draft" string="Patvirtinti" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_assign" states="confirmed,waiting" string="Rezervuoti prekes" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_assign" states="partially_available" string="Rezervuoti prekes"
+                                type="object"/>
+                        <button name="do_new_transfer" states="draft,partially_available,assigned"
+                                string="Perduoti prekes"
+                                type="object" class="oe_highlight"/>
+                        <button name="do_print_picking" string="Spausdinti" type="object"/>
+                        <button name="action_picking_return" string="Taisyti klaidas"
+                                states="done" type="object" context="{'error': True, 'default_error': True}"/>
+                        <button name="set_back_to_draft" string="Atstatyti į juodraštį" type="object"
+                                states="confirmed"/>
+                        <button name="action_cancel" states="assigned,confirmed,partially_available,draft,waiting"
+                                string="Atšaukti" type="object"/>
+                        <button name="do_unreserve" string="Atšaukti rezervaciją" type="object"
+                                attrs="{'invisible': [('quant_reserved_exist', '=', False),
+                                    ('state', 'not in', ['partially_available', 'assigned', 'confirmed'])]}"/>
+                        <button name="do_prepare_partial"
+                                attrs="{'invisible': ['|', ('launch_pack_operations', '=', True), '|', ('state', 'not in', ('assigned', 'partially_available')), ('pack_operation_ids', '!=', [])]}"
+                                string="Perskaičiuoti operacijas" type="object"/>
+                        <button name="export_to_i_vaz" type="object" groups="stock.group_stock_manager"
+                                string="Eksportuoti i.VAZ" states="waiting,confirmed,partially_available,assigned,done"
+                        />
+                        <field name="launch_pack_operations" invisible="1" on_change="1"/>
+                        <field name="error" invisible="1"/>
+                        <field name="state" widget="statusbar" help=""
+                               statusbar_visible="draft,confirmed,partially_available,assigned,done" on_change="1"/>
+                    </header>
+                    <sheet>
+                        <field name="potential_duplicate" invisible="1"/>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': [('potential_duplicate','=',False)]}">
+                            Egzistuoja važtaraštis su ta pačia lokacija ir tuo pačiu susijusiu dokumentu/tiekėjo
+                            važtaraščio numeriu. Jeigu norite tęsti, ignoruokite šią žinutę.
+                        </div>
+                        <div class="oe_button_box" name="button_box">
+                            <field name="has_scrap_move" invisible="True"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <button name="action_see_move_scrap" string="Scraps" type="object" class="oe_stat_button"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    icon="fa-arrows-v" attrs="{'invisible': [('has_scrap_move', '=', False)]}"/>
+                            <button type="object" name="open_website_url" class="oe_stat_button" icon="fa-truck"
+                                    string="Siuntos stebėjimas" groups="robo_basic.group_robo_premium_accountant"
+                                    attrs="{'invisible': ['|','|',('carrier_tracking_ref','=',False),('carrier_id', '=', False),('delivery_type','=','grid')]}"/>
+                            <button name="%(robo_stock.action_picking_related_moves)d"
+                                    type="action"
+                                    icon="fa-truck"
+                                    class="oe_stat_button" groups="stock.group_stock_manager"
+                                    attrs="{'invisible': [('move_count','=',True)]}">
+                                <field name="move_count" widget="statinfo" string="Pervežimai"/>
+                            </button>
+                            <field name="sale_id" invisible="1"/>
+                            <field name="purchase_id" invisible="1"/>
+                            <field name="num_rel_invoices" invisible="1"/>
+                            <button name="action_view_invoice_robo" type="object" string="Sąskaitos"
+                                    icon="fa-pencil-square-o"
+                                    class="oe_stat_button"
+                                    attrs="{'invisible': [('sale_id', '=', False), ('purchase_id', '=', False),
+                                    ('num_rel_invoices', '=', 0)]}"/>
+                            <button name="action_view_sale_robo" type="object" string="Pardavimas"
+                                    icon="fa-pencil-square-o"
+                                    class="oe_stat_button"
+                                    attrs="{'invisible': [('sale_id', '=', False)]}"/>
+                            <button name="action_view_purchase_robo" type="object" string="Pirkimas"
+                                    icon="fa-pencil-square-o"
+                                    class="oe_stat_button"
+                                    attrs="{'invisible': [('purchase_id', '=', False)]}"/>
+                            <field name="show_accounting" invisible="1"/>
+                            <button name="open_account_move_lines" type="object" class="oe_stat_button" icon="fa-bars"
+                                    string="DK įrašai" groups="robo_basic.group_robo_premium_accountant"
+                                    attrs="{'invisible': [('show_accounting','=',False)]}"/>
+                        </div>
+                        <h1 class="hidden-xs">
+                            <field name="name" attrs="{'invisible': [('name','=','/')]}" readonly="1"/>
+                        </h1>
+                        <group class="hidden-xs">
+                            <group>
+                                <field name="partner_id" attrs="{'invisible': [('picking_type_code', '=', 'internal')]}"
+                                       on_change="1" can_create="true" can_write="true"
+                                       options="{'no_open': False, 'no_create': True}"
+                                       context="{'form_view_ref': 'robo.new_clients_customer_form'}"/>
+                                <field name="picking_type_id" on_change="1" can_create="true" can_write="true"
+                                       string="Pervežimo operacija"
+                                       domain="[('code', '!=', 'mrp_operation')]"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                <field name="location_id" options="{'no_open': True, 'no_create': True}" on_change="1"
+                                       can_create="true" can_write="true" invisible="0"
+                                       domain="[('usage', '!=', 'view')]"
+                                       string="Prekių pakrovimo vieta"/>
+                                <field name="location_dest_id" on_change="1" can_create="true" can_write="true"
+                                       invisible="0" options="{'no_open': True, 'no_create': True}"
+                                       string="Prekių pristatymo vieta" domain="[('usage', '!=', 'view')]"/>
+                                <field name="backorder_id" readonly="1" options="{'no_open': True, 'no_create': True}"
+                                       attrs="{'invisible': [('backorder_id','=',False)]}" can_create="true"
+                                       can_write="true"/>
+                            </group>
+                            <group>
+                                <field name="min_date"/>
+                                <field name="origin" placeholder="pvz. PO0032" class="oe_inline"
+                                       string="Susijęs dokumentas" readonly="1"/>
+                                <field name="supplier_note" string="Tiekėjo važtaraščio numeris"/>
+                                <field name="shipping_type" on_change="1" string="Siuntos tipas" invisible="1"/>
+                                <label for="owner_id" invisible="1"/>
+                                <div invisible="1">
+                                    <field name="owner_id" can_create="true" can_write="true"/>
+                                    <button name="action_assign_owner" string="Assign Owner" type="object"
+                                            attrs="{'invisible': ['|',('pack_operation_exist', '=', False),('state', 'not in', ('draft','assigned','confirmed'))]}"
+                                            class="oe_link oe_edit_only"/>
+                                </div>
+                                <field name="is_out_refund" invisible="1"/>
+                                <field name="show_total_cost" invisible="1"/>
+                                <field name="total_cost" groups="stock.group_stock_manager"
+                                       attrs="{'invisible': [('show_total_cost', '=', False)]}"/>
+                                <field name="avg_total_cost" groups="stock.group_stock_manager"
+                                       attrs="{'invisible': [('show_total_cost', '=', True)]}"/>
+                                <field name="select_origin_picking" groups="stock.group_stock_manager"
+                                       attrs="{'invisible': [('is_out_refund', '=', False)]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Operacijos"
+                                  attrs="{'invisible': [('state', 'in', ('draft', 'confirmed', 'waiting'))]}">
+                                <button name="do_prepare_partial" type="object" string="Perskaičiuoti"
+                                        attrs="{'invisible': [('recompute_pack_op','=', False)]}" help=""/>
+                                <field name="recompute_pack_op" invisible="1" help=""/>
+                                <field name="pack_operation_ids" invisible="1" on_change="1" help=""/>
+                                <field name="pack_operation_product_ids" help="" string="Operacija"
+                                       class="order_operations"
+                                       options="{'reload_on_button': True, 'no_open': True}"
+                                       context="{'default_picking_id': id, 'default_location_id': location_id,
+                                       'form_view_ref': 'robo_stock.view_stock_pack_operation_picking_form',
+                                       'default_location_dest_id': location_dest_id}"
+                                       mode="tree,kanban">
+                                    <tree editable="bottom" class="robo_operation_edit robo_tree_in_form"
+                                          decoration-muted="result_package_id"
+                                          decoration-danger="qty_done&gt;product_qty"
+                                          decoration-success="qty_done==product_qty and state!='done' and not result_package_id">
+                                        <field name="package_id" options="{'no_create': True, 'no_open': True}"
+                                               groups="stock.group_tracking_lot" invisible="1" string="Pakuotė"/>
+                                        <field name="product_id" required="1" string="Produktas"
+                                               context="{'form_view_ref': 'robo_stock.robo_stock_product_form','default_type': 'product'}"
+                                               attrs="{'readonly': [('fresh_record', '=', False)]}"/>
+                                        <field name="product_description"/>
+                                        <field name="fresh_record" invisible="1"/>
+                                        <field name="product_uom_id" string="Matavimo vienetai"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               attrs="{'readonly': [('fresh_record', '=', False)]}"
+                                               groups="product.group_uom"/>
+                                        <field name="lots_visible" invisible="1"/>
+                                        <field name="owner_id" groups="stock.group_tracking_owner"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="location_id" domain="[('id', 'child_of', parent.location_id)]"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               invisible="1" string="Pakrovimo vieta"/>
+                                        <field name="location_dest_id" string="Pristatymo vieta"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="from_loc" string="Pakrovimo vieta"
+                                               groups="stock.group_stock_multi_locations,stock.group_tracking_lot"/>
+                                        <field name="to_loc" string="Pristatymo vieta"
+                                               groups="stock.group_stock_multi_locations,stock.group_tracking_lot"/>
+                                        <field name="result_package_id" groups="stock.group_tracking_lot"
+                                               string="Pakuotė" options="{'no_create': True, 'no_open': True}"
+                                               context="{'default_location_id': location_dest_id}" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="product_qty" readonly="1" string="Suplanuotas kiekis"
+                                               attrs="{'required': [('product_id', '!=', False)]}"/>
+                                        <field name="qty_done" string="Faktinis kiekis"
+                                               attrs="{'readonly': [('lots_visible', '=', True)]}"/>
+                                        <button name="split_lot" string="Skaidyti SN" type="object" icon="fa-list"
+                                                groups="stock.group_production_lot"
+                                                attrs="{'invisible': ['|', ('lots_visible', '=', False), ('state', 'not in', ['confirmed', 'assigned', 'waiting', 'partially_available','done'])]}"/>
+                                        <button name="show_details" string="Keisti" type="object" icon="fa-pencil"
+                                                groups="stock.group_stock_multi_locations"
+                                                states="confirmed,assigned,waiting,partially_available"/>
+                                    </tree>
+                                    <kanban class="o_kanban_mobile">
+                                        <field name="package_id" options="{'no_create': True, 'no_open': True}"
+                                               groups="stock.group_tracking_lot" invisible="1"/>
+                                        <field name="product_id" required="1"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               attrs="{'readonly': [('fresh_record', '=', False)]}"/>
+                                        <field name="fresh_record" invisible="1"/>
+                                        <field name="product_uom_id" options="{'no_create': True, 'no_open': True}"
+                                               attrs="{'readonly': [('fresh_record', '=', False)]}"
+                                               groups="product.group_uom"/>
+                                        <field name="lots_visible" invisible="1"/>
+                                        <field name="owner_id" options="{'no_create': True, 'no_open': True}"
+                                               groups="stock.group_tracking_owner"/>
+                                        <field name="location_id" domain="[('id', 'child_of', parent.location_id)]"
+                                               invisible="1" options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="location_dest_id" options="{'no_create': True, 'no_open': True}"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="from_loc"
+                                               groups="stock.group_stock_multi_locations,stock.group_tracking_lot"/>
+                                        <field name="to_loc"
+                                               groups="stock.group_stock_multi_locations,stock.group_tracking_lot"/>
+                                        <field name="result_package_id" groups="stock.group_tracking_lot"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               context="{'default_location_id': location_dest_id}" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="product_qty" readonly="1"
+                                               attrs="{'required': [('product_id', '!=', False)]}"/>
+                                        <field name="qty_done" attrs="{'readonly': [('lots_visible', '=', True)]}"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click                                                                #{record.qty_done.raw_value&gt;record.product_qty.raw_value ? 'oe_kanban_color_2' : ''}                                                                #{record.qty_done.raw_value==record.product_qty.raw_value &amp;&amp; record.state.raw_value!='done' &amp;&amp; ! record.result_package_id.raw_value ? 'oe_kanban_color_3' : ''}">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                <t t-esc="record.from_loc.value"/>
+                                                                į
+                                                                <t t-esc="record.to_loc.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>
+                                                                <t t-esc="record.qty_done.value"/>
+                                                                iš
+                                                                <t t-esc="record.product_qty.value"/>
+                                                                <t t-esc="record.product_uom_id.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                                <field name="picking_type_entire_packs" help="" invisible="1"/>
+                                <field name="pack_operation_pack_ids" help="" options="{'reload_on_button': True}"
+                                       attrs="{'invisible': [('pack_operation_pack_ids', '=', []), ('picking_type_entire_packs', '=', False)]}"
+                                       context="{'default_picking_id': id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id, 'default_picking_id': id}"
+                                       groups="stock.group_tracking_lot">
+                                    <tree editable="bottom" decoration-muted="qty_done&gt;0" class="robo_tree_in_form">
+                                        <field name="package_id" required="1" string="Pakuotės pervežimui"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               domain="[('location_id', '=', location_id)]"/>
+                                        <field name="location_id" domain="[('id', 'child_of', parent.location_id)]"
+                                               invisible="1" options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="from_loc"
+                                               groups="stock.group_stock_multi_locations,stock.group_tracking_lot"/>
+                                        <field name="to_loc"
+                                               groups="stock.group_stock_multi_locations,stock.group_tracking_lot"/>
+                                        <field name="location_dest_id" options="{'no_create': True, 'no_open': True}"
+                                               domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                        <field name="result_package_id" groups="stock.group_tracking_lot"
+                                               context="{'default_location_id': location_dest_id}" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="qty_done" invisible="1"/>
+                                        <field name="lots_visible" invisible="1"/>
+                                        <field name="is_done"/>
+                                        <button name="show_details" string="Keisti" type="object" icon="fa-pencil"
+                                                states="confirmed,assigned,waiting,partially_available"
+                                                groups="base.group_no_one"/>
+                                    </tree>
+                                </field>
+                                <button class="oe_link oe_right" name="put_in_pack" type="object"
+                                        string="↳Put in Pack"
+                                        attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}"
+                                        groups="stock.group_tracking_lot"/>
+                            </page>
+                            <page string="Pradinis užsakymas">
+                                <field name="move_lines" class="order_operations"
+                                       attrs="{'readonly': [('state', 'in', ('cancel', 'partially_available', 'assigned', 'done'))]}"
+                                       options="{'reload_on_button': True, 'no_open': True}" mode="tree,kanban"
+                                       context="{'date': min_date,
+                                       'address_in_id': partner_id,
+                                       'form_view_ref':'robo_stock.view_move_picking_form',
+                                       'tree_view_ref':'robo_stock.view_move_picking_tree',
+                                       'default_picking_type_id': picking_type_id, 'default_location_id': location_id,
+                                       'default_location_dest_id': location_dest_id}">
+                                    <kanban class="o_kanban_mobile">
+                                        <field name="product_id" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="availability"/>
+                                        <field name="product_uom_qty"/>
+                                        <field name="product_uom" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="location_dest_id" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="scrapped"/>
+                                        <field name="state"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-8 text-muted">
+                                                            <span>
+                                                                <t t-esc="record.availability.value"/>
+                                                                iš
+                                                                <t t-esc="record.product_uom_qty.value"/>
+                                                                <t t-esc="record.product_uom.value"/>
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-xs-4 text-muted">
+                                                            <span class="pull-right text-right">
+                                                                <t t-esc="record.location_dest_id.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                                <field name="pack_operation_exist" invisible="1"/>
+                                <field name="note" help=""
+                                       placeholder="Čia galima suvesti komentarus, kurie bus atspausdinti važtaraštyje."
+                                       class="oe_inline"/>
+                            </page>
+                            <page string="Papildoma informacija" name="extra">
+                                <group>
+                                    <group>
+                                        <field name="move_type" on_change="1" invisible="1" string="Pristatymo būdas"/>
+                                        <field name="picking_type_code" string="Operacijos kodas" invisible="1"/>
+                                        <field name="quant_reserved_exist" string="Rezervacija" invisible="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="company_id" options="{'no_create': True, 'no_open': True}"
+                                               can_create="true"
+                                               can_write="true" invisible="1"/>
+                                        <field name="group_id" can_create="true" can_write="true"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               invisible="1" string="Pervežimo grupė"/>
+                                        <field name="priority" string="Prioritetas"/>
+                                    </group>
+                                </group>
+                                <separator string="Siuntos informacija"/>
+                                <group>
+                                    <group name="carrier_data">
+                                        <field name="carrier_id" attrs="{'readonly': [('state', '=', 'done')]}"
+                                               on_change="1" can_create="true" can_write="true" invisible="1"
+                                               string="Vežėjas" options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="partner_id_carrier" can_create="true" can_write="true"
+                                               options="{'no_create': False, 'no_open': True}"
+                                               context="{'default_delivery_agent': True,
+                                               'form_view_ref':'robo.new_clients_customer_form',
+                                               }"
+                                               string="Pervežimo kompanija"/>
+                                        <field name="transport_id" string="Transportas"
+                                               context="{'default_delivery_agent_id': partner_id_carrier,
+                                               'form_view_ref':'robo_stock.transport_form'}"
+                                               domain="[('delivery_agent_id','=',partner_id_carrier)]" can_create="true"
+                                               can_write="true"/>
+                                        <field name="delivery_type" attrs="{'invisible':True}"
+                                               string="Pristatymo tipas"/>
+                                        <label for="carrier_tracking_ref" string="Siuntos numeris"/>
+                                        <div name="tracking">
+                                            <field name="carrier_tracking_ref" class="oe_inline"
+                                                   attrs="{'readonly': [('state', '=', 'done')]}"/>
+                                            <button type="object" class="fa fa-arrow-right oe_link"
+                                                    name="cancel_shipment" string="Atšaukti"
+                                                    attrs="{'invisible':['|','|','|',('carrier_tracking_ref','=',False),('delivery_type','in', ['fixed', 'base_on_rule']),('delivery_type','=',False),('state','not in',('done'))]}"/>
+                                        </div>
+                                    </group>
+                                    <group>
+                                        <label for="weight" string="Svoris"/>
+                                        <div>
+                                            <field name="weight" class="oe_inline"/>
+                                            <field name="weight_uom_id" nolabel="1" class="oe_inline"
+                                                   options="{'no_create': True, 'no_open': True}"
+                                                   style="margin-left:5px" can_create="true" can_write="true"/>
+                                        </div>
+                                        <field name="shipping_weight"
+                                               string="Siuntos svoris"/>
+                                        <field name="number_of_packages" string="Pakuočių skaičius"
+                                               attrs="{'readonly': [('state', '=', 'done')]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Sąskaita (PDF)" name="invoice_pdf" groups="robo_stock.robo_stock_pdf_pickings" attrs="{'invisible': [('invoice_pdf', '=', False)]}">
+                                <field name="invoice_pdf" nolabel="1" widget="pdf_viewer"/>
+                            </page>
+                            <page name="quant_select" string="Grąžinimai"
+                                  attrs="{'invisible': [('select_origin_picking', '=', False)]}"
+                                  groups="stock.group_stock_manager">
+                                <div class="alert alert-danger" role="alert" style="margin-bottom:0px;"
+                                     groups="stock.group_stock_manager"
+                                     attrs="{'invisible': [('is_picking_selection_enough', '=', True)]}">
+                                    Neužtenka pasirinktų grąžinamų važtaraščių kiekio.
+                                </div>
+                                <field name="is_picking_selection_enough" invisible="1"/>
+                                <field name="origin_picking_ids" options="{'no_create': True}"
+                                       domain="[('location_id.usage', '=', 'internal'), ('location_dest_id.usage', '=', 'customer'), ('move_lines.non_error_quant_ids', '!=', 'False)]">
+                                    <tree editable="bottom" class="robo_tree_in_form">
+                                        <field name="name" readonly="True"/>
+                                        <field name="partner_id" readonly="True"/>
+                                        <field name="location_id" readonly="True"/>
+                                        <field name="min_date" readonly="True"/>
+                                        <field name="origin" readonly="True"/>
+                                    </tree>
+                                </field>
+                                <field name="origin_quant_ids" invisible="1"/>
+                                <group>
+                                    <field name="select_origin_quant"/>
+                                </group>
+                                <field name="is_quant_selection_ok" invisible="1"/>
+                                <div class="alert alert-danger" role="alert" style="margin-bottom:0px;"
+                                     groups="stock.group_stock_manager"
+                                     attrs="{'invisible': ['|', ('select_origin_quant', '=', False), ('is_quant_selection_ok', '=', True)]}">
+                                    Nesutampa pasirinkti grąžinami kiekiai su bendru važtaraščio kiekiu.
+                                </div>
+                                <field name="show_add_return_quant_button" invisible="1"/>
+                                <group string="Prekių kiekiai grąžinimui"
+                                       attrs="{'invisible': [('select_origin_quant', '=', False)]}">
+                                    <field name="quant_to_return_ids" nolabel="1">
+                                        <tree create="0" editable="bottom" class="robo_tree_in_form">
+                                            <field name="quant_id" readonly="True" invisible="1"/>
+                                            <field name="product_id" readonly="True"/>
+                                            <field name="cost" readonly="True"/>
+                                            <field name="in_date" readonly="True"/>
+                                            <field name="qty" readonly="True"/>
+                                            <field name="qty_to_return" sum="Suma:"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                                <button name="update_quants_to_return" string="Pridėti prieinamus kiekius" type="object"
+                                        attrs="{'invisible': ['|',
+                                                                ('select_origin_quant', '=', False),
+                                                                ('show_add_return_quant_button', '=', False)]}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_confirm_pickings_multi" model="ir.actions.server">
+            <field name="name">Tvirtinti važtaraščius</field>
+            <field name="model_id" ref="robo_stock.model_stock_picking"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).server_action_confirm_pickings()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_action_confirm_pickings_multi" model="stock.picking"/>
+
+        <record id="open_robo_stock_picking" model="ir.actions.act_window">
+            <field name="name">Važtaraščiai</field>
+            <field name="res_model">stock.picking</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="target">current</field>
+            <field name="domain">[('cancel_state', '!=', 'error')]</field>
+            <field name="view_id" ref="robo_stock_picking_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_stock_picking_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('stock.stock_picking_kanban')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_stock_picking_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="context">
+                {
+                'search_default_confirmed': 1,
+                }
+            </field>
+            <field name="robo_menu" ref="menu_robo_stock"/>
+            <field name="with_settings">True</field>
+            <field name="header" ref="robo_stock_header_picking"/>
+        </record>
+        <record id="new_open_robo_stock_picking" model="ir.actions.act_window">
+            <field name="name">Naujas važtaraštis</field>
+            <field name="res_model">stock.picking</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_stock_picking_form')})]"/>
+            <field name="context" eval="{
+                'robo_header': {},
+                'search_add_custom': False,
+                }"/>
+            <field name="robo_menu" ref="menu_robo_stock"/>
+            <field name="header" ref="robo_stock_header_picking"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <!--Menuitems-->
+        <menuitem id="menu_robo_stock_pickings"
+                  parent="robo_stock.menu_robo_stock"
+                  name="Važtaraščiai"
+                  sequence="3"
+                  action="open_robo_stock_picking"
+                  groups="robo_stock.robo_stock_extended"
+                  robo_front="True"
+                  force_web_icon="icon-document,none,none"
+                  searchable="True"
+                  tags="važtaraščiai"
+        />
+
+        <record id="menu_robo_stock_pickings" model="ir.ui.menu">
+            <field name="groups_id" eval="[(5, 0, 0), (4, ref('robo_stock.robo_stock_extended'))]"/>
+        </record>
+
+        <!--Extensions-->
+        <record id="vpicktree" model="ir.ui.view">
+            <field name="name">stock.picking.tree</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="cancel_state" invisible="1"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-muted">state == 'cancel' or cancel_state == 'error'</attribute>
+                    <attribute name="decoration-danger">(state not in ('cancel', 'done') and min_date &lt; current_date)
+                        or cancel_state == 'partial_error'
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_picking_form_string_change" model="ir.ui.view">
+            <field name="name">view.picking.form.string.change</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook//page[2]" position="attributes">
+                    <attribute name="string">Pradinis užsakymas</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="robo_stock_picking_search_extend" model="ir.ui.view">
+            <field name="name">robo.stock.picking.search.extend</field>
+            <field name="model">stock.picking</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='picking_type_id']" position="after">
+                    <field name="origin"/>
+                    <field name="supplier_note" string="Supplier number"/>
+                    <field name="location_id" domain="[('usage', '!=', 'view')]"/>
+                    <field name="location_dest_id" domain="[('usage', '!=', 'view')]"/>
+                </xpath>
+                <xpath expr="//filter[@name='picking_type']" position="after">
+                    <filter name="group_location_id" string="Prekių pakrovimo vieta" domain="[]"
+                            context="{'group_by':'location_id'}"/>
+                    <filter name="group_location_dest_id" string="Prekių pristatymo vieta" domain="[]"
+                            context="{'group_by':'location_dest_id'}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock.stock_picking_kanban" model="ir.ui.view">
+            <field name="robo_front">True</field>
+        </record>
+        <record id="stock_picking_kanban" model="ir.ui.view">
+            <field name="name">stock.picking.kanban</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.stock_picking_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="class">o_kanban_mobile</attribute>
+                    <attribute name="create">0</attribute>
+                    <attribute name="import">0</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

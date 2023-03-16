@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form" model="ir.ui.view">
+        <field name="name">view.user.form</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <field name="signature" position="before">
+                <field name="enable_2fa" readonly="0"/>
+                <field name="qr_image_2fa" widget="image" readonly="1"
+                       attrs="{'invisible': ['|', ('enable_2fa', '=', False), ('qr_image_2fa', '=', False),],}"
+                       groups="two_factor_otp_auth.mass_change_2fa_for_users"
+                />
+            </field>
+            <xpath expr="//field[@name='session_ids']//tree//field[@name='logged_in']" position="after">
+                    <field name="with_2fa"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button string="Reset 2FA credentials" type="object" name="action_discard_2f_auth_credentials"
+                        confirm="Do you really want to reset 2FA credentials?"
+                        attrs="{'invisible': ['|', ('enable_2fa', '=', False), ('qr_image_2fa', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_users_form_simple_modif" model="ir.ui.view">
+        <field name="name">view.users.form.simple.modif</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <field name="signature" position="before">
+                <field name="enable_2fa" readonly="0"/>
+                <div attrs="{'invisible': ['|', ('enable_2fa', '=', False), ('qr_image_2fa', '=', False),],}"
+                     colspan="4" style="width: 100%; position: relative" class="qr-code-container">
+                    <label for="qr_image_2fa" string="Two Factor Authentication QR Code"/>
+                    <field name="qr_image_2fa" widget="image" readonly="1" nolabel="1" colspan="4" class="qr-code-image"
+                           style="width: 100%; position: relative"
+                           attrs="{'invisible': ['|', ('enable_2fa', '=', False), ('qr_image_2fa', '=', False),],}"
+                    />
+                </div>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_users_tree" model="ir.ui.view">
+        <field name="name">view.users.tree</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_tree"/>
+        <field name="arch" type="xml">
+            <field name="login_date" position="after">
+                <field name="enable_2fa"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

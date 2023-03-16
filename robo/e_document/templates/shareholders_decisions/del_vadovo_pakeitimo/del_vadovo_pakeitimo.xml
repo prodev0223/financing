@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="akcininku_sprendimas_del_vadovo_pakeitimo_form" model="ir.ui.view">
+            <field name="inherit_id" ref="e_document.shareholders_decisions_base_view"/>
+            <field name="model">e.document</field>
+            <field name="name">Akcininkų sprendimas dėl vadovo pakeitimo</field>
+            <field name="mode">primary</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id2']" position="attributes">
+                    <attribute name="string">Paskiriamas vadovas</attribute>
+                </xpath>
+                <xpath expr="//field[@name='employee_id2']" position="after">
+                    <field name="date_from" string="Paskyrimo pradžia" required="True" invisible="0"/>
+                    <field name="date_to" string="Paskyrimo pabaiga (neprivaloma)" required="False" invisible="0"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="akcininku_sprendimas_del_vadovo_pakeitimo_action" model="ir.actions.act_window">
+            <field name="name">Akcininkų sprendimas dėl vadovo pakeitimo action</field>
+            <field name="res_model">e.document</field>
+            <field name="view_id" ref="e_document.akcininku_sprendimas_del_vadovo_pakeitimo_form"/>
+            <field name="context">{
+                u'default_document_type': u'akcininku_sprendimas',
+                u'rec_template_id': u'akcininku_sprendimas_del_vadovo_pakeitimo_template',
+                u'e_document_view_type': u'rigid'
+            }</field>
+        </record>
+
+        <record id="akcininku_sprendimas_del_vadovo_pakeitimo_menu" model="ir.ui.menu">
+            <field name="name">Akcininkų sprendimas dėl vadovo pakeitimo</field>
+            <field name="action" ref="e_document.akcininku_sprendimas_del_vadovo_pakeitimo_action"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="e_document_root"/>
+            <field name="tags">akcininkai, akcininku sprendimas, sprendimas, nuspresti, įsakymas, direktorius, vadovas, ceo, keisti</field>
+        </record>
+
+        <record id="akcininku_sprendimas_del_vadovo_pakeitimo_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    <span style="font-weight: bold">DARBOTVARKĖ:</span>
+                    <ol style="margin-left: 3%">
+                        <li>Dėl vadovo pakeitimo</li>
+                    </ol>
+                    <span style="font-weight: bold">NUTARTA:</span>
+                    <ol style="margin-left: 3%">
+                        <li>
+                            Skirti {{ ka(employee_id2, 'Aa') }},
+                            {% if employee_identification_id %}
+                             asmens kodas {{ employee_identification_id }},
+                            {% endif %}
+                            {% if employee_street %}
+                             gyvenantį adresu {{ employee_street }},
+                            {% endif %}
+                            {{ company_id.upper() }} vadovu nuo {{ date_string(date_from, 'ko') }}
+                            {% if date_to %} iki {{ date_string(date_to, 'ko')}}{% endif %}
+                        </li>
+                    </ol>
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Akcininkų sprendimas dėl vadovo pakeitimo</field>
+            <field name="footer" type="html">
+                <div style="margin-top: 20px;">
+                    {{ shareholder_sign_footer }}
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.akcininku_sprendimas_del_vadovo_pakeitimo_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                            width: 100px;
+                        }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>AKCININKŲ SPRENDIMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>DĖL VADOVO PAKEITIMO</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                            text-align: center;
+                            margin-left:auto;
+                            margin-right:auto;
+                        }
+                        .desine{
+                            float: right;
+                            width: 300px;
+                            text-align: justify
+                            .img-rounded{
+                                width: 100px;
+                            }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>AKCININKŲ SPRENDIMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                                <br/>
+                                <span>DĖL VADOVO PAKEITIMO</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ vieta }}</span>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        <span style="font-weight: bold">DARBOTVARKĖ:</span>
+                        <ol style="margin-left: 3%">
+                            <li>Dėl vadovo pakeitimo</li>
+                        </ol>
+                        <span style="font-weight: bold">NUTARTA:</span>
+                        <ol style="margin-left: 3%">
+                            <li>
+                                Skirti {{ ka(employee_id2, 'Aa') }},
+                                {% if employee_identification_id %}
+                                 asmens kodas {{ employee_identification_id }},
+                                {% endif %}
+                                {% if employee_street %}
+                                 gyvenantį adresu {{ employee_street }},
+                                {% endif %}
+                                {{ company_id.upper() }} vadovu nuo {{ date_string(date_from, 'ko') }}
+                                {% if date_to %} iki {{ date_string(date_to, 'ko')}}{% endif %}
+                            </li>
+                        </ol>
+                        {{ extra_text_html }}
+                    </div>
+                    <div style="margin-top: 20px;">
+                        {{ shareholder_sign_footer }}
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.akcininku_sprendimas_del_vadovo_pakeitimo_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name">date_to</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+        </record>
+    </data>
+</odoo>

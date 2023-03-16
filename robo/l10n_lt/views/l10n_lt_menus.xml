@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_voucher.menu_action_sale_receipt" model="ir.ui.menu">
+              <field name="groups_id" eval="[(4, ref('base.group_no_one'),0)]"/>
+        </record>
+        <record id="account_voucher.menu_action_purchase_receipt" model="ir.ui.menu">
+              <field name="groups_id" eval="[(4, ref('base.group_no_one'),0)]"/>
+        </record>
+        <record id="account.menu_finance_entries" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('account.group_account_manager'))]"/>
+        </record>
+
+        <menuitem id="sale.menu_product_pricelist_main"
+                  name="Pricelists"
+                  parent="account.menu_finance_entries"
+                  groups="robo_basic.group_robo_premium_accountant"
+                  sequence="999"/>
+
+        <menuitem action="product.product_pricelist_action2"
+                  id="sale.menu_product_pricelist_action2"
+                  parent="sale.menu_product_pricelist_main"
+                  sequence="1"
+                  groups="robo_basic.group_robo_premium_accountant"/>
+        <delete id="account.menu_action_tax_adjustment" model="ir.ui.menu"/>
+    </data>
+</odoo>

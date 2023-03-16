@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record forcecreate="1" id="mokejimai_seq_id" model="ir.sequence">
+            <field name="name">SEPA</field>
+            <field name="code">SEPA</field>
+            <field name="padding" eval="5"/>
+            <field name="prefix">SEPA</field>
+        </record>
+        <record forcecreate="1" id="sepainstrid" model="ir.sequence">
+            <field name="name">SEPAINSTRID</field>
+            <field name="code">SEPAINSTRID</field>
+            <field name="padding" eval="5"/>
+        </record>
+        <record id="mokejimu_eksportas_view" model="ir.ui.view">
+            <field name="name">mokejimu.eksportas.form</field>
+            <field name="model">mokejimu.eksportas</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimų formavimas">
+                    <header>
+                        <button name="atsaukti" type="object" states="verify,exported,done"
+                                string="Atstatyti į juodraštį" groups="account.group_account_user"
+                                confirm="Ar tikrai norite atšaukti?"/>
+                        <button name="patvirtinti" string="Patvirtinti" type="object" states="draft"
+                                class="oe_highlight" groups="account.group_account_user"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"
+                               statusbar_colors='{"draft":"blue"}'/>
+                    </header>
+                    <sheet string="Mokėjimų formavimas" cols="4" colspan="4">
+                        <field name="payment_order" invisible="1"/>
+                        <field name="bank_statement" invisible="1"/>
+                        <div class=" oe_right oe_button_box">
+                            <button class="oe_inline oe_stat_button oe_right" name="mokejimai" string="Mokėjimai"
+                                    Help="Nueiti į mokėjimų nurodymus" type="object"
+                                    attrs="{'invisible':[('payment_order','=',False)]}" icon="fa-bars"
+                                    widget="statinfo"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="israsai" string="Banko išrašas"
+                                    Help="Nueiti į banko išrašą" type="object" icon="fa-bank"
+                                    attrs="{'invisible':[('bank_statement','=',False)]}" widget="statinfo"/>
+                        </div>
+                        <group colspan="4">
+                            <field name="company_id"/>
+                            <field name="journal_id"/>
+                            <field name="data"/>
+                            <field name="data_nuo"/>
+                            <field name="data_iki"/>
+                            <field name="include_exported"/>
+                        </group>
+                        <notebook>
+                            <page string="Sąskaitos">
+                                <field name="saskaitos" nolabel="1">
+                                    <tree>
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Partneriai">
+                                <group>
+                                    <field name="all_partners"/>
+                                </group>
+                                <group attrs="{'invisible': [('all_partners','=',True)]}">
+                                    <button colspan="4" name="istraukti_darbuotojus" string="Sukelti darbuotojus"
+                                            type="object" groups="account.group_account_user" states="draft"/>
+                                    <field name="partneriai" nolabel="1">
+                                        <tree>
+                                            <field name="name"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Apmokami įrašai">
+                                <field name="eilutes_domain" invisible="1"/>
+                                <field name="eilutes" nolabel="1"
+                                       domain="[('id', 'in', eilutes_domain and eilutes_domain[0][2])]">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="date"/>
+                                        <field name="account_id"/>
+                                        <field name="partner_id"/>
+                                        <field name="debit" sum="debit"/>
+                                        <field name="credit" sum="credit"/>
+                                        <field name="amount_residual" sum="amount_residual"/>
+                                        <field name="eksportuota" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="mokejimu_eksportas_tree" model="ir.ui.view">
+            <field name="name">mookejimu.eksportas.tree</field>
+            <field name="model">mokejimu.eksportas</field>
+            <field name="arch" type="xml">
+                <tree string="Mokėjimų formavimas" colors="blue:state=='draft';red:state=='exported'">
+                    <field name="name"/>
+                    <field name="journal_id"/>
+                    <field name="data"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_mokejimu_eksportas">
+            <field name="name">Mokėjimų formavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">mokejimu.eksportas</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="mokejimu_eksportas_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Spausk čia, kad sukurtum Mokėjimų formavimus.
+                </p>
+            </field>
+        </record>
+        <menuitem
+                name="Mokėjimų formavimas"
+                id="meniu_mokejimu_eksportas"
+                parent="account.menu_finance_payables"
+                sequence="10"
+                action="action_mokejimu_eksportas"
+        />
+
+        <record id="mokesciu_institucija_form" model="ir.ui.view">
+            <field name="name">mokesciu.institucija.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='purchase']/field[@name='supplier']" position="after">
+                    <field name="mokesciu_institucija"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="imokos_kodas_form" model="ir.ui.view">
+            <field name="name">imokos.kodas.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="imones_kodas.partneris_kodas_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='kliento_kodas']" position="after">
+                    <field name="imokos_kodas"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="banko_israsu_view" model="ir.ui.view">
+            <field name="name">banko.israsai.form</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="before">
+                    <field name="show_non_structured_warning" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': ['|',  ('show_non_structured_warning', '=', False),
+                            ('sepa_imported', '=', True)]}">
+                        Rasta mokėjimo eilučių VMI/SODRAI kurių mokėjimo paskirtis nėra struktūruota.
+                        Eksportas tokiu atveju yra leidžiamas, tačiau rekomenduojame įsitikinti
+                        ar šie duomenys yra korektiški.
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='balance_end_real']/.." position="after">
+                    <field name="is_international" invisible="1"/>
+                    <field name="kas_sumoka" widget="selection" attrs="{'invisible':[('is_international','=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='bank_account_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('journal_entry_ids', '!=', [])]}</attribute>
+                </xpath>
+                <xpath expr="//div[@class='oe_clear']" position="after">
+                    <group style="display: inline-table;">
+                        <field name="bank_export_state_alert_html" colspan="4" string=" "/>
+                    </group>
+                    <footer style="text-align: left;">
+                        <field name="api_integrated_journal" invisible="1"/>
+                        <field name="api_full_integration" invisible="1"/>
+                        <field name="api_sepa_integration" invisible="1"/>
+                        <button name="send_to_bank" string="Siųsti į banką" type="object" class="oe_highlight"
+                                style="background-color: rgb(70,136,71) !important; margin-right: 10px;"
+                                attrs="{'invisible': ['|', '|', ('api_integrated_journal', '=', False),
+                                                           ('api_full_integration', '=', False),
+                                                           ('sepa_imported', '=', True)]}"/>
+                        <button name="send_to_bank" string="Siųsti į banką (grupinį)" type="object"
+                                class="oe_highlight"
+                                style="background-color: rgb(70,136,71) !important; margin-right: 10px;"
+                                attrs="{'invisible': ['|', '|', ('api_integrated_journal', '=', False),
+                                                           ('api_full_integration', '=', False),
+                                                           ('sepa_imported', '=', True)]}"
+                                context="{'group_transfer': True}"/>
+                        <button name="download" type="object" class="oe_highlight"
+                                string="Atsisiųsti SEPA" style="margin-right: 10px;"
+                                attrs="{'invisible': [('sepa_imported', '=', True)]}"/>
+                        <button name="download" type="object" class="oe_highlight"
+                                attrs="{'invisible': [('sepa_imported', '=', True)]}"
+                                context="{'group_transfer': True}"
+                                string="Atsisiųsti SEPA grupinį" style="margin-right: 10px;"/>
+                    </footer>
+                </xpath>
+            </field>
+        </record>
+        <record forcecreate="1" id="MsgId" model="ir.sequence">
+            <field name="name">MsgId</field>
+            <field name="code">MsgId</field>
+            <field name="padding" eval="10"/>
+        </record>
+        <record forcecreate="1" id="pmtInfId" model="ir.sequence">
+            <field name="name">PMTINFID</field>
+            <field name="code">PMTINFID</field>
+            <field name="padding" eval="10"/>
+        </record>
+        <record id="banko_israso_view" model="ir.ui.view">
+            <field name="name">account.bank.statement.form</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='bank_account_id']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

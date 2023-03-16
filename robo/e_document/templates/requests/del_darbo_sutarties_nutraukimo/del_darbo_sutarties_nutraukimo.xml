@@ -1,0 +1,279 @@
+<odoo>
+    <data>
+        <record id="prasymas_del_darbo_sutarties_nutraukimo_form" model="ir.ui.view">
+            <field name="name">Prašymas dėl darbo sutarties nutraukimo</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_request_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="job_id1" options="{'no_create': True, 'no_open': True}" required="0" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//header" position="after">
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('state','!=','e_signed')]}"
+                         groups="robo_basic.group_robo_premium_manager">
+                         ŠĮ DOKUMENTĄ REKOMENDUOJAMA PAPILDOMAI ATSISPAUSDINTI, PASIRAŠYTI BEI PERDUOTI VADOVUI!
+                    </div>
+                </xpath>
+
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="date_1" string="Nuo kada nutraukti (paskutinė darbo diena)" required="1"/>
+                    </group>
+                    <group>
+                        <field name="dk_nutraukimo_straipsnis" options="{'no_create': True, 'no_open': True}"
+                               string="DK straipsnis pagal kurį nutraukiama" required="1"
+                               domain="[('request', '=', True)]"/>
+                        <field name="dk_detalizacija" options="{'no_create': True, 'no_open': True}"
+                               string="DK straipsnio detalizacija" required="0" />
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="prasymas_del_darbo_sutarties_nutraukimo_action" model="ir.actions.act_window">
+            <field name="name">Prašymas dėl darbo sutarties nutraukimo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'prasymas', u'rec_template_id':
+                u'prasymas_del_darbo_sutarties_nutraukimo_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.prasymas_del_darbo_sutarties_nutraukimo_form"/>
+        </record>
+
+        <record id="prasymas_del_darbo_sutarties_nutraukimo_menu" model="ir.ui.menu">
+            <field name="name">Prašymas dėl darbo sutarties nutraukimo</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="prasymas"/>
+            <field name="action" ref="e_document.prasymas_del_darbo_sutarties_nutraukimo_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">prašymas,darbo sutartis,nutraukimas,atleidimas</field>
+        </record>
+
+        <record id="prasymas_del_darbo_sutarties_nutraukimo_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie darbo sutarties nutraukimo prašymus</field>
+            <field name="description">Informuoti, kuomet būna pasirašomas prašymas dėl darbo sutarties nutraukimo</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>e_documents</field>
+        </record>
+
+        <record id="prasymas_del_darbo_sutarties_nutraukimo_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Prašau nutraukti darbo sutartį ir atleisti mane iš {{ko(job_id1, 'aa')}} pareigų nuo {{ date_1 }}
+                    (laikant šią datą paskutine darbo diena) pagal {{dk_tekstas}} ({{dk_pavadinimas|lower()}}). {{
+                    extra_text }}
+                </div>
+            </field>
+            <field name="name">Prašymas dėl darbo sutarties nutraukimo</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{ employee_id1 }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.prasymas_del_darbo_sutarties_nutraukimo_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras {
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded {
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{%endif%} {{ job_id1}}</span>
+                                            </p>
+                                            <span>{{ employee_id1 }}</span>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p>
+                                                <span>{% if manager_job_id %}{{kam(manager_job_id, 'Aa')}} {%
+                                                    else%}Direktoriui{% endif %} {{kam(manager_id, 'Aa')}}
+                                                </span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>PRAŠYMAS</span>
+                        </p>
+                        <span>PRAŠYMAS NUTRAUKTI DARBO SUTARTĮ</span>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded {
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p style="font-weight:bold">
+                                                    <span>{{ department_id }}{% if job_id1 %},{%endif%} {{ job_id1}}
+                                                    </span>
+                                                </p>
+                                                <span>{{ employee_id1 }}</span>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p>
+                                                    <span>{% if manager_job_id %}{{kam(manager_job_id, 'Aa')}} {%
+                                                        else%}Direktoriui{% endif %} {{kam(manager_id, 'Aa')}}
+                                                    </span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>PRAŠYMAS</span>
+                            </p>
+                            <span>PRAŠYMAS NUTRAUKTI DARBO SUTARTĮ</span>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ vieta }}</span>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        Prašau nutraukti darbo sutartį ir atleisti mane iš {{ko(job_id1, 'aa')}} pareigų nuo {{ date_1
+                        }} (laikant šią datą paskutine darbo diena) pagal {{dk_tekstas}} ({{dk_pavadinimas|lower()}}).
+                        {{ extra_text_html }}
+                    </div>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="65%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{ employee_id1 }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.prasymas_del_darbo_sutarties_nutraukimo_workflow()</field>
+            <field name="date_from_field_name">date_1</field>
+            <field name="date_to_field_name">date_1</field>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="sign_mail_channel_ids" eval="[(4, ref('e_document.prasymas_del_darbo_sutarties_nutraukimo_mail_channel'))]"/>
+        </record>
+    </data>
+</odoo>

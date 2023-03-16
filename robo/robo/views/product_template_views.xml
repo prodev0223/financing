@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="new_product_form" model="ir.ui.view">
+            <field name="name">new.product.form</field>
+            <field name="model">product.template</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label class="oe_edit_only" for="name" string="Produkto pavadinimas"/>
+                            <h1>
+                                <field name="name" placeholder="Produkto pavadinimas"/>
+                            </h1>
+                            <div name="options" groups="base.group_user">
+                                <div>
+                                    <field name="sale_ok"/>
+                                    <label for="sale_ok"/>
+                                </div>
+                                <div>
+                                    <field name="purchase_ok"/>
+                                    <label for="purchase_ok"/>
+                                </div>
+                                <div>
+                                    <field name="can_be_expensed"/>
+                                    <label for="can_be_expensed"/>
+                                </div>
+                            </div>
+                        </div>
+                        <group>
+                            <field name="categ_id" string="Kategorija"/>
+                            <field name="default_code" string="Vidinis numeris"/>
+                            <field name="list_price" string="Pardavimo kaina"/>
+                            <!--<field name="standard_price" string="Savikaina"/>-->
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="product_template_form_view" model="ir.ui.view">
+            <field name="name">product.template.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="account.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <field name="property_account_income_id" position="attributes">
+                    <attribute name="domain">[('deprecated','=',False)]</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_template_front_form" model="ir.ui.view">
+            <field name="name">product.template.front.form</field>
+            <field name="model">product.template</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <label class="oe_edit_only" for="name"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                            <div name="options" groups="base.group_user">
+                                <div>
+                                    <field name="sale_ok"/>
+                                    <label for="sale_ok"/>
+                                </div>
+                                <div>
+                                    <field name="purchase_ok"/>
+                                    <label for="purchase_ok"/>
+                                </div>
+                            </div>
+                        </div>
+                        <group>
+                            <field name="type"/>
+                            <field name="categ_id" options="{'no_create': 1, 'no_open': 1}"/>
+                            <field name="default_code"/>
+                            <field name="list_price"/>
+                            <field name="uom_id" groups="robo.group_uom" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="uom_po_id" groups="robo.group_uom" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_open_product_template_front_form" model="ir.actions.act_window">
+            <field name="name">Product</field>
+            <field name="res_model">product.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="product_template_front_form"/>
+        </record>
+
+        <record model="ir.ui.view" id="product_template_tree_front">
+            <field name="name">product.template.front.tree</field>
+            <field name="model">product.template</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Products" import="0" create="0">
+                    <field name="sequence" widget="handle"/>
+                    <field name="default_code"/>
+                    <field name="name"/>
+                    <field name="list_price"/>
+                    <field name="categ_id"/>
+                    <field name="uom_id" groups="product.group_uom"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="product_template_front_search_view" model="ir.ui.view">
+            <field name="name">product.template.front.search.view</field>
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                <search string="Product">
+                    <field name="name" string="Product"
+                           filter_domain="['|',('default_code','ilike',self),('name','ilike',self)]"/>
+                    <field name="categ_id" domain="[('categ_id', 'child_of', self)]"/>
+                    <separator/>
+                    <filter string="Services" name="services" domain="[('type','=','service')]"/>
+                    <filter string="Products" name="consumable" domain="[('type', 'in', ['consu', 'product'])]"/>
+                    <separator/>
+                    <filter string="Can be sold" domain="[('sale_ok','=', True)]"/>
+                    <filter string="Can be purchased" domain="[('purchase_ok', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_open_robo_products" model="ir.actions.act_window">
+            <field name="name">Products</field>
+            <field name="res_model">product.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="product_template_tree_front"/>
+            <field name="domain">
+                [('robo_product', '=', False), '|', ('sale_ok', '=', True), ('purchase_ok', '=', True)]
+            </field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('product_template_tree_front')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('product_template_front_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    This request has not returned any results
+                </p>
+            </field>
+            <field name="robo_menu" ref="menu_kita"/>
+            <field name="header" ref="robo_header_product_template"/>
+            <field name="search_view_id" ref="product_template_front_search_view"/>
+        </record>
+
+        <menuitem id="menu_robo_products"
+                  name="Products"
+                  parent="robo.menu_kita"
+                  force_web_icon="icon-box,none,none"
+                  groups="robo_basic.group_robo_see_income"
+                  action="action_open_robo_products"
+                  robo_front="True"
+                  sequence="45"
+                  searchable="True"
+                  tags="products,services"
+        />
+    </data>
+</odoo>

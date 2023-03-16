@@ -1,0 +1,186 @@
+<odoo>
+    <data>
+        <record id="script_tree" model="ir.ui.view">
+            <field name="name">script.tree</field>
+            <field name="model">script</field>
+            <field name="arch" type="xml">
+                <tree string="Scripts" create="1" edit="1" delete="1">
+                    <field name="create_date"/>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="running"/>
+                </tree>
+            </field>
+        </record>
+        <record id="script_action" model="ir.actions.act_window">
+            <field name="name">Scripts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">script</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('date', '=', False)]</field>
+            <field name="view_id" ref="script_tree"/>
+        </record>
+        <record id="periodic_script_action" model="ir.actions.act_window">
+            <field name="name">Periodic scripts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">script</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('date','!=',False)]</field>
+            <field name="view_id" ref="script_tree"/>
+        </record>
+        <menuitem
+                name="Scripts"
+                id="menu_scripts"
+                sequence="47"
+                groups="base.group_system"
+                parent="base.menu_administration"
+        />
+        <menuitem
+                name="Scripts"
+                id="menu_scripts_scripts"
+                sequence="48"
+                action="script_action"
+                groups="base.group_system"
+                parent="menu_scripts"
+        />
+        <menuitem
+                name="Periodic scripts"
+                id="menu_periodic_scripts"
+                sequence="49"
+                action="periodic_script_action"
+                groups="base.group_system"
+                parent="menu_scripts"
+        />
+        <record id="script_form" model="ir.ui.view">
+            <field name="name">script.form</field>
+            <field name="model">script</field>
+            <field name="arch" type="xml">
+                <form string="Scripts">
+                    <header>
+                        <button name="execute" string="Execute" class="oe_highlight" type="object"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="open_history" string="History" type="object"
+                                    attrs="{'invisible':[('script_history_ids','=',[])]}" icon="fa-bars"/>
+                            <field name="script_history_ids" invisible="1"/>
+                        </div>
+                        <group>
+                            <field name="name"/>
+                            <field name="date" attrs="{'required': [('interval', '!=', False)]}"/>
+                            <field name="interval_number"/>
+                            <field name="interval"/>
+                            <field name="running"/>
+                            <field name="skip_update_window"
+                                   attrs="{'invisible': [('interval', 'not in', ['hour', 'minute'])]}"/>
+                        </group>
+                        <notebook>
+                            <page name="code" string="Python">
+                                <field name="code" widget="ace" options="{'mode': 'python'}" nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="script_view_search" model="ir.ui.view">
+            <field name="name">script.view.search</field>
+            <field name="model">script</field>
+            <field name="arch" type="xml">
+                <search string="Scripts" create="0" edit="0" delete="0">
+                    <field name="name"/>
+                    <field name="code"/>
+                </search>
+            </field>
+        </record>
+        <record id="script_history_form" model="ir.ui.view">
+            <field name="name">script.history.form</field>
+            <field name="model">script.history</field>
+            <field name="arch" type="xml">
+                <form string="Scripts History" edit="0">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="user"/>
+                            <field name="date"/>
+                            <field name="state"/>
+                        </group>
+                        <notebook>
+                            <page name="status" string="Status">
+                                <field name="status" widget="html"/>
+                            </page>
+                            <page name="code" string="Python">
+                                <field name="code" widget="ace" options="{'mode': 'python'}" nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="script_history_tree" model="ir.ui.view">
+            <field name="name">script.history.tree</field>
+            <field name="model">script.history</field>
+            <field name="arch" type="xml">
+                <tree string="Scripts history" create="0" edit="0" delete="0">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="user"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="script_history_view_search" model="ir.ui.view">
+            <field name="name">script.history.view.search</field>
+            <field name="model">script.history</field>
+            <field name="arch" type="xml">
+                <search string="Scripts history" create="0" edit="0" delete="0">
+                    <field name="name"/>
+                    <field name="user"/>
+                    <field name="code"/>
+                    <filter name="failed" string="Failed" domain="[('state', '=', 'fail')]"/>
+                    <filter name="success" string="Success" domain="[('state', '=', 'success')]"/>
+                    <separator/>
+                    <filter string="Today" name="today" domain="[('date','&gt;=',time.strftime('%Y-%m-%%d'))]"/>
+                    <filter string="This Month" name="thismonth" domain="[('date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
+                    <group expand="0" string="Group By">
+                        <filter name="groupby_state" string="State" domain="[]" context="{'group_by' : 'state'}" />
+                        <filter name="groupby_user" string="User" domain="[]" context="{'group_by' : 'user'}" />
+                        <filter name="groupby_date" string="Date" domain="[]" context="{'group_by' : 'date:day'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="script_history_action" model="ir.actions.act_window">
+            <field name="name">Scripts History</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">script.history</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="script_history_tree"/>
+        </record>
+        <menuitem
+                name="Scripts History"
+                id="menu_scripts_history"
+                sequence="50"
+                action="script_history_action"
+                groups="base.group_system"
+                parent="menu_scripts"
+        />
+    </data>
+    <data noupdate="1">
+        <record forcecreate="True" id="ir_cron_scripts" model="ir.cron">
+            <field name="name">CRON scripts</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">10</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field eval="False" name="doall"/>
+            <field eval="'script'" name="model"/>
+            <field eval="'cron_scheduled_scripts'" name="function"/>
+            <field eval="'()'" name="args"/>
+        </record>
+    </data>
+</odoo>

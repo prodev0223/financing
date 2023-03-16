@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="banko_israsu_form_extend" model="ir.ui.view">
+            <field name="name">account.bank.statement.extend</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="psd2_statement" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//field[@name='partner_id']" position="after">
+                    <field name="info_type"/>
+                    <field name="imported_partner_name"/>
+                    <field name="imported_partner_code"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//field[@name='bank_account_id']" position="after">
+                    <field name="sepa_instruction_id" invisible="1"/>
+                    <field name="sepa_duplicate" invisible="1"/>
+                    <button name="set_not_duplicate" type="object" icon="fa-check"
+                            attrs="{'invisible':[('sepa_duplicate', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//tree[1]" position="attributes">
+                    <attribute name="decoration-muted">journal_entry_ids or sepa_duplicate</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//tree[1]//field[@name='amount_currency']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//tree[1]//field[@name='currency_id']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//tree[1]//field[@name='ref']" position="attributes">
+                    <attribute name="groups"></attribute>
+                    <attribute name="string">Aprašymas</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//tree[1]//field[@name='name']" position="attributes">
+                    <attribute name="string">Mokėjimo paskirtis</attribute>
+                </xpath>
+                <xpath expr="//field[@name='all_lines_reconciled']" position="before">
+                    <field name="sepa_imported" invisible="1"/>
+                    <button name="mark_as_sepa_imported" string="Pažymėti kaip importuotą" type="object"
+                            class="oe_highlight" attrs="{'invisible':[('sepa_imported','=',True)]}"
+                            confirm="Funkcija 'Pažymėti kaip importuotą' naudojama labai retais atvejais,
+                            kai norima susimuliuoti realų banko išrašą. Sisteminių DU ir kt. mokėjimų niekada
+                            nereikia žymėti kaip importuotų. Ar tikrai norite tęsti?"/>
+                </xpath>
+                <xpath expr="//button[@name='%(account.action_bank_reconcile_bank_statements)d']" position="replace">
+                    <button name="%(account.action_bank_reconcile_bank_statements)d" string="Sudengti" type="action"
+                            class="oe_highlight" attrs="{'invisible':['|','|', '|', ('all_lines_reconciled','=',True),
+                            ('line_ids','=',[]),('state', '!=', 'open'), ('sepa_imported', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="action_server_normalize_upward" model="ir.actions.server">
+            <field name="name">Normalize balance from statement onwards</field>
+            <field name="model_id" ref="sepa.model_account_bank_statement"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).action_normalize_balances_ascending_from()
+            </field>
+        </record>
+        <function name="action_server_normalize_upward" model="account.bank.statement"/>
+        <record id="action_server_apply_bank_import_rule" model="ir.actions.server">
+            <field name="name">Apply bank import rules</field>
+            <field name="model_id" ref="sepa.model_account_bank_statement"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).action_apply_bank_import_rules()
+            </field>
+        </record>
+        <function name="action_server_apply_bank_import_rule" model="account.bank.statement"/>
+    </data>
+</odoo>

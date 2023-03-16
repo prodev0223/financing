@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="vmi_gpm312form">
+            <field name="name">e.vmi.gpm312.form</field>
+            <field name="model">e.vmi.gpm312</field>
+            <field name="arch" type="xml">
+                <form string="GPM312">
+                    <field name="corrections_exist" invisible="1"/>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;"
+                     attrs="{'invisible': [('corrections_exist', '=', False)]}">
+                    Nurodytu laikotarpiu yra GPM korekcijų, todėl deklaracija nebus pergeneruota iš naujo.
+                    Bus pateiktos anksčiau sugeneruotos vertės ir koreguotos vertės. Norėdami pergeneruoti GPM
+                    deklaraciją iš naujo - atnaujinkite pasirinktus laikotarpius deklaracijoje GPM313 pažymėdami varnelę
+                    "Priverstinai atnaujinti".
+                    </div>
+                    <group>
+                        <field name="data_nuo"/>
+                        <field name="data_iki"/>
+                        <field name="kompanija"/>
+                    </group>
+                    <footer>
+                        <button name="form_gpm312" string="Generuoti" type="object"/>
+                        <button name="form_gpm312" string="Siųsti į VMI" context="{'eds': True}" type="object"/>
+                        <button name="open_report" string="Ataskaita" type="object"/>
+                        <button name="import_data" string="Importuoti duomenis" type="object"/>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="vmi_gpm312_download">
+            <field name="name">vmi.gpm312.download.form</field>
+            <field name="model">e.vmi.gpm312</field>
+            <field name="arch" type="xml">
+                <form string="GPM312">
+                    <group>
+                        <group col="4" colspan="4">
+                            <field name="failas" nolabel="1" filename="failo_pavadinimas"/>
+                            <field name="failo_pavadinimas" invisible="1"/>
+                        </group>
+                        <group col="4" colspan="4">
+                            <field name="errors" nolabel="1"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vmi_gpm312_wizard">
+            <field name="name">VMI GPM312</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.vmi.gpm312</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vmi_gpm312form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

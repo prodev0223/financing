@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_journal_view_form_front" model="ir.ui.view">
+            <field name="name">account.journal.view.form.front</field>
+            <field name="model">account.journal</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="account_journal_view_tree_front" model="ir.ui.view">
+            <field name="name">account.journal.view.tree.front</field>
+            <field name="model">account.journal</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Žurnalai">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_account_journal_front" model="ir.actions.act_window">
+            <field name="name">Žurnalai</field>
+            <field name="res_model">account.journal</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="robo_front">True</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('account_journal_view_tree_front')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('account_journal_view_form_front')})]"/>
+            <field name="domain">[('type', '=', 'sale')]</field>
+            <field name="context">{'default_type': 'sale', 'creating_invoice_journal': True}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to add a journal.
+                </p>
+            </field>
+        </record>
+
+        <record id="view_account_journal_form" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_control_ids']" position="after">
+                    <field name="exclude_from_invoices"
+                           attrs="{'invisible': [('type', 'not in', ['sale', 'purchase'])]}"/>
+                    <field name='user_control_ids' options='{"no_create": True, "no_quick_create": True}'
+                           widget="many2many_tags" groups="robo_basic.group_robo_kasos_aparatas"
+                           attrs="{'invisible': ['|', '|', ('code', '=', 'KVIT'), ('code', 'like', 'CSH'),
+                           ('type', '!=', 'cash')]}"/>
+                </xpath>
+                <xpath expr="//sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

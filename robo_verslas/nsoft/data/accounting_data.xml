@@ -1,0 +1,85 @@
+<odoo>
+    <data noupdate="1">
+        <!-- NSOFT ACCOUNTS -->
+        <record id="nsoft_card_account" model="account.account">
+            <field name="name">nSoft Mokėjimo kortelės</field>
+            <field name="code">2411</field>
+            <field name="reconcile">True</field>
+            <field name="user_type_id" ref="account.data_account_type_receivable"/>
+        </record>
+        <record id="nsoft_gift_account" model="account.account">
+            <field name="name">nSoft Dovanų Čekiai</field>
+            <field name="code">2412</field>
+            <field name="reconcile">False</field>
+            <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+        </record>
+        <record id="nsoft_web_account" model="account.account">
+            <field name="name">nSoft Internetiniai pardavimai</field>
+            <field name="code">2413</field>
+            <field name="reconcile">True</field>
+            <field name="user_type_id" ref="account.data_account_type_receivable"/>
+        </record>
+        <!-- NSOFT JOURNALS -->
+        <record id="nsoft_ticket_journal" model="account.journal">
+            <field name="name">nSoft Bilietai</field>
+            <field name="code">TCKNSOFT</field>
+            <field name="type">sale</field>
+        </record>
+        <record id="nsoft_cash_journal" model="account.journal">
+            <field name="name">nSoft Grynieji</field>
+            <field name="code">CSHNSOFT</field>
+            <field name="type">cash</field>
+        </record>
+        <record id="nsoft_gift_journal" model="account.journal">
+            <field name="name">nSoft Dovanų Čekiai</field>
+            <field name="code">GFTNSOFT</field>
+            <field name="type">general</field>
+            <field name="default_debit_account_id" ref="nsoft_gift_account"/>
+            <field name="default_credit_account_id" ref="nsoft_gift_account"/>
+        </record>
+        <record id="nsoft_card_journal" model="account.journal">
+            <field name="name">nSoft Mokėjimo Kortelės</field>
+            <field name="code">CRDNSOFT</field>
+            <field name="type">general</field>
+            <field name="default_debit_account_id" ref="nsoft_card_account"/>
+            <field name="default_credit_account_id" ref="nsoft_card_account"/>
+        </record>
+        <record id="nsoft_web_journal" model="account.journal">
+            <field name="name">nSoft Internetiniai pardavimai</field>
+            <field name="code">WEBNS</field>
+            <field name="type">general</field>
+            <field name="default_debit_account_id" ref="nsoft_web_account"/>
+            <field name="default_credit_account_id" ref="nsoft_web_account"/>
+        </record>
+        <!-- NSOFT PAYMENT TYPES -->
+        <record id="cash_payment_type" model="nsoft.payment.type">
+            <field name="name">Grynieji</field>
+            <field name="ext_payment_type_code">P</field>
+            <field name="journal_id" ref="nsoft_cash_journal"/>
+            <field name="do_reconcile" eval="True"/>
+        </record>
+        <record id="card_payment_type" model="nsoft.payment.type">
+            <field name="name">Mokėjimo Kortelės</field>
+            <field name="ext_payment_type_code">C</field>
+            <field name="journal_id" ref="nsoft_card_journal"/>
+            <field name="do_reconcile" eval="True"/>
+        </record>
+        <record id="gift_payment_type" model="nsoft.payment.type">
+            <field name="name">Dovanų Čekiai</field>
+            <field name="ext_payment_type_code">K</field>
+            <field name="journal_id" ref="nsoft_gift_journal"/>
+            <field name="do_reconcile" eval="True"/>
+        </record>
+        <record id="web_payment_type" model="nsoft.payment.type">
+            <field name="name">Pardavimai Internetu</field>
+            <field name="ext_payment_type_code">I</field>
+            <field name="journal_id" ref="nsoft_web_journal"/>
+            <field name="do_reconcile" eval="True"/>
+        </record>
+        <record id="trans_payment_type" model="nsoft.payment.type">
+            <field name="name">Pavedimai</field>
+            <field name="ext_payment_type_code">F</field>
+            <field name="do_reconcile" eval="False"/>
+        </record>
+    </data>
+</odoo>

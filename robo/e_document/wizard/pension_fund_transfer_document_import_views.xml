@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="e_document_pension_transfer_import_view_form" model="ir.ui.view">
+            <field name="name">e.document.pension.transfer.import.view.form</field>
+            <field name="model">pension.fund.transfer.document.import</field>
+            <field name="inherit_id" ref="e_document_import_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="string">Pension payment eDocument import</attribute>
+                </xpath>
+                <xpath expr="//a[@class='import-download-container']" position="attributes">
+                    <attribute name="href">e_document/static/src/import_templates/Pervedimai_I_Pensiju_Fondus.xlsx</attribute>
+                </xpath>
+                <xpath expr="//field[@name='auto_confirm']" position="after">
+                    <field name="group_by_date"/>
+                    <field name="assign_pension_funds_to_employees"/>
+                    <field name="create_missing_pension_funds"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="e_document_pension_transfer_import_wizard" model="ir.actions.act_window">
+            <field name="name">Import pension transfer eDocuments</field>
+            <field name="res_model">pension.fund.transfer.document.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="e_document_pension_transfer_import_view_form"/>
+        </record>
+
+        <menuitem id="menu_e_document_import_pension_transfers_backend"
+                  name="Pension fund transfers"
+                  action="e_document_pension_transfer_import_wizard"
+                  parent="menu_e_document_import_backend"
+                  sequence="1"
+                  groups="robo_basic.group_robo_premium_accountant"/>
+    </data>
+</odoo>

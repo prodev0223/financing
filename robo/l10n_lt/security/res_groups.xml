@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_basic.group_robo_premium_accountant" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('skolu_suderinimas.group_select_account_in_debt_act'))]"/>
+        </record>
+
+        <record id="skolu_suderinimas.group_select_account_in_debt_act" model="res.groups">
+            <field name="robo_front" eval="True"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_help">Leidžia pasirinkti buhalterinę sąskaitą skolų suderinimo akte</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+    </data>
+</odoo>

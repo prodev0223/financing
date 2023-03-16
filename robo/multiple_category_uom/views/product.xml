@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="product_form_secondary_uom">
+            <field name="name">product.form.secondary.uom</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page string="Antriniai matavimo vienetai" groups="stock_extend.group_robo_stock">
+                        <field name="product_uom_lines" string="Antriniai produkto matavimo vienetai" mode="tree">
+                            <tree editable="bottom">
+                                <field name="uom_id" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="factor"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="robo_product_form_secondary_uom">
+            <field name="name">robo.product.form.secondary.uom</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page string="Antriniai matavimo vienetai" groups="stock_extend.group_robo_stock">
+                        <field name="product_uom_lines" string="Antriniai produkto matavimo vienetai" mode="tree">
+                            <tree editable="bottom">
+                                <field name="uom_id" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="factor"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

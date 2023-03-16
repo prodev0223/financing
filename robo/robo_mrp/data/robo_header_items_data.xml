@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--mrp bom-->
+         <record id="robo_mrp_header_bom_new" model="robo.header.items">
+            <field name="header" ref="robo_mrp_header_bom"/>
+            <field name="name">Komplektavimą</field>
+            <field name="icon">icon-cog</field>
+            <field name="action" ref="robo_mrp_bom_form_action"/>
+            <field name="item_class">new_mrp_bom</field>
+            <field name="help"></field>
+        </record>
+         <!--mrp production-->
+         <record id="robo_mrp_production_new" model="robo.header.items">
+            <field name="header" ref="robo_mrp_production"/>
+            <field name="name">Gamybą</field>
+            <field name="icon">icon-factory</field>
+            <field name="action" ref="open_robo_mrp_production"/>
+            <field name="item_class">new_mrp_production</field>
+            <field name="help"></field>
+        </record>
+        <!--mrp unbuild-->
+         <record id="robo_mrp_header_unbuild_new" model="robo.header.items">
+            <field name="header" ref="robo_mrp_header_unbuild"/>
+            <field name="name">Išrinkimą</field>
+            <field name="icon">icon-hammer-wrench</field>
+            <field name="action" ref="robo_mrp_unbuild"/>
+            <field name="item_class">new_mrp_unbuild</field>
+            <field name="help"></field>
+        </record>
+    </data>
+</odoo>

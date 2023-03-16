@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.actions.server" id="export_stock_picking_ivaz_action">
+            <field name="name">Export to i.VAZ</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="code">
+                action = env['stock.picking'].browse(context.get('active_ids', False)).export_to_i_vaz_wizard()
+            </field>
+        </record>
+        <function name="create_export_ivaz_action" model="stock.picking"/>
+        <record id="stock_picking_export_vaz_wizard_form" model="ir.ui.view">
+            <field name="name">stock.picking.export.vaz.wizard.form</field>
+            <field name="model">stock.picking.export.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Export to i.VAZ">
+                    <group>
+                        <field name="export_type" colspan="2" widget="selection" string="Filtras"/>
+                        <field name="filter_by_warehouse" string="Filtruoti pagal sandėlį"/>
+                        <field name="transport_doc_type" string="Dokumento tipas"/>
+                        <field name="picking_export_lines" invisible="1" />
+                        <field name="picking_export_lines_filtered" string="Eksportuojami važtaraščiai">
+                            <tree create="0" delete="1" editable="bottom" >
+                                 <field name="scheduled_date" readonly="1" string="Suplanuota data"/>
+                                 <field name="name" readonly="1" string="Numeris"/>
+                                 <field name="partner_id" readonly="1" string="Partneris"/>
+                                 <field name="transport_doc_type" string="Dokumento tipas"/>
+                                 <field name="exported_to_vaz" readonly="1" string="Eksportuota į i.VAZ"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="generate_ivaz" string="Export" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="stock_picking_ivaz_download">
+            <field name="name">stock.picking.ivaz.download.form</field>
+            <field name="model">ivaz.download</field>
+            <field name="arch" type="xml">
+             <form string="i.VAZ">
+                 <group>
+                     <field name="file" nolabel="1" filename="file_name"/>
+                     <field name="file_name" invisible="1"/>
+                 </group>
+                 <footer>
+                     <button string="Close" class="btn-default" special="cancel" />
+                 </footer>
+              </form>
+            </field>
+        </record>
+    </data>
+</odoo>

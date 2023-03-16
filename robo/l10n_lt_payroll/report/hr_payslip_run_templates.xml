@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="report_hr_payslip_run">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="l10n_lt_payroll.report_hr_payslip_run_document"
+                       t-lang="force_lang or user.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="report_hr_payslip_run_document">
+            <t t-call="report.simple_page_number_footer"/>
+
+            <t t-set="payslip_run_data" t-value="main_data[doc.id]"/>
+            <t t-set="categories" t-value="payslip_run_data['categories']"/>
+            <t t-set="payslip_data" t-value="payslip_run_data['payslip_data']"/>
+            <t t-set="payslip_values" t-value="payslip_data['values']"/>
+            <t t-set="payslip_totals" t-value="payslip_data['totals']"/>
+            <t t-set="payslip_run_payments" t-value="payments.get(doc.id) if payments else None"/>
+            <t t-set="footnote_count" t-value="0"/>
+
+            <div class="page payroll_report">
+                <t t-call="report.internal_layout"/>
+
+                <table class="centras" align="center" style="border-style:none" width="35%">
+                    <tr style="font-weight:bold; border-style:none">
+                        <td style="border-style:none">ATLYGINIMO SUVESTINĖ</td>
+                    </tr>
+                </table>
+                <br/>
+                <table class="centras" align="center" width="60%">
+                    <td style="border-style:none">
+                        <span>Laikotarpis:</span>
+                        <span t-esc="period(doc)"/>
+                    </td>
+                </table>
+                <p>
+                </p>
+
+                <table class="main-payslip-run-report-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Eilės nr.</th>
+                            <th rowspan="2" t-esc="report_line_data_title"/>
+
+                            <t t-foreach="categories" t-as="category">
+                                <t t-set="subcategories" t-value="category['subcategories']"/>
+                                <t t-set="number_of_subcategories" t-value="len(subcategories)"/>
+
+                                <t t-if="category['totals_column'] and number_of_subcategories > 1">
+                                    <!--Additional column span for totals column-->
+                                    <t t-set="number_of_subcategories" t-value="number_of_subcategories + 1"/>
+                                </t>
+
+                                <th t-att-colspan="number_of_subcategories">
+                                    <t t-esc="category['name']"/>
+                                </th>
+                            </t>
+                        </tr>
+
+                        <tr>
+                            <t t-foreach="categories" t-as="category">
+                                <t t-set="subcategories" t-value="category['subcategories']"/>
+                                <t t-set="number_of_subcategories" t-value="len(subcategories)"/>
+
+                                <t t-if="number_of_subcategories == 1">
+                                    <t t-set="style" t-value="'font-weight: bold !important;'"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="style" t-value="'font-weight: normal;'"/>
+                                </t>
+
+                                <t t-foreach="subcategories" t-as="subcategory">
+                                    <th t-att-style="style">
+                                        <t t-esc="subcategory['name']"/>
+                                        <t t-if="subcategory.get('footnote')">
+                                            <t t-set="footnote_count" t-value="footnote_count + 1"/>
+                                            <sup>
+                                                [<t t-esc="footnote_count"/>]
+                                            </sup>
+                                        </t>
+                                    </th>
+                                </t>
+                                <t t-if="category['totals_column'] and number_of_subcategories > 1">
+                                    <th style="font-weight: bold !important;">Iš viso</th>
+                                </t>
+                            </t>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="i" t-value="0"/>
+                        <t t-foreach="payslip_values" t-as="payslip">
+                            <t t-set="category_index" t-value="-1"/>
+                            <tr class="slip-data">
+                                <td>
+                                    <t t-if="not payslip.get('no_index')">
+                                        <t t-set="i" t-value="i+1"/>
+                                        <span t-esc="i"/>
+                                    </t>
+                                </td>
+                                <td style="text-align: left !important;">
+                                    <t t-if="payslip.get('print_bold')">
+                                        <t t-set="style" t-value="'font-weight: bold !important;'"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-set="style" t-value="'font-weight: normal;'"/>
+                                    </t>
+                                    <span t-esc="payslip['name']" t-att-style="style"/>
+                                </td>
+
+                                <t t-foreach="payslip['values']" t-as="category_values">
+                                    <t t-set="category_index" t-value="category_index+1"/>
+                                    <t t-set="subcategory_index" t-value="-1"/>
+
+                                    <t t-set="subcategory_data" t-value="category_values.get('subcategory_data')"/>
+                                    <t t-set="category_totals" t-value="category_values.get('category_total')"/>
+                                    <t t-set="print_category_totals"
+                                       t-value="category_values.get('print_category_total') and len(subcategory_data) &gt; 1"/>
+                                    <t t-set="category_type" t-value="category_values.get('type')"/>
+
+                                    <t t-if="len(subcategory_data) == 1 or payslip.get('print_bold')">
+                                        <t t-set="style" t-value="'font-weight: bold !important;'"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-set="style" t-value="'font-weight: normal;'"/>
+                                    </t>
+
+                                    <t t-if="category_type == 'time'">
+                                        <t t-foreach="subcategory_data" t-as="subcategory_values">
+                                            <t t-set="subcategory_index" t-value="subcategory_index+1"/>
+                                            <t t-set="days" t-value="subcategory_values.get('days')"/>
+                                            <t t-set="hours" t-value="subcategory_values.get('hours')"/>
+                                            <t t-set="print_zero_amounts"
+                                               t-value="categories[category_index]['subcategories'][subcategory_index].get('print_zero_amounts')"/>
+                                            <t t-if="print_zero_amounts or days or hours">
+                                                <td style="text-align: center !important;" t-att-style="style">
+                                                    <t t-if="days or print_zero_amounts">
+                                                        <t t-esc="remove(days)"/> d.d.
+                                                        <br/>
+                                                    </t>
+                                                    <t t-esc="round_time(hours)"/> val.
+                                                </td>
+                                            </t>
+                                            <t t-else="">
+                                                <td/>
+                                            </t>
+                                        </t>
+                                        <t t-if="print_category_totals">
+                                            <td style="text-align: center !important; font-weight:bold;">
+                                                <t t-set="days" t-value="category_totals.get('days')"/>
+                                                <t t-set="hours" t-value="category_totals.get('hours')"/>
+                                                <t t-if="days">
+                                                    <t t-esc="remove(days)"/> d.d.
+                                                    <br/>
+                                                </t>
+                                                <t t-esc="round_time(hours)"/> val.
+                                            </td>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-foreach="subcategory_data" t-as="subcategory_values">
+                                            <t t-set="subcategory_index" t-value="subcategory_index+1"/>
+                                            <td t-esc="replace(formatLang(subcategory_values, digits=2))"
+                                                t-att-style="style"/>
+                                        </t>
+                                        <t t-if="print_category_totals">
+                                            <td style="text-align: center !important; font-weight:bold;"
+                                                t-esc="replace(formatLang(category_totals, digits=2))"/>
+                                        </t>
+                                    </t>
+                                </t>
+                            </tr>
+                        </t>
+
+                        <tr class="total-slip-data">
+                            <td colspan="2" style="text-align: right; font-weight: bold !important;">Viso:</td>
+                            <t t-foreach="payslip_totals" t-as="category_totals">
+                                <t t-set="category_type" t-value="category_totals.get('type')"/>
+                                <t t-set="subcategory_data" t-value="category_totals.get('subcategory_totals')"/>
+                                <t t-set="print_category_totals"
+                                   t-value="category_totals.get('print_category_total') and len(subcategory_data) &gt; 1"/>
+                                <t t-if="len(subcategory_data) == 1">
+                                    <t t-set="style" t-value="'font-weight: bold !important;'"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="style" t-value="'font-weight: normal;'"/>
+                                </t>
+                                <t t-foreach="subcategory_data" t-as="subcategory_totals">
+                                    <t t-if="category_type == 'time'">
+                                        <t t-set="days" t-value="subcategory_totals.get('days')"/>
+                                        <t t-set="hours" t-value="subcategory_totals.get('hours')"/>
+                                        <td t-att-style="style">
+                                            <t t-if="days">
+                                                <t t-esc="remove(days)"/> d.d.
+                                                <br/>
+                                            </t>
+                                            <t t-esc="round_time(hours)"/> val.
+                                        </td>
+                                    </t>
+                                    <t t-else="">
+                                        <td t-esc="replace(formatLang(subcategory_totals, digits=2))"
+                                            t-att-style="style"/>
+                                    </t>
+                                </t>
+                                <t t-if="print_category_totals">
+                                    <t t-set="total_value_of_category" t-value="category_totals.get('category_total')"/>
+                                    <t t-if="category_type == 'time'">
+                                        <td style="font-weight:bold;">
+                                            <t t-set="days" t-value="total_value_of_category['days']"/>
+                                            <t t-set="hours" t-value="total_value_of_category['hours']"/>
+                                            <t t-if="days">
+                                                <t t-esc="remove(days)"/> d.d.
+                                                <br/>
+                                            </t>
+                                            <t t-esc="round_time(hours)"/> val.
+                                        </td>
+                                    </t>
+                                    <t t-else="">
+                                        <td style="font-weight:bold;" t-esc="replace(formatLang(total_value_of_category, digits=2))"/>
+                                    </t>
+                                </t>
+                            </t>
+                        </tr>
+                    </tbody>
+                </table>
+                <t t-if="footnote_count &gt; 0">
+                    <div style="font-size: 10px; margin-left: 15px;">
+                        <ol>
+                            <t t-foreach="categories" t-as="category">
+                                <t t-foreach="category['subcategories']" t-as="subcategory">
+                                    <t t-if="subcategory.get('footnote')">
+                                        <li t-esc="subcategory.get('footnote')"/>
+                                    </t>
+                                </t>
+                            </t>
+                        </ol>
+                    </div>
+                </t>
+                <t t-if="payslip_run_payments">
+                    <t t-set="payment_types" t-value="payslip_run_payments.get('payment_types')"/>
+                    <t t-set="payment_values" t-value="payslip_run_payments.get('payments')"/>
+                    <div class="payment-table-section" style="display: flex; flex-wrap: wrap;">
+                        <!--payment_types = sorted payment types from doc args-->
+                        <t t-foreach="payment_types" t-as="payment_type">
+                            <t t-set="payments_by_type" t-value="[p for p in payment_values if p['type'] == payment_type]"/>
+                            <div class="payment-table-container" style="display: inline-block;">
+                                <span class="payment-table-title" style="font-weight: bold; page-break-after: avoid">
+                                    <t t-esc="payments_by_type[0]['type_str']"/>
+                                </span>
+                                <table class="payment-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Vardas Pavardė</th>
+                                            <th>Sutarties nr.</th>
+                                            <th>Suma</th>
+                                            <th>GPM</th>
+                                            <th>Išmokėti</th>
+                                        </tr>
+                                    </thead>
+                                    <t t-set="payment_type_total" t-value="0.0"/>
+                                    <t t-set="payment_type_gpm_total" t-value="0.0"/>
+                                    <t t-set="payment_type_neto_total" t-value="0.0"/>
+                                    <tbody>
+                                        <t t-foreach="payments_by_type" t-as="payment">
+                                            <tr>
+                                                <td><span t-esc="payment['employee']"/></td>
+                                                <td><span t-esc="payment['contract']"/></td>
+                                                <td><span t-esc="replace(formatLang(payment['bruto'], digits=2))"/></td>
+                                                <td><span t-esc="replace(formatLang(payment['gpm'], digits=2))"/></td>
+                                                <td><span t-esc="replace(formatLang(payment['neto'], digits=2))"/></td>
+                                            </tr>
+                                            <t t-set="payment_type_total" t-value="payment_type_total+payment['bruto']"/>
+                                            <t t-set="payment_type_gpm_total" t-value="payment_type_gpm_total+payment['gpm']"/>
+                                            <t t-set="payment_type_neto_total" t-value="payment_type_neto_total+payment['neto']"/>
+                                        </t>
+                                        <tr>
+                                            <td colspan="2" style="font-weight: bold">Viso</td>
+                                            <td style="font-weight: bold">
+                                                <span t-esc="replace(formatLang(payment_type_total, digits=2))"/>
+                                            </td>
+                                            <td style="font-weight: bold">
+                                                <span t-esc="replace(formatLang(payment_type_gpm_total, digits=2))"/>
+                                            </td>
+                                            <td style="font-weight: bold">
+                                                <span t-esc="replace(formatLang(payment_type_neto_total, digits=2))"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <t t-if="payslip_values or payslip_run_payments">
+                    <table class="tax-table" style="page-break-inside: avoid;">
+                        <tr>
+                            <th>Mokesčiai</th>
+                            <th>Suma</th>
+                            <th>Įmokos kodas</th>
+                        </tr>
+                        <t t-foreach="tax_data.get(doc.id) or []" t-as="tax">
+                            <tr>
+                                <td t-esc="tax[0]" style="text-align: left !important;"/>
+                                <td><span t-esc="replace(formatLang(tax[1], digits=2))"/></td>
+                                <td t-esc="tax[2]"/>
+                            </tr>
+                        </t>
+                    </table>
+                </t>
+
+            </div>
+        </template>
+
+        <template id="report_hr_payslip_run_document_style" inherit_id="report_hr_payslip_run_document">
+            <xpath expr=".">
+                <style type="text/css">
+                    body.container {
+                        margin-left: inherit !important;
+                    }
+                    h3 {
+                        text-align: center;
+                    }
+                    .centras {
+                        text-align: center;
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                    table.tax-table {
+                        border: 1px solid black !important;
+                    }
+                    table.tax-table tr,
+                    table.tax-table th,
+                    table.tax-table td {
+                        border: 1px solid black !important;
+                        border-collapse: collapse;
+                    }
+                    table.tax-table td {
+                        padding: 5px;
+                        font-size: 12px;
+                        vertical-align: middle;
+                        text-align: center;
+                    }
+                    table.main-payslip-run-report-table tr,
+                    table.main-payslip-run-report-table th,
+                    table.main-payslip-run-report-table td {
+                        border: 1px solid black !important;
+                    }
+                    table.main-payslip-run-report-table {
+                        width: 100%;
+                        border: 1px solid black;
+                    }
+                    table.main-payslip-run-report-table tr th,
+                    table.main-payslip-run-report-table tr td {
+                        width: min-content !important;
+                        font-weight: 300;
+                        padding: 3px;
+                        vertical-align: middle;
+                    }
+                    table.main-payslip-run-report-table tr th {
+                        font-size: 12px;
+                        vertical-align: middle;
+                        text-align: center;
+                    }
+                    table.main-payslip-run-report-table tr.row-text-align-center th,
+                    table.main-payslip-run-report-table tr.row-text-align-center td {
+                        text-align: center;
+                    }
+                    table.main-payslip-run-report-table tr.slip-data,
+                    table.main-payslip-run-report-table tr.total-slip-data {
+                        border-top: 1px solid black;
+                        white-space: nowrap;
+                        page-break-inside: avoid;
+                        font-size: 11px !important;
+                    }
+                    table.main-payslip-run-report-table tr.slip-data td,
+                    table.main-payslip-run-report-table tr.total-slip-data td {
+                        white-space: nowrap;
+                        text-align: center;
+                    }
+                    table.main-payslip-run-report-table tr.total-slip-data td {
+                        border-top: 2px solid;
+                    }
+                    table.main-payslip-run-report-table tr.slip-data td:nth-of-type(2) {
+                        text-align: left !important;
+                    }
+                    table.payment-table {
+                        font-weight: normal;
+                        border
+                    }
+                    table.payment-table tr td, th{
+                        padding: 5px;
+                        vertical-align: middle;
+                        text-align: center;
+                    }
+                    table.main-payslip-run-report-table thead {
+                        display: table-header-group;
+                    }
+                    table.payment-table tr,
+                    table.payment-table th,
+                    table.payment-table td {
+                        border: 1px solid black !important;
+                        border-collapse: collapse;
+                    }
+                    table.payment-table td {
+                        padding: 5px;
+                        font-size: 12px;
+                        vertical-align: middle;
+                        text-align: center;
+                    }
+                    table.payment-table tr td:nth-of-type(1){
+                        text-align: left;
+                    }
+                </style>
+            </xpath>
+        </template>
+    </data>
+</odoo>

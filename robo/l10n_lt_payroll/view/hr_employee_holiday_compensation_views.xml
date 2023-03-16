@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_employee_holiday_compensation_view_form" model="ir.ui.view">
+            <field name="name">hr.employee.holiday.compensation.view.form</field>
+            <field name="model">hr.employee.holiday.compensation</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header>
+                        <button type="object" name="action_draft" attrs="{'invisible': [('state', '!=', 'confirmed')]}"
+                                string="Set to draft"/>
+                        <button type="object" name="action_confirm" attrs="{'invisible': [('state', '!=', 'draft')]}"
+                                string="Confirm"/>
+                        <field name="has_related_records" attrs="{'invisible': True}"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box">
+                            <button name="action_open_related_records" string="Related records" type="object"
+                                    attrs="{'invisible': [('has_related_records', '=', False)]}" icon="fa-bars"
+                                    help="Open related records" class="oe_stat_button"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="date"/>
+                                <field name="number_of_days"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_employee_holiday_compensation_view_tree" model="ir.ui.view">
+            <field name="name">hr.employee.holiday.compensation.view.tree</field>
+            <field name="model">hr.employee.holiday.compensation</field>
+            <field name="arch" type="xml">
+                <tree string="Holiday compensation"
+                      decoration-muted="state == 'draft'"
+                      decoration-info="state == 'confirmed'">
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <field name="number_of_days" sum="number_of_days"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="hr_employee_holiday_compensation_view_search" model="ir.ui.view">
+            <field name="name">hr.employee.holiday.compensation.view.search</field>
+            <field name="model">hr.employee.holiday.compensation</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="employee_id" string="Employee"/>
+                    <field name="date" string="Date"/>
+                    <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Confirmed" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="Date" domain="[]" context="{'group_by':'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="hr_employee_holiday_compensation_action" model="ir.actions.act_window">
+            <field name="name">Employee holiday compensations</field>
+            <field name="res_model">hr.employee.holiday.compensation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="hr_employee_holiday_compensation_view_tree"/>
+            <field name="search_view_id" ref="hr_employee_holiday_compensation_view_search"/>
+        </record>
+
+        <menuitem
+                id="hr_employee_holiday_compensation_menu_action"
+                name="Holiday Compensations"
+                parent="hr_holidays.menu_hr_holidays_configuration"
+                action="hr_employee_holiday_compensation_action"
+                sequence="3"
+                groups="robo_basic.group_robo_premium_accountant"
+        />
+    </data>
+</odoo>

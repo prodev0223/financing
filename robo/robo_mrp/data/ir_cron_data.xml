@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <record id="cron_renew_production_locations" model="ir.cron">
+            <field name="name">Robo MRP: Renew production locations</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">mrp.production</field>
+            <field name="function">cron_renew_production_locations</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=0, minute=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

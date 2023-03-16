@@ -1,0 +1,741 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="internship_order_form" model="ir.ui.view">
+            <field name="name">Įsakymas dėl praktikos</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="cancel_internship" type="object" string="Atšaukti sutartį"
+                            confirm="Are you sure you want to cancel this internship contract?"
+                            groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_edocument_manager"
+                            attrs="{'invisible': [('state','!=','e_signed')]}"/>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="attributes">
+                    <attribute name="string" eval="False"/>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group string="Intern information" colspan="4" col="4">
+                        <field name="employee_id2" string="Intern" required="True"
+                               options="{'no_create': True, 'no_open': True}"/>
+                        <field name="text_1" string="Intern identification number" required="True"/>
+                        <field name="text_2" string="Intern home address" required="True"/>
+                    </group>
+                    <group string="Internship information" colspan="4" col="4">
+                        <field name="internship_type" string="Internship type" required="True"/>
+                        <field name="employee_id1" string="Internship manager" required="True"
+                           options="{'no_create': True, 'no_open': True}"/>
+                        <field name="date_from" string="Internship start date" required="True"/>
+                        <field name="date_to" string="Internship end date" required="True"/>
+                        <field name="text_3" string="Internship location name and address" required="True"/>
+                        <field name="text_4" string="Internship description" required="True"/>
+                        <field name="int_1" string="Notice period before internship termination (days)"
+                               required="True"/>
+                    </group>
+                    <group string="Additional educational institution internship information" colspan="4" col="4"
+                           attrs="{'invisible': [('internship_type', '!=', 'educational_internship')]}">
+                        <field name="text_5" string="Educational institution name"
+                               attrs="{'required': [('internship_type', '=', 'educational_internship')]}"/>
+                        <field name="text_6" string="Educational institution company code"
+                               attrs="{'required': [('internship_type', '=', 'educational_internship')]}"/>
+                        <field name="text_7" string="Educational institution representative"
+                               attrs="{'required': [('internship_type', '=', 'educational_internship')]}"/>
+                        <field name="int_2" string="Period to submit internship plan (days)"
+                               required="True"/>
+                        <field name="text_8" string="Intern's study programme and course"/>
+                        <field name="float_1" string="Internship value in credits"/>
+                        <field name="text_9" string="Expected internship results"/>
+                        <field name="float_2"
+                               string="Amount compensated to the company for internship (&#8364;)"/>
+                    </group>
+                    <group string="Additional information" colspan="4" col="4">
+                        <group colspan="4" col="1">
+                            <field name="text_10" string="Additional internship terms and liabilities"/>
+                        </group>
+                        <group colspan="4" col="1">
+                            <field name="extra_text"
+                                   string="Additional internship terms and liabilities (Company)"/>
+                        </group>
+                        <group colspan="4" col="1">
+                            <field name="text_11" string="Additional internship terms and liabilities (Intern)"/>
+                        </group>
+                        <group colspan="4" col="1"
+                               attrs="{'invisible': [('internship_type', '!=', 'educational_internship')]}">
+                            <field name="text_12"
+                                   string="Additional internship terms and liabilities (Educational institution)"/>
+                        </group>
+                    </group>
+                    <group string="Internship schedule" colspan="4" col="4">
+                        <field name="fixed_attendance_ids" nolabel="1" options="{'no_open': True}">
+                            <tree string="Grafikas" editable="bottom" class="robo_tree_in_form">
+                                <field name="dayofweek"/>
+                                <field name="hour_from" widget="float_time"/>
+                                <field name="hour_to" widget="float_time"/>
+                                <field name="time_total" widget="float_time" sum="time_total"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="internship_order_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas dėl praktikos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{u'default_document_type': u'isakymas', u'rec_template_id':
+                u'internship_order_template', u'e_document_view_type': u'rigid'}
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.internship_order_form"/>
+        </record>
+
+        <record id="internship_order_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas dėl praktikos</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.internship_order_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">įsakymas,praktika</field>
+            <field name="groups_id"
+                   eval="[(6, 0, [ref('robo_basic.group_robo_free_manager'),ref('robo_basic.group_robo_premium_manager'),ref('robo_basic.group_robo_edocument_manager')])]"/>
+        </record>
+
+        <record id="internship_order_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    {% if internship_type__sv__ == 'voluntary_internship' %}
+                    <p>
+                        {{ company_id }} (toliau – priimanti įmonė, įstaiga, organizacija ar kita organizacinė
+                        struktūra), atstovaujama {{ ko(manager_job_id, 'aa') }} {{ ko(manager_id) }} ir
+                        {{ ka(internship_type, 'aa') }} atliekantis asmuo {{ employee_id2 }}, a.k. {{ text_1 }},
+                        gyvenantis {{ text_2 }} toliau kartu vadinami šalimis, vadovaudamiesi Lietuvos Respublikos
+                        užimtumo įstatymo (toliau – Užimtumo įstatymas) ir {{ ko(internship_type, 'aa') }} atlikimo
+                        tvarkos aprašo, tvirtinamo socialinės apsaugos ir darbo ministro, nuostatomis, sudaro šią
+                        sutartį:
+                    </p>
+                    <h3>I. BENDROSIOS NUOSTATOS</h3>
+                    <p>
+                        1. {{ ka(internship_type, 'aa').capitalize() }} atliekantis asmuo ir priimanti įmonė, įstaiga,
+                        organizacija ar kita organizacinė struktūra susitaria dėl {{ ko(internship_type, 'aa') }}
+                        atlikimo tokiomis sąlygomis:
+                    </p>
+                    <p>
+                        1.1. atliekama {{ internship_type.lower() }} (veiklos pobūdis) – {{ text_4 }};
+                    </p>
+                    <p>
+                        1.2. {{ ko(internship_type, 'aa') }} atlikimo trukmė – prasideda {{ date_from }}
+                        ir baigiasi {{ date_to }};
+                    </p>
+                    <p>
+                        1.3. {{ ko(internship_type, 'aa') }} priežiūrą vykdo {{ ko(internship_type, 'aa') }} vadovas
+                        {{ employee_id1 }};
+                    </p>
+                    {% if text_10 != '' %}
+                        <p>
+                            1.4. kitos {{ ko(internship_type, 'aa') }} atlikimo sąlygos ir tvarka – {{ text_10 }};
+                        </p>
+                    {% endif %}
+                    <h3>II. ŠALIŲ ĮSIPAREIGOJIMAI</h3>
+                    <p>
+                        2. Priimanti įmonė, įstaiga, organizacija ar kita organizacinė struktūra įsipareigoja:
+                    </p>
+                    <p>
+                        2.1. suteikti {{ ka(internship_type, 'aa') }} atliekančiam asmeniui vietą atlikti
+                        {{ ka(internship_type, 'aa') }} {{ kur(text_3) }}, sudaryti sąlygas ir aprūpinti priemonėmis,
+                        būtinomis {{ kam(internship_type, 'aa') }} atlikti;
+                    </p>
+                    <p>
+                        2.2. užtikrinti, kad {{ ka(internship_type, 'aa') }} atliekančiam asmeniui iš kvalifikuotų
+                        darbuotojų būtų paskirtas {{ ko(internship_type, 'aa') }} vadovas, su kuriuo
+                        {{ ka(internship_type, 'aa') }} atliekantis asmuo parengia {{ ko(internship_type, 'aa') }}
+                        atlikimo planą (programą), kuris vykdo {{ ko(internship_type, 'aa') }} atlikimo priežiūrą,
+                        o jai pasibaigus ją įvertina;
+                    </p>
+                    <p>
+                        2.3. organizuoti būtinus darbuotojų saugos ir sveikatos bei priešgaisrinės saugos instruktažus;
+                    </p>
+                    <p>
+                        2.4. vadovaudamasi priimančioje įmonėje, įstaigoje, organizacijoje ar kitoje organizacinėje
+                        struktūroje veikiančiais nuostatais dėl darbo tvarkos ir sąlygų, užtikrinti
+                        {{ ka(internship_type, 'aa') }} atliekančiam asmeniui darbuotojų saugos ir sveikatos bei
+                        higienos normas atitinkančias {{ ko(internship_type, 'aa') }} sąlygas, prireikus
+                        {{ ka(internship_type, 'aa') }} atliekantį asmenį aprūpinti būtinais darbo įrankiais, darbo
+                        drabužiais ir darbo avalyne, kitomis asmeninėmis ir kolektyvinėmis darbuotojų saugos ir
+                        sveikatos priemonėmis, jeigu sutarties šalys šioje sutartyje nesusitaria kitaip;
+                    </p>
+                    <p>
+                        2.5. atsižvelgdama į {{ ko(internship_type, 'aa') }} vadovo įvertinimą, išduoti dokumentą apie
+                        {{ ka(internship_type, 'aa') }} atliekančio asmens atliktą {{ ka(internship_type, 'aa') }};
+                    </p>
+                    <p>
+                        2.6. supažindinti {{ ka(internship_type, 'aa') }} atliekantį asmenį su priimančios įmonės,
+                        įstaigos, organizacijos ar kitos organizacinės struktūros nuostatais (įstatais) ir darbo tvarkos
+                        taisyklėmis, taip pat pranešti, kuri atliekant {{ ka(internship_type, 'aa') }} suteikiama
+                        informacija yra priimančios įmonės, įstaigos, organizacijos ar kitos organizacinės struktūros
+                        komercinė arba kita paslaptis, neplatinama už priimančios įmonės, įstaigos, organizacijos ar
+                        kitos organizacinės struktūros ribų;
+                    </p>
+                    <p>
+                        2.7. informuoti {{ ka(internship_type, 'aa') }} atliekantį asmenį, kad Užimtumo įstatymo 10
+                        straipsnio 4 dalyje nustatyta tvarka sveikatos draudimu ir nelaimingų atsitikimų darbe ir
+                        profesinių ligų socialiniu draudimu valstybės lėšomis jis bus apdraustas tik
+                        {{ ko(internship_type, 'aa') }} atlikimo (šios sutarties galiojimo) laikotarpiu;
+                    </p>
+                    <p>
+                        2.8. likus ne mažiau kaip 1 darbo dienai iki numatytos {{ ko(internship_type, 'aa') }} pradžios,
+                        Valstybinio socialinio draudimo fondo valdybos prie Socialinės apsaugos ir darbo ministerijos
+                        (toliau – Valstybinio socialinio draudimo fondo valdyba) teritoriniam skyriui pateikti pranešimą
+                        apie {{ ko(internship_type, 'aa') }} pradžią;
+                    </p>
+                    <p>
+                        2.9. ne vėliau kaip per 3 darbo dienas pateikti Valstybinio socialinio draudimo fondo valdybos
+                        teritoriniam skyriui pranešimą apie {{ ko(internship_type, 'aa') }} pabaigą, kai
+                        {{ ko(internship_type, 'aa') }} sutartis pasibaigia arba yra nutraukiama;
+                    </p>
+                    {%if extra_text != '' %}
+                        <p>
+                            2.10. papildomi priimančios įmonės, įstaigos, organizacijos ar kitos organizacinės struktūros
+                            įsipareigojimai – {{ extra_text_html }}.
+                        </p>
+                    {% endif %}
+                    <p>
+                        3. {{ ka(internship_type, 'aa').capitalize() }} atliekantis asmuo įsipareigoja:
+                    </p>
+                    <p>
+                        3.1. vykdyti {{ ko(internship_type, 'aa') }} metu gautas užduotis;
+                    </p>
+                    <p>
+                        3.2. neatvykęs atlikti {{ ko(internship_type, 'aa') }} priimančioje įmonėje, įstaigoje,
+                        organizacijoje ar kitoje organizacinėje struktūroje, nedelsdamas pranešti apie tai
+                        {{ ko(internship_type, 'aa') }} vadovui, nurodyti priežastį, o laikinojo nedarbingumo atveju –
+                        pateikti pranešimą apie išduotą elektroninį nedarbingumo pažymėjimą ar elektroninį nėštumo ir
+                        gimdymo atostogų pažymėjimą arba pateikti medicininę pažymą (forma 094/a);
+                    </p>
+                    <p>
+                        3.3. laikytis priimančios įmonės, įstaigos, organizacijos ar kitos organizacinės struktūros
+                        nuostatų (įstatų) ir darbo tvarkos taisyklių, laikyti paslaptyje priimančios įmonės, įstaigos,
+                        organizacijos ar kitos organizacinės struktūros komercines ir kitas paslaptis bei informaciją,
+                        kurią nurodo priimanti įmonė, įstaiga, organizacija ar kita organizacinė struktūra, pagal šios
+                        sutarties 2.6 papunktį;
+                    </p>
+                    <p>
+                        3.4. tausoti priimančios įmonės, įstaigos, organizacijos ar kitos organizacinės struktūros
+                        turtą, atlyginti padarytą materialinę žalą;
+                    </p>
+                    <p>
+                        3.5. laikytis darbuotojų saugos ir sveikatos bei priešgaisrinės apsaugos taisyklių reikalavimų;
+                    </p>
+                    {% if text_11 != '' %}
+                        <p>
+                            3.6. papildomi {{ ka(internship_type, 'aa') }} atliekančio asmens įsipareigojimai –
+                            {{ text_11 }}.
+                        </p>
+                    {% endif %}
+                    <h3>III. BAIGIAMOSIOS NUOSTATOS</h3>
+                    <p>
+                        4. Ši sutartis gali būti pakeista tik rašytiniu abiejų šalių susitarimu. Sutarties pakeitimai
+                        yra neatsiejama šios sutarties dalis.
+                    </p>
+                    <p>
+                        5. Ši sutartis gali būti nutraukiama:
+                    </p>
+                    <p>
+                        5.1. vienašališkai, jei viena iš šalių pažeidžia šioje sutartyje nustatytus įsipareigojimus, jų
+                        nevykdo arba vykdo netinkamai;
+                    </p>
+                    <p>
+                        5.2. šalių susitarimu, jei tokį susitarimą lėmė nenumatytos, objektyvios ir motyvuotos
+                        priežastys.
+                    </p>
+                    <p>
+                        6. Sutarties šalis praneša kitai sutarties šaliai apie sutarties nutraukimą ne vėliau kaip prieš
+                        {{ int_1 }} dienas (-ų).
+                    </p>
+                    <p>
+                        7. Visi ginčai, kurių sutarties šalys negali išspręsti geranoriškai ir bendru sutarimu,
+                        sprendžiami teismo tvarka.
+                    </p>
+                    <p>
+                        8. Ši sutartis sudaryta dviem egzemplioriais, turinčiais vienodą teisinę galią, po vieną
+                        kiekvienai sutarties šaliai.
+                    </p>
+                    {% elif internship_type__sv__ == 'educational_internship' %}
+                    <p>
+                        <b>{{ text_5 }}</b> (toliau – aukštoji mokykla), atstovaujama {{ ko(text_7, 'Aa') }} ir
+                        <b>{{ company_id }}</b> (toliau – priimanti organizacija), atstovaujama
+                        {{ ko(manager_job_id, 'aa') }} {{ ko(manager_id) }} ir {{ ka(internship_type, 'aa') }}
+                        atliekantis asmuo <b>{{ employee_id2 }},</b> a.k. {{ text_1 }}
+                        {% if text_8 %}
+                            ( {{ text_8 }} )
+                        {% endif %}, toliau kartu vadinami šalimis, sudaro šią sutartį:
+                    </p>
+                    <h3>I. BENDROSIOS NUOSTATOS</h3>
+                    <p>
+                        1. Ši sutartis sudaroma visam praktinio mokymo priimančioje organizacijoje
+                        (toliau – {{ internship_type }}) laikotarpiui.
+                    </p>
+                    <p>
+                        2. Praktikantas atlieka {{ ka(internship_type, 'aa') }} pagal studijų programą ir suderintą
+                        {{ ko(internship_type, 'aa') }} planą (programą). Vadovaujantis studijų programa šioje
+                        sutartyje nurodoma:
+                    </p>
+                    <p>
+                        2.1. {{ ko(internship_type, 'aa') }} tikslas – <b>{{ text_4 }}</b>,
+                    </p>
+                    <p>
+                        2.2. numatomi {{ ko(internship_type, 'aa') }} rezultatai – <b>{{ text_9 }}</b>,
+                    </p>
+                    <p>
+                        2.3. {{ ko(internship_type, 'aa') }} trukmė - {{ internship_type }} prasideda
+                        <b>{{ date_from }}</b> ir baigiasi <b>{{ date_to }}</b>
+                        {% if float_1 %},
+                        {{ ko(internship_type, 'aa') }} apimtis - <b>{{ float_1 }}
+                            {%if float_1 | float % 10 == 0 %}
+                                kreditų
+                            {% elif float_1 | float % 100 &gt; 10 and float_1 | float % 100 &lt; 20 %}
+                                kreditų
+                            {% elif float_1 | float % 10 == 1 %}
+                                kreditą
+                            {% else %}
+                                kreditai
+                            {% endif %}</b>
+                        {% endif %};
+                    </p>
+                    {% if text_10 %}
+                    <p>
+                        2.4. kitos {{ ko(internship_type, 'aa') }} atlikimo sąlygos ir tvarka – <b>{{ text_10 }}</b>.
+                    </p>
+                    {% endif %}
+                    <h3>II. Šalių įsipareigojimai</h3>
+                    <p>
+                        3. Aukštoji mokykla įsipareigoja:
+                    </p>
+                    <p>
+                        3.1. užtikrinti studento, siunčiamo atlikti {{ ka(internship_type, 'aa') }}, būtiną
+                        {{ kam(internship_type, 'aa') }} teorinį ir praktinį pasirengimą;
+                    </p>
+                    <p>
+                        3.2. skirti {{ ko(internship_type, 'aa') }} vadovą – aukštosios mokyklos dėstytoją, kuris
+                        studentui padeda parengti ir tvirtina {{ ko(internship_type, 'aa') }} planą (programą),
+                        užtikrina {{ ko(internship_type, 'aa') }} tikslų pasiekimo priežiūrą ir prireikus organizacijos
+                        atsakingais darbuotojais (arba valstybės tarnautojais) operatyviai sprendžia su studento
+                        atliekama {{ kuo(internship_type, 'aa') }} iškilusias problemas;
+                    </p>
+                    <p>
+                        3.3. aprūpinti priimančios organizacijos paskirtą {{ ko(internship_type, 'aa') }} vadovą
+                        metodinėmis vadovavimo {{ kam(internship_type, 'aa') }} rekomendacijomis (priemonėmis);
+                    </p>
+                    <p>
+                        3.4. šios sutarties nustatytomis sąlygomis, kai tai neprieštarauja priimančios organizacijos
+                        steigimo dokumentams ir veiklos tikslams, apmokėti priimančiai organizacijai už
+                        {{ ka(internship_type, 'aa') }} organizavimą ir skirti šiam tikslui <b>{{ float_2 }} Eur</b>
+                        (skiriama suma turi sudaryti ne mažiau kaip 50 procentų studijų kainos dalies, skirtos
+                        dėstytojų ir mokslo darbuotojų bei kitų su studijomis  susijusių darbuotojų darbo užmokesčiui,
+                        bet ne didesnės kaip norminė studijų kaina, proporcingos {{ ko(internship_type, 'aa') }}
+                        apimčiai (studijų kreditų skaičiui), jei aukštoji mokykla ir priimanti organizacija nesutaria
+                        kitaip (rezidentų praktinio mokymo atveju šis punktas gali būti netaikomas vadovaujantis
+                        medicinos, odontologijos ir veterinarinės medicinos rezidentūrą reglamentuojančių teisės aktų
+                        reikalavimais);
+                    </p>
+                    {% if text_12 %}
+                    <p>
+                        3.5. papildomi aukštosios mokyklos įsipareigojimai – <b>{{ text_12 }}</b> .
+                    </p>
+                    {% endif %}
+                    <p>
+                        4. Priimanti organizacija įsipareigoja:
+                    </p>
+                    <p>
+                        4.1. suteikti studentui praktinio mokymo vietą <b>{{ text_3 }}</b>,
+                        sudaryti sąlygas {{ ko(internship_type, 'aa') }} planui (programai) įgyvendinti, aprūpinti
+                        {{ ko(internship_type, 'aa') }} planui (programai) įgyvendinti reikalinga informacija ir
+                        neatitraukti studento nuo praktinio mokymo užduočių vykdymo;
+                    </p>
+                    <p>
+                        4.2. užtikrinti, kad studentui būtų paskirtas {{ ko(internship_type, 'aa') }} vadovu
+                        kvalifikuotas darbuotojas (arba valstybės tarnautojas), turintis ne mažesnį kaip 3 metų
+                        atitinkamo darbo stažą, su kuriuo praktikantas detalizuoja {{ ko(internship_type, 'aa') }} planą
+                        (programą), kuris vykdo {{ ko(internship_type, 'aa') }} priežiūrą, jai pasibaigus, ją įvertina;
+                    </p>
+                    <p>
+                        4.3. organizuoti būtinus darbuotojų saugos ir sveikatos bei priešgaisrinės saugos instruktažus;
+                    </p>
+                    <p>
+                        4.4. vadovaudamasi(s) priimančioje organizacijoje nustatyta tvarka ir susitarimu su aukštąja
+                        mokykla dėl darbo tvarkos ir sąlygų, užtikrinti studentui darbuotojų saugos ir sveikatos bei
+                        higienos normas atitinkančias darbo sąlygas, prireikus aprūpinti studentą
+                        {{ kam(internship_type, 'aa') }} atlikti būtinais darbo įrankiais, darbo drabužiais ir darbo
+                        avalyne, kitomis asmeninėmis ir kolektyvinėmis darbuotojų saugos ir sveikatos priemonėmis;
+                    </p>
+                    <p>
+                        4.5. skirti studentui su studijų bei praktinio mokymo specifika susijusias užduotis bei
+                        užtikrinti, kad nebūtų skiriamos su studijų bei praktinio mokymo specifika nesusijusios
+                        užduotys nekvalifikuotam darbui atlikti;
+                    </p>
+                    <p>
+                        4.6. informuoti aukštąją mokyklą apie atliekamos {{ ko(internship_type, 'aa') }} eigą ir
+                        atsižvelgiant į {{ ko(internship_type, 'aa') }} vadovo įvertinimą išduoti dokumentą apie
+                        studento atliktą {{ ka(internship_type, 'aa') }};
+                    </p>
+                    <p>
+                        4.7. informuoti studentą, kuriam {{ ko(internship_type, 'aa') }} metu suteikiama informacija
+                        yra priimančios organizacijos komercinė arba kita paslaptis, neplatinama už priimančios
+                        organizacijos ribų, bei apie už šios informacijos platinimą taikomas baudas
+                        (jei tokios yra numatytos vidaus dokumentuose);
+                    </p>
+                    {% if extra_text %}
+                    <p>
+                        4.8. papildomi priimančios organizacijos įsipareigojimai – <b>{{ extra_text_html }}</b>
+                    </p>
+                    {% endif %}
+                    <p>
+                        5. Priimanti organizacija turi teisę leisti studentui savarankiškai, be
+                        {{ ko(internship_type, 'aa') }} vadovo pagalbos, atlikti jam pavestas funkcijas dalyvaujant
+                        gamyboje arba teikiant paslaugas tik tais atvejais, jeigu priimanti organizacija sudaro su
+                        studentu darbo sutartį. Rezidentų praktinio mokymo atveju šis punktas gali būti netaikomas
+                        vadovaujantis medicinos, odontologijos ir veterinarinės medicinos rezidentūrą reglamentuojančių
+                        teisės aktų reikalavimais
+                    </p>
+                    <p>
+                        6. Praktikantas įsipareigoja:
+                    </p>
+                    <p>
+                        6.1. ne vėliau kaip prieš
+                        <b>{{ int_2 }}
+                        {%if int_2 | int % 10 == 0 %}
+                            dienų
+                        {% elif int_2 | int % 100 &gt; 10 and int_2 | int % 100 &lt; 20 %}
+                            dienų
+                        {% elif int_2 | int % 10 == 1 %}
+                            dieną
+                        {% else %}
+                            dienas
+                        {% endif %}</b>
+                        iki {{ ko(internship_type, 'aa') }} pradžios
+                        parengti {{ ko(internship_type, 'aa') }} planą (programą) ir suderinti su aukštosios mokyklos
+                        paskirtu {{ ko(internship_type, 'aa') }} vadovu, ne vėliau kaip per pirmąją
+                        {{ ko(internship_type, 'aa') }} dieną detalizuoti {{ ko(internship_type, 'aa') }} planą
+                        (programą) su priimančios organizacijos paskirtu {{ ko(internship_type, 'aa') }} vadovu;
+                    </p>
+                    <p>
+                        6.2. uoliai vykdyti praktinio mokymo užduotis; neatvykęs į {{ ka(internship_type, 'aa') }}
+                        priimančioje organizacijoje, nedelsdamas turi pranešti apie tai {{ ko(internship_type, 'aa') }}
+                        vadovams, nurodydamas priežastį, o ligos atveju – pateikdamas gydytojo pažymą;
+                    </p>
+                    <p>
+                        6.3. laikytis priimančios organizacijos steigimo ir veiklos dokumentų, darbo tvarkos taisyklių,
+                        susitarimo su aukštąja mokykla dėl darbo tvarkos ir sąlygų nuostatų; laikyti paslaptyje
+                        priimančios organizacijos komercines ir kitas paslaptis bei informaciją, kurią nurodo priimanti
+                        organizacija pagal šios sutarties 4.7 papunktį;
+                    </p>
+                    <p>
+                        6.4. tausoti priimančios organizacijos turtą, už padarytą materialinę žalą atsakyti įstatymų
+                        nustatyta tvarka;
+                    </p>
+                    <p>
+                        6.5. laikytis darbuotojų saugos ir sveikatos bei priešgaisrinės apsaugos taisyklių reikalavimų;
+                    </p>
+                    <p>
+                        6.6. informuoti aukštąją mokyklą, jei {{ ko(internship_type, 'aa') }} atlikimo laikotarpiu yra
+                        skiriamos su studijų bei praktinio mokymo specifika nesusijusios užduotys nekvalifikuotam
+                        darbui atlikti, jei priimanti organizacija nesudaro sąlygų {{ ko(internship_type, 'aa') }}
+                        planui (programai) įgyvendinti;
+                    </p>
+                    <p>
+                        6.7. parengti {{ ko(internship_type, 'aa') }} ataskaitą pagal aukštosios mokyklos nustatytus
+                        reikalavimus, pateikti ją aukštosios mokyklos paskirtam {{ ko(internship_type, 'aa') }} vadovui;
+                    </p>
+                    <p>
+                        6.8. papildomi studento įsipareigojimai – <b>{{ text_11 }}</b> .
+                    </p>
+                    <h3>III. BAIGIAMOSIOS NUOSTATOS</h3>
+                    <p>
+                        7. Ši sutartis gali būti pakeista tik rašytiniu visų šalių susitarimu. Sutarties pakeitimai yra
+                        neatsiejama šios sutarties dalis.
+                    </p>
+                    <p>
+                        8. Ši sutartis gali būti nutraukiama:
+                    </p>
+                    <p>
+                        8.1. jei praktikantas pašalinamas iš aukštosios mokyklos, nutraukia studijas arba jam
+                        suteikiamos akademinės atostogos;
+                    </p>
+                    <p>
+                        8.2. jei viena iš sutarties šalių pažeidžia šioje sutartyje nustatytus įsipareigojimus;
+                    </p>
+                    <p>
+                        8.3. šalių susitarimu.
+                    </p>
+                    <p>
+                        9. Sutarties šalis praneša kitoms sutarties šalims apie sutarties nutraukimą ne vėliau kaip
+                        prieš <b>{{ int_1 }}
+                        {%if int_1 | int % 10 == 0 %}
+                            dienų
+                        {% elif int_1 | int % 100 &gt; 10 and int_1 | int % 100 &lt; 20 %}
+                            dienų
+                        {% elif int_1 | int % 10 == 1 %}
+                            dieną
+                        {% else %}
+                            dienas
+                        {% endif %}</b>.
+                    </p>
+                    <p>
+                        10. Visi ginčai sprendžiami šalių susitarimu, o nesusitarus – teisme.
+                    </p>
+                    <p>
+                        11. Ši sutartis įsigalioja nuo tos dienos, kai paskutinioji iš šalių ją pasirašo, ir galioja iki
+                        {{ ko(internship_type, 'aa') }} atlikimo ir visų kitų įsipareigojimų pagal šią sutartį įvykdymo.
+                    </p>
+                    <p>
+                        12. Ši sutartis sudaryta trimis egzemplioriais, turinčiais vienodą teisinę galią, po vieną
+                        kiekvienai sutarties šaliai.
+                    </p>
+                    <h3>III. ŠALIŲ REKVIZITAI</h3>
+                    <p>
+                        Aukštoji mokykla: <b>{{ text_5 }}, {{ text_6 }}. {{ text_7 }}.</b>
+                    </p>
+                    <p>
+                        Priimanti organizacija:
+                        <b>{{ company_id }}, {{ text_3 }}, {{ manager_job_id }} {{ manager_id }}.</b>
+                    </p>
+                    <p>
+                        Praktikantas: <b>{{ employee_id2 }}, {{ text_1 }}, {{ text_2 }}.</b>
+
+                    </p>
+                    {% endif %}
+                </div>
+            </field>
+            <field name="name">Įsakymas dėl praktikos</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center; " align="center">(parašas)</td>
+                        </tr>
+                        {% if internship_type__sv__ == 'educational_internship' %}
+                            <tr style="border-style:none;">
+                                <td style="padding-top: 1em;">
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                            <tr style="border-style:none;">
+                                <td style="padding-top: 1em;">
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(Įmonės atstovo vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                        {% if internship_type__sv__ == 'educational_internship' %}
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center; padding-top: 1em;">
+                                    <span>{{ text_7 }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(Švietimo įstaigos atstovo vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center; padding-top: 1em;">
+                                    <span>{{ employee_id2 }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(Praktiką atliekančio asmens vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.internship_order_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                    text-align: center;
+                    margin-left:auto;
+                    margin-right:auto;
+                    }
+                    .desine{
+                    float: right;
+                    width: 300px;
+                    text-align: justify
+                    .img-rounded{
+                    width: 100px;
+                    }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                    </span>
+                                                </p>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p>
+                                                    <span>{{ manager_id }}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span t-field="doc.employee_id.work_location"/>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        <br/>
+                        {{ extra_text_html }}
+                    </div>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="65%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{manager_job_id}} {{ manager_id }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.internship_order_workflow()</field>
+            <field name="date_from_field_name" eval="False"/>
+            <field name="date_to_field_name" eval="False"/>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="date_lim_for_signing_field_name">_use_immediate_date</field>
+        </record>
+    </data>
+</odoo>

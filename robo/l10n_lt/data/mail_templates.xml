@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_invoice_main_mail_template" model="mail.template">
+            <field name="name">Account invoice</field>
+            <field name="email_from">${('noreply@robolabs.lt')|safe}</field>
+            <field name="subject">${object.company_id.name|safe} ${'invoice' if object.partner_lang in ['en_US'] else 'sąskaita'|safe} ${object.number or ''|safe}</field>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="email_cc"/>
+            <field name="active" eval="True"/>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="reply_to">${user.email}</field>
+            <field name="report_name">${(object.number or object.proforma_number or 'isankstine').replace('/','_')}</field>
+            <field name="lang">${object.partner_lang or object.partner_id.lang}</field>
+            <field name="robo_company_template_wrap" eval="True"/>
+            <field name="body_html"><![CDATA[
+<p>Greetings,</p>
+%if object.state in ['proforma','proforma2']:
+    <p>
+    You will find the attached invoice<b>${' ' + object.proforma_number if object.proforma_number else ''|safe}</b>
+    in the email, totaling <b>${'{0:.2f}'.format(object.amount_total)|safe}${object.currency_id.name|safe}</b>.
+    </p>
+%else:
+    <p>
+    You will find the attached invoice <b>${object.number or ''|safe}</b> in the email, totaling <b>
+    ${'{0:.2f}'.format(object.amount_total)|safe}${object.currency_id.name|safe}</b>.
+    </p>
+%endif
+%if object.state=='paid':
+    <p><span>Please note, that this invoice has already been paid.</span></p>
+%elif object.date_due and 'refund' not in object.type:
+    <p><span>Please pay the invoice by ${object.date_due|safe}.</span></p>
+%endif
+% if object.show_payment_url:
+    <br>
+    <a href="${object.invoice_payment_url}"
+    style="
+        background-color: #3498dc;
+        color: white;
+        padding: 7px 12px;
+        border-radius: 2px;
+        font-size: 16px;
+        text-decoration: none;
+        font-family: Georgia;
+        font-weight: bold;
+    " target="_blank">Pay Now</a>
+    <br>
+    <br>
+%endif
+<p>Thank you,</p>
+<p>
+    %if user.name:
+        <span>${user.name}</span>
+    %endif
+    %if user.email:
+        <br/>
+        <span>${user.email}</span>
+    %endif
+    %if user.employee_ids[0]:
+        %if user.employee_ids[0].mobile_phone:
+            <br/>
+            <span>${user.employee_ids[0].mobile_phone}</span>
+        %endif
+        %if user.employee_ids[0].work_phone:
+        <br/>
+            <span>${user.employee_ids[0].work_phone}</span>
+        %endif
+    %elif user.phone:
+        <br/>
+        <span>${user.phone}</span>
+    %endif
+</p>
+]]></field>
+        </record>
+    </data>
+</odoo>

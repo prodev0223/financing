@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<odoo>
+
+     <!--Main menu-->
+    <menuitem id="menu_robo_crm"
+              parent="robo.menu_start"
+              name="CRM"
+              sequence="52"
+              groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"
+              robo_extended="1"
+              robo_front="True"
+              force_web_icon="icon-group-work,none,none"
+    />
+
+    <record id="crm_activity_log_view_form" model="ir.ui.view">
+        <field name="name">Įvykdyti žingnį</field>
+        <field name="model">crm.activity.log</field>
+        <field name="priority">20</field>
+        <field name="robo_front">True</field>
+        <field name="inherit_id" ref="crm.crm_activity_log_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="replace">
+                <form string="Registruoti žingnį">
+                    <group>
+                        <field name="team_id" invisible="1"/>
+                        <field name="lead_id" invisible="1"/>
+                        <group>
+                            <field name="next_activity_id" required="1"
+                                domain="['|', ('team_id', '=', False), ('team_id', '=', team_id)]"
+                                options="{'no_create': True, 'no_open': True}" string="Žingsnis"/>
+                            <field name="title_action" placeholder="pvz. Aptarti pasiūlymą" string="Žingsnio aprašymas"/>
+                        </group>
+                        <group>
+                            <field name="planned_revenue" string="Planuojamos pajamos"/>
+                            <field name="date_deadline" string="Užklausos terminas"/>
+                        </group>
+                    </group>
+                    <field name="note" placeholder="Užrašyti žinutę..."/>
+                    <footer>
+                        <button name="action_log_and_schedule" string="Įvykdyti ir Planuoti toliau" type="object" class="btn btn-primary"/>
+                        <button name="action_log" string="Tik įvykdyti" type="object" class="btn btn-primary"/>
+                        <button string="Atšaukti" class="btn btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </xpath>
+        </field>
+    </record>
+    <record id="crm_activity_log_view_form_schedule" model="ir.ui.view">
+        <field name="name">Planuoti kitą žingsnį</field>
+        <field name="model">crm.activity.log</field>
+        <field name="priority">40</field>
+        <field name="robo_front">True</field>
+        <field name="inherit_id" ref="crm.crm_activity_log_view_form_schedule"/>
+        <field name="arch" type="xml">
+             <xpath expr="//form" position="replace">
+                <form string="Užregistruoti kitą žingsnį">
+                    <group class="mt0">
+                        <field name="team_id" invisible="1"/>
+                        <field name="lead_id" invisible="1"/>
+                        <field name="last_activity_id" invisible="1"/>
+                        <group>
+                            <field name="next_activity_id"
+                                domain="['|', ('team_id', '=', False), ('team_id', '=', team_id)]"
+                                options="{'no_create': True, 'no_open': True}" string="Žingsnis"/>
+                            <field name="date_action" string="Kito žingsnio data"/>
+                            <field name="title_action" placeholder="pvz. Aptarti pasiūlymą" string="Žingsnio aprašymas"/>
+                        </group>
+                        <group>
+                            <div>
+                                <p><strong>Rekomenduojamos veiklos:</strong></p>
+                                <field name="recommended_activity_id" widget="radio" class="o_recommended_activity"
+                                    domain="[('preceding_activity_ids', '=', last_activity_id)]"/>
+                            </div>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_schedule" string="Planuoti kitą žingsnį" type="object" class="btn btn-primary"/>
+                        <button string="Jokio žingsnio" class="btn btn-default" special="cancel"/>
+                    </footer>
+                </form>
+             </xpath>
+        </field>
+    </record>
+    <record id="crm_activity_log_action" model="ir.actions.act_window">
+        <field name="name">Įvykdyti žingnį</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">crm.activity.log</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="crm_activity_log_view_form"/>
+        <field name="target">new</field>
+        <field name="robo_menu" ref="menu_robo_crm"/>
+    </record>
+
+    <record id="crm_activity_schedule_action" model="ir.actions.act_window">
+        <field name="name">Robo Schedule an Activity</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">crm.activity.log</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="crm_activity_log_view_form_schedule"/>
+        <field name="target">new</field>
+        <field name="robo_menu" ref="menu_robo_crm"/>
+    </record>
+</odoo>

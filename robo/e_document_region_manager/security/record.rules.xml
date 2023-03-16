@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="e_document_premium_user_region_manager_related" model="ir.rule">
+            <field name="name">eDocument Premium User Region Manager related documents</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('id', 'in', [doc.id for doc in user.region_manager_document_ids]),
+                ('active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="e_document_line_premium_user_region_manager_related" model="ir.rule">
+            <field name="name">eDocument Premium User Region Manager related document lines</field>
+            <field name="model_id" ref="e_document.model_e_document_line"/>
+            <field name="domain_force">[
+                ('e_document_id.id', 'in', [doc.id for doc in user.region_manager_document_ids]),
+                ('e_document_id.active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="e_document_premium_user_region_manager" model="ir.rule">
+            <field name="name">eDocument Premium User Region Manager</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                '|',
+                '&amp;', '&amp;',
+                ('template_id.is_signable_by_region_manager', '=', True),
+                ('active', '=', True),
+                ('user_id','=',user.id),
+                '&amp;',# '&amp;',
+                ('cancel_id.template_id.is_signable_by_region_manager', '=', True),
+                ('cancel_id.active', '=', True),
+                #('cancel_id.user_id','=',user.id),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+        <record id="e_document_line_premium_user_region_manager" model="ir.rule">
+            <field name="name">eDocument Line Premium User Region Manager</field>
+            <field name="model_id" ref="e_document.model_e_document_line"/>
+            <field name="domain_force">[
+                '|',
+                '&amp;', '&amp;',
+                ('e_document_id.template_id.is_signable_by_region_manager', '=', True),
+                ('e_document_id.active', '=', True),
+                ('e_document_id.user_id','=',user.id),
+                '&amp;', '&amp;',
+                ('e_document_id.cancel_id.template_id.is_signable_by_region_manager', '=', True),
+                ('e_document_id.cancel_id.active', '=', True),
+                ('e_document_id.cancel_id.user_id','=',user.id),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+        <record id="hr_contract_e_document_region_manager_rule" model="ir.rule">
+            <field name="name">eDocument Region Manager read contracts</field>
+            <field name="model_id" ref="l10n_lt_payroll.model_hr_contract"/>
+            <field name="domain_force">[
+                ('employee_id.department_id', 'in', [d.id for d in user.get_accessible_departments()])
+                ]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+        <record id="hr_contract_appointment_e_document_region_manager_rule" model="ir.rule">
+            <field name="name">eDocument Region Manager read appointments</field>
+            <field name="model_id" ref="l10n_lt_payroll.model_hr_contract_appointment"/>
+            <field name="domain_force">[
+                ('employee_id.department_id', 'in', [d.id for d in user.get_accessible_departments()])
+                ]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+        <record id="e_document_attendance_line_premium_user_region_manager" model="ir.rule">
+            <field name="name">eDocument Fix Attendance Line Premium User Region Manager</field>
+            <field name="model_id" ref="e_document.model_e_document_fix_attendance_line"/>
+            <field name="domain_force">[
+                '|',
+                '|',
+                ('e_document', '=', False),
+                '&amp;', '&amp;',
+                ('e_document.template_id.is_signable_by_region_manager', '=', True),
+                ('e_document.active', '=', True),
+                ('e_document.user_id','=',user.id),
+                '&amp;', '&amp;',
+                ('e_document.cancel_id.template_id.is_signable_by_region_manager', '=', True),
+                ('e_document.cancel_id.active', '=', True),
+                ('e_document.cancel_id.user_id','=',user.id),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('e_document_region_manager.group_e_document_region_manager'))]"/>
+        </record>
+    </data>
+</odoo>

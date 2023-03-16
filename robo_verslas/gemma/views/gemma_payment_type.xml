@@ -1,0 +1,56 @@
+<odoo>
+    <data>
+        <record id="gemma_payment_type_form" model="ir.ui.view">
+            <field name="name">gemma.payment.type.form</field>
+            <field name="model">gemma.payment.type</field>
+            <field name="arch" type="xml">
+                <form string="Gemma Mokėjimas" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                    <sheet>
+                    <div>
+                        <label string="Mokėjimo tipo pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="ext_type_id"/>
+                            <field name="is_active"/>
+                            <field name="do_reconcile"/>
+                            <field name="journal_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="gemma_payment_type_tree" model="ir.ui.view">
+            <field name="name">gemma.payment.type.tree</field>
+            <field name="model">gemma.payment.type</field>
+            <field name="arch" type="xml">
+                <tree string="Mokėjimų tipai"
+                      create="1" edit="1" delete="1"
+                      decoration-danger="state == 'warning'"
+                      decoration-success="state == 'active'">
+                    <field name="name"/>
+                    <field name="ext_type_id"/>
+                    <field name="is_active"/>
+                    <field name="do_reconcile"/>
+                    <field name="journal_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="gemma_payment_type_action" model="ir.actions.act_window">
+            <field name="name">Mokėjimo tipai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">gemma.payment.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="gemma_payment_type_tree"/>
+        </record>
+    </data>
+</odoo>

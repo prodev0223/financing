@@ -1,0 +1,48 @@
+<odoo>
+    <data noupdate="1">
+        <!--CATEGORY SEQUENCE-->
+        <record id="nsoft_sum_category_account_account_sequence" model="ir.sequence">
+            <field name="name">Suminių nSoft kategorijų sąskaitų seka</field>
+            <field name="code">NSOFT_CAT_SEQ</field>
+            <field name="number_increment" eval="1"/>
+            <field name="number_next_actual" eval="1"/>
+        </record>
+        <!--ACCOUNT JOURNALS-->
+        <record id="journal_nsoft_inventory" model="account.journal">
+            <field name="name">nSoft Inventorizacijos</field>
+            <field name="code">NSIVR</field>
+            <field name="type">general</field>
+        </record>
+        <record id="journal_nsoft_write_off" model="account.journal">
+            <field name="name">nSoft Nurašymai</field>
+            <field name="code">NSWRF</field>
+            <field name="type">general</field>
+        </record>
+        <record id="journal_nsoft_prime_cost_act" model="account.journal">
+            <field name="name">nSoft Savikainos Aktai</field>
+            <field name="code">NSPRM</field>
+            <field name="type">general</field>
+        </record>
+        <!--REPORT MOVE CATEGORIES-->
+        <record id="nsoft_inventory_move_category_prm" model="nsoft.report.move.category">
+            <field name="name">Pardavimo savikainos aktai</field>
+            <field name="report_type">2</field>
+            <field name="journal_id" ref="journal_nsoft_prime_cost_act"/>
+        </record>
+        <record id="nsoft_inventory_move_category_inv" model="nsoft.report.move.category">
+            <field name="name">Inventorizavimo aktai</field>
+            <field name="report_type">6</field>
+            <field name="journal_id" ref="journal_nsoft_inventory"/>
+        </record>
+        <record id="nsoft_inventory_move_category_off" model="nsoft.report.move.category">
+            <field name="name">Nurašymo aktai</field>
+            <field name="report_type">7</field>
+            <field name="journal_id" ref="journal_nsoft_write_off"/>
+        </record>
+        <record id="nsoft_inventory_move_category_close" model="nsoft.report.move.category">
+            <field name="name">Uždarymai aktai</field>
+            <field name="report_type">9</field>
+            <field name="journal_id" ref="journal_nsoft_inventory"/>
+        </record>
+    </data>
+</odoo>

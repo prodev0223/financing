@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">robo.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_vat']" position="after">
+                    <field name="license_number" string="Kompanijos licencijos numeris"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

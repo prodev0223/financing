@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+{
+    'name' : 'Projects',
+    'version' : '1.0',
+    'author' : 'Robolabs',
+    'website': 'http://www.robolabs.lt',
+    'license': 'Other proprietary',
+    'depends': ['project', 'project_issue', 'project_issue_sheet', 'hr_timesheet_sheet',
+                'project_native', 'robo_analytic',  'web_gantt_native', 'sale_timesheet'],
+    'data': [
+        'security/res.groups.xml',
+        'security/record.rules.xml',
+        'security/ir.model.access.csv',
+        'data/header_buttons.xml',
+        'view/project_tasks.xml',
+        'view/project_views.xml',
+        # 'view/hr_timesheet_sheet.xml',
+        'view/my_timesheet.xml',
+        'view/analytic.xml',
+        'view/view.xml',
+        # 'view/timesheet.xml',
+        'view/project_issue.xml',
+        # 'view/backend.xml',
+        'data/header_buttons_items.xml',
+    ],
+    'qweb': [
+        'static/src/xml/template.xml',
+    ],
+    'css': ['static/src/css/stylesheet.css'],
+    'demo': [],
+    'installable': True,
+}

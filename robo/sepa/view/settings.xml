@@ -1,0 +1,108 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="auto_rec_settings_wizard_view" model="ir.ui.view">
+            <field name="name">automatic.reconciliation.settings.wizard</field>
+            <field name="model">automatic.reconciliation.settings</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                            Šiame vedlyje galite nusistatyti įvairius automatinio bankinio dengimo nustatymus:
+                            Pasirinkti kurie partneriai turėtų būti praleidžiami automatinio sudengimo metu,
+                            pasirinkti kurios buhalterinės sąskaitos turėtų būti praleidžiamos arba traukiamos (
+                            Prioritetas visada duodamas traukiamų sąskaitų sąrašui).
+                            Taip pat galite išsijungti automatinį dengimą.
+                        </div>
+                        <group>
+                            <field name="disable_automatic_reconciliation"/>
+                            <field name="disable_automatic_structured_reconciliation"
+                                   attrs="{'invisible': [('disable_automatic_reconciliation', '=', True)]}"/>
+                            <field name="automatic_reconciliation_sorting" required="1"
+                                   attrs="{'invisible': [('disable_automatic_reconciliation', '=', True)]}"/>
+                            <field name="automatic_bank_reconciliation" required="1"
+                                   attrs="{'invisible': [('disable_automatic_reconciliation', '=', True)]}"/>
+                            <field name="automatic_reconciliation_filtering" required="1"
+                                   attrs="{'invisible': [('disable_automatic_reconciliation', '=', True)]}"/>
+                        </group>
+                        <field name="included_account_ids" invisible="1"/>
+                        <group string="Įtraukiamų sąskaitų sąrašas"
+                               attrs="{'invisible': [('disable_automatic_reconciliation', '=', True)]}">
+                            <div class="alert alert-warning" role="alert" style="margin-bottom:10px;" colspan="4">
+                                Dėmesio! Itraukiamų sąskaitų sąrašui duodamas prioritetas lyginant
+                                su praleidžiamų sąskaitų sąrašu.
+                            </div>
+                            <field name="included_account_item_ids" nolabel="1" widget="one2many_list">
+                                <tree editable="bottom" options="{'no_create': True, 'no_open': True}"
+                                      class="robo_tree_in_form">
+                                    <field name="inc_account_id" options="{'no_create': True, 'no_open': True}"
+                                           domain="[('id', 'not in', parent.included_account_ids
+                                                     and parent.included_account_ids[0][2]),
+                                                    ('reconcile', '=', True)]" required="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <field name="excluded_account_ids" invisible="1"/>
+                        <group string="Praleidžiamų sąskaitų sąrašas"
+                               attrs="{'invisible': [('disable_automatic_reconciliation', '=', True)]}">
+                            <field name="excluded_account_item_ids" nolabel="1" widget="one2many_list">
+                                <tree editable="bottom" options="{'no_create': True, 'no_open': True}"
+                                      class="robo_tree_in_form">
+                                    <field name="exc_account_id" options="{'no_create': True, 'no_open': True}"
+                                           domain="[('id', 'not in', parent.excluded_account_ids
+                                                     and parent.excluded_account_ids[0][2]),
+                                                    ('reconcile', '=', True)]" required="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <field name="partner_ids" invisible="1"/>
+                        <group string="Praleidžiamų partnerių sąrašas"
+                               attrs="{'invisible': [('disable_automatic_reconciliation', '=', True)]}">
+                            <field name="partner_item_ids" nolabel="1" widget="one2many_list">
+                                <tree editable="bottom" options="{'no_create': True, 'no_open': True}"
+                                      class="robo_tree_in_form">
+                                    <field name="partner_id" options="{'no_create': True, 'no_open': True}"
+                                           domain="[('id', 'not in', parent.partner_ids and parent.partner_ids[0][2])]"
+                                           required="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <field name="journal_ids" invisible="1"/>
+                        <group string="Praleidžiamų banko sąskaitų sąrašas"
+                               attrs="{'invisible': [('disable_automatic_reconciliation', '=', True)]}">
+                            <field name="journal_item_ids" nolabel="1" widget="one2many_list">
+                                <tree editable="bottom" options="{'no_create': True, 'no_open': True}"
+                                      class="robo_tree_in_form">
+                                    <field name="journal_id" options="{'no_create': True, 'no_open': True}"
+                                           domain="[('id', 'not in', parent.journal_ids and parent.journal_ids[0][2]),
+                                                     ('type', '=', 'bank'), ('bank_acc_number', '!=', False)]"
+                                           required="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Išsaugoti" name="set_reconciliation_info" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+    <record id="action_open_auto_rec_settings_wizard" model="ir.actions.act_window">
+        <field name="name">Automatinio banko sudengimo nustatymai</field>
+        <field name="res_model">automatic.reconciliation.settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="auto_rec_settings_wizard_view"/>
+    </record>
+    <menuitem action="action_open_auto_rec_settings_wizard"
+              string="Automatinio sudengimo nustatymai"
+              id="auto_rec_settings"
+              parent="account.menu_finance_configuration"
+              groups="account.group_account_manager"
+              sequence="4"/>
+</odoo>

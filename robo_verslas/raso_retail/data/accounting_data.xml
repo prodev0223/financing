@@ -1,0 +1,50 @@
+<odoo>
+    <data noupdate="1">
+        <!--Account account objects-->
+         <record id="raso_card_account" model="account.account">
+             <field name="name">RASO Mokėjimo kortelės</field>
+             <field name="code">2417</field>
+             <field name="reconcile">True</field>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+         <record id="raso_gift_account" model="account.account">
+             <field name="name">RASO Dovanų Čekiai</field>
+             <field name="code">2418</field>
+             <field name="reconcile">True</field>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+         <record id="raso_transfer_account" model="account.account">
+             <field name="name">RASO Pavedimai</field>
+             <field name="code">2416</field>
+             <field name="reconcile">True</field>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+        <!--Account journal objects-->
+         <record id="raso_cash_journal" model="account.journal">
+             <field name="name">RASO Grynieji</field>
+             <field name="code">RSCSH</field>
+             <field name="type">cash</field>
+         </record>
+         <record id="raso_gift_journal" model="account.journal">
+             <field name="name">RASO Dovanų Čekiai</field>
+             <field name="code">RSGFT</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="raso_gift_account"/>
+             <field name="default_credit_account_id" ref="raso_gift_account"/>
+         </record>
+         <record id="raso_card_journal" model="account.journal">
+             <field name="name">RASO Mokėjimo Kortelės</field>
+             <field name="code">RSCRD</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="raso_card_account"/>
+             <field name="default_credit_account_id" ref="raso_card_account"/>
+         </record>
+         <record id="raso_transfer_journal" model="account.journal">
+             <field name="name">RASO Compensa</field>
+             <field name="code">RSTRA</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="raso_transfer_account"/>
+             <field name="default_credit_account_id" ref="raso_transfer_account"/>
+         </record>
+    </data>
+</odoo>

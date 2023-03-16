@@ -1,0 +1,1 @@
+from . import test_change_name_and_email, test_due_payments_settings

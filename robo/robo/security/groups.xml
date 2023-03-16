@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_front_bank_statements_own" model="res.groups">
+            <field name="name">Front statements (own)</field>
+            <field name="robo_front" eval="True"/>
+            <field name="category_id" ref="group_category_front_bank_statements"/>
+            <field name="front_help">Allows front bank statement access, for own records</field>
+            <field name="implied_ids" eval="[(4, ref('robo.robo_reports_general')), (4, ref('robo.robo_reports'))]"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_payments')"/>
+        </record>
+        <record id="group_front_bank_statements_all" model="res.groups">
+            <field name="name">Front statements (all)</field>
+            <field name="robo_front" eval="True"/>
+            <field name="category_id" ref="group_category_front_bank_statements"/>
+            <field name="implied_ids" eval="[(4, ref('group_front_bank_statements_own'))]"/>
+            <field name="front_help">Allows front bank statement access, for all records</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_payments')"/>
+        </record>
+        <!--Group should not be in customizable groups, because it's added/removed on boolean check in the company-->
+        <record id="group_robo_threaded_front_reports" model="res.groups">
+            <field name="name">Robo foninis ataskaitų generavimas</field>
+        </record>
+        <record id="group_robo_invoice_partner_change_wizard" model="res.groups">
+            <field name="name">Sąskaitos partnerio keitimo vedlys</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama keisti sąskaitos partnerį</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_payments')"/>
+        </record>
+        <record id="group_robo_e_invoice" model="res.groups">
+            <field name="name">Enable eInvoicing</field>
+        </record>
+        <record id="robo_reports" model="res.groups">
+            <field name="name">Robo ataskaitų meniu</field>
+        </record>
+        <record id="robo_front_tax_change" model="res.groups">
+            <field name="name">Robo front tax change</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama keisti sąskaitos mokesčių eilutes</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+        </record>
+        <record id="group_robo_need_action" model="res.groups">
+            <field name="name">Representative for need action</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama priskirti sąskaitą reprezentacinėms sąnaudoms</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+        </record>
+        <record id="robo_see_all_tickets" model="res.groups">
+            <field name="name">See all support tickets</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomos visos pagalbos užklausos</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_ticketing')"/>
+        </record>
+        <record id="robo_reports_general" model="res.groups">
+            <field name="name">Pagrindinės ataskaitos</field>
+        </record>
+        <record id="robo_direct_kpo_printing" model="res.groups">
+            <field name="name">Robo direct KPO printing</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžiama registruoti standartinį sąskaitos apmokėjimą grynais</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_kasa')"/>
+        </record>
+        <record id="robo_cash_register_printing_for_journal_payments" model="res.groups">
+            <field name="name">Allow printing cash register order for journal payments</field>
+        </record>
+        <record id="group_overpay_transfer_requests" model="res.groups">
+            <field name="name">See Overpay transfer requests</field>
+            <field name="front_help">Leidžia matyti prašymus perversti permokas</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+        <record id="group_debt_reconciliation_reports" model="res.groups">
+            <field name="name">See Partner Debt reconciliation reports</field>
+            <field name="front_help">Leidžia matyti skolų suderinimo / sudengimo aktus</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+        <record id="group_menu_kita_analitika" model="res.groups">
+            <field name="name">Robo See All Invoices</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomos visos sąskaitos-faktūros</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+            <field name="implied_ids"
+                   eval="[
+                   (4, ref('robo_basic.group_robo_see_income')),
+                   (4, ref('robo_basic.group_robo_manage_all_partners')),
+                   (4, ref('robo.group_debt_reconciliation_reports')),
+                   ]"/>
+        </record>
+
+
+        <record id="group_robo_see_all_expenses" model="res.groups">
+            <field name="name">Robo See All Expenses</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomos visos išlaidų sąskaitos-faktūros</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_basic.group_robo_manage_all_partners'))]"/>
+        </record>
+
+        <record id="group_robo_see_all_incomes" model="res.groups">
+            <field name="name">Robo See All Incomes</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomos visos pajamų sąskaitos-faktūros</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_basic.group_robo_manage_all_partners')),
+                          (4, ref('robo_basic.group_robo_see_income'))]"/>
+        </record>
+        <record id="robo_crm_sharing" model="res.groups">
+            <field name="name">CRM Sharing</field>
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_basic.group_robo_see_income'))]"/>
+        </record>
+        <record id="sales_team.group_sale_salesman_all_leads" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('robo.group_robo_see_all_incomes'))]"/>
+        </record>
+
+        <record id="group_amount_untaxed_invoice_tree" model="res.groups">
+            <field name="name">Rodyti sumą be PVM sąskaitų medyje</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Leidžia vartotojui matyti sumą be PVM sąskaitų medyje</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+        </record>
+
+        <record id="group_robo_invoice_crediting_associate_original_salesperson" model="res.groups">
+            <field name="name">Allow associating crediting to original salesperson</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Allows associating invoice crediting to the original salesperson on the invoice</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_invoices')"/>
+        </record>
+
+        <record id="group_robo_see_reconciliation_information_partner_cards" model="res.groups">
+            <field name="name">See reconciliation information on partner cards</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Allow to see reconciliations and dates of when they happened on partner cards</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+
+        <record id="group_change_invoice_header" model="res.groups">
+            <field name="name">Allow to change invoice header</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">
+                Allow to set a custom invoice header for both customer and supplier invoices
+            </field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+
+        <record id="group_select_account_in_account_aged_trial_balance" model="res.groups">
+            <field name="name">Leisti rinktis buhalterinę sąskaitą skolų ataskaitose</field>
+            <field name="front_help">Leidžia matyti ir keisti sąskaitas skolų ataskaitose</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+
+        <record id="group_allow_user_manage_own_channel_subscriptions" model="res.groups">
+            <field name="name">Allow user to manage his/her own channel subscriptions</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_help">Lets user subscribe/unsubscribe to accessible mail channels</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_users')"/>
+        </record>
+
+        <record id="group_change_cash_receipt_name" model="res.groups">
+            <field name="name">Allow user to change cash receipt number</field>
+            <field name="robo_front" eval="True"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+            <field name="front_help">Lets user set cash receipt journal number</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+        </record>
+
+        <record id="robo_basic.group_robo_premium_accountant" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('robo.group_select_account_in_account_aged_trial_balance')),
+                          (4, ref('robo.group_robo_see_reconciliation_information_partner_cards')),
+                          (4, ref('robo.group_allow_user_manage_own_channel_subscriptions'))]"/>
+        </record>
+        <record id="robo_basic.group_robo_premium_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('hr_holidays.group_hr_holidays_user')),
+                          (4, ref('robo.robo_reports_general')),
+                          (4, ref('robo.robo_reports')),
+                          (4, ref('robo.robo_see_all_tickets')),
+                          (4, ref('robo.group_allow_user_manage_own_channel_subscriptions'))]"/>
+        </record>
+        <record id="robo_basic.group_robo_free_manager" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('hr_holidays.group_hr_holidays_user')),
+                          (4, ref('robo.robo_reports_general')),
+                          (4, ref('robo.robo_reports')),
+                          (4, ref('robo.robo_see_all_tickets')),
+                          (4, ref('robo.group_allow_user_manage_own_channel_subscriptions'))]"/>
+        </record>
+        <record id="robo_basic.group_robo_hr_manager" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('robo.robo_reports_general')),
+                                             (4, ref('robo.robo_reports')),
+                                             (4, ref('robo.group_allow_user_manage_own_channel_subscriptions'))]"/>
+        </record>
+        <record id="robo_basic.group_robo_premium_user" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('robo.group_allow_user_manage_own_channel_subscriptions'))]"/>
+        </record>
+
+        <record id="group_uom" model="res.groups">
+            <field name="robo_front" eval="True"/>
+            <field name="name">Manage Multiple Units of Measure</field>
+            <field name="front_help">Lets user set the unit of measure in product card</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_products')"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+        </record>
+
+        <record id="group_cost_allocation" model="res.groups">
+            <field name="name">Cost Allocation</field>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Gives the user access to cost allocation</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_other')"/>
+            <field name="robo_front_only_shown_to_super" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

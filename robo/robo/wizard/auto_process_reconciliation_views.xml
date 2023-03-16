@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="auto_process_reconciliation_wizard">
+            <field name="name">Priverstinis sudengimas</field>
+            <field name="model">auto.process.reconciliation</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="auto_partner_id"/>
+                        <field name="auto_account_id"/>
+                    </group>
+                    <group>
+                        <notebook>
+                            <page string="Transakcijos" name="statement_line_ids">
+                                <field name="line_ids">
+                                    <tree string="Statement lines" decoration-muted="journal_entry_ids" create="0">
+                                        <field name="journal_entry_ids" invisible="1"/>
+                                        <field name="date" readonly="1"/>
+                                        <field name="name" readonly="1"/>
+                                        <field name="partner_id"
+                                               domain="['|',('parent_id','=',False),('is_company','=',True)]"
+                                               context="{'default_supplier': 1}"/>
+                                        <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"
+                                               groups="base.group_no_one"/>
+                                        <field name="amount" readonly="1"/>
+                                        <field name="journal_currency_id" invisible="1"/>
+                                        <field name="amount_currency" invisible="1"/>
+                                        <field name="currency_id" options="{'no_create': True}" invisible="1"/>
+                                        <field name="bank_account_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                    <footer>
+                        <button name="auto_process_reconciliation" string="Priverstinai sudengti" type="object"
+                                class="oe_highlight"/>
+                        <button name="cancel" special="cancel" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

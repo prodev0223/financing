@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Main menu-->
+        <menuitem id="menu_projects_parent"
+                  parent="robo.menu_start"
+                  name="Projektai"
+                  sequence="51"
+                  groups="project.group_project_user"
+                  force_web_icon="icon-puzzle,none,none"
+                  robo_extended="1"
+                  robo_front="1"
+        />
+
+        <!--timesheet-->
+        <record id="hr_timesheet_line_tree" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree.hr_timesheet.robo</field>
+            <field name="model">account.analytic.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree editable="top" string="Timesheet Activities">
+                    <field name="date"/>
+                    <field name="user_id" required="1" options='{"no_open": True}'/>
+                    <field name="name"/>
+                    <field name="project_id" required="1"/>
+                    <field name="task_id" context="{'default_project_id': project_id}"
+                           domain="[('project_id', '=', project_id)]"/>
+                    <field name="unit_amount" string="Duration" sum="Total time" widget="float_time"/>
+                </tree>
+            </field>
+        </record>
+        <record id="analytic_line_tree_extend" model="ir.ui.view">
+            <field name="name">analytic.line.tree.extend</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="robo_projects.hr_timesheet_line_tree"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                 <xpath expr="/tree" position="attributes">
+                    <attribute name="string">Laiko žiniaraštis</attribute>
+                    <attribute name="import">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="before">
+                    <field name="user_domain" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="domain">[('id', 'in', user_domain and user_domain[0][2])]</attribute>
+                    <attribute name="options">{'no_create': 'True', 'no_open': 'True'}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_analytic_line_search_extend" model="ir.ui.view">
+            <field name="name">account.analytic.line.search.extend</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_search"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="replace">
+                    <filter string="Naudotojai" domain="[]" context="{'group_by':'user_id'}"/>
+                    <filter string="Projektas" domain="[]" context="{'group_by':'project_id'}"/>
+                    <filter string="Užduotis" domain="[]" context="{'group_by':'task_id'}"/>
+                    <filter string="Produktas" domain="[]" context="{'group_by':'product_id'}"/>
+                    <filter string="Žiniaraščio mėnuo" domain="[]" context="{'group_by':'date'}" help="Žiniaraščio mėnuo"/>
+                    <filter name="is_timesheet" string="Yra žiniaraštis" domain="[('project_id', '!=', False)]"/>
+                </xpath>
+                <!--<xpath expr="//group[1]/filter[last()]" position="replace">-->
+                    <!--<filter string="Pamėnesiui" domain="[]" context="{'group_by':'date'}" help="Žiniaraštis pamėnesiui"/>-->
+                <!--</xpath>-->
+            </field>
+        </record>
+        <record id="act_hr_timesheet_line_by_project" model="ir.actions.act_window">
+            <field name="name">Žiniaraštis</field>
+            <field name="res_model">account.analytic.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_projects.hr_timesheet_line_tree')})]"/>
+            <field name="view_id" ref="robo_projects.hr_timesheet_line_tree"/>
+            <field name="domain">[('project_id', '!=', False)]</field>
+            <field name="header" ref="robo_projects.project_default"/>
+            <field name="robo_menu" ref="robo_projects.menu_projects_parent"/>
+            <field name="context">{"default_project_id": active_id, "search_default_project_id": [active_id]}</field>
+            <field name="search_view_id" ref="hr_timesheet.hr_timesheet_line_search"/>
+             <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                </p>
+            </field>
+        </record>
+
+
+        <!--TODO: backend?-->
+        <record id="view_project_task_type_simple_form" model="ir.ui.view">
+            <field name="name">project.task.type.form.view.inherit</field>
+            <field name="model">project.task.type</field>
+            <field name="inherit_id" ref="project.task_type_edit"/>
+            <field name="priority" eval="50"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="replace">
+                    <form string="Task Stage">
+                            <sheet>
+                                <group>
+                                    <group>
+                                        <field name="name" string="Etapo pavadinimas"  options="{'translatable': False}"/>
+                                        <!--<field name="mail_template_id"/>-->
+                                    </group>
+                                    <group>
+                                        <field name="fold" string="Suskleisti"/>
+                                        <field name="project_ids" widget="many2many_tags" groups="base.group_no_one"/>
+                                        <field name="sequence" groups="base.group_no_one"/>
+                                    </group>
+                                </group>
+                                <!--&lt;!&ndash;Tik admin&ndash;&gt;-->
+                                <!--<group string="Stage Description and Tooltips" groups="base.group_no_one">-->
+                                    <!--<p class="text-muted" colspan="2">-->
+                                        <!--At each stage employees can block or make task/issue ready for next stage.-->
+                                        <!--You can define here labels that will be displayed for the state instead-->
+                                        <!--of the default labels.-->
+                                    <!--</p>-->
+                                    <!--<label for="legend_normal" string=" " class="oe_kanban_status oe_project_kanban_legend"/>-->
+                                    <!--<field name="legend_normal" nolabel="1"/>-->
+                                    <!--<label for="legend_blocked" string=" " class="oe_kanban_status oe_kanban_status_red oe_project_kanban_legend"/>-->
+                                    <!--<field name="legend_blocked" nolabel="1"/>-->
+                                    <!--<label for="legend_done" string=" " class="oe_kanban_status oe_kanban_status_green oe_project_kanban_legend"/>-->
+                                    <!--<field name="legend_done" nolabel="1"/>-->
+
+                                    <!--<p class="text-muted" colspan="2">-->
+                                        <!--You can also give a tooltip about the use of the stars available in the kanban and form views.-->
+                                    <!--</p>-->
+                                    <!--<label for="legend_priority" string=" " class="fa fa-star fa-lg o_star_on oe_project_kanban_legend"/>-->
+                                    <!--<field name="legend_priority" nolabel="1"/>-->
+
+                                    <!--<p class="text-muted" colspan="2">-->
+                                        <!--You can also add a description to help your coworkers understand the meaning and purpose of the stage.-->
+                                    <!--</p>-->
+                                    <!--<field name="description" placeholder="Add a description..." nolabel="1" colspan="2"/>-->
+                                <!--</group>-->
+                            </sheet>
+                        </form>
+                </xpath>
+            </field>
+        </record>
+        <!--end backend-->
+
+        <!--action 1-->
+        <!--view bellow contains link to the action; full description bellow-->
+        <record id="act_project_task_sub_task" model="ir.actions.act_window">
+            <field name="name">Použduotys</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">kanban,tree_robo,form,calendar_robo,ganttaps</field>
+        </record>
+
+        <record id="view_task_search_form" model="ir.ui.view">
+            <field name="name">support.task.search.form</field>
+            <field name="model">project.task</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+               <search string="Tasks">
+                    <field name="name" string="Užduotys"/>
+                    <field name="tag_ids"/>
+                    <field name="partner_id"/>
+                    <field name="project_id"/>
+                    <field name="user_id"/>
+                    <field name="stage_id"/>
+                    <filter string="Mano užduotys" name="my_tasks" domain="[('user_id','=',uid)]"/>
+                    <filter string="Nepriskirtos" name="unassigned" domain="[('user_id', '=', False)]"/>
+                    <separator/>
+                    <filter string="Naujos" name="draft" domain="[('stage_id.sequence', '&lt;=', 1)]"/>
+                    <separator/>
+                    <!--<filter string="Neperskaitytos žinutės" name="message_needaction" domain="[('message_needaction','=',True)]"/>-->
+                    <filter string="Suarchyvuotos" name="inactive" domain="[('active','=',False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Projektas" name="project" context="{'group_by':'project_id'}"/>
+                        <filter string="Užduotis" context="{'group_by':'name'}"/>
+                        <filter string="Priskirta" name="User" context="{'group_by':'user_id'}"/>
+                        <filter string="Etapas" name="Stage" context="{'group_by':'stage_id'}"/>
+                        <filter string="Kompanija" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                        <separator/>
+                        <!--<filter string="Paskutinė žinutė" name="group_message_last_post" context="{'group_by':'message_last_post:week'}"/>-->
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_task_kanban">
+            <field name="priority">1</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="name">project.task.kanban</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_small_column o_kanban_project_tasks" on_create="quick_create">
+                    <field name="color"/>
+                    <field name="priority"/>
+                    <field name="stage_id" options='{"group_by_tooltip": {"description": "Stage Description", "legend_priority": "Use of stars"}}'/>
+                    <field name="user_id"/>
+                    <field name="user_email"/>
+                    <field name="description"/>
+                    <field name="sequence"/>
+                    <field name="remaining_hours" groups="project.group_time_work_estimation_tasks"/>
+                    <field name="date_deadline"/>
+                    <field name="message_needaction_counter"/>
+                    <field name="tag_ids"/>
+                    <field name="attachment_ids"/>
+                    <field name="displayed_image_id"/>
+                    <field name="active"/>
+                    <field name="legend_blocked"/>
+                    <field name="legend_normal"/>
+                    <field name="legend_done"/>
+                    <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">
+
+                            <div class="o_dropdown_kanban dropdown" groups="base.group_user">
+                                <a class="dropdown-toggle btn" data-toggle="dropdown" href="#" >
+                                    <span class="fa fa-bars fa-lg"/>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <!--<t t-if="widget.editable"><li><a type="set_cover">Set Cover Image</a></li></t>-->
+                                    <t t-if="widget.editable"><li><a type="edit">Redaguoti</a></li></t>
+                                    <t t-if="widget.deletable"><li><a type="delete">Ištrinti</a></li></t>
+                                    <li><ul class="oe_kanban_colorpicker" data-field="color"/></li>
+                                </ul>
+                            </div>
+                            <div class="oe_kanban_content">
+                                <div>
+                                    <field name="tag_ids"/>
+                                </div>
+                                <div>
+                                    <field name="priority" widget="priority"/>
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="text-muted">
+                                    <field name="project_id" invisible="context.get('default_project_id', False)"/>
+                                    <t t-if="record.date_deadline.raw_value and record.date_deadline.raw_value lt (new Date())" t-set="red">oe_kanban_text_red</t>
+                                    <span t-attf-class="#{red || ''}"><i><field name="date_deadline"/></i></span>
+                                </div>
+                                <!--<div class="oe_kanban_bottom_left">-->
+                                    <!--<field name="priority" widget="priority"/>-->
+                                    <!--<t t-if="record.message_needaction_counter.raw_value">-->
+                                        <!--<span class='oe_kanban_mail_new' title='Unread Messages'><i class='fa fa-comments'/><t t-raw="record.message_needaction_counter.raw_value"/></span>-->
+                                    <!--</t>-->
+                                <!--</div>-->
+                                <div class="oe_kanban_bottom_right">
+                                    <img t-att-src="kanban_image('res.users', 'image_small', record.user_id.raw_value)" t-att-title="record.user_id.value" width="24" height="24" class="oe_kanban_avatar pull-right"/>
+                                    <div class="pull-left" groups="base.group_user">
+                                        <field name="kanban_state" widget="kanban_state_selection"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div t-if="record.displayed_image_id.value">
+                                        <field name="displayed_image_id" widget="attachment_image"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--<div t-if="record.displayed_image_id.value">-->
+                                <!--<field name="displayed_image_id" widget="attachment_image"/>-->
+                            <!--</div>-->
+                            <div class="oe_clear"></div>
+                        </div>
+                    </t>
+                    </templates>
+                </kanban>
+            </field>
+         </record>
+        <record id="view_task_tree2" model="ir.ui.view">
+            <field name="priority">1</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="name">project.task.tree</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <tree decoration-bf="message_needaction==True" decoration-danger="date_deadline and (date_deadline&lt;current_date)" string="Tasks" create="0">
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="sequence" invisible="not context.get('seq_visible', False)" string="Numeris"/>
+                    <field name="name" string="Pavadinimas"/>
+                    <field name="project_id" invisible="context.get('user_invisible', False)" string="Projektas"/>
+                    <field name="user_id" invisible="context.get('user_invisible', False)" string="Priskirtas"/>
+                    <field name="date_deadline" invisible="context.get('deadline_visible',True)" string="Terminas"/>
+                    <field name="stage_id" invisible="context.get('set_visible',False)" string="Etapas"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_task_calendar" model="ir.ui.view">
+            <field name="priority">1</field>
+            <field name="robo_front">True</field>
+            <field name="mode">primary</field>
+            <field name="name">project.task.calendar</field>
+            <field name="model">project.task</field>
+            <field name="type">calendar_robo</field>
+            <field name="arch" type="xml">
+                <calendar color="user_id" date_start="date_deadline" string="Užduotys" mode="month">
+                    <field name="name"/>
+                    <field name="project_id"/>
+                </calendar>
+            </field>
+        </record>
+        <record id="view_task_form2" model="ir.ui.view">
+            <field name="name">project.task.form</field>
+            <field name="model">project.task</field>
+            <field name="priority">1</field>
+            <field name="mode">primary</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Task" class="o_form_project_tasks">
+                    <header>
+                        <field name="stage_id" widget="statusbar" clickable="True"
+                            options="{'fold_field': 'fold'}"/>
+                    </header>
+                    <!--hides only visualy!-->
+                    <div groups="project.group_project_user">
+                        <field name="nbr_of_attachments" invisible="1"/>
+                        <field name="user_attachment_ids" invisible="1"/>
+                        <field name="attachment_drop_lock" invisible="1"/>
+                        <field name="unique_wizard_id" invisible="1"/>
+                        <widget type="robo_attach_files"/>
+                    </div>
+                    <sheet string="Užduotis">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" groups="base.group_user"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                        </button>
+                        <button name="%(robo_projects.act_project_task_sub_task)d" type="action" class="oe_stat_button" icon="fa-tasks"
+                                attrs="{'invisible' : [('subtask_project_id', '=', False)]}"
+                                context="{'project_id': subtask_project_id, 'name': name, 'partner_id': partner_id}" help="Jei užduotį norime išskaidyti į smulkesnes užduotėles." >
+                            <field string="Použduotys" name="subtask_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <field name="kanban_state" widget="kanban_state_selection"/>
+                    <div class="oe_title">
+                        <h1 class="o_row">
+                            <field name="priority" widget="priority"/>
+                            <field name="name" placeholder="Užduoties pavadinimas..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="project_id" domain="[('active', '=', True)]" context="{'default_use_tasks':1}" options="{'no_open':1, 'no_create':1}"/>
+                            <field name="user_id" class="o_task_user_field" options='{"no_open": True, "no_create": True}' string="Darbuotojas"/>
+                            <field name="planned_hours" widget="float_time" string="Suplanuotos darbo val."/>
+                            <field name="legend_blocked" invisible="1"/>
+                            <field name="legend_normal" invisible="1"/>
+                            <field name="legend_done" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="date_deadline" string="Galutinis terminas"/>
+                            <field name="tag_ids" widget="many2many_tags" string="Žymos"/>
+                            <field name="progress" widget="progressbar" string="Dirbtas laikas"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Žiniaraštis" attrs="{'invisible': [('project_id', '=', False)]}">
+                            <field name="timesheet_ids" context="{'default_project_id': project_id}" options="{'no_open':1}">
+                                <tree editable="bottom" string="Timesheet Activities" default_order="date">
+                                    <field name="date"/>
+                                    <field name="user_domain" invisible="1"/>
+                                    <field name="user_id" required="1" domain="[('id', 'in', user_domain and user_domain[0][2])]" options="{'no_create': 'True', 'no_open': 'True'}" string='Darbuotojas'/>
+                                    <field name="name"/>
+                                    <field name="unit_amount" string="Trukmė" widget="float_time"/>
+                                    <field name="project_id" invisible="1"/>
+                                </tree>
+                            </field>
+                            <group>
+                             <group class="oe_subtotal_footer oe_right" name="project_hours">
+                                <field name="effective_hours" widget="float_time" string="Dirbta valandų" help=""/>
+                                <field name="children_hours" widget="float_time" attrs="{'invisible' : [('children_hours', '=', 0.0)]}" sting="Použduočių valandos" help=""/>
+                                <field name="total_hours_spent" widget="float_time" class="oe_subtotal_footer_separator" attrs="{'invisible' : [('children_hours', '=', 0.0)]}"  string="Viso valandų" help=""/>
+                                <field name="remaining_hours" widget="float_time" class="oe_subtotal_footer_separator" readonly="1" string="Likusios valandos" help=""/>
+                             </group>
+                            </group>
+                        </page>
+                        <page string="Gantt užduoties nustatymai">
+                            <group>
+                                <group>
+                                     <field name="schedule_mode" widget="radio" string="Užduoties planavimas" help="Automatiniu atveju, jūsų užduoties planavimas nustatomas pagal pasirinktą užduočių eigą. Jei ši užduotis nepriklauso nuo kitų, tai automatinis planavimas neturi prasmės ir pradžios ar pabaigos data bus imama iš projekto nustatymų."/>
+                                    <field name="constrain_type" string="Papildomi apribojimai" attrs="{'invisible':['|',('child_ids','!=', []), ('schedule_mode', '=' ,'manual')]}"/>
+                                    <field name="constrain_date" string="Apribojimo data" attrs="{'invisible':['|',('child_ids','!=', []), ('schedule_mode', '=' ,'manual')]}"/>
+                                </group>
+                                <div attrs="{'invisible':['|',('schedule_mode', '=' ,'manual'), ('child_ids','==', [])]}">
+                                    <span><strong>Ši užduotis išskaidyta į použduotis. Todėl jos trukmė bus apskaičiuota automatiškai iš použduočių.</strong></span>
+                                </div>
+                                <group>
+                                    <label for="plan_duration" attrs="{'invisible':['|',('schedule_mode', '=' ,'manual'), ('child_ids','!=', [])]}" string="Planuojama trukmė"/>
+                                        <div attrs="{'invisible':['|',('schedule_mode', '=' ,'manual'), ('child_ids','!=', [])]}">
+
+                                            <field name="plan_duration" widget="time_delta" options="{'mask_humanize_field': 'duration_scale', 'mask_picker_field' : 'duration_picker'}" class="oe_inline"/>
+                                        </div>
+
+
+                                    <field name="date_start" attrs="{'readonly': [('schedule_mode', '=', 'auto')], 'invisible':[('schedule_mode', '=' ,'auto')]}"/>
+                                    <field name="date_end" attrs="{'readonly': [('schedule_mode', '=', 'auto')], 'invisible':[('schedule_mode', '=' ,'auto')]}"/>
+
+
+                                    <label for="duration" string="Trukmė" attrs="{'invisible':[('schedule_mode', '=' ,'auto')]}"/>
+                                    <div>
+                                        <field name="duration" widget="time_delta" attrs="{'invisible':[('schedule_mode', '=' ,'auto')]}" options="{'mask_humanize_field': 'duration_scale', 'mask_picker_field' : 'duration_picker'}" class="oe_inline"/>
+                                    </div>
+                                    <div attrs="{'invisible':['|',('schedule_mode', '=' ,'manual'), ('child_ids','!=', [])]}" colspan="2">
+                                        <span>Pradžios ir pabaigos datos bus atnaujintos/perskaičiuotos Gannt'o peržiūroje (paspaudus atnaujinimo mygtuką) pagal <i>užduočių eigos</i> ir pačio projekto pasirinktus planavimo parametrus.
+                                            Numatytoji reikšmė užduoties pradžios ar pabaigos datai yra atitinkama projekto data.</span>
+                                    </div>
+                                </group>
+                            </group>
+                            <group>
+                                <group col="6">
+
+                                    <label for="on_gantt" string="Užduoties pavadinimas gannt'e" colspan="3"/>
+                                    <field name="on_gantt" nolabel="1" colspan="3"/>
+                                    <label for="is_milestone" string="Pažymėti, kaip labai svarbų" colspan="3"/>
+                                    <field name="is_milestone" nolabel="1" colspan="3"/>
+
+                                    <label for="color_gantt_set" string="Pasirinkti spalvą" colspan="3"/>
+                                    <field name="color_gantt_set" nolabel="1" colspan="3"/>
+                                    <label for="color_gantt" string="Spalva" colspan="1" attrs="{'invisible': [('color_gantt_set', '=', False)]}"/>
+                                    <field name="color_gantt" widget="colorpicker" attrs="{'invisible': [('color_gantt_set', '=', False)]}" colspan="5" nolabel="1"/>
+
+                                    <field name="summary_date_start" invisible="1"/>
+                                    <field name="summary_date_end" invisible="1"/>
+
+
+                                </group>
+                                <group>
+                                    <field name="duration_scale" invisible="1"/>
+                                    <field name="duration_picker" invisible="1"/>
+                                    <field name="date_finished" string="Užbaigimo data"/>
+                                </group>
+
+                            </group>
+                    </page>
+
+                    <page string="Gannt užduočių eiga">
+
+                        <div attrs="{'invisible': [('schedule_mode','!=','manual')]}">
+                            <span class="mt32"><strong>Užduočių eigą galėsite keisti pasirinkę automatinį planavimą.</strong></span>
+                        </div>
+                        <field name="predecessor_ids" nolabel="1" widget="one2many_list" attrs="{'invisible': [('schedule_mode','!=','auto')]}">
+                            <tree string="Predecessor" editable="bottom">
+                                <field name="parent_task_id" string="Užduotis" options="{'no_open':1, 'no_create':1}"
+                                       domain="[('id','!=',parent.parent_id),('project_id','=',parent.project_id), ('id', '!=', parent.id)]"/>
+                                <field name="type" string="Matavimo būdas"/>
+                                <field name="lag_qty" string="Tarpsnis iki šios užduoties"/>
+                                <field name="lag_type" string="Matavimo vienetai"/>
+                            </tree>
+
+                        </field>
+
+                    </page>
+                        <page name="description_page" string="Aprašymas">
+                            <field name="description" type="html"/>
+                            <div class="oe_clear"/>
+                        </page>
+                        <page string="Papildoma informacija">
+                            <group>
+                                <group>
+                                    <field name="sequence" groups="base.group_no_one"/>
+                                    <field name="partner_id" string="Partneris" options="{'no_open':1, 'no_create': 1}"/>
+                                    <field name="parent_id" attrs="{'invisible' : [('parent_id', '=', False)]}" string="Tėvinė užduotis" options="{'no_open': True}" context="{'form_view_ref': 'robo_projects.view_task_form2'}"/>
+                                    <field name="child_ids" invisible="1"/>
+                                    <field name="subtask_project_id" invisible="1"/>
+                                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                                    <field name="displayed_image_id" groups="base.group_no_one"/>
+                                </group>
+                                <group>
+                                    <field name="date_assign" groups="base.group_no_one"/>
+                                    <field name="date_last_stage_update" groups="base.group_no_one"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                    </sheet>
+                     <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_project_task_sub_task" model="ir.actions.act_window">
+            <field name="name">Použduotys</field>
+            <field name="res_model">project.task</field>
+             <field name="view_mode">kanban,tree_robo,form,calendar_robo,ganttaps</field>
+             <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_task_kanban')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('view_task_tree2')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_task_form2')}),
+                (0, 0, {'view_mode': 'calendar_robo', 'view_id': ref('view_task_calendar')})]"/>
+            <field name="domain">[('id', 'child_of', active_id), ('id', '!=', active_id)]</field>
+            <field name="header" ref="robo_projects.project_default"/>
+            <field name="robo_menu" ref ='robo_projects.menu_projects_parent'/>
+            <field name="context">
+            {
+                'default_parent_id' : active_id,
+                'default_project_id' : project_id,
+                'default_name' : name + ':',
+                'default_partner_id' : partner_id,
+            }
+            </field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                </p>
+            </field>
+            <field name="search_view_id" ref="view_task_search_form"/>
+        </record>
+        <!-- end action 1-->
+
+        <record id="act_project_project_2_project_task_all" model="ir.actions.act_window">
+            <field name="name">Užduotys</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">kanban,tree_robo,form,calendar_robo,ganttaps</field>
+             <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_task_kanban')}),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('view_task_tree2')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_task_form2')}),
+                (0, 0, {'view_mode': 'calendar_robo', 'view_id': ref('view_task_calendar')}),
+                (0, 0, {'view_mode': 'gantt', 'view_id': ref('project_native.view_task_ganttaps')})]"/>
+             <field name="context">{
+                'group_by': 'stage_id',
+                'search_default_project_id': [active_id],
+
+                'default_project_id': active_id,
+                }</field>
+            <field name="header" ref="robo_projects.project_default"/>
+            <field name="robo_menu" ref ='robo_projects.menu_projects_parent'/>
+            <field name="search_view_id" ref="view_task_search_form"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

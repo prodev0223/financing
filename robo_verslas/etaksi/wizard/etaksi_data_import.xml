@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="form_etaksi_data_import" model="ir.ui.view">
+            <field name="name">form.etaksi.data.import</field>
+            <field name="model">etaksi.data.import</field>
+            <field name="arch" type="xml">
+                <form string="XLS Duomenų importas">
+                    <sheet>
+                        <group>
+                            <div><p>
+                                Naudojantis šiuo vedliu galite importuoti XLS failus į sistemą.<br/>
+                                <br/><br/>
+                                <i>PASTABA: Sąskaitos importuojamos kaip foninė funkcija,
+                                    patikrinkite meniu 'Darbai', kad pamatytumėte ar importavimas pavyko sėkmingai</i>
+                            </p></div>
+                        </group>
+                        <group>
+                            <field name="xls_data" filename="xls_name" required="1"/>
+                            <field name="xls_name" invisible="1"/>
+                        </group>
+                    </sheet>
+                <footer>
+                    <button string="Importuoti Duomenis" name="data_import_prep" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_etaksi_data_import" model="ir.actions.act_window">
+            <field name="name">XLS Duomenų Importavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">etaksi.data.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>

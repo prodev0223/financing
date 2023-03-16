@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="apr_email_template_res_partner_before_invoice" model="mail.template">
+            <field name="name">APR Before Reminder email</field>
+            <field name="email_from">noreply@robolabs.lt</field>
+            <field name="subject">Payment reminder from </field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="robo_company_template_wrap" eval="True"/>
+            <field name="body_html"><![CDATA[
+                    <p>Dear business partner,</p>
+                    <p></p>
+                    <p>Thanks for doing business with us. We’re just getting in touch regarding ${object.env.context.get('invoice')|safe}.
+                    We wanted to give you a quick reminder that the balance of  ${object.env.context.get('amount')|safe}
+                    <span style="text-decoration: underline;">is due to be paid in ${object.env.context.get('n_days')} days</span>.</p>
+                    <p></p>
+
+                    ${object.env.context.get('payment_details')|safe}
+
+                    <p>Of course, if you have already paid this invoice, please disregard this message.</p>
+
+                    <p>Once again, we greatly appreciate your business.</p>
+                    <p></p>
+                    <p>Thanks,</p>
+                    <p>${user.company_id.name}</p>
+]]>
+            </field>
+        </record>
+        <record id="apr_email_template_res_partner_on_date_invoice" model="mail.template">
+            <field name="name">APR Today Reminder email</field>
+            <field name="email_from">noreply@robolabs.lt</field>
+            <field name="subject">Payment reminder from </field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="robo_company_template_wrap" eval="True"/>
+            <field name="body_html"><![CDATA[
+                    <p>Dear business partner,</p>
+                    <p></p>
+                    <p>This a quick message regarding ${object.env.context.get('invoice')|safe}.
+                    We just wanted to remind you that the balance for this invoice of ${object.env.context.get('amount')|safe} <span style="text-decoration: underline;">is due to be paid today</span>.</p>
+                    <p></p>
+                    <p>You can settle your balance by making a transfer. Here are all the details you will need to make a transfer to settle your balance:</p>
+
+                    ${object.env.context.get('payment_details')|safe}
+
+                    <p>Of course, if you have already paid this invoice, please disregard this message.</p>
+
+                    <p>As always, we greatly appreciate your business.</p>
+                    <p></p>
+                    <p>Thanks,</p>
+                    <p>${user.company_id.name}</p>
+]]>
+            </field>
+        </record>
+        <record id="apr_email_template_res_partner_after_invoice" model="mail.template">
+            <field name="name">APR After Reminder email</field>
+            <field name="email_from">noreply@robolabs.lt</field>
+            <field name="subject">Payment reminder from </field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="robo_company_template_wrap" eval="True"/>
+            <field name="body_html"><![CDATA[
+                    <p>Dear business partner,</p>
+                    <p></p>
+                    <p>We are contacting you with regards to ${object.env.context.get('invoice')|safe}.
+                    We wanted to remind you that total amount to pay is ${object.env.context.get('amount')|safe}
+                    and the earliest missed payment was
+                    <span style="text-decoration: underline;">due to be paid on ${object.env.context.get('date_due')|safe}</span>.</p>
+                    <p></p>
+                    <p>We kindly ask that this payment be made as soon as possible. Here are all the details you will need to make a transfer to settle your balance:</p>
+
+                    ${object.env.context.get('payment_details')|safe}
+
+                    <p>We look forward to your swift response. Please feel free to contact us if we can be of any assistance.</p>
+
+                    <p>Of course, if you have already paid this invoice, please disregard this message.</p>
+
+                    <p>Thanks once again for your business.</p>
+                    <p></p>
+                    <p>Regards,</p>
+                    <p>${user.company_id.name}</p>
+]]>
+            </field>
+        </record>
+        <!--Default Notification Email template -->
+        <record id="mail_template_data_notification_email_default" model="mail.template">
+            <field name="name">Notification Email</field>
+            <field name="subject">
+                ${object.subject or (object.record_name and 'Re: %s' % object.record_name) or (object.parent_id and object.parent_id.subject and 'Re: %s' % object.parent_id.subject) or (object.parent_id and object.parent_id.record_name and 'Re: %s' % object.parent_id.record_name)}
+            </field>
+            <field name="model_id" ref="mail.model_mail_message"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="robo_template_wrap" eval="True"/>
+            <field name="body_html"><![CDATA[
+${object.body | safe}
+<p>
+</p>
+
+% if ctx.get('robo_chat'):
+<div itemscope="" itemtype="http://schema.org/EmailMessage">
+    <div itemprop="potentialAction" itemscope="" itemtype="http://schema.org/ViewAction">
+        <link itemprop="target" href="${ctx['button_access']['url']}">
+        <link itemprop="url" href="${ctx['button_access']['url']}">
+        <meta itemprop="name" content="Atidaryti">
+    </div>
+</div>
+<div>
+<a href="${ctx['button_access']['url']}" style="padding: 8px 12px; font-size: 12px; color: #FFFFFF; text-decoration: none !important; font-weight: 400; background-color: #3498DB; border: 0px solid #3498DB; border-radius:3px">Atidaryti</a>
+</div>
+% endif
+]]></field>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record id="email_template_partner_due_payment" model="mail.template">
+            <field name="name">Reminder - Partner due payments</field>
+            <!--<field name="email_to">hello@robolabs.lt</field>-->
+            <field name="subject">Due payments</field>
+            <field name="partner_to"/>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="body_html"><![CDATA[
+            <p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;">
+            </p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;">
+
+</p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;">Dear ${object.display_name},</p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;">Exception made if there was a mistake of ours, it seems that the following amount stays unpaid. Please, take appropriate measures in order to carry out this payment in the next 8 days. Would your payment have been carried out after this mail was sent, please ignore this message. Do not hesitate to contact our accounting department. Please find payment information attached</p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;">Best Regards,</p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;">
+
+</p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;">${user.company_id.name}</p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;"></p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;"></p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;"></p><p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;"> </p>
+
+
+            <p style="margin:0px 0px 10px 0px;font-size:13px;font-family:'Lucida Grande', Helvetica, Verdana, Arial, sans-serif;"></p>
+            ]]>
+            </field>
+            <field name="report_template" ref="account.action_report_print_overdue"/>
+        </record>
+    </data>
+</odoo>

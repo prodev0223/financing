@@ -1,0 +1,31 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_etaksi_invoice_mass_mailing_job" model="ir.ui.view">
+            <field name="name">tree.etaksi.invoice.mass.mailing.job</field>
+            <field name="model">etaksi.invoice.mass.mailing.job</field>
+            <field name="arch" type="xml">
+                <tree string="Sąskaitų siuntimo Darbai"
+                      create="0" delete="0" edit="1" editable="bottom"
+                        decoration-info="state == 'in_progress'"
+                        decoration-success="state == 'finished'"
+                        decoration-danger="state == 'failed'">
+                    <field name="execution_start_date" readonly="1"/>
+                    <field name="execution_end_date" readonly="1"/>
+                    <field name="state"/>
+                    <field name="fail_message" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_etaksi_invoice_mass_mailing_job" model="ir.actions.act_window">
+            <field name="name">Sąskaitų siuntimo darbai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">etaksi.invoice.mass.mailing.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_etaksi_invoice_mass_mailing_job"/>
+        </record>
+    </data>
+</odoo>

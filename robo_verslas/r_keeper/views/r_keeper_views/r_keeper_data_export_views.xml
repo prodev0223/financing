@@ -1,0 +1,75 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_r_keeper_data_export" model="ir.ui.view">
+            <field name="name">tree.r.keeper.data.export</field>
+            <field name="model">r.keeper.data.export</field>
+            <field name="arch" type="xml">
+                <tree string="Duomenų eksportavimas"
+                      create="0" delete="1" edit="0"
+                      decoration-info="state == 'waiting'"
+                      decoration-warning="state == 'no_action'"
+                      decoration-success="state == 'accepted'"
+                      decoration-danger="state == 'rejected'">
+                    <field name="point_of_sale_id"/>
+                    <field name="create_date" string="Eksportavimo data"/>
+                    <field name="create_uid" string="Eksportavęs naudotojas"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="form_r_keeper_data_export" model="ir.ui.view">
+            <field name="name">form.r.keeper.data.export</field>
+            <field name="model">r.keeper.data.export</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div>
+                            <label string="Pardavimo taškas"/>
+                            <h1 class="mt0">
+                                <field name="point_of_sale_id" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="create_date" string="Eksportavimo data" readonly="1"/>
+                            <field name="create_uid" string="Eksportavęs naudotojas" readonly="1"/>
+                            <field name="export_file_name" invisible="1"/>
+                            <field name="export_file" filename="export_file_name" readonly="1"/>
+                            <field name="state"/>
+                        </group>
+                        <group string="Eksportuotų įrašų versijos">
+                            <field name="revision_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                   options="{'no_open': True, 'always_reload': True}">
+                                <tree class="robo_invoice_edit robo_tree_in_form"
+                                      editable="bottom">
+                                    <field name="point_of_sale_product_id"/>
+                                    <field name="product_id"/>
+                                    <field name="revision_number"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_r_keeper_data_export" model="ir.actions.act_window">
+            <field name="name">Duomenų eksportas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.data.export</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_r_keeper_data_export"/>
+        </record>
+        <!--MENU ITEMS-->
+        <menuitem
+                id="menu_r_keeper_data_export"
+                name="Duomenų eksportas"
+                action="action_r_keeper_data_export"
+                sequence="1"
+                parent="r_keeper_export_root"
+        />
+    </data>
+</odoo>

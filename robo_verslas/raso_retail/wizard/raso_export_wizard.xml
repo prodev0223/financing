@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+        <record id="raso_export_data_wizard" model="ir.ui.view">
+            <field name="name">raso.export.wizard</field>
+            <field name="model">raso.export.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Duomenu eksportas">
+                <div>
+                    <p>
+                        Paspaudę eksportuoti, rankiniu būdų galite susinchronizuoti ROBO duomenų bazę su RASO duomenimis<br/>
+                        Eksportavus duomenis iš RASO serverio, bus sukurtos sąskaitos faktūros ir pardavimo eilutės<br/>
+                        Duomenys eksportuojami atsižvelgiant į pardavimo eilutės statusą,<br/>
+                        Jeigu norite eksportuojami senesnius duomenis, pažymėkite laukelį ir įveskite datas <br/>
+                        PASTABA: Šis veiksmas atliekamas automatiškai kas dieną
+                    </p>
+                </div>
+                <group>
+                    <field name="data_type"/>
+                    <field name="use_date"/>
+                    <field name="get_status_one_rows"/>
+                            <field name="date_from" attrs="{'invisible': [('use_date', '=', False)]}"/>
+                            <field name="date_to" attrs="{'invisible': [('use_date', '=', False)]}"/>
+                </group>
+                <footer>
+                    <button string="Eksportuoti Duomenis iš RASO" name="cron_get_data" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+            </field>
+        </record>
+        <record id="open_export_wizard_raso" model="ir.actions.act_window">
+            <field name="name">Duomenų Eksportavimas iš Raso</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">raso.export.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_partner_bank_form_extend" model="ir.ui.view">
+            <field name="name">res.partner.bank.form.extend</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="before">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" groups="base.group_user"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <record id="res_partner_bank_search_extend" model="ir.ui.view">
+            <field name="name">res.partner.bank.search.extend</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="before">
+                    <separator/>
+                    <filter string="Not Archived" name="active" domain="[('active','=',True)]"/>
+                    <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="res_partner_bank_form_extend_view" model="ir.ui.view">
+            <field name="name">res.partner.bank.form.extend.view</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="mokejimu_eksportas.res_partner_bank_front_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="before">
+                    <div class="oe_button_box" name="button_box" groups="robo_basic.group_robo_premium_accountant">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                        </button>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_stock_move_mrp_scanning" model="ir.ui.view">
+            <field name="name">stock.move.scanning</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="mrp.view_stock_move_lots"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='workorder_id']" position="after">
+                    <field name="_barcode_scanned" widget="barcode_handler" invisible="1"
+                           groups="stock.group_production_lot"/>
+                    <field name="barcode" groups="stock.group_production_lot"/>
+                    <field name="scan_status_text" readonly="True" groups="stock.group_production_lot"/>
+                </xpath>
+                <xpath expr="//field[@name='active_move_lot_ids']/tree" position="attributes">
+                    <attribute name="create">0</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="mrp.view_stock_move_lots" model="ir.ui.view">
+            <field name="robo_front">True</field>
+        </record>
+        <record id="robo_action_mrp_unbuild_moves" model="ir.actions.act_window">
+            <field name="name">Stock Moves</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.move</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="domain">['|', ('unbuild_id', '=', active_id), ('consume_unbuild_id', '=', active_id)]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_stock.view_move_picking_tree')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('robo_stock.view_move_picking_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="domain">['|', ('raw_material_production_id', '=', active_id), ('production_id', '=',
+                active_id)]
+            </field>
+            <field name="robo_menu" ref="menu_robo_mrp_start"/>
+            <field name="context" eval="{
+                    'robo_header': {
+                        'fit':True,
+                    },
+            }"/>
+        </record>
+        <record id="robo_action_mrp_production_moves" model="ir.actions.act_window">
+            <field name="name">Produkcijos judėjimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.move</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('robo_stock.view_move_picking_tree_readonly')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('robo_stock.view_move_picking_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="domain">['|', '|', '|', ('raw_material_production_id', '=', active_id), ('production_id',
+                '=',
+                active_id), ('cancel_raw_material_production_id', '=', active_id), ('cancel_production_id', '=',
+                active_id)]
+            </field>
+            <field name="robo_menu" ref="menu_robo_mrp_start"/>
+            <field name="context" eval="{
+                    'robo_header': {
+                        'fit':True,
+                    },
+            }"/>
+        </record>
+        <record id="view_move_search" model="ir.ui.view">
+            <field name="name">stock.move.search.mrp</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='done']" position="after">
+                    <field name="surplus_production_id" string="Perteklinė gamyba"/>
+                    <filter name="surplus_production_move" string="Perteklinis judėjimas"
+                            domain="[('surplus_production_id', '!=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

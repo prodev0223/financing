@@ -1,0 +1,201 @@
+#importas {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+
+    div.o_form_field_binary_file {
+        width: auto;
+    }
+
+    .import-element-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px;
+
+
+        a.import-download-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 10px;
+
+            img {
+                width: 50px;
+            }
+
+            span {
+                margin-top: 5px;
+                word-break: break-word;
+                text-align: center;
+                max-width: 150px;
+            }
+        }
+    }
+}
+
+.robo-buttons-mixin(@url, @url-height){
+   .o-inline-flex-display;
+    .o-flex-flow(column, nowrap);
+    //.o-justify-content(center);
+    width: 100%;
+    //min-height: 231px;
+    background: white;
+    font-family: @robo-text-font;
+    position: relative;
+    padding: 3px;
+
+    &:before{
+      //content: " ";
+      //display: block;
+      //position: absolute;
+      //top: 0px;
+      //left: 0px;
+      //width: 100%;
+      //height: 5px;
+      //background: @robo-blue-primary;
+      background-image: url(/robo/static/src/img/report_box.svg);
+      background-size: 30px 15px;
+      width: 30px;
+      height: 15px;
+      display: block;
+      content: "";
+      margin-left: auto;
+      margin-right: auto;
+      position: absolute;
+      top: -7px;
+      left: 0;
+      right: 0;
+    }
+    //&:after{
+    //  background: @robo-background-color;
+    //  content: " ";
+    //  display: block;
+    //  position: absolute;
+    //  bottom: 0px;
+    //  left: 0px;
+    //  width: 100%;
+    //  height: 5px;
+    //}
+    &:hover{
+//       .robo-menu-item-hover;
+//       border-color: @robo-dark-blue;
+        color: #2c3e50;
+        background-color: rgba(240, 250, 255, 1);
+        border-color: #dedddd;
+      //.box-shadow(0 0 0 3px @robo-shadow-color);
+    }
+    .robo-border(@size: 1px);
+    .box-shadow(0 0 5px 1px @robo-shadow-color);
+    transition-duration: 0.08s;
+    .icon{
+      font-size: 50px;
+      padding: 20px 20px 0 20px;
+      span{
+        color: @robo-blue-primary;
+      }
+      &:after{
+        content: '';
+        display: block;
+        background-image: @url;
+        height: @url-height;
+        width: 100%;
+      }
+    }
+    a{
+      //min-width: 200px;
+      padding-bottom: 20px;
+      font-size: 18px;
+      //line-height: 32px;
+      font-weight: 300;
+      color: black;
+
+      &.btn-my-style {
+        word-wrap: break-word;
+        border-radius: @robo-button-small-radius;
+        background-color: @robo-button-color;
+        font-weight: 300;
+        text-align: center;
+        border-color: @robo-button-color;
+
+        &:hover {
+          background-color: @robo-button-hover-color;
+          border-color: @robo-button-hover-color;
+        }
+
+        &:focus {
+          background-color: @robo-button-hover-color;
+          border-color: @robo-button-hover-color;
+        }
+
+        &:active {
+          -webkit-box-shadow: none;
+          box-shadow: none;
+          -webkit-transition: none;
+          transition: none;
+          background-image: none;
+          background-color: @robo-button-hover-color;
+          border-color: @robo-button-hover-color;
+        }
+
+      }
+    }
+}
+
+
+.robo_employees_buttons{
+  // .o-flex-display();
+  // .o-flex-flow(row, wrap);
+  justify-content: center;
+  .robo_button_new, .robo_button_change, .robo_button_fire,.robo_button_calendar, .robo_button_pay_holiday, .robo_button_trip, .robo_button_noPay_holiday{
+    .robo-buttons-mixin(url(/robo/static/src/img/report_box_lines_two.svg), 20px);
+  }
+
+  .robo_button_pay_holiday, .robo_button_trip, .robo_button_noPay_holiday{
+    min-height: 220px;
+  }
+
+  .robo_button_new, .robo_button_change, .robo_button_fire{
+    min-height: 180px;
+  }
+
+  .robo_manager .robo_button_calendar{
+    min-height: 180px;
+  }
+
+  .robo_user .robo_button_calendar{
+    min-height: 220px;
+  }
+
+  position: relative;
+  font-family: @robo-header-font;
+  justify-content: center;
+  .report_section{
+    .o-flex-display;
+    .o-flex-flow(row, wrap);
+    .o-align-items(stretch);
+    .o-justify-content(center);
+    .employee-box{
+      //.o-flex(1,1,20%);
+      width: 175px;
+      margin: 0 5px;
+      text-align: center;
+    }
+  }
+
+}
+
+.oe_robo_atostogos_kanban{
+    background: lighten(@robo-background, 5%);
+    color: @robo-red;
+}
+.normal-field-below{
+  font-weight: normal !important;
+}
+.atostogos-field-below{
+  //font-weight: normal !important;
+  color: #E74C3C;
+}

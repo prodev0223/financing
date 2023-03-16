@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="report.paperformat_a4_landscape_narrow" model="report.paperformat">
+            <field name="name">European A4 Landscape (narrow)</field>
+            <field name="format">A4</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top" eval="10"/>
+            <field name="margin_bottom" eval="12"/>
+            <field name="margin_left" eval="7"/>
+            <field name="margin_right" eval="7"/>
+            <field name="header_spacing" eval="20"/>
+            <field name="dpi" eval="90"/>
+        </record>
+        <report
+                id="report_algalapis"
+                model="hr.payslip"
+                string="Darbo užmokesčio pažyma"
+                report_type="qweb-pdf"
+                name="l10n_lt_payroll.report_algalapis_sl"
+                file="l10n_lt_payroll.report_algalapis_sl"
+                paperformat="report.paperformat_a4_landscape_narrow"
+        />
+        <record id="report.paperformat_label" model="report.paperformat">
+            <field name="name">Label</field>
+            <field name="format">custom</field>
+            <field name="page_height" eval="30"/>
+            <field name="page_width" eval="70"/>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top" eval="4"/>
+            <field name="margin_bottom" eval="2"/>
+            <field name="margin_left" eval="5"/>
+            <field name="margin_right" eval="5"/>
+            <field name="header_spacing" eval="0"/>
+            <field name="dpi" eval="200"/>
+        </record>
+        <!--<record id="report_algalapis" model="ir.actions.report.xml">-->
+        <!--<field name="paperformat_id" ref="report.paperformat_label"/>-->
+        <!--</record>-->
+        <template id="report_algalapis_sl_old">
+            <style type="text/css">
+                body.container {
+                margin-left: 7px !important;
+                }
+                h3 {
+                text-align: center;
+                }
+                .centras{
+                text-align: center;
+                margin-left:auto;
+                margin-right:auto;
+                }
+                .virsus{
+                border-top: 1px solid black;
+                }
+                .desine{
+                float: right;
+                width: 300px;
+                text-align: justify;
+                }
+                .lentele{
+                border: 1px solid black;
+                }
+                tr{
+                padding-left: 5px;
+                border: 3px solid black;
+                }
+                th{
+                padding-left: 5px;
+                border: 3px solid black;
+                }
+                td{
+                padding-left: 5px;
+                border: 3px solid black;
+                }
+            </style>
+            <t t-call="report.html_container">
+                <t t-esc="setLang(docs[0].company_id.partner_id.lang)"/>
+                <div class="page">
+                    <div class="desine" style="float: right; width: 300px; text-align: justify;">
+                        <p>Forma patvirtinta Lietuvos Respublikos socialinės apsaugos ir darbo ministro 2012 m. sausio
+                            25 d. įsakymu Nr. A1-35
+                        </p>
+                    </div>
+                    <div class="centras row">
+                        <table class="centras" style="margin-left:auto; margin-right:auto; border-style:none; text-align:center;" width="40%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none">
+                                    <span t-field="docs[0].company_id"/>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none">
+                                    <span>(įmonės, įstaigos, organizacijos, pavadinimas)</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none">
+                                    <span t-esc="docs[0].company_id.partner_id._display_address(without_company=True)"/>
+                                    <t t-if="docs[0].company_id.phone">,
+                                        <span t-field="docs[0].company_id.phone"/>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none">
+                                    <span>(adresas, tel.)</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none">
+                                    <span t-field="docs[0].employee_id"/>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none">
+                                    <span>(adresatas)</span>
+                                </td>
+                            </tr>
+                            <tr style="font-weight:bold; border-style:none">
+                                <td style="border-style:none">PAŽYMA APIE PRISKAIČIUOTĄ IR IŠMOKĖTĄ DARBO UŽMOKESTĮ BEI
+                                    KITAS IŠMOKAS
+                                </td>
+                            </tr>
+                            <tr style="border-style:none">
+                                <td style="border-style:none"><span t-esc="time.strftime('%%Y-%%m-%%d')"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p/>
+                    <br/>
+                    <table class="centras" align="center" width="60%">
+                        <tr style="border-style:none">
+                            <td style="border-style:none">Darbuotojo vardas ir pavardė
+                                <span style="font-weight:bold" t-field="docs[0].employee_id"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <p/>
+                    <table width="100%" class="lentele" style="padding:10px; border: 1px solid black !important;">
+                        <tr style="border: 1px solid black !important;">
+                            <td width="4%" rowspan="2" align="left" valign="top" scope="col" style="padding:5px; border: 1px solid black !important;">
+                                <div align="left">Data</div>
+                            </td>
+                            <td rowspan="2" align="left" valign="top" scope="col" style="padding:5px; border: 1px solid black !important;">
+                                <div align="left">
+                                    <div align="left">Nustatyta maksimali darbo laiko trukmė, valandų ir dienų per mėnesį</div>
+                                </div>
+                            </td>
+                            <div align="left">
+                                <td rowspan="2" align="left" valign="top" scope="col" style="padding:5px; border: 1px solid black !important;">
+                                    Dirbtas laikas; nedirbtas laikas dėl ligos; prastovos ne dėl darbuotojo kaltės;
+                                    kasmetinių atostogų trukmė, valandų ir dienų per mėnesį
+                                </td>
+                            </div>
+                            <td rowspan="2" align="left" valign="top" scope="col" style="padding:5px; border: 1px solid black !important;">
+                                <div align="left">Nemokamų atostogų ir neapmokamo nedarbingumo trukmė, valandų ir dienų per mėnesį</div>
+                            </td>
+                            <td height="24" colspan="6" align="left" valign="top" scope="col" style="padding:5px; border: 1px solid black !important;">
+                                <div align="left">Priskaičiuota, Eur</div>
+                                <div align="left"/>
+                                <div align="left"/>
+                            </td>
+                            <td colspan="6" align="left" valign="top" scope="col" style="padding:5px; border: 1px solid black !important;">Išskaičiuota,
+                                Eur
+                            </td>
+                            <td colspan="2" align="left" valign="top" scope="col" style="padding:5px; border: 1px solid black !important;">Išmokėta, Eur
+                            </td>
+                            <td colspan="1" align="left" valign="top" scope="col" style="padding:5px; border: 1px solid black !important;">Darbdavio kaštai,
+                                Eur
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:5px; border: 1px solid black !important;">Darbo užmokesčio
+                            </td>
+                            <td width="1%" style="padding:5px; border: 1px solid black !important;">užmokesčio už
+                                prastovas ne dėl darbuotojo kaltės
+                            </td>
+                            <td width="1%" style="padding:5px; border: 1px solid black !important;">ligos pašalpos</td>
+                            <td style="padding:5px; border: 1px solid black !important;">
+                                už kasmetines atostogas; nepanaudotų kasmetinių atostogų kompensacija
+                            </td>
+                            <td width="1%" style="padding:5px; border: 1px solid black !important;">kitų išmokų</td>
+                            <td style="padding:5px; border: 1px solid black !important;">iš viso per mėnesį</td>
+
+                            <td width="1%" style="padding:5px; border: 1px solid black !important;">pajamų mokesčio</td>
+                            <td style="padding:5px; border: 1px solid black !important;">socialinio draudimo įmokų
+                                (išskyrus pensijų socialinį draudimą) ir privalomojo sveikatos draudimo įmokų
+                            </td>
+                            <td style="padding:5px; border: 1px solid black !important;">pensijų socialinio draudimo įmokų
+                            </td>
+                            <td width="1%" style="padding:5px; border: 1px solid black !important;">lėšų vaikui
+                                išlaikyti
+                            </td>
+                            <td width="1%" style="padding:5px; border: 1px solid black !important;">Kitos išskaitos</td>
+
+                            <td width="1%" style="padding:5px; border: 1px solid black !important;">iš viso per mėnesį
+                            </td>
+                            <td style="padding:5px; border: 1px solid black !important;">Iš viso priskaičiuota išmokėti
+                                suma už 1 skiltyje nurodytus
+                                mėnesius, Eur (15=9-14)
+                            </td>
+                            <td style="padding:5px; border: 1px solid black !important;">Per 1 skiltyje nurodytus
+                                mėnesius už ankstesnius mėnesius (nurodyti)
+                                pavėluotai išmokėta suma, Eur ir išmokėjimo data
+                            </td>
+                            <td width="1%" style="padding:5px; border: 1px solid black !important;">Darbdaviui tenkantis
+                                mokestis socialiniam draudimui
+                            </td>
+                        </tr>
+                        <tr style="border: 1px solid black !important;">
+                            <td style="text-align: center; border: 1px solid black !important;">1</td>
+                            <td style="text-align: center; border: 1px solid black !important;">2</td>
+                            <td style="text-align: center; border: 1px solid black !important;">3</td>
+                            <td style="text-align: center; border: 1px solid black !important;">4</td>
+                            <td style="text-align: center; border: 1px solid black !important;">5</td>
+                            <td style="text-align: center; border: 1px solid black !important;">6</td>
+                            <td style="text-align: center; border: 1px solid black !important;">7</td>
+                            <td style="text-align: center; border: 1px solid black !important;">8</td>
+                            <td style="text-align: center; border: 1px solid black !important;">9</td>
+                            <td style="text-align: center; border: 1px solid black !important;">10</td>
+                            <td style="text-align: center; border: 1px solid black !important;">11</td>
+                            <td style="text-align: center; border: 1px solid black !important;">12</td>
+                            <td style="text-align: center; border: 1px solid black !important;">13</td>
+                            <td style="text-align: center; border: 1px solid black !important;">14</td>
+                            <td style="text-align: center; border: 1px solid black !important;">15</td>
+                            <td style="text-align: center; border: 1px solid black !important;">16</td>
+                            <td style="text-align: center; border: 1px solid black !important;">17</td>
+                            <td style="text-align: center; border: 1px solid black !important;">18</td>
+                            <td style="text-align: center; border: 1px solid black !important;">19</td>
+                        </tr>
+                        <t t-foreach="docs" t-as="o">
+                            <t t-set="slip_amount" t-value="payslip_amounts(o)"/>
+                            <tr style="page-break-inside: avoid; border: 1px solid black !important;">
+                                <td style="border: 1px solid black !important;">
+                                    <span style="padding-left: 5px; padding-right: 5px; white-space: nowrap;" t-esc="periodas(o)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="str(formatLang(max_laikas_d(o), digits=0)) + ' d.d. '"/>
+                                    <br/>
+                                    <span t-esc="str(formatLang(max_laikas_h(o), digits=2)) + ' val.'"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="str(formatLang(visas_laikas_d(o), digits=0)) + ' d.d. '"/>
+                                    <br/>
+                                    <span t-esc="str(formatLang(visas_laikas_h(o), digits=2)) + ' val.'"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <t t-if="nemokamos_atostogos_d(o)+neapmokamas_nedarbingumas_d(o) != 0">
+                                        <span t-esc="str(formatLang(nemokamos_atostogos_d(o)+neapmokamas_nedarbingumas_d(o), digits=0)) + ' d.d. '"/>
+                                        <br/>
+                                        <span t-esc="str(formatLang(nemokamos_atostogos_h(o)+neapmokamas_nedarbingumas_h(o), digits=2)) + ' val.'"/>
+                                    </t>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['regular_amount'] + slip_amount['extra_amount_excl_downtime'],
+                                    digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['downtime_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['liga_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['all_holidays_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['other_bonuses_amount'] + slip_amount['tevystes_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span style="padding-left: 5px; padding-right: 5px; white-space: nowrap" t-esc="formatLang(slip_amount['total_additions_amount'], digits=2)"/>
+                                </td>
+
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['gpm_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['social_security_excl_pension_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['social_pension_security_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['child_benefit_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['other_deductions_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['total_deductions_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['total_additions_amount']-slip_amount['total_deductions_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['late_payments_amount'], digits=2)"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black !important;">
+                                    <span t-esc="formatLang(slip_amount['SODRA_total_amount'], digits=2)"/>
+                                </td>
+                            </tr>
+                        </t>
+                        <t t-set="slip_amount" t-value="payslip_amounts(docs)"/>
+                        <tr style="page-break-inside: avoid; border: 1px solid black !important;">
+                            <td style="border: 1px solid black !important;">
+                                <span style="padding-left: 5px; padding-right: 5px; white-space: nowrap;">Iš viso:</span>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="str(formatLang(sum(max_laikas_d(o) for o in docs), digits=0)) + ' d.d. '"/>
+                                <br/>
+                                <span t-esc="str(formatLang(sum(max_laikas_h(o) for o in docs), digits=2)) + ' val.'"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="str(formatLang(sum(visas_laikas_d(o) for o in docs), digits=0)) + ' d.d. '"/>
+                                <br/>
+                                <span t-esc="str(formatLang(sum(visas_laikas_h(o) for o in docs), digits=2)) + ' val.'"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <t t-if="sum(nemokamos_atostogos_d(o)+neapmokamas_nedarbingumas_d(o) for o in docs) != 0">
+                                    <span t-esc="str(formatLang(sum(nemokamos_atostogos_d(o)+neapmokamas_nedarbingumas_d(o) for o in docs), digits=0)) + ' d.d. '"/>
+                                    <br/>
+                                    <span t-esc="str(formatLang(sum(nemokamos_atostogos_h(o)+neapmokamas_nedarbingumas_h(o) for o in docs), digits=2)) + ' val.'"/>
+                                </t>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['regular_amount'] + slip_amount['extra_amount_excl_downtime'],
+                                digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['downtime_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['liga_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['all_holidays_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['other_bonuses_amount'] + slip_amount['tevystes_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span style="padding-left: 5px; padding-right: 5px; white-space: nowrap" t-esc="formatLang(slip_amount['total_additions_amount'], digits=2)"/>
+                            </td>
+
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['gpm_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['social_security_excl_pension_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['social_pension_security_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['child_benefit_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['other_deductions_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['total_deductions_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['total_additions_amount']-slip_amount['total_deductions_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['late_payments_amount'], digits=2)"/>
+                            </td>
+                            <td style="text-align: center; border: 1px solid black !important;">
+                                <span t-esc="formatLang(slip_amount['SODRA_total_amount'], digits=2)"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div style="page-break-inside:avoid">
+                        <div style="float: left; width:30%">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none; text-align:left">
+                                        <span>Direktorius</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="display:inline-block; width:30%">
+                            <table class="centras" align="center" width="40%">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <span>
+                                            <br/>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none;text-align: center;">
+                                        <span>(parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="float: right; width:30%">
+                            <table width="40%">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none; text-align: center;">
+                                        <span t-field="docs[0].with_context(date=docs[0].date_to).company_id.vadovas"/>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none;text-align:center">
+                                        <span>(vardas ir pavardė)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <br/>
+                        <div style="float: left;text-align:right; width:30%">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none; text-align:right">
+                                        <span>A.V.</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <br/>
+                        <br/>
+                        <div style="float: left; width:30%">
+                            <table style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none; text-align:left">
+                                        <span>Vyr. finansininkas (Vyr. buhalteris)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="display:inline-block; width:30%">
+                            <table class="centras" align="center" width="40%">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <span>
+                                            <br/>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none; text-align: center;">
+                                        <span>(parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="float: right; width:30%">
+                            <table width="40%">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                        <span t-field="docs[0].company_id.findir"/>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                    <td style="border-style:none; text-align:center;">
+                                        <span>(vardas ir pavardė)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>
+

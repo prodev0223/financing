@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Base menu items-->
+        <menuitem
+                id="menu_amazon_sp_root"
+                name="Amazon SP-API"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+                sequence="99"
+        />
+        <menuitem
+                id="menu_amazon_sp_management_root"
+                name="Management"
+                sequence="3"
+                parent="menu_amazon_sp_root"
+        />
+        <menuitem
+                id="menu_amazon_sp_data_root"
+                name="Amazon data"
+                sequence="1"
+                parent="menu_amazon_sp_root"
+        />
+        <menuitem
+                id="menu_amazon_sp_stock_data_root"
+                name="Amazon stock data"
+                sequence="2"
+                parent="menu_amazon_sp_root"
+        />
+        <!--Front-end menu items-->
+        <menuitem id="menu_amazon_sp_api_front_end"
+                  parent="robo.menu_start"
+                  name="Amazon SP-API"
+                  sequence="80"
+                  robo_front="True"
+                  groups="amazon_sp_api.group_amazon_sp_api_front"
+                  robo_extended="1"
+                  force_web_icon="icon-cloud-database,none,none"
+        />
+    </data>
+</odoo>

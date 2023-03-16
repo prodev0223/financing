@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_company_settings_view_form" model="ir.ui.view">
+            <field name="name">robo.company.settings.view.form</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='api_integrations']" position="attributes">
+                    <!--Make integrations group always visible when Neopay is installed-->
+                    <attribute name="attrs"/>
+                </xpath>
+                <xpath expr="//group[@name='api_integrations']"  position="inside">
+                    <group>
+                        <field name="enable_neopay_integration" string="Enable Neopay integration"/>
+                        <div class="alert alert-info" role="alert" style="margin-bottom: 2px;" colspan="2"
+                             attrs="{'invisible': [('enable_neopay_integration', '=', False)]}">
+                            Every successful payment using Neopay is charged additionally (10 ct per payment).
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

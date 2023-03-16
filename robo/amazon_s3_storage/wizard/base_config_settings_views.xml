@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_general_configuration" model="ir.ui.view">
+        <field name="name">view.general.configuration.amazonS3</field>
+        <field name="model">base.config.settings</field>
+        <field name="inherit_id" ref="base_setup.view_general_configuration"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='google_analytics']" position="after">
+                <group string="Amazon S3 Cloud Configuration" groups="base.group_no_one">
+                    <div name="Amazon S3 Configuration">
+                        <b>Amazon S3 Configuration</b>
+                        <button type="object" name="open_s3_conf" string="Configuration" class="oe_inline oe_link"
+                                icon="fa-cogs"/>
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

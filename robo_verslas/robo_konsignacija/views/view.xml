@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="purchase_order_view" model="ir.ui.view">
+            <field name="name">purchase.order.view</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="robo_stock.robo_purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                    <attribute name="domain">['|',('usage','=','internal'),('usage','=','transit')]</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_template_consignation_form" model="ir.ui.view">
+            <field name="name">product.template.consignation</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='landed_cost_ok']" position="after">
+                    <field name="consignation"/>
+                    <field name="consignation_location" options="{'no_create':1, 'no_open':1}" attrs="{'invisible': [('consignation', '=', False)], 'required': [('consignation', '=', True)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_template_consignation_backend_form" model="ir.ui.view">
+            <field name="name">product.template.consignation</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock_landed_costs.view_product_landed_cost_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='landed_cost_ok']" position="after">
+                    <field name="consignation"/>
+                    <field name="consignation_location" options="{'no_create':1, 'no_open':1}" attrs="{'invisible': [('consignation', '=', False)], 'required': [('consignation', '=', True)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock_picking_consignation_form" model="ir.ui.view">
+            <field name="name">stock.picking.consignation</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='open_account_move_lines']" position="after">
+                    <field name="consignation_picking_ids" invisible="1"/>
+                    <button name="open_related_consignations" type="object" class="oe_stat_button" icon="fa-truck" string="Konsignacija" attrs="{'invisible': [('consignation_picking_ids','=',[])]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="robo_consignation_product_template_filter" model="ir.ui.view">
+            <field name="name">robo_consignation.product.template.filter</field>
+            <field name="model">product.template</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='pricelist_id']" position="after">
+                    <separator/>
+                    <filter name="consignation" string="Konsignacinis produktas" domain="[('consignation','=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

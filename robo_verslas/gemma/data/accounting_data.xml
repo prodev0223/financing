@@ -1,0 +1,167 @@
+<odoo>
+      <data noupdate="1">
+          <record id="gemma_card_partner" model="res.partner">
+            <field name="name">Gemma Kortelių Partneris</field>
+            <field name="kodas">gemmacards</field>
+            <field name="company_type">person</field>
+            <field name="country_id" search="[('code', '=', 'LT')]"/>
+              <field name="property_account_receivable_id" search="[('code', '=', '2410')]"/>
+              <field name="property_account_payable_id" search="[('code', '=', '4430')]"/>
+          </record>
+          <record id="gemma_credit_invoice_seq" model="ir.sequence">
+            <field name="name">Kreditinės sąskaitos</field>
+            <field name="code">G_INV_CRED</field>
+            <field name="prefix">KRGS</field>
+            <field name="padding" eval="7"/>
+            <field name="number_increment" eval="1"/>
+          </record>
+          <record id="product_gpx" model="product.template">
+            <field name="name">Koregavimas</field>
+            <field name="default_code">GPX</field>
+            <field name="type">service</field>
+          <field name="acc_product_type">service</field>
+          <field name="categ_id" search="[('name','=','Slaugos paslaugos kom.')]"/>
+          </record>
+          <record id="gemma_compensa_account" model="account.account">
+             <field name="name">Gemma Compensa</field>
+             <field name="code">2411</field>
+             <field name="reconcile" eval="True"/>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+           <record id="gemma_compensa_journal" model="account.journal">
+             <field name="name">Gemma Compensa</field>
+             <field name="code">GMCOM</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="gemma_compensa_account"/>
+             <field name="default_credit_account_id" ref="gemma_compensa_account"/>
+         </record>
+          <record id="g_compensa_payment_type" model="gemma.payment.type">
+             <field name="name">Compensa Vienna Insurance Group</field>
+             <field name="ext_type_id">36</field>
+             <field name="is_active" eval="True"/>
+              <field name="do_reconcile" eval="True"/>
+             <field name="journal_id" ref="gemma_compensa_journal"/>
+         </record>
+          <record id="gemma_gift_account" model="account.account">
+             <field name="name">Gemma Dovanų kuponai</field>
+             <field name="code">2412</field>
+             <field name="reconcile" eval="True"/>
+             <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+         </record>
+           <record id="gemma_gift_journal" model="account.journal">
+             <field name="name">Gemma Dovanų kuponai</field>
+             <field name="code">GMGFT</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="gemma_gift_account"/>
+             <field name="default_credit_account_id" ref="gemma_gift_account"/>
+         </record>
+          <record id="g_gift_payment_type" model="gemma.payment.type">
+             <field name="name">Dovanų kuponai</field>
+             <field name="ext_type_id">31</field>
+             <field name="is_active" eval="True"/>
+              <field name="do_reconcile" eval="True"/>
+             <field name="journal_id" ref="gemma_gift_journal"/>
+         </record>
+          <record id="gemma_card_account" model="account.account">
+             <field name="name">Gemma kortelės</field>
+             <field name="code">2413</field>
+             <field name="reconcile" eval="True"/>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+           <record id="gemma_card_journal" model="account.journal">
+             <field name="name">Gemma kortelės</field>
+             <field name="code">GMCRD</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="gemma_card_account"/>
+             <field name="default_credit_account_id" ref="gemma_card_account"/>
+         </record>
+          <record id="g_card_payment_type" model="gemma.payment.type">
+             <field name="name">Mokėjimo kortelės</field>
+             <field name="ext_type_id">2</field>
+             <field name="is_active" eval="True"/>
+              <field name="do_reconcile" eval="True"/>
+             <field name="journal_id" ref="gemma_card_journal"/>
+         </record>
+          <record id="gemma_cash_collection_journal" model="account.journal">
+             <field name="name">Gemma Inkasacijos</field>
+             <field name="code">GMINC</field>
+             <field name="type">cash</field>
+             <field name="default_debit_account_id" search="[('code', '=', '2721')]"/>
+             <field name="default_credit_account_id" search="[('code', '=', '2721')]"/>
+         </record>
+          <record id="gemma_cash_journal" model="account.journal">
+             <field name="name">Gemma Grynieji</field>
+             <field name="code">GMCSH</field>
+             <field name="type">cash</field>
+             <field name="default_debit_account_id" search="[('code', '=', '2721')]"/>
+             <field name="default_credit_account_id" search="[('code', '=', '2721')]"/>
+         </record>
+          <record id="g_cash_payment_type" model="gemma.payment.type">
+             <field name="name">Grynieji</field>
+             <field name="ext_type_id">1</field>
+             <field name="is_active" eval="True"/>
+              <field name="do_reconcile" eval="True"/>
+             <field name="journal_id" ref="gemma_cash_journal"/>
+         </record>
+          <record id="gemma_transfer_account" model="account.account">
+             <field name="name">Gemma pavedimai</field>
+             <field name="code">2414</field>
+             <field name="reconcile" eval="True"/>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+           <record id="gemma_transfer_journal" model="account.journal">
+             <field name="name">Gemma pavedimai</field>
+             <field name="code">GMTRN</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="gemma_transfer_account"/>
+             <field name="default_credit_account_id" ref="gemma_transfer_account"/>
+         </record>
+          <record id="g_transfer_payment_type" model="gemma.payment.type">
+             <field name="name">Pavedimai</field>
+             <field name="ext_type_id">30</field>
+             <field name="is_active" eval="False"/>
+             <field name="do_reconcile" eval="False"/>
+             <field name="journal_id" ref="gemma_transfer_journal"/>
+         </record>
+          <record id="gemma_ergo_account" model="account.account">
+             <field name="name">Gemma Ergo</field>
+             <field name="code">2415</field>
+             <field name="reconcile" eval="True"/>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+           <record id="gemma_ergo_journal" model="account.journal">
+             <field name="name">Gemma Ergo</field>
+             <field name="code">GMERG</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="gemma_ergo_account"/>
+             <field name="default_credit_account_id" ref="gemma_ergo_account"/>
+         </record>
+          <record id="g_ergo_payment_type" model="gemma.payment.type">
+             <field name="name">Ergo</field>
+             <field name="ext_type_id">37</field>
+             <field name="is_active" eval="True"/>
+              <field name="do_reconcile" eval="True"/>
+             <field name="journal_id" ref="gemma_ergo_journal"/>
+         </record>
+          <record id="gemma_gjensidige_account" model="account.account">
+             <field name="name">Gemma Gjensidige</field>
+             <field name="code">2416</field>
+             <field name="reconcile" eval="True"/>
+             <field name="user_type_id" ref="account.data_account_type_receivable"/>
+         </record>
+           <record id="gemma_gjensidige_journal" model="account.journal">
+             <field name="name">Gemma Gjensidige</field>
+             <field name="code">GMGJN</field>
+             <field name="type">general</field>
+             <field name="default_debit_account_id" ref="gemma_gjensidige_account"/>
+             <field name="default_credit_account_id" ref="gemma_gjensidige_account"/>
+         </record>
+          <record id="g_gjensidige_payment_type" model="gemma.payment.type">
+             <field name="name">Gjensidige</field>
+             <field name="ext_type_id">34</field>
+             <field name="is_active" eval="True"/>
+              <field name="do_reconcile" eval="True"/>
+             <field name="journal_id" ref="gemma_gjensidige_journal"/>
+         </record>
+      </data>
+</odoo>

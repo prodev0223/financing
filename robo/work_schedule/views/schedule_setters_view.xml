@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="main_work_schedule_setter_form" model="ir.ui.view">
+            <field name="name">Grafiko koregavimas</field>
+            <field name="model">main.schedule.setter</field>
+            <field name="type">form</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Grafiko koregavimas">
+                    <field name="day_schedule_ids" invisible="1"/>
+                    <field name="len_day_ids_selected" invisible="1"/>
+                    <field name="first_day_of_month" invisible="1"/>
+                    <field name="last_day_of_month" invisible="1"/>
+                    <group col="4" style="margin: 0 !important; padding: 0 !important;">
+                        <group colspan="4" col="2">
+                            <group colspan="1" col="2" style="margin: 0 !important; padding: 0 !important;">
+                                <field name="setter_type"/>
+                            </group>
+                            <group colspan="1" col="3" style="margin: 0 !important; padding: 0 !important;">
+                                <group col="1" colspan="1" style="margin: 0 !important; padding: 0 !important;">
+                                    <field name="date" nolabel="1" attrs="{'invisible': [('len_day_ids_selected','!=', 1)]}"/>
+                                </group>
+                                <group col="2" colspan="2" style="margin: 0 !important; padding: 0 !important;">
+                                    <button string="" style="padding-top: 2px; padding-bottom: 2px; padding-left: 7px; padding-right: 7px;" class="oe_inline oe_highlight" type="object" name="open_another_day_setter" context="{'direction': 'previous'}" attrs="{'invisible': ['|',('first_day_of_month','=',True),('len_day_ids_selected','!=', 1)]}">
+                                        <span class="icon-arrow-left"/>
+                                    </button>
+                                    <button string="" style="padding-top: 2px; padding-bottom: 2px; padding-left: 7px; padding-right: 7px;" class="oe_inline oe_highlight" type="object" name="open_another_day_setter" context="{'direction': 'next'}" attrs="{'invisible': ['|',('last_day_of_month','=',True),('len_day_ids_selected','!=', 1)]}">
+                                        <span class="icon-arrow-right"/>
+                                    </button>
+                                </group>
+                            </group>
+                        </group>
+                        <group colspan="4" attrs="{'invisible':['|',('free_day', '=', True),('setter_type', '=', 'simple')]}" style="margin: 0 !important; padding: 0 !important;">
+                            <field name="line_ids" nolabel="1">
+                                <tree editable="bottom" options="{'no_open': True}">
+                                    <field name="work_schedule_code_id" options="{'no_open': True, 'no_create': True}"/>
+                                    <field name="time_from" widget="float_time"/>
+                                    <field name="time_to" widget="float_time"/>
+                                    <field name="time_total" widget="float_time" sum="Suma"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group colspan="4" col="4" attrs="{'invisible':['|',('free_day', '=', True),('setter_type', '!=', 'simple')]}" style="margin: 0 !important; padding: 0 !important;">
+                            <group colspan="2" col="2">
+                                <span col="2" colspan="2" attrs="{'invisible':['|',('free_day', '=', True),('setter_type', '!=', 'simple')]}">Darbo laikas</span>
+                                <div col="2" colspan="2" attrs="{'invisible':['|',('free_day', '=', True),('setter_type', '!=', 'simple')]}">
+                                    <field name="work_hours_from" widget="float_time" nolabel="1" class="oe_inline" required="1"/>
+                                    <span class="oe_inline">-</span>
+                                    <field name="work_hours_to" widget="float_time" nolabel="1" class="oe_inline" required="1"/>
+                                </div>
+                                <span attrs="{'invisible':['|', ('free_day', '=', True), '|', ('lunch_break', '!=', True), ('setter_type', '!=', 'simple')]}" col="2" colspan="2">Pertraukos laikas
+                                </span>
+                                <div attrs="{'invisible':['|', ('free_day', '=', True), '|', ('lunch_break', '!=', True), ('setter_type', '!=', 'simple')]}" col="2" colspan="2">
+                                    <field name="break_hours_from" widget="float_time" nolabel="1" class="oe_inline" attrs="{'required': [('free_day', '!=', True), ('lunch_break', '=', True)], 'invisible':['|', ('free_day', '=', True), ('lunch_break', '!=', True)]}"/>
+                                    <span class="oe_inline">-</span>
+                                    <field name="break_hours_to" widget="float_time" nolabel="1" class="oe_inline" attrs="{'required': [('free_day', '!=', True), ('lunch_break', '=', True)], 'invisible':['|', ('free_day', '=', True), ('lunch_break', '!=', True)]}"/>
+                                </div>
+                            </group>
+                        </group>
+                        <group colspan="4" col="4">
+                            <group col="2" colspan="2">
+                                <div col="2" colspan="2" attrs="{'invisible':['|',('free_day', '=', True),('setter_type', '!=', 'simple')]}">
+                                    <field name="lunch_break" nolabel="1"/>
+                                    <span class="oe_inline">Pertrauka</span>
+                                </div>
+                                <div col="2" colspan="2">
+                                    <field name="free_day" nolabel="1"/>
+                                    <span class="oe_inline">Poilsio diena</span>
+                                </div>
+                                <div col="2" colspan="2">
+                                    <field name="business_trip" nolabel="1"/>
+                                    <span class="oe_inline">Komandiruotė</span>
+                                </div>
+                            </group>
+                            <group col="2" colspan="2">
+                                <field name="sum_before_changes"/>
+                                <field name="sum_after_changes"/>
+                                <field name="expected_work_hours"/>
+                            </group>
+                        </group>
+                        <group colspan="4" col="4">
+                            <field name="sumine_text" nolabel="1" col="1" colspan="4"/>
+                        </group>
+                        <group colspan="4" col="1">
+                            <field name="show_break_text" invisible="1"/>
+                            <span attrs="{'invisible': [('show_break_text', '=', False)]}">
+                                Nustatant ilgesnį nei 5 valandų įprastą darbo laiką - darbuotojam turi būti suteikiama pertrauka pavalgyti ir pailsėti.
+                                Nenustačius šios pertraukos laiko, darbuotojui turi būti suteikiama galimybė į šią pertrauką darbo metu, o šios pertraukos laikas - turi būti apmokamas.
+                            </span>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="confirm" string="Patvirtinti" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_main_schedule_setter" model="ir.actions.act_window">
+            <field name="name">Grafiko koregavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">main.schedule.setter</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="main_work_schedule_setter_form"/>
+            <field name="target">new</field>
+        </record>
+        <record id="overtime_schedule_setter_form" model="ir.ui.view">
+            <field name="name">Papildomo darbo koregavimas</field>
+            <field name="model">overtime.schedule.setter</field>
+            <field name="robo_front">True</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Papildomi darbai">
+                    <group colspan="4" col="4">
+                        <div colspan="2" col="2">
+                            <div attrs="{'invisible': [('whole_day', '=', True)]}">
+                                Darbo laikas
+                                <field name="work_hours_from" widget="float_time" nolabel="1" class="oe_inline"/>
+                                -
+                                <field name="work_hours_to" widget="float_time" nolabel="1" class="oe_inline"/>
+                            </div>
+                            <div attrs="{'invisible': [('whole_day', '!=', True)]}">
+                                Pasirinkus šį žymėjimą - bus žymima visa diena
+                            </div>
+                        </div>
+                        <div colspan="2" col="2">
+                            <field name="work_schedule_code_id" options="{'no_open': True, 'no_create': True}"   />
+                        </div>
+                        <field name="whole_day" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button name="confirm" string="Patvirtinti" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_overtime_schedule_setter" model="ir.actions.act_window">
+            <field name="name">Papildomi darbai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">overtime.schedule.setter</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="overtime_schedule_setter_form"/>
+            <field name="target">new</field>
+        </record>
+        <!--<record id="absence_schedule_setter_form" model="ir.ui.view">-->
+            <!--<field name="name">Neatvykimų koregavimas</field>-->
+            <!--<field name="model">absence.schedule.setter</field>-->
+            <!--<field name="robo_front">True</field>-->
+            <!--<field name="type">form</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<form string="Neatvykimai">-->
+                    <!--<group colspan="4" col="4">-->
+                        <!--<div colspan="2" col="2">-->
+                            <!--<div>-->
+                                <!--Darbo laikas-->
+                                <!--<field name="work_hours_from" widget="float_time" nolabel="1" class="oe_inline"/>-->
+                                <!-- - -->
+                                <!--<field name="work_hours_to" widget="float_time" nolabel="1" class="oe_inline"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div colspan="2" col="2">-->
+                            <!--<field name="work_schedule_code_id" options="{'no_open': True, 'no_create': True}"/>-->
+                        <!--</div>-->
+                    <!--</group>-->
+                    <!--<footer>-->
+                        <!--<button name="confirm" string="Patvirtinti" type="object" class="oe_highlight"/>-->
+                        <!--<button string="Atšaukti" class="oe_link" special="cancel"/>-->
+                    <!--</footer>-->
+                <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
+        <!--<record id="action_open_absence_schedule_setter" model="ir.actions.act_window">-->
+            <!--<field name="name">Neatvykimai</field>-->
+            <!--<field name="type">ir.actions.act_window</field>-->
+            <!--<field name="res_model">absence.schedule.setter</field>-->
+            <!--<field name="view_type">form</field>-->
+            <!--<field name="view_mode">form</field>-->
+            <!--<field name="view_id" eval="absence_schedule_setter_form"/>-->
+            <!--<field name="target">new</field>-->
+        <!--</record>-->
+
+        <record id="holidays_schedule_setter_form" model="ir.ui.view">
+            <field name="name">Atostogų koregavimas</field>
+            <field name="model">holidays.schedule.setter</field>
+            <field name="robo_front">True</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Atostogos">
+                    <group>
+                        <field name="day_schedule_ids" invisible="1"/>
+                        <field name="selected_existing_holidays" invisible="1"/>
+
+                        <field name="employee_id"
+                               options="{'no_open': True, 'no_create': True}" attrs="{'readonly': 1}"/>
+                        <field name="work_schedule_code_id" options="{'no_open': True, 'no_create': True}" attrs="{'readonly': [('selected_existing_holidays', '=', True)]}"/>
+                    </group>
+                    <group>
+                        <div>
+                            <div>
+                                <strong>Atostogų periodas</strong>
+                            </div>
+                            <div>
+                                <field name="date_from" nolabel="1" class="oe_inline"
+                                       attrs="{'readonly': [('selected_existing_holidays', '=', True)]}"/>
+                                -
+                                <field name="date_to" nolabel="1" class="oe_inline"
+                                       attrs="{'readonly': [('selected_existing_holidays', '=', True)]}"/>
+                            </div>
+                        </div>
+                    </group>
+                    <footer>
+                        <button name="confirm" string="Patvirtinti" type="object" class="oe_highlight"
+                                attrs="{'readonly': [('selected_existing_holidays', '=', True)], 'invisible': [('selected_existing_holidays', '=', True)]}"/>
+                        <button name="confirm" string="Ištrinti atostogas" context="{'delete_holidays': True}"
+                                type="object" class="oe_highlight"
+                                attrs="{'invisible': [('selected_existing_holidays', '=', False)]}"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_holidays_schedule_setter" model="ir.actions.act_window">
+            <field name="name">Atostogos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">holidays.schedule.setter</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="holidays_schedule_setter_form"/>
+            <field name="target">new</field>
+        </record>
+        <record id="go_to_date_wizard_form" model="ir.ui.view">
+            <field name="name">Pereiti į datą</field>
+            <field name="model">jump.to.date.wizard</field>
+            <field name="type">form</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pereiti į datą">
+                    <group style="padding-top: 0 !important;" col="4">
+                        <field name="year"/>
+                        <field name="month"/>
+                    </group>
+                    <footer>
+                        <button name="confirm" string="Pereiti" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_go_to_date_wizard" model="ir.actions.act_window">
+            <field name="name">Pereiti į datą</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">jump.to.date.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="go_to_date_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="schedule_export_wizard_form" model="ir.ui.view">
+            <field name="name">Grafikų eksportavimas</field>
+            <field name="model">schedule.export.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Grafikų eksportavimas">
+                    <group col="2" colspan="2">
+                        <field name="work_schedule_to_use" attrs="{'required': True}"/>
+                        <field name="export_view_type" attrs="{'required': True}"/>
+                        <field name="user_group_above_basic" invisible="1"/>
+                        <field name="export_for_all_users"
+                               attrs="{'readonly': [('user_group_above_basic', '=', False)]}"/>
+                        <field name="employee_ids"
+                               attrs="{'readonly': [('user_group_above_basic', '=', False)], 'invisible': [('export_for_all_users', '=', True)]}"
+                               widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="export_for_all_departments"/>
+                        <field name="department_ids" attrs="{'invisible': [('export_for_all_departments', '=', True)]}"
+                               widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="export_for_all_job_ids"/>
+                        <field name="job_ids" attrs="{'invisible': [('export_for_all_job_ids', '=', True)]}"
+                               widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="show_other_month_days"
+                               attrs="{'invisible': [('export_view_type','=','month_view')]}"/>
+                        <field name="break_users_separate_tables"
+                               attrs="{'invisible': ['|',('user_group_above_basic', '=', False),('export_view_type','=','month_view')]}"/>
+                        <field name="break_users_separate_pages"
+                               attrs="{'invisible': ['|', ('user_group_above_basic', '=', False), '|', ('break_users_separate_tables', '=', False), ('export_view_type','=','month_view')]}"/>
+                    </group>
+                    <footer>
+                        <button name="export_pdf" class="btn-primary" invisible="1" string="PDF Formatu" type="object"/>
+                        <button name="export_xls" class="btn-primary" string="XLS Formatu" type="object"/>
+                        <button special="cancel" class="btn-default" string="Atšaukti"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_schedule_export_wizard" model="ir.actions.act_window">
+            <field name="name">Grafikų eksportavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">schedule.export.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="schedule_export_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="new_schedule_line_wizard_form" model="ir.ui.view">
+            <field name="name">Grafiko sukūrimas</field>
+            <field name="model">new.schedule.line.wizard</field>
+            <field name="robo_front">True</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Naujas grafikas">
+                    <group>
+                        <field name="month" readonly="1"/>
+                        <field name="year" readonly="1" class="oe_inline"/>
+                        <field name="employee_id" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="department_id"
+                               options="{'no_open': True, 'no_create': True}"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_new_schedule_line_wizard" model="ir.actions.act_window">
+            <field name="name">Grafiko sukūrimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">new.schedule.line.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="new_schedule_line_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>
+

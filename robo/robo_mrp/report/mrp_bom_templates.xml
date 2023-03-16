@@ -1,0 +1,79 @@
+<odoo>
+    <data>
+        <!--BOM report templates, that can be printed. Separated from other templates as guidelines suggest-->
+        <template id="mrp_bom_report">
+            <t t-call="robo_mrp.mrp_bom_report_document"
+               t-lang="company._context.get('force_lang') or company.partner_id.lang or 'lt_LT'"/>
+        </template>
+        <template id="mrp_bom_report_document">
+            <t t-call="report.html_container">
+                <div class="header">
+                    <div class="row">
+                        <div id="right_block" style="display: inline-block; float: right; text-align: center;">
+                            <span style="font-weight:bold;">TVIRTINU</span>
+                            <br/>
+                            <span>Padalinio vadovas</span>
+                            <br/>
+                            <span>______________________________</span>
+                            <br/>
+                            <p>
+                                <span t-esc="data['print_date']"/>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="page xls_front" id="main">
+                    <style type="text/css">
+                        div.page{ page-break-after: always; }
+                        body{
+                        font-size: 13px;
+                        }
+                        table{
+                        font-size: 13px;
+                        }
+                    </style>
+                    <center>
+                        <img t-if="company.logo_web" t-att-src="'data:image/png;base64,%s' % company.logo_web"/>
+                        <p/>
+                        <span t-field="company.partner_id"/>
+                    </center>
+                    <div class="row">
+                        <div class="col-xs-12" style="text-align: center;">
+                            <p style="font-weight:bold; font-size: 18px;">Technologinė kortelė</p>
+                        </div>
+                        <div class="col-xs-12" style="text-align: center;">
+                            <span style="font-size: 15px;" t-esc="data['product_name']"/>
+                            <p><span t-esc="data['report_mode_name']"/></p>
+                        </div>
+                        <div class="col-xs-12" style="margin-top:5%;">
+                            <t t-if="data['expiry_dates_enabled']">
+                                <div style="display: inline-block; float: left; text-align: center;">
+                                    <span style="font-weight:bold;">Galiojimo periodas</span>
+                                    <p>
+                                        <span t-esc="data['date_from']"/>
+                                        -
+                                        <span t-esc="data['date_to']"/>
+                                    </p>
+                                </div>
+                            </t>
+                            <div style="display: inline-block; float: right; text-align: center;">
+                                <span style="font-weight:bold;">Gaminio išeiga</span>
+                                <p><span t-esc="data['quantity_display']"/></p>
+                            </div>
+                        </div>
+                    </div>
+                    <t t-raw="data['component_table']"/>
+                    <!--Empty html field always has those tags...-->
+                    <t t-if="data['comments_exist']">
+                        <div class="row">
+                            <div class="col-xs-12" style="text-align: center;">
+                                <span style="font-weight:bold; font-size: 18px; margin-bottom: 5%;">Komentarai</span>
+                                <t t-raw="data['comments']"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

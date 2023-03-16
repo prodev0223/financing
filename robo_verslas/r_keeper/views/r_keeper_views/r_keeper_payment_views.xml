@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="tree_r_keeper_payment" model="ir.ui.view">
+            <field name="name">r.keeper.payment.tree</field>
+            <field name="model">r.keeper.payment</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1"
+                      decoration-success="state == 'reconciled'"
+                      decoration-info="state == 'partially_reconciled'"
+                      decoration-warning="state in ['active', 'open']"
+                      decoration-danger="state in ['warning', 'failed']">
+                    <field name="doc_number"/>
+                    <field name="payment_date"/>
+                    <field name="payment_type_code"/>
+                    <field name="payment_type_id"/>
+                    <field name="amount" sum="amount"/>
+                    <field name="residual" sum="residual"/>
+                    <field name="pos_code"/>
+                    <field name="point_of_sale_id"/>
+                    <field name="state"/>
+                    <field name="refund_payment"/>
+                    <field name="refund_invoice_id"/>
+                    <field name="refund_invoice_state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tree_r_keeper_payment_front" model="ir.ui.view">
+            <field name="name">r.keeper.payment.tree.front</field>
+            <field name="model">r.keeper.payment</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0"
+                      decoration-success="state == 'reconciled'"
+                      decoration-info="state == 'partially_reconciled'"
+                      decoration-warning="state in ['active', 'open']"
+                      decoration-danger="state in ['warning', 'failed']">
+                    <field name="doc_number"/>
+                    <field name="payment_date"/>
+                    <field name="payment_type_code"/>
+                    <field name="payment_type_id"/>
+                    <field name="amount" sum="amount"/>
+                    <field name="residual" sum="residual"/>
+                    <field name="pos_code"/>
+                    <field name="point_of_sale_id"/>
+                    <field name="state"/>
+                    <field name="refund_payment"/>
+                    <field name="refund_invoice_id"/>
+                    <field name="refund_invoice_state"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="form_r_keeper_payment" model="ir.ui.view">
+            <field name="name">r.keeper.payment.form</field>
+            <field name="model">r.keeper.payment</field>
+            <field name="arch" type="xml">
+                <form string="rKeeper mokėjimai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="create_refund_payment_invoice_prep"
+                                type="object" string="Kurti kreditinę sąskaitą"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('let_create_refund_invoice', '=', False)]}"/>
+                        <button name="button_cancel_payment"
+                                type="object" string="Atšaukti mokėjimą"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state', '=', 'canceled')]}"/>
+                        <button name="recompute_fields" type="object" string="Perskaičiuoti laukus"
+                                class="oe_highlight"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Dokumento numeris"/>
+                            <h1 class="mt0">
+                                <field name="doc_number" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="doc_date"/>
+                            <field name="payment_date"/>
+                            <field name="amount"/>
+                            <field name="residual"/>
+                            <field name="move_id" readonly="1"
+                                   attrs="{'invisible': [('move_id', '=', False)]}"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Mokėjimo taškas" colspan="1" col="2">
+                                <field name="payment_type_code"/>
+                                <field name="payment_type_id" readonly="1"/>
+
+                            </group>
+                            <group string="Mokėjimo tipas" colspan="1" col="2">
+                                <field name="pos_code"/>
+                                <field name="point_of_sale_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Papildoma informacija" colspan="1" col="2">
+                            <field name="refund_payment"/>
+                            <field name="extra_data"/>
+                            <field name="refund_invoice_id" readonly="1"/>
+                            <field name="refund_invoice_state" readonly="1"/>
+                            <field name="let_create_refund_invoice" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="form_r_keeper_payment_front" model="ir.ui.view">
+            <field name="name">r.keeper.payment.form.front</field>
+            <field name="model">r.keeper.payment</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="rKeeper mokėjimai" create="0" edit="0" delete="0">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Dokumento numeris"/>
+                            <h1 class="mt0">
+                                <field name="doc_number" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="doc_date"/>
+                            <field name="payment_date"/>
+                            <field name="amount"/>
+                            <field name="residual"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Mokėjimo taškas" colspan="1" col="2">
+                                <field name="payment_type_code"/>
+                                <field name="payment_type_id" readonly="1"/>
+
+                            </group>
+                            <group string="Mokėjimo tipas" colspan="1" col="2">
+                                <field name="pos_code"/>
+                                <field name="point_of_sale_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Papildoma informacija" colspan="1" col="2">
+                            <field name="refund_payment"/>
+                            <field name="extra_data"/>
+                            <field name="refund_invoice_id"/>
+                            <field name="refund_invoice_state"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--PIVOT-->
+        <record id="pivot_r_keeper_payment_front" model="ir.ui.view">
+            <field name="name">r.keeper.payment.pivot.front</field>
+            <field name="model">r.keeper.payment</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Mokėjimai">
+                    <field name="amount" type="measure"/>
+                    <field name="residual" type="measure"/>
+                    <field name="payment_date" type="row"/>
+                    <field name="point_of_sale_id" type="row"/>
+                    <field name="payment_type_id" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <!--SEARCHES-->
+        <record id="search_r_keeper_payment" model="ir.ui.view">
+            <field name="name">Mokėjimų paieška</field>
+            <field name="model">r.keeper.payment</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="no_action" string="Nekūriama" domain="[('state', '=', 'no_action')]"/>
+                    <filter name="active" string="Laukiama sukūrimo" domain="[('state','=','active')]"/>
+                    <filter name="warning" string="Nepavyko sukurti įrašo" domain="[('state','=','failed')]"/>
+                    <filter name="warning" string="Trūksta konfigūracijos" domain="[('state','=','warning')]"/>
+                    <filter name="open" string="Sukurta, laukiama sudengimo" domain="[('state','=','open')]"/>
+                    <filter name="partially_reconciled" string="Mokėjimas sudengtas dalinai"
+                            domain="[('state', '=', 'partially_reconciled')]"/>
+                    <filter name="reconciled" string="Mokėjimas sudengtas" domain="[('state', '=', 'reconciled')]"/>
+                    <separator/>
+                    <filter name="credit_invoice_unconfirmed"
+                            string="Kreditinė sąskaita nepatvirtinta"
+                            domain="[('refund_invoice_id.state', 'not in', ['open', 'paid'])]"/>
+                    <filter name="active" string="Kreditinė sąskaita nekurta"
+                            domain="[('refund_invoice_state','=','no_action')]"/>
+                    <filter name="warning" string="Nepavyko sukurti kreditinės sąskaitos"
+                            domain="[('refund_invoice_state','=','failed')]"/>
+                    <filter name="warning" string="Kreditinė sąskaita sukurta"
+                            domain="[('refund_invoice_state','=','created')]"/>
+                    <field name="refund_invoice_state"/>
+                    <separator/>
+                    <field name="payment_date"/>
+                    <field name="doc_number" filter_domain="[('doc_number', 'ilike', self)]"/>
+                    <field name="payment_type_code" filter_domain="[('payment_type_code', 'ilike', self)]"/>
+                    <field name="payment_type_id"/>
+                    <field name="pos_code" filter_domain="[('pos_code', 'ilike', self)]"/>
+                    <field name="point_of_sale_id"/>
+                    <field name="refund_invoice_id"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="['|', '&amp;',
+                            ('payment_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('payment_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('payment_date', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                            ('payment_date', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"
+                    />
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['|', '&amp;',
+                            ('payment_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('payment_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('payment_date', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                            ('payment_date', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"
+                    />
+                    <filter name="this_year" string="Šie metai"
+                            domain="['|', '&amp;',
+                            ('payment_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                            ('payment_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('payment_date', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                            ('payment_date', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"
+                    />
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="['|', '&amp;',
+                            ('payment_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                            ('payment_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                            '&amp;',
+                            ('payment_date', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                            ('payment_date', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"
+                    />
+                    <group>
+                        <filter name="group_pos_id" string="Pardavimo taškas"
+                                context="{'group_by':'point_of_sale_id'}"/>
+                        <filter name="group_payment_type_id" string="Mokėjimo tipas"
+                                context="{'group_by':'payment_type_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_r_keeper_payment" model="ir.actions.act_window">
+            <field name="name">Mokėjimai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">r.keeper.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_r_keeper_payment"/>
+        </record>
+        <record id="action_open_r_keeper_payment_front" model="ir.actions.act_window">
+            <field name="name">Mokėjimai</field>
+            <field name="res_model">r.keeper.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree_robo,pivot</field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="header_r_keeper_base"/>
+            <field name="search_view_id" ref="search_r_keeper_payment"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_r_keeper_payment_front')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_r_keeper_payment_front')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('pivot_r_keeper_payment_front')}),]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="action_recompute_fields_multi_payment" model="ir.actions.server">
+            <field name="name">Perskaičiuoti laukus</field>
+            <field name="model_id" ref="r_keeper.model_r_keeper_payment"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).recompute_fields()
+            </field>
+        </record>
+        <function name="create_action_recompute_fields_multi_payment" model="r.keeper.payment"/>
+        <record id="action_cancel_payment_multi" model="ir.actions.server">
+            <field name="name">Atšaukti mokėjimus</field>
+            <field name="model_id" ref="r_keeper.model_r_keeper_payment"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).cancel_payment()
+            </field>
+        </record>
+        <function name="create_action_cancel_payment_multi" model="r.keeper.payment"/>
+        <!--MENU ITEMS-->
+        <menuitem
+                id="menu_r_keeper_payment"
+                name="Mokėjimai"
+                sequence="2"
+                action="action_open_r_keeper_payment"
+                parent="r_keeper_accounting_root"
+        />
+        <menuitem id="menu_r_keeper_payment_front"
+                  name="Mokėjimai"
+                  parent="r_keeper.r_keeper_root_front"
+                  sequence="4"
+                  robo_front="True"
+                  action="action_open_r_keeper_payment_front"
+                  groups="r_keeper.group_r_keeper_front_end"
+                  force_web_icon="icon-cash-euro,none,none"
+                  searchable="True"
+                  tags="rkeeper,mokėjimai"
+        />
+    </data>
+</odoo>

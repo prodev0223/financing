@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <odoo>
+        <!--Form-->
+        <record id="form_account_invoice_vat_change_wizard" model="ir.ui.view">
+            <field name="name">form.account.invoice.vat.change.wizard</field>
+            <field name="model">account.invoice.vat.change.wizard</field>
+            <field name="arch" type="xml">
+                <form string="VAT change wizard">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                            With this wizard you can replace all invoice line taxes to the selected tax.
+                            If you would like to change the taxes only for a particular line, do not use this wizard.
+                        </div>
+                        <group>
+                            <field name="account_tax_id" string="Tax" required="1" options="{'no_create':1}"/>
+                        </group>
+                    <footer>
+                        <button name="change_taxes" string="Change taxes" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </odoo>
+</data>

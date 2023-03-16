@@ -1,0 +1,132 @@
+<template>
+    <t t-name="ziniarastis.ZiniarastisController">
+        <header id="ziniarastis_header">
+
+            <div id="ziniarastis_state_button_group">
+                <div id="button_done_threaded"
+                     class="positive button o_ziniarastis_invisible"
+                     confirm="Šis veiksmas patvirtins visus nepatvirtintus žiniaraščius. Ar norite tęsti?">
+                    <span class="fa fa-check"/>
+                    <span>Patvirtinti visus</span>
+                </div>
+                <div id="button_done_selected"
+                     class="positive button o_ziniarastis_invisible"
+                     confirm="Šis veiksmas patvirtins visus išfiltruotus nepatvirtintus žiniaraščius. Ar norite tęsti?">
+                    <span class="fa fa-check"/>
+                    <span>Patvirtinti pasirinktus</span>
+                </div>
+                <div id="button_check"
+                     class="positive button o_ziniarastis_invisible">
+                    <span class="fa fa-eye"/>
+                    <span>Patikrinti</span>
+                </div>
+                <div id="button_cancel"
+                     class="negative button o_ziniarastis_invisible"
+                     confirm="Šis veiksmas atšauks tik eilutes, kurių algalapiai dar nepatvirtinti. Ar norite tęsti?">
+                    <span class="fa fa-times"/>
+                    <span>Atšaukti</span>
+                </div>
+                <div id="button_draft"
+                     class="negative button o_ziniarastis_invisible">
+                    <span class="fa fa-edit"/>
+                    <span>Atstatyti į juodraštį</span>
+                </div>
+            </div>
+
+            <div id="ziniarastis_data_button_group">
+                <div id="add_non_existing_contracts"
+                     class="regular button o_ziniarastis_invisible"
+                     confirm="Jeigu kol kas nesukurti žiniaraščiai, tai gali užtrukti daug laiko. Ar norite tęsti?">
+                    <span class="fa fa-book"/>
+                    <span>Pridėti neįtrauktus kontraktus</span>
+                </div>
+                <div id="update_ziniarasciai"
+                     class="regular button o_ziniarastis_invisible"
+                     confirm="Ši operacija gali užtrukti daug laiko. Ar norite tęsti?">
+                    <span class="fa fa-database"/>
+                    <span>Atnaujinti duomenis</span>
+                </div>
+            </div>
+
+            <div id="ziniarastis_export_button_group">
+                <div id="export_excel"
+                     class="export button o_ziniarastis_invisible">
+                    <span class="fa fa-download"/>
+                    <span>Eksportuoti</span>
+                </div>
+                <div id="export_excel_multiple"
+                     class="export button o_ziniarastis_invisible">
+                    <span class="fa fa-download"/>
+                    <span>Eksportuoti pasirinktinai</span>
+                </div>
+            </div>
+
+            <div id="ziniarastis_other_group">
+                <div id="open_payslip_batches"
+                     class="jump button o_ziniarastis_invisible">
+                    <span class="fa fa-money"/>
+                    <span>Algalapių suvestinė</span>
+                </div>
+            </div>
+
+            <div id="ziniarastis_arrow_group" class="o_ziniarastis_invisible">
+                <div class="ziniarastis_arrow_previous arrow" type="button">
+                    <span class="fa fa-arrow-left"/>
+                </div>
+                <div class="ziniarastis_arrow_next arrow" type="button">
+                    <span class="fa fa-arrow-right"/>
+                </div>
+            </div>
+
+            <div>
+                <span id="ziniarastis_state"/> <!-- JS Sets this when loading header -->
+                <div class="fa-2x" id="spinner_container">
+                    <i id="ziniarastis_busy_icon" class="fa fa-spinner fa-spin o_ziniarastis_invisible" title="Tvirtinama..."/>
+                </div>
+            </div>
+
+            <div id="button_switch_table_container" class="o_ziniarastis_invisible">
+                <span>Išplėstinis rodinys</span>
+                <i id='button_switch_table' class="fa fa-toggle-on" title="Perjungti rodinį"/>
+            </div>
+
+        </header>
+
+        <span id="confirm_msg" class="o_ziniarastis_invisible"/>
+
+        <div id="ziniarastis_setter_group" class="o_ziniarastis_invisible">
+            <div class="button_group">
+                <div class="setter_button" style="background-color: #62b8ff !important" code="FD1" title="Pažymėtomis dienomis nustatyti 1 valandos įprastą darbo laiką"><span>FD1</span></div>
+                <div class="setter_button" style="background-color: #62b8ff !important" code="FD2" title="Pažymėtomis dienomis nustatyti 2 valandų įprastą darbo laiką"><span>FD2</span></div>
+                <div class="setter_button" style="background-color: #62b8ff !important" code="FD3" title="Pažymėtomis dienomis nustatyti 3 valandų įprastą darbo laiką"><span>FD3</span></div>
+                <div class="setter_button" style="background-color: #62b8ff !important" code="FD4" title="Pažymėtomis dienomis nustatyti 4 valandų įprastą darbo laiką"><span>FD4</span></div>
+                <div class="setter_button" style="background-color: #62b8ff !important" code="FD5" title="Pažymėtomis dienomis nustatyti 5 valandų įprastą darbo laiką"><span>FD5</span></div>
+                <div class="setter_button" style="background-color: #62b8ff !important" code="FD6" title="Pažymėtomis dienomis nustatyti 6 valandų įprastą darbo laiką"><span>FD6</span></div>
+                <div class="setter_button" style="background-color: #62b8ff !important" code="FD7" title="Pažymėtomis dienomis nustatyti 7 valandų įprastą darbo laiką"><span>FD7</span></div>
+                <div class="setter_button" style="background-color: #62b8ff !important" code="FD8" title="Pažymėtomis dienomis nustatyti 8 valandų įprastą darbo laiką"><span>FD8</span></div>
+            </div>
+
+            <div class="button_group">
+                <div class="setter_button oe_vd_button" code="VD1" title="Pažymėtomis dienomis nustatyti 1 valandą viršvalandžių"><span>VD1</span></div>
+                <div class="setter_button oe_vd_button" code="VD2" title="Pažymėtomis dienomis nustatyti 2 valandas viršvalandžių"><span>VD2</span></div>
+                <div class="setter_button oe_vd_button" code="VD3" title="Pažymėtomis dienomis nustatyti 3 valandas viršvalandžių"><span>VD3</span></div>
+                <div class="setter_button oe_vd_button" code="VD4" title="Pažymėtomis dienomis nustatyti 4 valandas viršvalandžių"><span>VD4</span></div>
+            </div>
+
+            <div class="button_group">
+                <div class="setter_button oe_background_green" code="A" title="Pažymėti, kaip kasmetines atostogas"><span>A</span></div>
+                <div class="setter_button oe_background_yellow" code="K" title="Pažymėti, kaip komandiruotę"><span>K</span></div>
+                <div class="setter_button oe_background_red" code="L" title="Pažymėti, kaip ligą"><span>L</span></div>
+                <div class="setter_button oe_background_orange" code="M" title="Pažymėti, kaip papildomą poislio dieną tėvams auginantiems vaikus"><span>M</span></div>
+                <div class="setter_button oe_background_teal" code="NA" title="Pažymėti, kaip neapmokamas atostogas"><span>NA</span></div>
+                <div class="setter_button oe_background_blue" code="ND" title="Pažymėti, kaip neatvykimą į darbą administracijai leidus"><span>ND</span></div>
+                <div class="setter_button oe_background_aqua" code="NS" title="Pažymėti, kaip nedarbingumą ligoniams slaugyti"><span>NS</span></div>
+                <div class="setter_button oe_background_silver" code="P" title="Pažymėti, kaip poilsio dieną"><span>P</span></div>
+            </div>
+
+            <div class="button_group">
+                <div class="setter_button" style="background-color: #f85b5b !important;" code="DEL" title="Panaikinti darbo laiką pažymėtuose langeliuose"><span>IŠTRINTI</span></div>
+            </div>
+        </div>
+    </t>
+</template>

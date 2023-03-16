@@ -1,0 +1,12 @@
+<odoo>
+    <data>
+        <record id="robo_analytic.group_robo_analytic_sharing" model="res.groups">
+            <field name="name">Robo Invoice Analytic sharing</field>
+            <field name="implied_ids"
+                   eval="[(4, ref('robo_analytic.group_robo_analytic_see_amounts'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name="front_help">Matomos komandos narių analitinių sąskaitų sumos ir dokumentai</field>
+            <field name="front_category_id" eval="ref('robo_basic.front_res_groups_category_analytics')"/>
+        </record>
+    </data>
+</odoo>

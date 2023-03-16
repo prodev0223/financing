@@ -1,0 +1,411 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* due_payments
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-26 06:45+0000\n"
+"PO-Revision-Date: 2021-03-26 06:45+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: due_payments
+#: model:mail.template,body_html:due_payments.apr_email_template_res_partner_before_invoice
+msgid "\n"
+"                    <p>Dear business partner,</p>\n"
+"                    <p></p>\n"
+"                    <p>Thanks for doing business with us. We’re just getting in touch regarding ${object.env.context.get('invoice')|safe}.\n"
+"                    We wanted to give you a quick reminder that the balance of  ${object.env.context.get('amount')|safe}\n"
+"                    <span style=\"text-decoration: underline;\">is due to be paid in ${object.env.context.get('n_days')} days</span>.</p>\n"
+"                    <p></p>\n"
+"\n"
+"                    ${object.env.context.get('payment_details')|safe}\n"
+"\n"
+"                    <p>Of course, if you have already paid this invoice, please disregard this message.</p>\n"
+"\n"
+"                    <p>Once again, we greatly appreciate your business.</p>\n"
+"                    <p></p>\n"
+"                    <p>Thanks,</p>\n"
+"                    <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+msgstr "\n"
+"                    <p>Mielas verslo partneri,</p>\n"
+"                    <p></p>\n"
+"                    <p>norime priminti apie ${object.env.context.get('invoice')|safe} mokėtina suma ${object.env.context.get('amount')|safe} \n"
+"                    <span style=\"text-decoration: underline;\">turi būti apmokėta po ${object.env.context.get('n_days')} dienų</span>.</p>\n"
+"                    <p></p>\n"
+"\n"
+"                    ${object.env.context.get('payment_details')|safe}\n"
+"\n"
+"                    <p>Jei ši sąskaita jau apmokėta - ignoruokite šią žinutę.</p>\n"
+"                    <p>Dėkui,</p>\n"
+"                    <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+
+#. module: due_payments
+#: model:mail.template,body_html:due_payments.apr_email_template_res_partner_on_date_invoice
+msgid "\n"
+"                    <p>Dear business partner,</p>\n"
+"                    <p></p>\n"
+"                    <p>This a quick message regarding ${object.env.context.get('invoice')|safe}.\n"
+"                    We just wanted to remind you that the balance for this invoice of ${object.env.context.get('amount')|safe} <span style=\"text-decoration: underline;\">is due to be paid today</span>.</p>\n"
+"                    <p></p>\n"
+"                    <p>You can settle your balance by making a transfer. Here are all the details you will need to make a transfer to settle your balance:</p>\n"
+"\n"
+"                    ${object.env.context.get('payment_details')|safe}\n"
+"\n"
+"                    <p>Of course, if you have already paid this invoice, please disregard this message.</p>\n"
+"\n"
+"                    <p>As always, we greatly appreciate your business.</p>\n"
+"                    <p></p>\n"
+"                    <p>Thanks,</p>\n"
+"                    <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+msgstr "\n"
+"                    <p>Mielas verslo partneri,</p>\n"
+"                    <p></p>\n"
+"                    <p>norime priminti apie ${object.env.context.get('invoice')|safe} mokėtina suma ${object.env.context.get('amount')|safe} \n"
+"                    <span style=\"text-decoration: underline;\">turi būti apmokėta šiandien</span>.</p>\n"
+"                    <p></p>\n"
+"                    <p>Galite atlikti mokėjimą pagal žemiau pateiktus duomenis:</p>\n"
+"\n"
+"                    ${object.env.context.get('payment_details')|safe}\n"
+"\n"
+"                    <p>Jei ši sąskaita jau apmokėta - ignoruokite šią žinutę.</p>\n"
+"                    <p>Dėkui,</p>\n"
+"                    <p>${user.company_id.name}</p>\n"
+"            "
+
+#. module: due_payments
+#: model:mail.template,body_html:due_payments.apr_email_template_res_partner_after_invoice
+msgid "\n"
+"                    <p>Dear business partner,</p>\n"
+"                    <p></p>\n"
+"                    <p>We are contacting you with regards to ${object.env.context.get('invoice')|safe}.\n"
+"                    We wanted to remind you that total amount to pay is ${object.env.context.get('amount')|safe}\n"
+"                    and the earliest missed payment was\n"
+"                    <span style=\"text-decoration: underline;\">due to be paid on ${object.env.context.get('date_due')|safe}</span>.</p>\n"
+"                    <p></p>\n"
+"                    <p>We kindly ask that this payment be made as soon as possible. Here are all the details you will need to make a transfer to settle your balance:</p>\n"
+"\n"
+"                    ${object.env.context.get('payment_details')|safe}\n"
+"\n"
+"                    <p>We look forward to your swift response. Please feel free to contact us if we can be of any assistance.</p>\n"
+"\n"
+"                    <p>Of course, if you have already paid this invoice, please disregard this message.</p>\n"
+"\n"
+"                    <p>Thanks once again for your business.</p>\n"
+"                    <p></p>\n"
+"                    <p>Regards,</p>\n"
+"                    <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+msgstr "\n"
+"                    <p>Mielas verslo partneri,</p>\n"
+"                    <p></p>\n"
+"                    <p>Norime priminti apie ${object.env.context.get('invoice')|safe} mokėtina suma ${object.env.context.get('amount')|safe} ir anksčiausias praleistas mokėjimas \n"
+"                    <span style=\"text-decoration: underline;\">turėjo būti apmokėtas ${object.env.context.get('date_due')|safe}</span>.</p>\n"
+"                    <p></p>\n"
+"                    <p>Prašome atlikti mokėjimus pagal žemiau pateiktus duomenis:</p>\n"
+"\n"
+"                    ${object.env.context.get('payment_details')|safe}\n"
+"\n"
+"                    <p>Žinoma, jei jau apmokėjote šią sąskaitą, prašome nekreipti dėmesio į šį pranešimą.</p>\n"
+"\n"
+"                    <p>Prašome kuo skubiau atlikti mokėjimus. Jei turite klausimų dėl pateiktų skolų - kreipkitės.</p>\n"
+"                    <p>Dėkui,</p>\n"
+"                    <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:259
+#, python-format
+msgid "Account number"
+msgstr "Banko sąskaitos numeris"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_send_reminders
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_send_reminders
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_send_reminders
+msgid "Aktyvuoti automatinius priminimus"
+msgstr "Aktyvuoti automatinius priminimus"
+
+#. module: due_payments
+#: model:ir.model.fields,help:due_payments.field_res_company_apr_enabled_by_default
+msgid "Aktyvuoti automatinius priminimus visiems naujai sukurtiems partneriams pagal nutylėjimą"
+msgstr "Aktyvuoti automatinius priminimus visiems naujai sukurtiems partneriams pagal nutylėjimą"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_enabled_reminders
+msgid "Aktyvuoti priminimai"
+msgstr "Aktyvuoti priminimai"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_enabled_by_default
+msgid "Aktyvuoti visiems naujai sukurtiems partneriams pagal nutylėjimą"
+msgstr "Aktyvuoti visiems naujai sukurtiems partneriams pagal nutylėjimą"
+
+#. module: due_payments
+#: model:ir.ui.view,arch_db:due_payments.view_partner_form_apr_settings
+msgid "Automatiniai mokėjimų priminimai"
+msgstr "Automatiniai mokėjimų priminimai"
+
+#. module: due_payments
+#: model:ir.ui.view,arch_db:due_payments.view_partner_form_apr_settings
+msgid "Automatinių priminimų el. paštai nenustatyti, nurodykite partnerio el. paštą arba sukonfigūruokite nustatymus."
+msgstr "Automatinių priminimų el. paštai nenustatyti, nurodykite partnerio el. paštą arba sukonfigūruokite nustatymus."
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:260
+#, python-format
+msgid "BIC"
+msgstr "BIC"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:314
+#, python-format
+msgid "Balance "
+msgstr "Skolos "
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:258
+#, python-format
+msgid "Bank code"
+msgstr "Banko kodas"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:257
+#, python-format
+msgid "Bank name"
+msgstr "Banko pavadinimas"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:261
+#, python-format
+msgid "Beneficiary"
+msgstr "Gavėjas"
+
+#. module: due_payments
+#: model:ir.model,name:due_payments.model_res_company
+msgid "Companies"
+msgstr "Įmonės"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_send_before_ndays
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_send_before_ndays
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_send_before_ndays
+msgid "Dienų skaičius iki mokėjimo termino"
+msgstr "Dienų skaičius iki mokėjimo termino"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_send_after_ndays
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_send_after_ndays
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_send_after_ndays
+msgid "Dienų skaičius nuo mokėjimo termino"
+msgstr "Dienų skaičius nuo mokėjimo termino"
+
+#. module: due_payments
+#: model:mail.template,subject:due_payments.email_template_partner_due_payment
+msgid "Due payments"
+msgstr "Due payments"
+
+#. module: due_payments
+#: model:ir.model,name:due_payments.model_mail_compose_message
+msgid "Email composition wizard"
+msgstr "El. laiško sukūrimo vedlys"
+
+#. module: due_payments
+#: model:ir.ui.view,arch_db:due_payments.view_partner_form_apr_settings
+msgid "Gavėjų el.pašto adresai"
+msgstr "Gavėjų el.pašto adresai"
+
+#. module: due_payments
+#: model:ir.model.fields,help:due_payments.field_res_partner_apr_email_cc
+#: model:ir.model.fields,help:due_payments.field_res_partner_apr_sendto_emails
+#: model:ir.model.fields,help:due_payments.field_res_users_apr_email_cc
+#: model:ir.model.fields,help:due_payments.field_res_users_apr_sendto_emails
+msgid "Jei pateikiami keli el. pašto adresai, jie turi būti atskirti kabliataškiu (;)"
+msgstr "Jei pateikiami keli el. pašto adresai, jie turi būti atskirti kabliataškiu (;)"
+
+#. module: due_payments
+#: model:ir.model.fields,help:due_payments.field_res_company_apr_send_reminders
+msgid "Jei užstatyta, klientai su įjungtu priminimų siuntimu gaus el. laiškus. Jei neužstatyta, nei vienas klientas negaus automatinių priminimų."
+msgstr "Jei užstatyta, klientai su įjungtu priminimų siuntimu gaus el. laiškus. Jei neužstatyta, nei vienas klientas negaus automatinių priminimų."
+
+#. module: due_payments
+#: model:ir.model.fields,help:due_payments.field_res_company_apr_send_after
+#: model:ir.model.fields,help:due_payments.field_res_company_apr_send_on_date
+#: model:ir.model.fields,help:due_payments.field_res_partner_apr_send_after
+#: model:ir.model.fields,help:due_payments.field_res_partner_apr_send_on_date
+#: model:ir.model.fields,help:due_payments.field_res_users_apr_send_after
+#: model:ir.model.fields,help:due_payments.field_res_users_apr_send_on_date
+msgid "Jei užstatyta, klientas gaus automatinius mokėjimo priminimus"
+msgstr "Jei užstatyta, klientas gaus automatinius mokėjimo priminimus"
+
+#. module: due_payments
+#: model:ir.model.fields,help:due_payments.field_res_company_apr_send_before
+#: model:ir.model.fields,help:due_payments.field_res_partner_apr_send_before
+#: model:ir.model.fields,help:due_payments.field_res_users_apr_send_before
+msgid "Jei užstatyta, klientas gaus automatinius mokėjimo priminimus prieš mokėjimo terminą"
+msgstr "Jei užstatyta, klientas gaus automatinius mokėjimo priminimus prieš mokėjimo terminą"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:83
+#, python-format
+msgid "Kompanijos nustatymuose neįjungti automatiniai priminimai."
+msgstr "Kompanijos nustatymuose neįjungti automatiniai priminimai."
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_min_amount_to_send
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_min_amount_to_send
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_min_amount_to_send
+msgid "Mažiausia suma, nuo kurios siųsti mokėjimo priminimus"
+msgstr "Mažiausia suma, nuo kurios siųsti mokėjimo priminimus"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:136
+#: code:addons/due_payments/model/res_partner.py:143
+#, python-format
+msgid "Mažiausias leistinas dienų skaičius yra 1 diena"
+msgstr "Mažiausias leistinas dienų skaičius yra 1 diena"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_users_mobile
+msgid "Mobile phone"
+msgstr "Mobilusis"
+
+#. module: due_payments
+#: model:ir.ui.view,arch_db:due_payments.view_partner_form_apr_settings
+msgid "Mokėjimų priminimai"
+msgstr "Mokėjimų priminimai"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:102
+#: code:addons/due_payments/model/res_partner.py:114
+#, python-format
+msgid "Nurodytas neteisingas el. pašto adresas."
+msgstr "Nurodytas neteisingas el. pašto adresas."
+
+#. module: due_payments
+#: model:ir.model.fields,help:due_payments.field_res_partner_apr_send_reminders
+#: model:ir.model.fields,help:due_payments.field_res_users_apr_send_reminders
+msgid "Nustačius klientas gaus automatinius el. Laiškus apie mokėjimo terminus (Turi būti aktyvuota ir kompanijos nustatymuose)"
+msgstr "Nustačius klientas gaus automatinius el. Laiškus apie mokėjimo terminus (Turi būti aktyvuota ir kompanijos nustatymuose)"
+
+#. module: due_payments
+#: model:ir.model,name:due_payments.model_res_partner
+msgid "Partner"
+msgstr "Partneris"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_date_last_sent
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_date_last_sent
+msgid "Paskutinė mokėjimo terminų priminimo data"
+msgstr "Paskutinė mokėjimo terminų priminimo data"
+
+#. module: due_payments
+#: model:mail.template,subject:due_payments.apr_email_template_res_partner_after_invoice
+#: model:mail.template,subject:due_payments.apr_email_template_res_partner_before_invoice
+#: model:mail.template,subject:due_payments.apr_email_template_res_partner_on_date_invoice
+msgid "Payment reminder from "
+msgstr "Mokėjimo priminimas nuo "
+
+#. module: due_payments
+#: model:ir.model.fields,help:due_payments.field_res_company_apr_send_before_ndays
+#: model:ir.model.fields,help:due_payments.field_res_partner_apr_send_before_ndays
+#: model:ir.model.fields,help:due_payments.field_res_users_apr_send_before_ndays
+msgid "Priminimas bus siunčiamas ... dienų iki mokėjimo termino"
+msgstr "Priminimas bus siunčiamas ... dienų iki mokėjimo termino"
+
+#. module: due_payments
+#: model:ir.model.fields,help:due_payments.field_res_partner_apr_send_after_ndays
+#: model:ir.model.fields,help:due_payments.field_res_users_apr_send_after_ndays
+msgid "Priminimas bus siunčiamas ... dienų nuo mokėjimo termino"
+msgstr "Priminimas bus siunčiamas ... dienų nuo mokėjimo termino"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_email_reply_to
+msgid "Priminimų laiškai atsakomi 'reply-to'"
+msgstr "Priminimų laiškai atsakomi 'reply-to'"
+
+#. module: due_payments
+#: model:ir.ui.view,arch_db:due_payments.view_partner_form_apr_settings
+msgid "Priminimų nustatymai"
+msgstr "Priminimų nustatymai"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:262
+#, python-format
+msgid "Registration number"
+msgstr "Įmonės kodas"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_send_after
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_send_after
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_send_after
+msgid "Siųsti automatinius priminimus po mokėjimo termino"
+msgstr "Siųsti automatinius priminimus po mokėjimo termino"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_send_before
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_send_before
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_send_before
+msgid "Siųsti automatinius priminimus prieš mokėjimo terminą"
+msgstr "Siųsti automatinius priminimus prieš mokėjimo terminą"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_sendto_emails
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_sendto_emails
+msgid "Siųsti automatinius priminimus į šiuos el pašto adresus"
+msgstr "Siųsti automatinius priminimus į šiuos el pašto adresus"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_email_cc
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_email_cc
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_email_cc
+msgid "Siųsti laiškų kopijas el. paštu"
+msgstr "Siųsti laiškų kopijas el. paštu"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_company_apr_send_on_date
+#: model:ir.model.fields,field_description:due_payments.field_res_partner_apr_send_on_date
+#: model:ir.model.fields,field_description:due_payments.field_res_users_apr_send_on_date
+msgid "Siųsti priminimą termino dieną"
+msgstr "Siųsti priminimą termino dieną"
+
+#. module: due_payments
+#: model:ir.model.fields,field_description:due_payments.field_res_users_parent_id
+msgid "Susijusi įmonė"
+msgstr "Susijusi įmonė"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:81
+#, python-format
+msgid "Tik vadovas gali pakeisti šį nustatymą"
+msgstr "Tik vadovas gali pakeisti šį nustatymą"
+
+#. module: due_payments
+#: code:addons/due_payments/model/res_partner.py:263
+#, python-format
+msgid "VAT code"
+msgstr "PVM kodas"
+
+#. module: due_payments
+#: model:ir.model,name:due_payments.model_payment_reminder
+msgid "payment.reminder"
+msgstr "mokėjimo.priminimas"
+
+#. module: due_payments
+#: model:ir.ui.view,arch_db:due_payments.view_partner_form_apr_settings
+msgid "Įgalinti priminimus"
+msgstr "Įgalinti priminimus"

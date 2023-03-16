@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="base.action_partner_customer_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+        </record>
+        <record id="base.action_partner_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('base.view_partner_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('base.view_partner_form')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('base.res_partner_kanban_view')})]"/>
+        </record>
+        <record id="base.action_partner_supplier_form" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+        </record>
+
+        <record id="view_partner_form_apr_settings" model="ir.ui.view">
+            <field name="name">res.partner.automaticpaymentreminder.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook[1]" position="inside">
+                    <page name="automatic_payment_reminders" string="Mokėjimų priminimai">
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': ['|', '|', ('apr_send_reminders', '=', False), ('email', '!=', False), ('apr_sendto_emails', '!=', False)] }">
+                            Automatinių priminimų el. paštai nenustatyti, nurodykite partnerio el. paštą arba sukonfigūruokite nustatymus.
+                        </div>
+                        <group name="apr" string="Automatiniai mokėjimų priminimai" colspan="4">
+                            <group>
+                                <field name="apr_send_reminders" string="Įgalinti priminimus"/>
+                            </group>
+                        </group>
+                        <group name="APR_settings" string="Priminimų nustatymai"
+                               attrs="{'invisible':[('apr_send_reminders','=',False)]}" colspan="4">
+                            <group name="apr_emails">
+                                <field name="apr_sendto_emails" string="Gavėjų el.pašto adresai" colspan="4"/>
+                                <field name="apr_min_amount_to_send" colspan="4"/>
+                            </group>
+                            <group name="apr_emails_cc">
+                                <field name="apr_email_cc" colspan="4"/>
+                            </group>
+                            <group name="apr_before">
+                                <field name="apr_send_before"/>
+                                <field name="apr_send_before_ndays"
+                                       attrs="{'invisible':[('apr_send_before','=',False)]}"/>
+                            </group>
+                            <group name="apr_today">
+                                <field name="apr_send_on_date"/>
+                            </group>
+                            <group name="apr_after">
+                                <field name="apr_send_after"/>
+                                <field name="apr_send_after_ndays"
+                                       attrs="{'invisible':[('apr_send_after','=',False)]}"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

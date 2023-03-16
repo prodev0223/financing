@@ -1,0 +1,79 @@
+<odoo>
+    <data>
+        <record id="form_bank_export_job" model="ir.ui.view">
+            <field name="name">form.bank.export.job</field>
+            <field name="model">bank.export.job</field>
+            <field name="arch" type="xml">
+                <form edit="0" create="0" delete="0">
+                    <sheet>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': [('xml_file_download', '=', False)]}">
+                            Šis mokėjimas buvo eksportuotas ir atsisiųstas kaip XML failas.
+                        </div>
+                        <field name="xml_file_download" invisible="1"/>
+                        <group string="Transakcijos duomenys"
+                               attrs="{'invisible': [('export_data_type', 'in',
+                                                    ['e_invoice', 'automatic_e_invoice_payment'])]}">
+                            <field name="tr_name"/>
+                            <field name="tr_ref"/>
+                            <field name="tr_date"/>
+                            <field name="tr_amount"/>
+                            <field name="tr_partner_id"/>
+                            <field name="tr_currency_id"/>
+                            <field name="tr_bank_account_id"/>
+                            <field name="tr_structured"/>
+                            <field name="journal_id" options="{'no_open': True}"/>
+                        </group>
+                        <group colspan="4" col="2">
+                            <group string="Transakcijos identifikacija" colspan="1" col="2"
+                                   attrs="{'invisible': [('export_data_type', 'in',
+                                                        ['e_invoice', 'automatic_e_invoice_payment'])]}">
+                                <field name="sepa_instruction_id"/>
+                                <field name="partial_payment"/>
+                                <field name="post_export_residual"
+                                       attrs="{'invisible': [('partial_payment', '=', False)]}"/>
+                            </group>
+                            <group string="eSąskaitų informacija" colspan="1" col="2"
+                                   attrs="{'invisible': [('export_data_type', 'not in',
+                                                        ['e_invoice', 'automatic_e_invoice_payment'])]}">
+                                <field name="e_invoice_file_id"/>
+                                <field name="e_invoice_global_unique_id"/>
+                                <field name="e_invoice_auto_payment_partner_id"
+                                       attrs="{'invisible': [('e_invoice_auto_payment_partner_id', '=', False)]}"/>
+                            </group>
+                            <group string="Papildoma informacija" colspan="1" col="2">
+                                <field name="export_data_type"/>
+                                <field name="last_error_message"/>
+                                <field name="partner_id"/>
+                                <field name="export_state"/>
+                                <field name="date_exported"/>
+                                <field name="e_signed_export"
+                                       attrs="{'invisible': [('available_for_signing', '=', False)]}"/>
+                                <field name="date_signed"
+                                       attrs="{'invisible': [('available_for_signing', '=', False)]}"/>
+                                <field name="available_for_signing" invisible="1"/>
+                                <field name="system_notification" groups="robo_basic.group_robo_premium_manager"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('export_data_type', 'in',
+                                      ['automatic_e_invoice_payment', 'front_statement', 'bank_statement'])]}"
+                               colspan="4" col="2">
+                            <group string="Susijusios sąskaitos" colspan="1" col="2">
+                                <field name="invoice_ids" widget="many2many_tags"/>
+                            </group>
+                            <group string="Susiję žurnalo elementai" colspan="1" col="2">
+                                <field name="move_line_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': ['|', ('available_for_signing', '=', False)]}"
+                               style="text-align: center;"
+                               string="Pasirašymas">
+                            <button name="sign_bank_transaction" string="Pasirašyti transakciją"
+                                    type="object" icon="fa-pencil-square-o analytic_button"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

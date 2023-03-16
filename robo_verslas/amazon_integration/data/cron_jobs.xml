@@ -1,0 +1,17 @@
+<odoo>
+    <data>
+        <!--Cron Jobs-->
+        <record id="cron_synchronize_orders" model="ir.cron">
+            <field name="name">Synchronize Amazon orders</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">amazon.cron.jobs</field>
+            <field name="function">cron_synchronize_orders</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=21, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="amazon_sp_inventory_act_line_view_form" model="ir.ui.view">
+            <field name="name">amazon.sp.inventory.act.line.view.form</field>
+            <field name="model">amazon.sp.inventory.act.line</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Amazon SP-API inventory line" create="0" delete="0">
+                    <sheet>
+                        <div>
+                            <label string="Product ASIN"/>
+                            <h1 class="mt0">
+                                <field name="asin_product_code" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group readonly="1">
+                            <field name="amazon_product_id"/>
+                            <field name="write_off_quantity"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

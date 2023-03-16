@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="tree_nsoft_report_move_line" model="ir.ui.view">
+            <field name="name">tree.nsoft.report.move.line</field>
+            <field name="model">nsoft.report.move.line</field>
+            <field name="arch" type="xml">
+                <tree string="nSoft Aktų eilutės"
+                      decoration-success="state == 'created'"
+                      decoration-danger="state == 'failed'"
+                      decoration-info="state == 'imported'"
+                      create="0" edit="0" delete="1">
+                    <field name="nsoft_report_move"/>
+                    <field name="move_id"/>
+                    <field name="line_quantity"/>
+                    <field name="line_amount"/>
+                    <field name="ext_product_category_id"/>
+                    <field name="nsoft_product_category_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_nsoft_report_move_line" model="ir.actions.act_window">
+            <field name="name">nSoft Aktų eilutės</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.report.move.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="tree_nsoft_report_move_line"/>
+        </record>
+        <!--Forms-->
+        <record id="form_nsoft_report_move_line" model="ir.ui.view">
+            <field name="name">form.nsoft.report.move.line</field>
+            <field name="model">nsoft.report.move.line</field>
+            <field name="arch" type="xml">
+                <form string="nSoft Aktų eilutės" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Tėvinis įrašas"/>
+                            <h1 class="mt0">
+                                <field name="nsoft_report_move" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="product_name"/>
+                            <field name="move_id"/>
+                            <field name="line_quantity"/>
+                            <field name="line_amount"/>
+                            <field name="ext_product_category_id"/>
+                            <field name="nsoft_product_category_id"/>
+                            <field name="state"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Searches-->
+        <record id="search_nsoft_report_move_line" model="ir.ui.view">
+            <field name="name">Aktų eilučių paieška</field>
+            <field name="model">nsoft.report.move.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="state_imported" string="Būsena: Importuota" domain="[('state','=','imported')]"/>
+                    <filter name="state_created" string="Būsena: Sukurta" domain="[('state','=','created')]"/>
+                    <filter name="state_failed" string="Būsena: Klaida kuriant aktą" domain="[('state','=','failed')]"/>
+                    <separator/>
+                    <field name="nsoft_report_move"/>
+                </search>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Aktų eilutės"
+                id="menu_nsoft_report_move_line"
+                sequence="43"
+                action="action_open_nsoft_report_move_line"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nsoft_sum_accounting"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,30 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'Analytic',
+    'version': '1.0',
+    'author': 'Robolabs',
+    'website': 'http://www.robolabs.lt',
+    'license': 'Other proprietary',
+    'depends': ['robo_settings'],
+    'data': [
+        'security/res.groups.xml',
+        'security/record.rules.xml',
+        'security/ir.model.access.csv',
+        'data/header_buttons.xml',
+        'view/analytic_lock_dates_wizard.xml',
+        'view/view.xml',
+        'view/account_invoice.xml',
+        'view/payroll_analytics.xml',
+        'view/account_move_line.xml',
+        'view/account_analytic_default_views.xml',
+        'view/account_invoice_report_materialized.xml',
+        'view/account_analytic_group.xml',
+        'data/header_buttons_items.xml',
+
+        'wizard/recompute_analytics_employee_card_wizard_views.xml',
+        'wizard/recompute_analytics_wizard_views.xml',
+    ],
+    'qweb': ['static/src/xml/*.xml'],
+    'demo': [],
+    'installable': True,
+}

@@ -1,0 +1,26 @@
+
+[class^="robo_"][class*="_buttons"]{//ROBO: why $ does not work?
+
+  position: relative;
+  font-family: @robo-header-font;
+  justify-content: center;
+  .heading-text {
+    font-size: 27px; //-h2
+  }
+  [class^="robo_button_"]{
+    .robo-buttons-mixin(url(/robo/static/src/img/report_box_lines.svg), 40px);
+    min-height: 230px;
+  }
+  .report_section{
+    .o-flex-display;
+    .o-flex-flow(row, wrap);
+    .o-align-items(stretch);
+    .o-justify-content(center);
+    .reports-box{
+      .o-flex(0,0,175px);
+      margin: 1em;
+      text-align: center;
+    }
+  }
+}
+

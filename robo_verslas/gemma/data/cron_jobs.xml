@@ -1,0 +1,49 @@
+<odoo>
+      <data noupdate="1">
+        <record id="cron_data_delete_gemma" model="ir.cron">
+            <field name="name">Delete Gemma Data</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">gemma.data.import</field>
+            <field name="function">cron_delete_sales</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=23, minute=30, second=00, months=1, day=1)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="active" eval="True"/>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_data_import_gemma" model="ir.cron">
+            <field name="name">Synchronize Gemma Data</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">gemma.sale.line</field>
+            <field name="function">cron_fetch_create</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=23, minute=59, second=59)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_recreate_gemma" model="ir.cron">
+            <field name="name">Recreate Gemma Invoices/Moves</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">gemma.sale.line</field>
+            <field name="function">cron_recreate</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=4, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+        <record id="cron_push_statement_lines_polis" model="ir.cron">
+            <field name="name">Push bank statement lines to POLIS</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">account.bank.statement.line</field>
+            <field name="function">cron_push_statement_lines_polis</field>
+            <field name="nextcall" eval="False"/>
+            <field name="args">()</field>
+        </record>
+      </data>
+</odoo>

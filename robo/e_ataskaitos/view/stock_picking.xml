@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_picking_form_extend" model="ir.ui.view">
+            <field name="name">view.picking.form.extend</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='carrier_id']" position="after">
+                    <!--<field name="partner_id_carrier" attrs="{'invisible': [('carrier_id','!=',False)]}"/>-->
+                    <field name="partner_id_carrier"/>
+                    <field name="transport_id" context="{'default_delivery_agent_id': partner_id_carrier}" domain="[('delivery_agent_id','=',partner_id_carrier)]"/>
+                </xpath>
+                <!--<xpath expr="//field[@name='origin']" position="after">-->
+                    <!--<field name="supplier_note"/>-->
+                    <!--<field name="partner_shipping_sequence" groups="stock.group_stock_manager"/>-->
+                <!--</xpath>-->
+            </field>
+        </record>
+        <record id="delivery_transport_tree_view" model="ir.ui.view">
+            <field name="name">delivery.transport.tree.view</field>
+            <field name="model">transport</field>
+            <field name="arch" type="xml">
+                <tree string="Transport">
+                    <field name="delivery_agent_id"/>
+                    <field name="model"/>
+                    <field name="license_plate"/>
+                </tree>
+            </field>
+        </record>
+        <record id="delivery_transport_form_view" model="ir.ui.view">
+            <field name="name">delivery.transport.form.view</field>
+            <field name="model">transport</field>
+            <field name="arch" type="xml">
+                <form string="Transport">
+                    <sheet string="Transport">
+                        <group>
+                            <field name="delivery_agent_id" string="Pervežimo kompanija" context="{'form_view_ref': 'robo.new_clients_customer_form'}"/>
+                            <field name="model" string="Mašinos modelis"/>
+                            <field name="license_plate" string="Mašinos numeriai"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_delivery_transport_form" model="ir.actions.act_window">
+            <field name="name">Delivery Transport</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                  Click to define a new transport.
+                </p>
+            </field>
+        </record>
+        <menuitem action="action_delivery_transport_form" id="menu_action_delivery_transport_form"
+                  parent="delivery.menu_delivery" sequence="1"/>
+        <menuitem action="action_delivery_transport_form" id="sale_menu_action_delivery_transport_form"
+                  parent="delivery.sale_menu_delivery" sequence="1"/>
+        <record id="res_partner_delivery_agent_form_view" model="ir.ui.view">
+            <field name="name">res.partner.delivery.agent.form.view</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='purchase']//field[@name='supplier']" position="after">
+                    <field name="delivery_agent" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="delivery_carrier_form_extend" model="ir.ui.view">
+            <field name="name">delivery.carrier.form.extend</field>
+            <field name="model">delivery.carrier</field>
+            <field name="inherit_id" ref="delivery.view_delivery_carrier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="partner_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

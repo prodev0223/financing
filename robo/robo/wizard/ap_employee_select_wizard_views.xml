@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="ap_employee_select_wizard" model="ir.ui.view">
+            <field name="name">ap.employee.select.wizard.form</field>
+            <field name="model">ap.employee.select.wizard</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form>
+                    <group string="Nurodykite atskaitingą asmenį">
+                        <field name="ap_employee_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+                    </group>
+                    <footer>
+                        <button name="post" type="object" string="Tvirtinti" class="oe_highlight"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

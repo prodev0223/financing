@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="revolut_api_transaction_view_form" model="ir.ui.view">
+            <field name="name">revolut.api.transaction.view.form</field>
+            <field name="model">revolut.api.transaction</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Revolut Transakcija">
+                    <header>
+                        <button name="btn_update_transaction" states="pending" type="object"
+                                string="Atnaujinti" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="Informacija">
+                            <field name="uuid"/>
+                            <field name="transaction_type"/>
+                            <field name="created_at"/>
+                            <field name="updated_at"/>
+                            <field name="completed_at"/>
+                        </group>
+                        <field name="leg_ids" readonly="1">
+                            <tree create="0">
+                                <field name="revolut_account_id"/>
+                                <field name="description"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="bill_currency_id" invisible="1"/>
+                                <field name="amount" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
+                                <field name="bill_amount" widget="monetary"
+                                       options="{'currency_field': 'bill_currency_id'}"/>
+                                <field name="bank_statement_line_ids" widget="many2many_tags"/>
+                                <button name="btn_create_statement" type="object" string="Sudengti"/>
+                            </tree>
+                        </field>
+                        <field name="bank_statement_line_ids" readonly="1">
+                            <tree create="0" >
+                                <field name="name"/>
+                                <field name="ref"/>
+                                <field name="statement_id"/>
+                            </tree>
+                        </field>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="revolut_api_transaction_view_tree" model="ir.ui.view">
+            <field name="name">revolut.api.transaction.view.tree</field>
+            <field name="model">revolut.api.transaction</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <tree string="Revolut Transakcijos">
+                    <field name="uuid"/>
+                    <field name="transaction_type"/>
+                    <field name="created_at"/>
+                    <field name="completed_at"/>
+                    <field name="reference"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="revolut_api_transaction_view_search" model="ir.ui.view">
+            <field name="name">revolut.api.transaction.view.search</field>
+            <field name="model">revolut.api.transaction</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <search string="Revolut Transakcijos">
+                    <field name="uuid"/>
+                    <field name="reference"/>
+                    <field name="state"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="[('created_at', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                     ('created_at', '&lt;', (context_today()+relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="[('created_at', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                     ('created_at', '&lt;', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai"
+                            domain="[('created_at', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                     ('created_at', '&lt;', (context_today()+relativedelta(years=1, month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="[('created_at', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                     ('created_at', '&lt;', (context_today()+relativedelta( month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                </search>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="revolut_api_transaction_action" model="ir.actions.act_window">
+            <field name="name">Revolut Transakcijos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">revolut.api.transaction</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_ids" eval="[(5,0,0),
+                          (0,0,{'view_mode':'tree', 'view_id': ref('revolut_api_transaction_view_tree')}),
+                          (0,0,{'view_mode':'form', 'view_id': ref('revolut_api_transaction_view_form')})]"/>
+            <field name="target">current</field>
+            <field name="context">{'search_default_this_year': True}</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="inv_approval_workflow_condition_view_form" model="ir.ui.view">
+            <field name="name">inv.approval.workflow.condition.view.form</field>
+            <field name="model">inv.approval.workflow.condition</field>
+            <field name="inherit_id" ref="invoice_approval_workflow.invoice_approval_condition_view_form"/>
+            <field name="mode">primary</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='approver_id']" position="replace">
+                    <div>
+                        <field name="workflow_approver_id" options="{'no_create': True}"/>
+                        <field name="workflow_step_id" options="{'no_create': True}"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="inv_approval_workflow_condition_view_tree" model="ir.ui.view">
+            <field name="name">inv.approval.workflow.condition.view.tree</field>
+            <field name="model">inv.approval.workflow.condition</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree string="Invoice approval workflow conditions" import="0">
+                    <field name="workflow_step_id"/>
+                    <field name="approver_id"/>
+                    <field name="analytic_account_display"/>
+                    <field name="account_display"/>
+                    <field name="supplier_display"/>
+                    <field name="requester_display"/>
+                    <field name="amount_display"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="inv_approval_workflow_condition_view_search" model="ir.ui.view">
+            <field name="name">inv.approval.workflow.condition.view.search</field>
+            <field name="model">inv.approval.workflow.condition</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <search string="Invoice approval workflow condition search">
+                    <field name="workflow_approver_id" string="Approver"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="inv_approval_workflow_condition_action" model="ir.actions.act_window">
+            <field name="name">Invoice approval workflow conditions</field>
+            <field name="res_model">inv.approval.workflow.condition</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="inv_approval_workflow_condition_view_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('inv_approval_workflow_condition_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('inv_approval_workflow_condition_view_form')})]"/>
+            <field name="search_view_id" ref="inv_approval_workflow_condition_view_search"/>
+        </record>
+
+
+        <menuitem
+                id="inv_approval_workflow_condition_menu_action"
+                name="Workflow conditions"
+                parent="invoice_approval_workflow_container_menu"
+                action="inv_approval_workflow_condition_action"
+                sequence="4"
+                groups=""
+        />
+    </data>
+</odoo>

@@ -1,0 +1,56 @@
+div.approval_status {
+    padding: 6px 12px;
+    border: 3px solid black;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+    width: fit-content;
+    font-size: large;
+    float: right;
+
+    &.approval_status_approved {
+        border-color: green;
+        color: green;
+    }
+
+    &.approval_status_disapproved {
+        border-color: red;
+        color: red;
+    }
+
+    &.approval_status_waiting {
+        border-color: gray;
+        color: gray;
+    }
+}
+
+.invoice_approval_buttons {
+    button.approval_button {
+        padding: 6px 12px;
+        color: white;
+        font-size: medium;
+        float: left;
+        transition-duration: 0.1s;
+        margin-left: 2px;
+        margin-right: 2px;
+        border-radius: 2px;
+
+        &.button_approve {
+            background-color: #27af27;
+            border: 1px solid #24840f;
+
+            &:hover {
+                background-color: #219621;
+            }
+        }
+
+        &.button_disapprove {
+            background-color: #e43232;
+            border: 1px solid #d42b2b;
+
+            &:hover {
+                background-color: #ce2929;
+            }
+        }
+    }
+}

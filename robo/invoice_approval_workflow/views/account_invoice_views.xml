@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="robo_expenses_view_form" model="ir.ui.view">
+            <field name="name">Invoice approval expense invoice form view</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_form"/>
+            <field name="groups_id" eval="[(4, ref('invoice_approval_workflow.invoice_approval_enabled_group'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="allow_performing_approval_action" attrs="{'invisible': True}"/>
+                    <field name="allow_performing_force_approval_action" attrs="{'invisible': True}"/>
+                    <field name="invoice_approval_is_enabled" attrs="{'invisible': True}"/>
+                    <field name="approved" attrs="{'invisible': True}"/>
+                </xpath>
+                <xpath expr="//button[@name='ask_payment']" position="before">
+                    <button name="ask_again_for_approval" string="Ask again for approval"
+                            groups="robo_basic.group_robo_premium_accountant"
+                            confirm="Are you sure you wish to ask for invoice approval again?"
+                            type="object"
+                            attrs="{'invisible': [
+                                '|',
+                                ('invoice_approval_is_enabled', '=', False),
+                                '|',
+                                ('approved', '=', 'False'),
+                                '|',
+                                ('expense_state', 'not in', ['open', 'draft']),
+                                ('type', 'not in', ['in_invoice', 'in_refund'])
+                            ]
+                            }"
+                    />
+                </xpath>
+                <xpath expr="//field[@name='has_not_been_validated_by_accountant_warning']" position="after">
+                    <div class="invoice_approval_buttons" colspan="2"
+                         attrs="{'invisible': [('invoice_approval_is_enabled', '=', False)]}">
+                        <button name="action_invoice_approval_approve" type="object"
+                                class="approval_button button_approve" string="Approve"
+                                attrs="{'invisible': [
+                                '|',
+                                ('invoice_approval_is_enabled', '=', False),
+                                ('allow_performing_approval_action', '=', False)
+                                ]}"/>
+                        <button name="action_invoice_approval_disapprove" type="object"
+                                class="approval_button button_disapprove" string="Disapprove"
+                                attrs="{'invisible': [
+                                '|',
+                                ('invoice_approval_is_enabled', '=', False),
+                                ('allow_performing_approval_action', '=', False)
+                                ]}"/>
+                        <button name="action_invoice_approval_force_approve" type="object"
+                                class="approval_button button_approve" string="Force Approve"
+                                attrs="{'invisible': [
+                                '|',
+                                ('invoice_approval_is_enabled', '=', False),
+                                ('allow_performing_force_approval_action', '=', False)
+                                ]}"/>
+                        <button name="action_invoice_approval_force_disapprove" type="object"
+                                class="approval_button button_disapprove" string="Force Disapprove"
+                                attrs="{'invisible': [
+                                '|',
+                                ('invoice_approval_is_enabled', '=', False),
+                                ('allow_performing_force_approval_action', '=', False)
+                                ]}"/>
+                    </div>
+                </xpath>
+                <xpath expr="//button[@name='ask_payment']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': [
+                            '|',
+                            ('expense_state','=','paid'),
+                            '&amp;',
+                            ('invoice_approval_is_enabled', '=', True),
+                            ('approved', '=', False)
+                        ]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='ask_representation']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': [
+                            '|',
+                            ('expense_state','in', ['paid', 'imported', 'awaiting']),
+                            '&amp;',
+                            ('invoice_approval_is_enabled', '=', True),
+                            ('approved', '=', False)
+                        ]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_cancel']" position="attributes">
+                    <attribute name="confirm">
+                        After cancelling this invoice the invoice will have to be approved again
+                        following the invoice approval process. Do you want to continue?
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='expense_state']" position="attributes">
+                    <attribute name="attrs">{'invisible': [
+                        ('invoice_approval_is_enabled', '=', True),
+                        ('expense_state', '=', 'in_approval')
+                    ]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='expense_state']" position="after">
+                    <field name="invoice_approval_workflow" attrs="{'invisible': True}"/>
+                    <field name="invoice_approval_workflow_step" widget="statusbar" nolabel="1"
+                           attrs="{'invisible': [
+                               '|',
+                               ('invoice_approval_is_enabled', '=', False),
+                               ('expense_state', '!=', 'in_approval')
+                           ]}"
+                           domain="[('workflow_id', '=', invoice_approval_workflow)]"/>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_change_analytics_all']" position="attributes">
+                    <attribute name="states">proforma2,open,paid,in_approval</attribute>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//button[@name='action_line_change_analytics']"
+                       position="attributes">
+                    <attribute name="states">proforma2,open,paid,in_approval</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="expense_search_extension" model="ir.ui.view">
+            <field name="name">Invoice approval expense invoice search extension</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='draft']" position="after">
+                    <filter name="waiting_for_approval" string="Awaiting approval"
+                            domain="[('expense_state','=','in_approval')]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_invoice_approval_approve" model="ir.actions.server">
+            <field name="name">Approve</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="robo_front" eval="True"/>
+            <field name="code">
+invoices = env['account.invoice'].browse(context.get('active_ids', False))
+for invoice in invoices:
+    try:
+        invoice.action_invoice_approval_approve()
+    except Exception:
+        pass
+            </field>
+        </record>
+        <function name="create_account_invoice_approve_action" model="account.invoice"/>
+    </data>
+</odoo>

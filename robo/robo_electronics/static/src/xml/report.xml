@@ -1,0 +1,19 @@
+<template>
+    <t t-extend="RoboReports">
+        <!--:last here means insert block just after basic reports-->
+        <t t-jquery=".robo_stock_buttons .reports-box:last" t-operation="after">
+            <div t-if="widget.robo_electronics_reports" class="robo_reports_buttons reports-box  r-cursor">
+                <div class="robo_button_electronics_analysis">
+                    <div class="icon">
+                        <span class="icon-desktop"></span>
+                        <span class="icon-laundry"></span>
+                    </div>
+                    <h3>
+                        <a class="btn-header">Elektronika</a>
+                    </h3>
+                </div>
+            </div>
+        </t>
+    </t>
+
+</template>

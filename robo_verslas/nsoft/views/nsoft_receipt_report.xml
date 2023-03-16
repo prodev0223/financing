@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Pivots-->
+        <record id="nsoft_receipt_report_pivot" model="ir.ui.view">
+            <field name="name">nsoft.receipt.report.pivot</field>
+            <field name="model">nsoft.receipt.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Pakuotės" create="false" delete="false">
+                    <field name="sale_date" type="col"/>
+                    <field name="receipt_total" type="measure"/>
+                    <field name="partner_id" type="row"/>
+                    <field name="avg_receipt" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <!--Searches-->
+        <record id="nsoft_receipt_report_search" model="ir.ui.view">
+            <field name="name">nsoft.receipt.report.search</field>
+            <field name="model">nsoft.receipt.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="product_id"/>
+                    <field name="product_category_id"/>
+                    <field name="cash_register_id"/>
+                    <field name="receipt_id"/>
+                    <field name="partner_id"/>
+                </search>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="open_receipt_pivot_report" model="ir.actions.act_window">
+            <field name="name">Pirkinių krepšelio ataskaita</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.receipt.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="domain">[]</field>
+            <field name="target">current</field>
+            <field name="search_view_id" ref="nsoft_receipt_report_search"/>
+            <field name="view_id" ref="nsoft_receipt_report_pivot"/>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Pirkinių krepšelio ataskaita"
+                id="nsoft_receipt_report_menu"
+                sequence="51"
+                action="open_receipt_pivot_report"
+                parent="nsoft_report_menu"
+        />
+        <menuitem id="menu_front_nsoft_report" parent="robo.menu_kita" name="Pirkinių krepšelio ataskaita"
+                  sequence="70" action="open_receipt_pivot_report"
+                  robo_front="True"
+                  groups="robo_basic.group_robo_premium_manager"
+                  searchable="True"
+                  tags="pirkinių,krepšelio,ataskaita"
+        />
+        <record model="ir.ui.menu" id="menu_front_nsoft_report">
+            <field name="web_icon">icon-pencil5,none,none</field>
+        </record>
+    </data>
+</odoo>

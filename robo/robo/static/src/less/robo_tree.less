@@ -1,0 +1,480 @@
+//Utilities
+
+.robo-style-checkbox(@size: @robo-checkbox-size;@size_check: 20px; @border_size: 2px){
+  div.o_checkbox {
+        display: block;
+        position: relative;
+        vertical-align: sub;
+        span>i{
+          display:none;
+        }
+    }
+
+  div.o_checkbox > input {
+      width: @size;
+      height: @size;
+      margin: 0;
+      opacity: 0;
+      position: absolute;
+      top: auto;
+      left: auto;
+      bottom: auto;
+      right: auto;
+      cursor: pointer;
+  }
+
+  div.o_checkbox > input + span {
+      width: @size;
+      height: @size;
+      background-color: white;
+      border: @border_size solid @robo-border-color;
+      border-radius: @robo-border-radius;
+  }
+
+  div.o_checkbox > input:checked + span {
+      background: none;
+      background-color: @robo-popover-checkbox-color;
+      text-align: center;
+    &:before{
+      content:"\f00c";
+      display: block;
+      color: white;
+      font: normal normal normal @size_check/1 FontAwesome;
+    }
+    //>i{
+      //display: block;
+      //color: white;
+      //font-size: 18px;
+    //}
+  }
+
+  div.o_checkbox > input:disabled + span {
+      opacity: 0.7;
+      border: 1px solid #e2e2e0;
+  }
+
+   div.o_checkbox > input:focus + span {
+     outline: none;
+  }
+}
+
+//end of Utilities
+
+section.boxes{
+  font-family: @robo-header-font;
+  margin-bottom: 48px;
+  .boxes-row{
+    overflow: hidden;
+    .o-flex-display;
+    .o-justify-content(center);
+    .o-flex-flow(row, wrap);
+    color: #062942;
+    //height: 230px;
+    height: auto;
+    .box-active, .box-template {
+      &:hover{
+        .robo-menu-item-hover;
+      }
+      margin: 20px;
+      padding: 3px;
+      &.box-invoice{
+        .o-flex-display;
+        .o-justify-content(center);
+        .o-flex-flow(column, nowrap);
+        width: 170px;
+        height: 211px;
+        border-top: 5px solid @robo-invoice-header-client !important;
+        &.expenses {
+          border-top-color: @robo-invoice-header-supplier !important;
+        }
+        //height: auto;
+        .box-content{
+          .o-flex(0, 1, auto);
+          height: 170px;
+          padding: 15px 20px;
+          overflow: hidden;
+          .invoice-number{
+            margin-bottom: 12px;
+            opacity: 0.5;
+            &:empty:before {
+              content: "\200b";
+            }
+          }
+          .invoice-client{
+            opacity: 0.7;
+            font-weight: 700;
+            font-size: 0.8em;
+          }
+          .invoice-date{
+            opacity: 0.5;
+            margin-bottom: 30px;
+          }
+          .invoice-amount{
+            padding-top: 6px;
+            padding-bottom: 17px;
+            border-top: 1px solid @robo-border-color;
+            font-size: 1.5em;
+            font-weight: 300;
+            text-align: right;
+            //line-height: 32px;
+          }
+        }
+        span{
+          .o-flex(1,1,auto);
+          font-size: 0.9em;
+        }
+      }
+      &.box-client{
+        width: 250px;//300px;
+        height: 155px;//170px;
+        margin-top: 24px;
+        border-top: 5px solid @robo-client-header !important;
+        &.supplier{
+          border-top: 5px solid @robo-supplier-header !important;
+        }
+        .box-content{
+          position: relative; //contains absolute
+          padding: 15px;//20px;
+          .client-logo{
+            float:left;
+            text-align: center;
+            border-width: 2px;
+            border-style: solid;
+            background-color: #fff;
+            vertical-align: middle;
+            color: #F8C593;
+            border-color: #F8C593;
+            display: inline-block;
+            overflow: hidden;
+            border-radius: 50%;
+            margin-right: 20px;
+            width: 35px;//65px;
+            height: 35px;//65px;
+            font-size: 28px;
+            line-height: 31px;//62px;
+            @media (max-width: @screen-xs-max){ //ROBO: no need, on mobile phone kanban view;
+              width: 20px;//65px;
+              height: 20px;//65px;
+              font-size: 13px;
+              line-height: 18px;//62px;
+            }
+            font-weight: 500;
+          }
+          .client-info {
+            width: 150px; //160px;
+             @media (max-width: @screen-xs-max){ //ROBO: no need, on mobile phone kanban view;
+              width: 100px
+              }
+            display: inline-block;
+
+            .client-name {
+              font-size: 18px;
+               @media (max-width: @screen-xs-max){
+                  font-size: 16px;
+               }
+              font-weight: 400;
+              margin-bottom: 20px;
+            }
+          }
+          .client-info2 {
+            width: 190px; //160px;
+            @media (max-width: @screen-xs-max){
+              width: 180px;
+            }
+            display: inline-block;
+            position: absolute;
+            top: 90px;
+            left: 0;
+            .client-email, .client-phone {
+              opacity: 0.5;
+              margin-bottom: 5px;
+              padding-left: 20px;
+              >i{
+                margin-right: 5px;
+              }
+            }
+          }
+        }
+      }
+      &.box-face{
+        .robo-border(@size: 1px);
+        .box-shadow(0 0 0 3px @robo-shadow-color);
+
+        //-webkit-box-shadow: 2px 0 0px 0px @robo-shadow-color,-2px 0 0px 0px @robo-shadow-color,0 -2px 0px 2px @robo-shadow-color;
+        //-moz-box-shadow: 2px 0 0px 0px @robo-shadow-color,-2px 0 0px 0px @robo-shadow-color,0 -2px 0px 2px @robo-shadow-color;
+        //box-shadow: 2px 0 0px 0px @robo-shadow-color,-2px 0 0px 0px @robo-shadow-color,0 -2px 0px 2px @robo-shadow-color;
+
+        border-radius: @robo-border-radius;
+        background: white;
+      }
+      &:hover{
+        border-color: rgba(155, 169, 179, 1);
+        border-style: solid;
+        border-width: 1.5px;
+
+        //-webkit-box-shadow: 3px 0 0px 0px @robo-shadow-color,-3px 0 0px 0px @robo-shadow-color,0 -3px 0px 3px @robo-shadow-color;
+        //-moz-box-shadow: 3px 0 0px 0px @robo-shadow-color,-3px 0 0px 0px @robo-shadow-color,0 -3px 0px 3px @robo-shadow-color;
+        //box-shadow: 3px 0 0px 0px @robo-shadow-color,-3px 0 0px 0px @robo-shadow-color,0 -3px 0px 3px @robo-shadow-color;
+        //.transition(box-shadow 1s)
+      }
+      >span{
+        //border-radius: 5px;
+        padding: 8px 0 7px;
+        font-weight: 700;
+        //height: auto;
+        text-align: center;
+        text-transform: uppercase;
+        display: block;
+      }
+    }
+    .box-template{
+      &.create-record{
+        background-color: transparent;
+        color: #8394a1;
+        border: 2px dashed #cdd4d9;
+        .o-flex-display;
+        .o-flex-flow(column, nowrap);
+          .o-justify-content(center);
+          .o-align-items(center);
+        padding: 0 20px;
+        .create-new-text{
+          font-size: 16px;
+          i, span {
+            display:block;
+            text-align: center;
+          }
+        }
+        &:hover{
+          background: #f3f9fd;
+          color: #062942;
+        }
+        &.second-step{
+          //display: none;
+        }
+      }
+    }
+    .box-active + .box-active, .box-template + .box-active{
+        //margin-left: 20px;
+    }
+  }
+}
+
+.o-robo-list-view{
+
+  //robo checkbox
+  .robo-style-checkbox;
+  .robo_header_fit &{
+    .robo-style-checkbox(18px;14px;1px);
+  }
+
+  background-color: @robo-background-color;
+  tfoot{
+    background-color: @robo-background-color;
+  }
+  thead.robo-header{
+    background-color: @robo-background-color !important;
+    font-family: @robo-header-font;
+    >tr>th {
+      &.oe_date_invoice{
+          width: 80px;
+        }
+      &.oe_date_short{
+          width: 40px;
+        }
+        &.oe_reference_invoice{
+          word-break: break-word !important;
+          width: 100px;
+        }
+        &.oe_computed_number{
+            word-break: break-word !important;
+            max-width: 40px;
+        }
+        &.oe_partner{
+          word-break: break-word !important;
+          min-width: 80px;
+        }
+        &.oe_residual_signed{
+          width: 60px;
+        }
+        &.oe_main_analytic_id, &.oe_invoice_analytic_codes{
+            width: 40px;
+        }
+      border-left: none;
+      &:hover{
+        background-color: @robo-item-hover-background !important;
+        font-weight: bold !important;
+      }
+    }
+  }
+  tbody{
+    >tr {
+      .o_short_group_name &.o_group_header {
+        .o_group_name{
+          max-width: 20px; //experiment
+        }
+        .o_group_pager{
+          width: 100px;
+        }
+      }
+      border-top: 1px solid @robo-border-color;
+      font-family: @robo-text-font;
+      &:hover{
+        background-color: @robo-item-hover-background;
+      }
+      &.selected-row{
+        background-color: @robo-item-selected-background;
+      }
+      >td {
+        &.oe_date_invoice{
+          width: 80px;
+          white-space: nowrap;
+        }
+        &.oe_date_short{
+          width: 40px;
+        }
+        &.oe_reference_invoice{
+          word-break: break-word !important;
+          width: 100px;
+        }
+        &.oe_partner{
+          word-break: break-word !important;
+          max-width: 120px;
+        }
+        &.oe_residual_signed{
+          width: 60px;
+        }
+        .upload_colors;
+        >span, >div{
+            font-weight: bold;
+            //the following comes from invoices.less
+            //&.draftClass{
+            //  color: @robo-invoice-status-draft-color;
+            //}
+            //&.proformaClass, .proforma2Class{
+            //  color: @robo-invoice-status-draft-color;
+            //}
+            //&.openClass{
+            //  color: @robo-invoice-status-open-color;
+            //}
+            //&.paidClass{
+            //  color: @robo-invoice-status-paid-color;
+            //}
+            //&.cancelClass{
+            //  color: @robo-invoice-status-cancel-color;
+            //}
+        }
+      }
+    }
+  }
+
+  // expenses icon color:
+  .normal-expense-icon-color{
+    color: @robo-blue;
+  }
+  .info-expense-icon-color{
+    color: @robo-red;
+  }
+
+
+}
+
+
+//upload_document reject info
+.reject-icon{
+  color: @robo-blue;
+  padding-left: 0.2em;
+  font-size: 1.7em;
+}
+.reject-document-icon{
+  padding-left: 0.3em;
+  font-size: 1.3em;
+}
+
+
+//special delete button
+.o_list_buttons{
+  > .btn-group{
+    //display: block;
+    //margin-top: 10px;
+    margin: 0px 10px;
+    .dropdown-toggle{
+      &:after{
+        content: "";
+        display: inline-block;
+        width: 0;
+        height: 0;
+        vertical-align: middle;
+        border-bottom: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid;
+        -moz-transform: scale(0.9999);
+        margin-left: 5px;
+      }
+    }
+    ul.dropdown-menu{
+      padding: 0;
+      min-width: 100px;
+      margin-top: 10px;
+      .remove_item{
+        //icon-trash2
+        background-color: white;
+        width: 100%;
+        text-align: left;
+        &:hover, &:focus, &:active{
+          color: black;
+          background-color: @robo-item-hover-background;
+          -webkit-box-shadow: none;
+          -moz-box-shadow: none;
+          box-shadow: none;
+        }
+        padding: 3px 25px;
+        color: black;
+        >span{
+          padding-right: 10px;
+          color: red;
+        }
+
+      }
+    }
+
+  }
+}
+//robo-front-actions
+li.robo-front-actions {
+  > a {
+    width: 100%;
+    text-align: left;
+    padding: 3px 25px;
+    display: block;
+    line-height: 1.5;
+    white-space: nowrap;
+    color: black;
+    cursor: pointer;
+    //font-style: italic;
+  }
+}
+
+.break_all{
+  word-break: break-all;
+}
+
+.o_view_manager_content:not(.robo_header_fit){
+  table.o-robo-list-view{
+    tbody > tr > td{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 170px;
+//       padding: 8px 4px;
+    }
+  }
+}
+//.robo_sides{
+//  margin: 0 8px;
+//}
+
+.robo_md_full_size .table-responsive.container {
+    @media (max-width: @screen-xl-min) {
+        width: 100%;
+    }
+}

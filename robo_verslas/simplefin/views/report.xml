@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="simplefin_report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//tr[@t-foreach='o.invoice_line_ids']" position="attributes">
+                <attribute name="t-if">not l.is_coverage</attribute>
+            </xpath>
+            <xpath expr="//div[contains(@class, 'row invoice_additional')]//div[contains(@class, 'col-xs-6 pull-right invoice_pvm')]//table//t//tr[contains(@class, 'border-robo-invoice')][2]" position="after">
+                <t t-if="o.show_coverage_amount">
+                    <tr t-foreach="o.invoice_line_ids" t-as="l">
+                        <t t-if="l.is_coverage">
+                            <td>
+                                <span t-field="o.coverage_type"/>:
+                            </td>
+                            <td class="text-right">
+                                <t t-if="print_currency_option == 'invoice_currency'">
+                                    <span t-field="l.print_price_subtotal"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="l.print_price_subtotal_company"/>
+                                </t>
+                            </td>
+                            <t t-if="print_currency_option in ['multiple_currency', 'company_currency'] and invoice_currency != company_currency">
+                                <td class="text-right">
+                                    <span t-field="l.print_price_subtotal"/>
+                                </td>
+                            </t>
+                        </t>
+                    </tr>
+                </t>
+            </xpath>
+            <xpath expr="//div[contains(@class, 'row invoice_additional')]//div[contains(@class, 'col-xs-6 pull-right invoice_pvm')]//table//t//tr[contains(@class, 'border-robo-invoice')][3]//td[contains(@class, 'text-right')]//span[@t-field='o.print_amount_total_signed']" position="replace">
+                <span t-field="o.print_amount_total_company_included_coverage"/>
+            </xpath>
+            <xpath expr="//div[contains(@class, 'row invoice_additional')]//div[contains(@class, 'col-xs-6 pull-right invoice_pvm')]//table//t[@t-else='']//tr[contains(@class, 'border-robo-invoice')][1]//td[contains(@class, 'text-right')]//span[@t-field='o.print_amount_total_signed']" position="replace">
+                <span t-field="o.print_amount_total_company_included_coverage"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

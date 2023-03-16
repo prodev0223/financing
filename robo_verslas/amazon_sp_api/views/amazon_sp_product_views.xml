@@ -1,0 +1,68 @@
+<odoo>
+    <data>
+        <!--TREES-->
+        <record id="amazon_sp_product_view_tree" model="ir.ui.view">
+            <field name="name">amazon.sp.product.view.tree</field>
+            <field name="model">amazon.sp.product</field>
+            <field name="arch" type="xml">
+                <tree string="Amazon products"
+                      decoration-info="configured"
+                      decoration-warning="not configured"
+                      create="1" edit="1" delete="1">
+                    <field name="product_name"/>
+                    <field name="asin_product_code"/>
+                    <field name="ext_product_code"/>
+                    <field name="product_group"/>
+                    <field name="product_id"/>
+                    <field name="amazon_category_id"/>
+                    <field name="spec_product"/>
+                    <field name="configured"/>
+                </tree>
+            </field>
+        </record>
+        <!--FORMS-->
+        <record id="amazon_sp_product_view_form" model="ir.ui.view">
+            <field name="name">amazon.sp.product.view.form</field>
+            <field name="model">amazon.sp.product</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div>
+                            <label string="Product name"/>
+                            <h1 class="mt0">
+                                <field name="product_name" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="ext_product_code"/>
+                            <field name="asin_product_code"/>
+                            <field name="product_group"/>
+                            <field name="product_id"/>
+                            <field name="amazon_category_id"/>
+                            <field name="spec_product"/>
+                            <field name="configured"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_amazon_sp_product" model="ir.actions.act_window">
+            <field name="name">Amazon SP-API product</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.sp.product</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form, pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="amazon_sp_product_view_tree"/>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_amazon_sp_product"
+                name="Products"
+                sequence="1"
+                parent="menu_amazon_sp_stock_data_root"
+                action="action_open_amazon_sp_product"
+        />
+    </data>
+</odoo>

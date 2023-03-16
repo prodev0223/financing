@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="DynamicReportDataSection">
+        <div class="data-container"></div>
+    </t>
+
+    <t t-name="DynamicReportGroupExpandCaret">
+        <i class='fa fa-caret-down group-expand-icon' style='margin-right: 5px;'></i>
+    </t>
+
+    <t t-name="DynamicReportTable">
+        <table id="data-lines" class="dynamic-report-main-data-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <!-- Empty column for child element buttons -->
+                    <t t-if="any_child_has_child_elements">
+                        <th class="column-header child-element-column empty-cell"/>
+                    </t>
+
+                    <!-- Empty cells to the first column title level -->
+                    <t t-if="max_group_level &gt; 0">
+                        <t t-foreach="Array.from(Array(max_group_level).keys())">
+                            <th class="column-header empty-cell"/>
+                        </t>
+                    </t>
+
+                    <!-- Render title for each column -->
+                    <t t-foreach="columns" t-as="column">
+                        <t t-if="column['shown']">
+                            <th t-attf-class="column-header #{column['is_number'] ? 'amt-head' : ''}">
+                                <div style="display: inline-flex; justify-content: center; vertical-align: middle; align-items: center;">
+                                    <span class="column-title"><t t-esc="column['name']"/></span>
+                                    <!-- Add sorting arrow -->
+                                    <i style="padding-left: 6px;" class="fa fa-caret-down sorting-arrow sorting-arrow-inactive"/>
+                                </div>
+                            </th>
+                        </t>
+                    </t>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-raw="renderedGroupData"/>   <!-- Render table data -->
+            </tbody>
+        </table>
+    </t>
+
+    <t t-name="DynamicReportGroupTitleRow">
+        <!--If the total is not calculated for the first few rows - show the group title in the column-->
+        <t t-if="two_rows">
+            <tr t-attf-class="#{is_totals ? 'totals-row' : ''} group-title-row data-group-expanded group-title-border-top group-name-row"
+                t-attf-group="#{group_id}" t-attf-group-level="#{group_level}">
+
+                <!-- Empty column for child element buttons -->
+                <t t-if="any_child_has_child_elements"><th class="column-header child-element-column empty-cell"/></t>
+
+                <!-- Add empty cells for the group level -->
+                <t t-if="group_level &gt; 0"><th t-attf-colspan="#{group_level}"/></t>
+
+                <!-- Add the group title -->
+                <t t-if="group_title_colspan > 0">
+                    <th t-attf-colspan="#{group_title_colspan}" class="group_title_container">
+                        <t t-esc="group_title"/>
+                    </th>
+                </t>
+
+                <!-- Add empty cells to match totals -->
+                <t t-if="max_group_level-group_level+1> 0">
+                    <th t-attf-colspan="#{group_level > 0 ? max_group_level-group_level : max_group_level-group_level}"/>
+                </t>
+            </tr>
+            <tr t-attf-class="#{is_totals ? 'totals-row' : ''} group-title-row data-group-expanded group-totals-row"
+                t-attf-group="#{group_id}" t-attf-group-level="#{group_level}">
+
+                <!-- Empty column for child element buttons -->
+                <t t-if="any_child_has_child_elements"><th class="column-header child-element-column empty-cell"/></t>
+
+                <!-- Add empty cells for the group level -->
+                <t t-if="group_level &gt; 0"><th t-attf-colspan="#{group_level}"/></t>
+
+                <!-- Add empty cells to match totals -->
+                <t t-if="max_group_level-group_level+1> 0">
+                    <th t-attf-colspan="#{group_level > 0 ? max_group_level-group_level : max_group_level-group_level}"/>
+                </t>
+
+                <!-- Add empty cells till the first totals are present-->
+                <t t-if="first_totals_colspan > 0">
+                    <th t-attf-colspan="#{first_totals_colspan}"/>
+                </t>
+                
+                <!-- Add group total cells -->
+                <t t-foreach="group_totals" t-as="group_total">
+                    <th t-attf-colspan="#{group_total.colspan or 1}" class="amt">
+                        <t t-if="group_total.show_total or False"><t t-esc="group_total.total or 0.0"/></t>
+                    </th>
+                </t>
+            </tr>
+        </t>
+        <t t-else="">
+            <tr t-attf-class="#{is_totals ? 'totals-row' : ''} group-title-row data-group-expanded group-title-border-top group-name-row group-totals-row"
+                t-attf-group="#{group_id}" t-attf-group-level="#{group_level}">
+                <!-- Add empty cells for the group level -->
+                <t t-if="group_level > 0"><th t-attf-colspan="#{group_level}"/></t>
+
+                <!-- Calculate additional colspace -->
+                <t t-set="additional_colspace" t-value="0"/>
+                <t t-if="max_group_level &gt; 0">
+                    <t t-if="group_level > max_group_level or group_level &lt; 0">
+                        <t t-value="additional_colspace+max_group_level" t-set="additional_colspace"/>
+                    </t>
+                    <t t-else="">
+                        <t t-value="additional_colspace+max_group_level-group_level" t-set="additional_colspace"/>
+                    </t>
+                </t>
+
+                <!-- Add the group title -->
+                <t t-if="first_totals_colspan &gt; 0">
+                    <th t-attf-colspan="#{group_title ? group_title_colspan+additional_colspace : first_totals_colspan+additional_colspace}"
+                        class="group_title_container">
+                        <t t-esc="group_title"/>
+                    </th>
+                </t>
+
+                <!-- Show the group totals -->
+                <t t-foreach="group_totals" t-as="group_total">
+                    <th t-attf-colspan="#{group_total.colspan or 1}" class="amt">
+                        <t t-if="group_total.show_total or False"><t t-esc="group_total.total or 0.0"/></t>
+                    </th>
+                </t>
+            </tr>
+        </t>
+    </t>
+
+    <t t-name="DynamicReportGroupDataRow">
+        <tr t-attf-class="#{action_id ? 'data-row-with-action' : ''} data-line #{oddRow ? 'odd-row' : ''}"
+            t-attf-action="#{action_id ? action_id : None}"
+            t-attf-record="#{record_ids ? record_ids : None}"
+            t-attf-group-level="#{group_level}"
+            t-attf-group="#{group_id}">
+
+            <!-- Add child element expand button -->
+            <t t-if="child_elements and child_elements.length > 0">
+                <td class="toggle_child_elements_button"><i class="fa fa-bars toggle_child_element_icon"/></td>
+            </t>
+            
+            <!-- Indent element by its level -->
+            <t t-if="max_group_level &gt; 0"><td t-attf-colspan="#{indentation_level}"/></t>
+
+            <t t-foreach="cells" t-as="cell">
+                <td t-attf-class="
+                        py-mline #{cell.is_number ? 'amt' : ''}
+                        #{cell.style_attributes and cell.style_attributes.bold ? 'bld' : ''}
+                    " t-attf-colspan="#{cell.colspan or 1}" t-attf-style="#{cell.custom_css or ''};">
+                    <t t-if="cell.value or cell.value === 0 or cell.value === 0.0">
+                        <t t-raw="cell.value"/>
+                    </t>
+                    <t t-else="">
+                        <t t-raw="''"/>
+                    </t>
+                </td>
+            </t>
+        </tr>
+        <t t-foreach="child_elements" t-as="childRow">
+            <tr class="child_row hidden" t-attf-group-level="#{group_level}">
+                <t t-if="group_level+1"><td t-attf-colspan="#{group_level+1}"/></t>
+                <t t-foreach="childRow" t-as="cell">
+                    <td t-attf-class="
+                            py-mline #{cell.is_number ? 'amt' : ''}
+                            #{cell.style_attributes and cell.style_attributes.bold ? 'bld' : ''}
+                        " t-attf-colspan="#{cell.colspan or 1}" t-attf-style="#{cell.custom_css or ''};">
+                        <t t-raw="cell.value or ''"/>
+                    </td>
+                </t>
+            </tr>
+        </t>
+    </t>
+</templates>

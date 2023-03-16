@@ -1,0 +1,205 @@
+<odoo>
+    <data>
+        <record id="overtime_request_form" model="ir.ui.view">
+            <field name="name">Prašymas leisti dirbti viršvalandžius arba šventinę dieną</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_request_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="overtime_compensation" required="1"/>
+                    </group>
+                    <group colspan="4" col="4" string="Prašomas laikas">
+                        <field name="e_document_time_line_ids" nolabel="1" colspan="4"
+                               options="{'no_open': True}" required="True">
+                            <tree editable="bottom" open="0" class="robo_tree_in_form">
+                                <field name="date" required="1"/>
+                                <field name="time_from" required="1" widget="float_time"/>
+                                <field name="time_to" required="1" widget="float_time"/>
+                                <field name="duration" sum="duration" readonly="True"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="overtime_request_action" model="ir.actions.act_window">
+            <field name="name">Prašymas leisti dirbti viršvalandžius arba šventinę dieną</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{
+                u'default_document_type': u'prasymas',
+                u'rec_template_id': u'overtime_request_template',
+                u'e_document_view_type': u'rigid'
+            }</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.overtime_request_form"/>
+        </record>
+
+
+        <record id="overtime_request_menu" model="ir.ui.menu">
+            <field name="name">Prašymas leisti dirbti viršvalandžius arba šventinę dieną</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="prasymas"/>
+            <field name="action" ref="e_document.overtime_request_action"/>
+            <field name="sequence">1</field>
+            <field name="tags">viršvalandžiai,prašymas,šventė,šventinė,nedarbo,diena</field>
+        </record>
+
+        <record id="overtime_request_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie prašymus leisti dirbti viršvalandžius arba šventinę dieną</field>
+            <field name="description">Pranešti apie pasirašytus prašymus dėl leidimo dirbti viršvalandžius arba šventinę dieną</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+
+        <record id="overtime_request_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Aš, {{ employee_id1 }}, prašau leisti man dirbti šiomis dienomis:
+
+                    <table style="border: 1px solid black; border-collapse: collapse;">
+                        <tr>
+                            <th style="border: 1px solid black; padding: 2px;">Data</th>
+                            <th style="border: 1px solid black; padding: 2px;">Laikas nuo</th>
+                            <th style="border: 1px solid black; padding: 2px;">Laikas iki</th>
+                            <th style="border: 1px solid black; padding: 2px;">Trukmė</th>
+                        </tr>
+                        {% for e_document_time_line in e_document_time_line_ids %}
+                            <tr>
+                                <td style="border: 1px solid black; padding: 2px;">{{ e_document_time_line.date }}</td>
+                                <td style="border: 1px solid black; padding: 2px;">{{ format_float_to_hours(e_document_time_line.time_from) }}</td>
+                                <td style="border: 1px solid black; padding: 2px;">{{ format_float_to_hours(e_document_time_line.time_to) }}</td>
+                                <td style="border: 1px solid black; padding: 2px;">
+                                    {{ format_float_to_hours(e_document_time_line.duration) }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <br/>
+                    <br/>
+                    Prašau atlyginti už šį dirbtą laiką
+                    {% if overtime_compensation__sv__ == 'monetary' %}
+                        mokant atitinkamą darbo užmokesčio dydį.
+                    {% else %}
+                        pridedant dirbtą laiką, atitinkamai padaugintą iš Lietuvos Respublikos Darbo Kodekso 144 straipsnyje nustatyto dydžio, prie kasmetinių atostogų laiko.
+                    {% endif %}
+                </div>
+            </field>
+            <field name="name">Prašymas leisti dirbti viršvalandžius arba šventinę dieną</field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{ employee_id1 }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.overtime_request_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded {
+                            width: 100px;
+                        }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{%endif%} {{ job_id1}}</span>
+                                            </p>
+                                            <span>{{ employee_id1 }}</span>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p>
+                                                <span>{% if manager_job_id %}{{kam(manager_job_id, 'Aa')}} {%
+                                                    else%}Direktoriui{% endif %} {{kam(manager_id, 'Aa')}}
+                                                </span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>PRAŠYMAS</span>
+                        </p>
+                        {% if overtime_request_type__sv__ == 'overtime' %}
+                            <span>PRAŠYMAS LEISTI DIRBTI VIRŠVALANDŽIUS</span>
+                        {% elif overtime_request_type__sv__ == 'holidays' %}
+                            <span>PRAŠYMAS LEISTI DIRBTI ŠVENČIŲ DIENOMIS</span>
+                        {% else %}
+                            <span>PRAŠYMAS LEISTI DIRBTI VIRŠVALANDŽIUS IR ŠVENČIŲ DIENOMIS</span>
+                        {% endif %}
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.overtime_request_workflow()</field>
+            <field name="date_from_field_name">date_2</field>
+            <field name="date_to_field_name">date_2</field>
+            <field name="send_manager" eval="True"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="allow_copy" eval="True"/>
+            <field name="sign_mail_channel_ids" eval="[(4, ref('e_document.overtime_request_mail_channel'))]"/>
+        </record>
+    </data>
+</odoo>

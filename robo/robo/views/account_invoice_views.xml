@@ -1,0 +1,2528 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <!--VIEWS-->
+        <!--Kanban-->
+        <record id="account_invoice_view_kanban" model="ir.ui.view">
+            <field name="name">Account invoice kanban view</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false" create="false">
+                    <field name="number"/>
+                    <field name="partner_id"/>
+                    <field name="amount_total_signed"/>
+                    <field name="date_invoice"/>
+                    <field name="state"/>
+                    <field name="currency_id"/>
+                    <field name="bank_export_state_html"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-7 short_name">
+                                        <strong>
+                                            <span t-attf-title="{{record.partner_id.value}}">
+                                                <t t-esc="record.partner_id.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                    <div class="col-xs-5 pull-right text-right">
+                                        <strong>
+                                            <field name="amount_total_signed" widget="monetary"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-10 text-muted">
+                                        <span class="invoice_number_value_container">
+                                            <t t-esc="record.number.value"/>
+                                            <t t-esc="record.date_invoice.value"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <span class="pull-right text-right" groups="robo_basic.group_robo_premium_manager">
+                                            <t t-raw="record.bank_export_state_html.raw_value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span class="pull-right text-right">
+                                            <field class="state_field" name="state" widget="kanban_label_selection"
+                                                   options="{'classes': {'draft': 'robo-draft', 'cancel': 'robo-cancel', 'proforma': 'robo-proforma', 'proforma2': 'robo-proforma2', 'open': 'robo-open', 'paid': 'robo-paid'}}"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="pajamos_kanban" model="ir.ui.view">
+            <field name="name">Income invoice kanban view</field>
+            <field name="model">account.invoice</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="robo.account_invoice_view_kanban"/>
+            <field name="robo_front">True</field>
+        </record>
+
+        <record id="robo_expenses_kanban" model="ir.ui.view">
+            <field name="name">Expense invoice kanban view</field>
+            <field name="model">account.invoice</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="robo.account_invoice_view_kanban"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="multi_open">
+                        robo.new_cheque_action:(with_cheque_form==True)and(state in ('draft','open','proforma2','cancel'))and(not payment_move_line_ids)):hr_expense_id
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='number']" position="before">
+                    <field name="with_cheque_form" invisible="1"/>
+                    <field name="payment_move_line_ids" invisible="1"/>
+                    <field name="hr_expense_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='currency_id']" position="before">
+                    <field name="reference" invisible="1"/>
+                </xpath>
+                <xpath expr="//span[@class='invoice_number_value_container']" position="replace">
+                    <span>
+                        <t t-if="record.reference.value">
+                            <t t-esc="record.reference.value"/>
+                        </t>
+                        <t t-if="! record.reference.value">
+                            <t t-esc="record.number.value"/>
+                        </t>
+                        <t t-esc="record.date_invoice.value"/>
+                    </span>
+                </xpath>
+                <xpath expr="//field[@class='state_field']" position="replace">
+                    <field name="expense_state" widget="kanban_label_selection"
+                           options="{'classes': {'draft': 'robo-draft', 'cancel': 'robo-cancel',
+                           'proforma': 'robo-proforma', 'proforma2': 'robo-proforma2',
+                           'open': 'robo-open', 'paid': 'robo-paid'}}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Form-->
+        <record id="pajamos_form" model="ir.ui.view">
+            <field name="name">Income invoice form view</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form class="robo_pajamos_form">
+                    <header>
+                        <button name="action_invoice_open" type="object" states="draft" string="Patvirtinti"
+                                class="oe_highlight" groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <button name="action_invoice_open" type="object" states="proforma2" string="Patvirtinti"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <button name="action_invoice_sent" type="object" string="Siųsti el. paštu"
+                                attrs="{'invisible':['|',('sent','=',True), ('state', 'not in', ['open', 'proforma', 'proforma2', 'paid'])]}"
+                                class="oe_highlight" groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <button name="invoice_print" string="Spausdinti" type="object"
+                                attrs="{'invisible':['|',('sent','=',True), ('state', 'not in', ['open', 'proforma', 'proforma2', 'paid'])]}"
+                                class="oe_highlight" groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <button name="action_invoice_sent" type="object" string="Siųsti el. paštu"
+                                attrs="{'invisible':['|',('sent','=',False), ('state', 'not in', ['open', 'proforma', 'proforma2', 'paid'])]}"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <button name="invoice_print" string="Spausdinti" type="object"
+                                attrs="{'invisible':['|',('sent','=',False), ('state', 'not in', ['open', 'proforma', 'proforma2', 'paid'])]}"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <button name="%(action_account_invoice_register_payment)d" type="action" states="open,proforma,proforma2"
+                                string="Registruoti mokėjimą grynais"
+                                class="oe_highlight" context="{'default_amount': residual, 'default_currency_id': currency_id}"/>
+                        <button name="register_standard_cash_payment_and_download_pdf" type="object" states="open,proforma,proforma2"
+                                string="Standartinis apmokėjimas grynais"
+                                confirm="Ar tikrai norite registruoti standartinį apmokėjimą grynais?
+                                         Patvirtinus, bus sukurtas kasos pajamų orderis, apmokama visa suma,
+                                         naudojamas grynųjų pinigų žurnalas nustatant jus, kaip kasininką"
+                                class="oe_highlight" context="{'default_amount': residual, 'default_currency_id': currency_id}"
+                                groups="robo.robo_direct_kpo_printing"/>
+                        <button name="mark_proforma_paid" string="Pažymėti apmokėta" type="object"
+                                attrs="{'invisible':['|',('proforma_paid','!=', False), ('state', 'not in', ('proforma','proforma2'))]}"/>
+                        <button name="mark_proforma_not_paid" string="Pažymėti neapmokėta" type="object"
+                                attrs="{'invisible':['|',('proforma_paid','!=', True), ('state', 'not in', ('proforma','proforma2'))]}"/>
+                        <button name="action_invoice_proforma2" type="object" states="draft" string="Išankstinė sąskaita"
+                                groups="account.group_proforma_invoices"/>
+                        <button name="%(action_account_invoice_refund)d" type="action" string="Kredituoti"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"
+                                attrs="{'invisible': ['|',('type', '!=', 'out_invoice'), ('state', 'not in', ('open','paid'))]}"/>
+                        <button name="action_invoice_cancel_draft" type="object" states="open"
+                                string="Atstatyti į juodraštį" groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <field name="has_running_periodic" groups="robo_basic.group_robo_periodic" invisible="1"/>
+                        <button name="make_periodic" type="object" string="Padaryti periodine"
+                                attrs="{'invisible': ['|', '|', ('type', '!=', 'out_invoice'), ('has_running_periodic', '=', True), ('state', 'not in', ['open', 'paid'])]}"
+                                groups="robo_basic.group_robo_periodic"/>
+                        <button name="stop_periodic" type="object" string="Sustabdyti periodinį kūrimą"
+                                attrs="{'invisible': [('has_running_periodic', '=', False)]}"
+                                groups="robo_basic.group_robo_periodic"/>
+                        <button name="action_invoice_cancel" type="object" states="draft,proforma2,open"
+                                string="Atšaukti" groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <button name="action_invoice_change_number" type="object" states="draft,open,cancel,paid"
+                                string="Keisti numerį" groups="robo_basic.group_robo_premium_accountant"/>
+                        <button name="action_invoice_open_type_change_wizard" type="object" states="draft"
+                                string="Keisti tipą" groups="robo_basic.group_robo_premium_accountant"/>
+                        <button name="action_invoice_draft" states="cancel" string="Atstatyti į juodraštį" type="object"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"/>
+                        <button name="action_invoice_open_partner_change_wizard"
+                            string="Keisti sąskaitos partnerį"
+                            type="object" states="proforma2,open,paid"
+                            groups="robo.group_robo_invoice_partner_change_wizard"/>
+                        <button name="action_open_invoice_financial_account_change_wizard"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                string="Keisti eilučių finansines sąskaitas"
+                                type="object" states="proforma2,open,paid,draft"/>
+                        <button name="action_open_invoice_date_change_wizard"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                string="Change invoice dates"
+                                type="object" states="proforma2,open,paid,draft"/>
+                        <button name="action_invoice_change_analytics_all" string="Keisti analitines sąskaitas"
+                                groups="analytic.group_analytic_accounting"
+                                domain="[('company_id', '=', parent.company_id)]"
+                                type="object"
+                                icon="fa-pencil-square-o analytic_button"
+                                states="proforma2,open,paid"/>
+                        <button name="action_e_invoice_export_wizard" type="object" string="Importuoti eSąskaitą"
+                            attrs="{'invisible': ['|', ('type', 'not in', ['out_invoice']),
+                            ('state', 'not in', ['open']), ('activate_e_invoices', '=', False)]}"
+                            class="oe_highlight"
+                            groups="robo.group_robo_e_invoice"/>
+                        <button name="action_cancel_paid" type="object" string="Atšaukti"
+                                attrs="{'invisible': ['|', ('amount_is_zero', '=', False), ('state', '!=', 'paid')]}"/>
+                        <field name="proforma_paid" invisible="1"/>
+                        <field name='amount_is_zero' invisible="1"/>
+                        <field name="activate_e_invoices" invisible="1"/>
+                        <field name='show_export_to_other_EU_member_state_warning' invisible="1"/>
+                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
+                    </header>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('show_export_to_other_EU_member_state_warning', '=', False)]}">
+                        Pagal šią sąskaitą, kai tiekiamos prekės į kitą ES šalį, kitos ES šalies PVM mokėtojui,
+                        privaloma turėti šių prekių išvežimo į kitą ES šalį narę įrodančius pasirašytus dokumentus -
+                        važtaraščius, CMR ar kt.
+                        Rekomenduojame šių dokumentų kopijas prisegti prie šios sąskaitos sistemoje.
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('validated_after_isaf', '=', False)]}">
+                            Sąskaita buvo patvirtinta po mokestinio periodo uždarymo. Gali būti taikomi papildomi mokesčiai.
+                    </div>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                         attrs="{'invisible': ['|',('has_outstanding','=',False),'&amp;',('state','in',['proforma', 'proforma2']),('proforma_paid','=',True)]}">
+                        Jūs turite
+                        <bold>
+                            <a class="alert-link" href="#outstanding" role="button">nepriskirtų mokėjimų</a>
+                        </bold>
+                        šiam klientui.
+                        <span attrs="{'invisible': [('state','in',['proforma', 'proforma2'])]}">
+                            Galite šiuos mokėjimus priskirti prie šios sąskaitos žemiau paspaudę mygtuką "Pridėti".
+                        </span>
+                    </div>
+                    <field name="has_outstanding" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="validated_after_isaf" invisible="1"/>
+
+                    <field name="nbr_of_attachments" invisible="1"/>
+                    <field name="user_attachment_ids" invisible="1"/>
+                    <field name="accountant_validated" invisible="1"/>
+                    <field name="attachment_drop_lock" invisible="1"/>
+                    <widget type="robo_attach_files"/>
+                    <field name="unique_wizard_id" invisible="1"/>
+                    <field name="imported_pic" invisible="1"/>
+
+                    <sheet string="Invoice">
+
+                        <!--<field name="image" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;image_medium&quot;, &quot;size&quot;: [90, 90]}"/>-->
+                        <div class="bigger-label">
+                            <h1 class="mt0">
+                                <field class='text-center o_horizontal_separator' name="document_name" nolabel="1"/>
+                            </h1>
+                            <!--<label string="Pro Forma Invoice" attrs="{'invisible': [('state','not in',('proforma','proforma2'))]}"/>-->
+                            <!--<label string="Refund" attrs="{'invisible': ['|',('state','in',('draft','proforma','proforma2')), ('type','&lt;&gt;','out_refund')]}"/>-->
+                            <!--<h1 class="mt0">-->
+                            <!--<label string="Draft Invoice" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_invoice')]}"/>-->
+                            <!--<label string="Draft Refund" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_refund')]}"/>-->
+                            <!--<field name="number" readonly="1" class="oe_inline" attrs="{'invisible': [('state','in',('draft',))]}"/>-->
+                            <!--</h1>-->
+                        </div>
+                        <group colspan="4" col="4" class="no-right-td-padding align-vertical-middle">
+                            <button name="report_invoice_processing_issue"
+                                    string="Pranešti klaidą"
+                                    alt="Pranešti apie dokumentų apdorojimo klaidą" type="object"
+                                    attrs="{'invisible': [('imported_pic','=', False)]}"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    icon="fa-exclamation-circle"
+                                    class="report-issue-button"
+                            />
+                        </group>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="open_backend" type="object" groups="robo_basic.group_robo_premium_accountant" string="BACKEND" class="oe_stat_button" icon="fa-arrow-right"/>
+                        </div>
+                        <field name="type" invisible="1"/>
+                        <group>
+                            <group name="first_column"></group>
+                            <group name="second_column">
+                                <field string="Sąskaitos data:" name="date_invoice"
+                                       context="{'date': date_invoice, 'vat_date_test': True}"/>
+                                <field string="Išrašymo data" name="operacijos_data" invisible="1"/>
+                                <field string="Prašome apmokėti iki:" name="date_due" context="{'robo':True}"/>
+                                <field name="partner_lang" string="Kalba" help="Sąskaitos kalba" required="1"/>
+                                <field name="payment_term_id" string="Mokėjimo terminas" invisible="1"
+                                       options="{'no_create':True, 'no_open':True}"/>
+                                <label for="currency_id" groups="base.group_multi_currency"/>
+                                <div groups="base.group_multi_currency">
+                                    <!--ROBO: removed class="oe_inline"-->
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="company_currency_id" invisible="1"/>
+                                </div>
+                                <field name="main_analytic_id" groups="analytic.group_analytic_accounting"/>
+                                <field name="invoice_header" groups="robo.group_change_invoice_header"/>
+                                <field name="user_id" options="{'no_open':True, 'no_create':True}" groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_see_income"/>
+                                <field name="team_id" options="{'no_open':True, 'no_create':True}" groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo_basic.group_robo_see_income"/>
+                                <field name="proforma_vat_visibility" groups="robo_basic.group_robo_proforma_vat_visible" attrs="{'invisible': [('state', 'not in', ['proforma', 'proforma2'])]}"/>
+                                <field name="proforma_print_commercial_offer" attrs="{'invisible': [('state', 'not in', ['proforma', 'proforma2'])]}"/>
+                                <field name="account_id" invisible="1"/>
+                                <field name="fiscal_position_id" invisible="1"/>
+                                <field name="show_vat" invisible="1"/>
+                                <field name="journal_id" options="{'no_create': True}"
+                                       groups="account.group_account_user,robo_basic.group_robo_select_invoice_journal"
+                                       attrs="{'readonly':[('move_name','!=',False)]}"/>
+                            </group>
+                        </group>
+                        <group class="text-center">
+                            <group class='left_group' string="Pardavėjas">
+                                <field name="my_company_name"
+                                       options="{'always_reload': True, 'no_open': True, 'no_create': True}"
+                                       attrs="{'readonly': True}"/>
+                                <field name="empty_field"/>
+                                <label for="my_company_street" string="Adresas" attrs="{'readonly': True}"/>
+                                <div class="o_address_format">
+                                    <field name="my_company_street" placeholder="Gatvė..." class="o_address_street"
+                                           attrs="{'readonly': True}"/>
+                                    <field name="my_company_city" placeholder="Miestas" class="o_address_city oe_inline"
+                                           attrs="{'readonly': True}"/>
+                                    <field name="my_company_zip" placeholder="Pašto kodas" class="o_address_zip"
+                                           attrs="{'readonly': True}"/>
+                                    <field name="my_company_country_id" placeholder="Šalis" class="o_address_country"
+                                           options="{'no_open': True, 'no_create': True}" attrs="{'readonly': True}"/>
+                                    <br/>
+                                </div>
+                                <field name="my_company_kodas" placeholder="Kodas" attrs="{'readonly': True}"/>
+                                <field name="my_company_vat" placeholder="PVM kodas"
+                                       attrs="{'readonly': True, 'invisible': [('show_vat', '=', False)]}"/>
+                                <field name="my_company_phone" widget="phone" placeholder="Telefonas"
+                                       attrs="{'readonly': True}"/>
+                                <field name="my_company_email" widget="email" placeholder="El. paštas"
+                                       attrs="{'readonly': True}"/>
+                                <field name="move_name" invisible="1"/>
+                                <field name="my_company_bank_account" placeholder="Sąskaita"
+                                       attrs="{'readonly': True}"/>
+                                <field name="my_company_bank_name" placeholder="Pavadinimas"
+                                       attrs="{'readonly': True}"/>
+                                <field name="my_company_bank_BIC" placeholder="BIC" attrs="{'readonly': True}"/>
+                            </group>
+                            <group class='right_group' string="Pirkėjas">
+                                <field string="Pavadinimas" name="partner_id"
+                                       context="{'form_view_ref': 'robo.new_clients_customer_form','default_customer':1,
+                                   'default_company_type': partner_company_type,
+                                   'default_street': partner_street,
+                                   'default_city': partner_city,
+                                   'default_zip': partner_zip,
+                                   'default_country_id': partner_country_id,
+                                   'default_kodas': partner_kodas,
+                                   'default_vat': partner_vat,
+                                   'default_phone': partner_phone,
+                                   'default_email': partner_email,
+                                   'default_supplier': False,
+                                   'default_customer': True,
+                                   'default_category_id': partner_category_id,
+                                   'default_fax': partner_fax,
+                                   'default_mobile': partner_mobile,
+                                   'default_website': partner_website,
+                                   'default_lang': partner_lang,
+                                   }"
+                                       options="{'always_reload': True,  'no_open': False, 'no_quick_create':False,
+                                       'no_create_edit':True, 'quick_create': True}"
+                                       domain="[('advance_payment','=', False), '|', ('customer', '=', True),
+                                       ('is_employee','=',False), '|', ('parent_id', '=', False),
+                                       ('type', '!=', 'delivery')]" widget="robo_many2one"/>
+                                <!--, 'create_name_field': 'name' ??????????????????????????????-->
+                                <field name="partner_fax" invisible="1"/>
+                                <field name="partner_mobile" invisible="1"/>
+                                <field name="partner_website" invisible="1"/>
+                                <field name="partner_category_id" invisible="1"/>
+                                <field name="partner_company_type" widget="radio" options="{'horizontal': true}"/>
+                                <label for="partner_street" string="Adresas"/>
+                                <div class="o_address_format">
+                                    <field name="partner_street" placeholder="Gatvė" class="o_address_street"/>
+                                    <field name="partner_city" placeholder="Miestas" class="o_address_city"/>
+                                    <field name="partner_zip" placeholder="Pašto kodas" class="o_address_zip"/>
+                                    <field name="partner_country_id" placeholder="Šalis" class="o_address_country"
+                                           options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                    <br/>
+                                </div>
+                                <field name="partner_parent_id" invisible="1"/>
+                                <field name="partner_kodas" placeholder="Kodas" attrs="{
+                                'required': [('partner_parent_id', '=', False),('partner_company_type', '=', 'company'), ('partner_country_id', '=', %(base.lt)d)]
+                                }"
+                                />
+                                <field name="partner_vat"  placeholder="PVM kodas"/>
+                                <field name="partner_phone" widget="phone" placeholder="Telefonas"/>
+                                <field name="partner_email" widget="email" placeholder="El. paštas"/>
+                                <field name="force_taxes" placeholder="force_taxes" invisible="1"/>
+                                <field name="partner_tag_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <field name="sent" invisible="1"/>
+                        <field name="has_export_job_ids" invisible="1"
+                               groups="robo_basic.group_robo_premium_manager"/>
+                        <field name="has_e_invoice_export_job_ids" invisible="1"
+                               groups="robo_basic.group_robo_premium_manager"/>
+                        <notebook colspan="4">
+                            <page string="Paslaugos">
+                            <div class="invoice_lines">
+                                <field name="invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id}"
+                                       attrs="{'readonly': ['|', ('state', '!=', 'draft'), ('force_taxes','=',True)]}"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree string="Invoice Lines" class="robo_invoice_edit" editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="product_id" string="Paslauga" domain="[('sale_ok','=',True)]"
+                                               context="{'form_view_ref': 'robo.new_product_form', 'date': parent.date_invoice}"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="origin" invisible="1"/>
+                                        <field name="name" invisible="0"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="account_id" string="Sąskaita" groups="account.group_account_user"
+                                               domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other')]"
+                                               invisible="1"/>
+                                        <field name="account_analytic_id" string="Analitinė sąskaita"
+                                               groups="analytic.group_analytic_accounting"
+                                               domain="[('company_id', '=', parent.company_id)]"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="state" invisible="1"/>
+                                        <button name="action_line_change_analytics" string="Keisti analitinę sąskaitą"
+                                                groups="analytic.group_analytic_accounting"
+                                                domain="[('company_id', '=', parent.company_id)]"
+                                                type="object" icon="fa-pencil-square-o analytic_button"
+                                                states="proforma2,open,paid"/>
+                                        <field name="product_uom_categ_id" invisible="1"/>
+                                        <field name="uom_id" string="Matas" domain="[('category_id','=', product_uom_categ_id)]"
+                                               groups="product.group_uom"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="quantity" string="Kiekis"/>
+                                        <field name="price_unit" string="Kaina"/>
+                                        <!--<field name="discount" groups="sale.group_discount_per_so_line"/>-->
+                                        <field name="discount" string="Nuolaida, %"/>
+                                        <field name="invoice_line_tax_ids" string="PVM" widget="many2many_tags"
+                                               context="{'type':parent.type, 'date': parent.operacijos_data, 'vat_date_test': True, 'skip_non_vat': True}"
+                                               groups="robo_basic.group_robo_vat"
+                                               domain="[('type_tax_use','=','sale'),('company_id', '=', parent.company_id),('price_include', '=', parent.price_include)]"
+                                               options="{'no_create': True}" attrs="{'required': 0}"/>
+                                        <field name="price_subtotal_save_force_value" invisible="1"/>
+                                        <field name="price_subtotal_make_force_step" invisible="1"/>
+                                        <field name="price_subtotal" string="Suma" readonly="0" invisible="1"/>
+                                        <field name="amount_depends" context="{'direct_trigger_amount_depends': True}"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                    <form name="account_invoice_line" string="Invoice Line">
+                                        <group>
+                                            <group>
+                                                <label for="product_id"/>
+                                                <div>
+                                                    <field name="product_id"
+                                                           context="parent and {'partner_id': parent.partner_id,
+                                                           'form_view_ref': 'robo.new_product_form'}"
+                                                           options="{'no_create': True, 'no_open': True}"
+                                                           domain="[('sale_ok','=',True)]"/>
+                                                </div>
+                                                <label for="quantity"/>
+                                                <div>
+                                                    <field name="quantity" class="oe_inline"/>
+                                                    <field name="uom_id" class="oe_inline" groups="product.group_uom"/>
+                                                </div>
+                                                <field name="price_unit"/>
+                                                <field name="discount"/>
+                                                <field name="price_subtotal_save_force_value" invisible="1"/>
+                                                <field name="price_subtotal_make_force_step" invisible="1"/>
+                                                <field name="price_subtotal" string="Suma" readonly="0" invisible="1"/>
+                                                <field name="amount_depends" context="{'direct_trigger_amount_depends': True}"/>
+                                                <field name="currency_id" invisible="1"/>
+                                            </group>
+                                            <group>
+                                                <field domain="[('company_id', '=', parent.company_id)]"
+                                                       name="account_id" groups="account.group_account_user" options="{'no_create': True, 'no_open': True}"/>
+                                                <field name="invoice_line_tax_ids" context="{'type':parent.get('type')}" groups="robo_basic.group_robo_vat"
+                                                       domain="[('type_tax_use','!=','none'),('company_id', '=', parent.company_id)]"
+                                                       widget="many2many_tags" options="{'no_create': True, 'no_open': True}"/>
+                                                <field domain="[('company_id', '=', parent.company_id)]"
+                                                       name="account_analytic_id"
+                                                       groups="analytic.group_analytic_accounting"/>
+                                                <field name="company_id" groups="base.group_multi_company"
+                                                       readonly="1"/>
+                                                <field name="price_subtotal" invisible="1"/>
+                                            </group>
+                                        </group>
+                                        <label for="name"/>
+                                        <field name="name"/>
+                                    </form>
+                                    <kanban class="o_kanban_mobile">
+                                        <field name="product_id"/>
+                                        <field name="price_subtotal"/>
+                                        <field name="quantity"/>
+                                        <field name="name"/>
+                                        <field name="uom_id" groups="product.group_uom"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.name.value or 'None'"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-8 text-muted">
+                                                            <span>
+                                                                <t t-esc="record.quantity.value"/>
+                                                                <t t-esc="record.uom_id.value"/>
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-xs-4 text-muted">
+                                                            <span class="text-right">
+                                                                <t t-esc="record.price_subtotal.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+
+                                <field name="tax_line_ids" invisible="1">
+                                    <tree editable="bottom" string="Taxes">
+                                        <field name="name"/>
+                                        <!--Need invisible fields for on_change to create all necessary info -->
+                                        <field name="tax_id" invisible="1"/>
+                                        <field name="sequence" invisible="1"/>
+                                        <field name="manual" invisible="1"/>
+                                        <field name="account_id" groups="account.group_account_invoice"/>
+                                        <field name="account_analytic_id"
+                                               domain="[('company_id', '=', parent.company_id)]"
+                                               groups="analytic.group_analytic_accounting"/>
+                                        <field name="amount"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                </field>
+
+                                <group class="oe_subtotal_footer oe_right oe_subtotal_robo">
+                                    <field name="amount_untaxed" invisible="1"/>
+                                    <field name="amount_tax" invisible="1"/>
+                                    <field name="amount_total" invisible="1"/>
+                                    <field name="reporting_amount_untaxed" string="Suma be PVM" attrs="{'invisible': [('show_vat','=',False)]}"/>
+                                    <field name="reporting_amount_tax" string="PVM" attrs="{'invisible': [('show_vat','=',False)]}"/>
+                                    <field name="reporting_amount_total" class="oe_subtotal_footer_separator" string="Viso"/>
+                                    <field name="show_signed" invisible="1"/>
+                                    <field name="amount_total_company_signed" string="Viso (EUR)"
+                                           attrs="{'invisible': [('show_signed','=',False)]}"/>
+                                    <field name="price_include_selection" style="min-width:150px"
+                                           context="{'date': date_invoice, 'vat_date_test': True}"
+                                           attrs="{'readonly': [('state','!=','draft')] ,'invisible': [('show_vat','=',False)]}"/>
+                                    <field name="price_include" invisible="1"/>
+                                    <field name="payments_widget" colspan="2" nolabel="1" widget="robo_payment"/>
+                                    <field name="residual" string="Viso mokėti" class="oe_subtotal_footer_separator"
+                                           attrs="{'invisible': [('state', 'not in', ['open', 'paid'])]}"/>
+                                    <field name="reconciled" invisible="1"/>
+                                    <field name="outstanding_credits_debits_widget" colspan="2" nolabel="1"
+                                           widget="robo_payment"
+                                           attrs="{'invisible': [('state', '!=', 'open'),
+                                                                 '|', ('state', 'not in', ['proforma', 'proforma2']),
+                                                                      ('proforma_paid','=', True)]}"/>
+                                    <field name="has_potential_bank_statement" invisible="1"/>
+                                    <field name="bank_statement_data" colspan="2" nolabel="1"
+                                           widget="robo_bank_statement"
+                                           attrs="{'invisible': [('has_potential_bank_statement', '=', False)]}"/>
+                                    <field name="offsetting_data" colspan="2" nolabel="1"
+                                           widget="robo_offsetting"
+                                           attrs="{'invisible': [('state', '!=', 'open'),
+                                                                 '|', ('state', 'not in', ['proforma', 'proforma2']),
+                                                                      ('proforma_paid','=', True)]}"
+                                           groups="robo_basic.group_robo_premium_manager"/>
+                                </group>
+                                <group style="display: inline-table;" groups="robo_basic.group_robo_premium_manager">
+                                    <field name="bank_export_state_alert_html" colspan="4" string=" "/>
+                                </group>
+                            </div>
+                            </page>
+                            <page class="invoice_lines" string="Mokesčiai" groups="robo.robo_front_tax_change">
+                                 <field name="tax_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id}"
+                                       attrs="{'readonly': ['|', ('state', '!=', 'draft'), ('force_taxes','=',True)]}"
+                                       options="{'always_reload': True, 'no_open': True, 'no_create': True}">
+                                    <tree string="Mokesčių eilutės" editable="bottom" class="robo_invoice_edit" create="0" delete="0">
+                                        <field name="name" readonly="1"/>
+                                        <field name="tax_id" invisible="1"/>
+                                        <field name="account_analytic_id" invisible="1"/>
+                                        <field name="sequence" invisible="1"/>
+                                        <field name="manual" invisible="1"/>
+                                        <field name="account_id" groups="account.group_account_user" readonly="1"/>
+                                        <field name="amount" readonly="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <button name="action_change_line_vals" string="Keisti eilutę"
+                                            type="object" icon="fa-pencil-square-o analytic_button"/>
+                                    </tree>
+                                 </field>
+                            </page>
+                             <page string="PDF" name="pdf" attrs="{'invisible': [('show_pdf','=',False)]}">
+                                <field name="show_pdf" invisible="1"/>
+                                <field name="pdf" widget="pdf_viewer"/>
+                            </page>
+                            <page string="eInvoice export" name="bank_exports"
+                                  attrs="{'invisible': [('has_e_invoice_export_job_ids', '=', False)]}"
+                                  groups="robo_basic.group_robo_premium_manager">
+                                <field name="e_invoice_job_ids" nolabel="1" options="{'always_reload': True}"
+                                       mode="tree,kanban" widget="one2many_list"
+                                       groups="robo_basic.group_robo_premium_manager">
+                                    <tree edit="0" create="0" delete="0" class="robo_tree_in_form"
+                                          decoration-success="export_state in ['processed', 'processed_partial']"
+                                          decoration-info="export_state in ['accepted', 'accepted_partial']"
+                                          decoration-danger="export_state in ['rejected', 'rejected_partial', 'rejected_sign']"
+                                          decoration-warning="export_state == 'waiting'">
+                                        <field name="e_invoice_file_id"/>
+                                        <field name="partner_id"/>
+                                        <field name="journal_id"/>
+                                        <field name="date_exported"/>
+                                        <field name="export_state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Bank payment export" name="bank_exports"
+                                  attrs="{'invisible': [('has_export_job_ids','=',False)]}"
+                                  groups="robo_basic.group_robo_payment_export">
+                                <field name="general_export_job_ids" nolabel="1" options="{'always_reload': True}"
+                                       mode="tree,kanban" widget="one2many_list"
+                                       groups="robo_basic.group_robo_payment_export">
+                                    <tree edit="0" create="0" delete="0" class="robo_tree_in_form"
+                                          decoration-success="export_state in ['processed', 'processed_partial']"
+                                          decoration-info="export_state in ['accepted', 'accepted_partial']"
+                                          decoration-danger="export_state in ['rejected', 'rejected_partial', 'rejected_sign']"
+                                          decoration-warning="export_state == 'waiting'">
+                                        <field name="tr_name"/>
+                                        <field name="date_exported"/>
+                                        <field name="tr_amount"/>
+                                        <field name="tr_partner_id"/>
+                                        <field name="tr_currency_id"/>
+                                        <field name="tr_bank_account_id"/>
+                                        <field name="export_state"/>
+                                        <field name="available_for_signing"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <group>
+                            <group>
+                            </group>
+                        </group>
+                        <field name="comment" placeholder="Pastabos..."/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <!--<field name="message_follower_ids" widget="mail_followers"/>-->
+                        <field name="message_ids" widget="robo_mail_thread" context="{'related_front_action': %(robo.open_client_invoice)d}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="robo_expenses_form" model="ir.ui.view">
+            <field name="name">Expense invoice form view</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form class="robo_islaidos_form">
+                    <header>
+                        <field name="show_representation_action" invisible="1"/>
+                        <field name="exported_sepa" invisible="1"/>
+                        <button name="representation_check" type="object" string="Patvirtinti"
+                                class="oe_highlight"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"
+                                attrs="{'invisible':['|', ('expense_state','!=','draft'), ('show_representation_action', '=', True)]}"
+                        />
+                        <button name="submit_ceo_action" type="object" string="Pateikti vadovui"
+                                class="oe_highlight"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"
+                                attrs="{'invisible':['|', ('expense_state','!=','draft'), ('show_representation_action', '!=', True)]}"
+                        />
+                        <button name="download_sepa" string="Apmokėti sąskaitą banke"
+                                groups="robo_basic.group_robo_payment_export"
+                                type="object" class="oe_highlight"
+                                states="open,proforma,proforma2"/>
+                        <button name="%(action_account_invoice_register_payment)d" type="action"
+                                string="Registruoti mokėjimą grynais"
+                                context="{'default_amount': residual, 'default_currency_id': currency_id}"
+                                attrs="{'invisible':[('expense_state','!=','open')]}"/>
+                        <button name="action_invoice_open" type="object" states="proforma2" string="Patvirtinti"
+                                groups="account.group_account_invoice"/>
+                        <button name="action_invoice_proforma2" type="object" states="draft"
+                                string="Išankstinė sąskaita" groups="account.group_proforma_invoices"/>
+                        <button name="%(action_account_invoice_refund)d" type="action" string="Kredituoti"
+                                groups="robo_basic.group_robo_free_employee,robo_basic.group_robo_premium_user"
+                                attrs="{'invisible': ['|',('type', '!=', 'in_invoice'), ('expense_state', 'not in', ('open','paid'))]}"/>
+                        <button name="action_invoice_cancel" type="object"
+                                string="Atšaukti"
+                                groups="robo_basic.group_robo_premium_manager,robo.group_menu_kita_analitika,robo.group_robo_see_all_expenses"
+                                attrs="{'invisible': ['|',('with_cheque_form', '=', True), ('expense_state', 'not in', ('open','draft','proforma','proforma2'))]}"
+                        />
+                        <button name="mark_sepa_non_exported" string="Pažymėti kaip neeksportuotą"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                attrs="{'invisible':['|', '|', ('exported_sepa','=', False),
+                                        ('has_export_job_ids', '=', True), ('state', '=', 'paid')]}"
+                                type="object"/>
+                        <button name="ask_payment" string="Klausti apmokėjimo" type="object"
+                                attrs="{'invisible':[('expense_state','=','paid')]}"
+                                groups="robo_basic.group_robo_premium_accountant"/>
+                        <button name="ask_representation" type="object" string="Klausti ar išlaidos reprezentacinės"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                attrs="{'invisible':[('expense_state','in', ['paid', 'imported', 'awaiting'])]}"/>
+                        <button name="mark_proforma_paid" string="Pažymėti apmokėta" type="object"
+                                attrs="{'invisible':['|',('proforma_paid','!=', False), ('expense_state', 'not in', ('proforma','proforma2'))]}"/>
+                        <button name="mark_proforma_not_paid" string="Pažymėti neapmokėta" type="object"
+                                attrs="{'invisible':['|',('proforma_paid','!=', True), ('expense_state', 'not in', ('proforma','proforma2'))]}"/>
+                        <button name="action_invoice_order" type="object" states="open"
+                                string="Sukurti kasos išlaidų orderį" groups="robo_basic.group_robo_kasos_orderiai"/>
+                        <button name="action_invoice_draft" string="Atstatyti į juodraštį" type="object"
+                                attrs="{'invisible':[('expense_state','!=','cancel')]}"/>
+                        <button name="action_invoice_open_type_change_wizard" string="Keisti tipą" type="object"
+                                states="draft"
+                                groups="robo_basic.group_robo_premium_accountant"/>
+                        <button name="action_invoice_open_partner_change_wizard"
+                                string="Keisti sąskaitos partnerį"
+                                type="object" states="proforma2,open,paid"
+                                groups="robo.group_robo_invoice_partner_change_wizard"/>
+                        <button name="action_open_invoice_financial_account_change_wizard"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                string="Keisti eilučių finansines sąskaitas"
+                                type="object" states="proforma2,open,paid,draft"/>
+                        <button name="action_open_invoice_date_change_wizard"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                string="Change invoice dates"
+                                type="object" states="proforma2,open,paid,draft"/>
+                        <button name="action_invoice_change_analytics_all" string="Keisti analitines sąskaitas"
+                                groups="analytic.group_analytic_accounting"
+                                domain="[('company_id', '=', parent.company_id)]"
+                                type="object"
+                                icon="fa-pencil-square-o analytic_button"
+                                states="proforma2,open,paid"/>
+                        <button name="cancel_invoice_created_from_cheque_with_action" string="Atšaukti" type="object"
+                                attrs="{'invisible': ['|',('expense_state','not in',('paid','open')),('with_cheque_form','=', False)]}"/>
+                        <button name="action_cancel_paid" type="object" string="Atšaukti"
+                                attrs="{'invisible': ['|', ('amount_is_zero', '=', False), ('state', '!=', 'paid')]}"/>
+                        <field name='amount_is_zero' invisible="1"/>
+                        <field name="expense_state" widget="statusbar" nolabel="1"
+                               statusbar_visible="draft,open,paid,imported"/>
+                        <field name="state" invisible="1"/>
+                        <field name="proforma_paid" invisible="1"/>
+                        <field name="need_action_repr" invisible="1"/>
+                        <field name="need_action_info" invisible="1"/>
+                        <field name="action_shift" invisible="1"/>
+                        <field name="is_ceo" invisible="1"/>
+                    </header>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                         attrs="{'invisible':['|', ('expense_state','!=','draft'), ('show_representation_action', '!=', True)]}">
+                        <span>
+                            Sąskaita turi bent vieną reprezentacinį produktą, veiksmų langelyje matysite mygtuką 'Pateikti vadovui'.
+                            Paspaudus šį mygtuką reprezentacinių išlaidų tvirtinimo klausimas bus išsiunčiamas vadovui.
+                        </span>
+                    </div>
+                    <field name="robo_unpaid_e_invoice" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': ['|', ('robo_unpaid_e_invoice', '=', False), ('state', '=', 'paid')]}">
+                        Elektroninę sąskaitą už Jums suteiktas paslaugas rasite ir
+                        galėsite apmokėti prisijungę prie elektroninės bankininkystės, pasirinkę "Mokėjimai" ir "E. sąskaitos".
+                        Rekomenduojame sudaryti automatinio apmokėjimo sutartį,
+                        kad mėnesinių mokėjimų nereiktų atlikti rankiniu būdu.
+                    </div>
+                    <br/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                         attrs="{'invisible': ['|',('has_outstanding','=',False),'&amp;',('state','in',['proforma', 'proforma2']),('proforma_paid','=',True)]}">
+                        Jūs turite
+                        <bold>
+                            <a class="alert-link" href="#outstanding" role="button">nepriskirtų mokėjimų</a>
+                        </bold>
+                        šiam tiekėjui.
+                        <span attrs="{'invisible': [('state','in',['proforma', 'proforma2'])]}">
+                            Galite šiuos mokėjimus priskirti prie šios sąskaitos žemiau paspaudę mygtuką "Pridėti".
+                        </span>
+                    </div>
+
+                    <field name="has_outstanding" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <!--<field name="expense_state" invisible="1"/>-->
+                    <div class="alert alert-info robo_need_action_alert" role="alert"
+                         style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', '|', ('need_action_info', '!=', True), ('expense_state','not in', ['imported', 'awaiting'])]}">
+                        <div>
+                            <h4>Kaip apmokėjote?</h4>
+                        </div>
+                        <button name="app_inv_own_select" string="Asmeninės lėšos" type="object"
+                                style="margin-left:15px;"/>
+                        <button name="app_inv_company" string="Įmonės lėšos" type="object" style="margin-left:15px;"/>
+                    </div>
+
+                    <div class="alert alert-info robo_need_action_alert" role="alert"
+                         style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', '|', '|', ('need_action_repr','!=', True), ('expense_state','!=', 'imported'), ('action_shift', '!=', 'ceo'), ('is_ceo', '!=', True)]}">
+                        <div attrs="{'invisible':[('need_action_text_accountant', '!=', False)]}">
+                            <h4>Ar šios sąnaudos yra laikomos įmonės reprezentacinėmis sąnaudomis?</h4>
+                        </div>
+                        <div attrs="{'invisible':[('need_action_text_accountant', '=', False)]}">
+                            <h4>Buhalterio nuomone šios sąnaudos yra reprezentacinės. Patikslinkite pagrindimą.</h4>
+                        </div>
+                        <group attrs="{'invisible':[('need_action_text_accountant', '=', False)]}">
+                            <field name="need_action_text_accountant" readonly="1"/>
+                        </group>
+                        <button name="action_agree" string="Taip" type="object" style="margin-left:15px;"
+                                context="{'ceo': True, 'repr': True}"/>
+                        <button name="action_disagree" string="Ne" type="object" style="margin-left:15px;"
+                                context="{'ceo': True, 'repr': True}"/>
+                    </div>
+                    <div class="alert alert-info robo_need_action_alert" role="alert"
+                         style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', '|', '|', ('need_action_repr','!=', True), ('expense_state','!=', 'imported'), ('action_shift', '!=', 'ceo'), ('is_ceo', '!=', False)]}">
+                            <h4>
+                                Ši sąskaita laukia patikslinimo iš įmonės vadovo arba kitų reprezentacinių sąskaitų faktūrų tvirtinimo įgaliotinių.
+                            </h4>
+                    </div>
+
+                    <div class="alert alert-info robo_need_action_alert" role="alert"
+                         style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', '|',('need_action_repr','!=', True), ('expense_state','!=', 'awaiting'), ('action_shift', '!=', 'accountant')]}"
+                         groups="robo_basic.group_robo_premium_accountant">
+                        <div>
+                            <h4>Ar šios sąnaudos yra laikomos įmonės reprezentacinėmis sąnaudomis?</h4>
+                        </div>
+                        <div attrs="{'invisible':['|', ('ceo_state', '=', 'agree'), ('force_taxes', '=', False)]}">
+                            <p>Sąskaita turi priverstinius mokesčius, jeigu ją priskirsite neleidžiamiems atskaitymams,
+                                būtinai patikrinkite ar mokesčių sumos suvaikščiojo tinkamai!</p>
+                        </div>
+                        <group>
+                            <field name="ceo_state" readonly="1"/>
+                            <field name="need_action_text"/>
+                        </group>
+                        <button name="action_agree" string="Tvirtinti" type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'disagree')]}"/>
+                        <button name="action_agree" string="Priskirti neapibrėžtoms išlaidoms"
+                                type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True, 'force_confirm': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'disagree')]}"/>
+                        <button name="action_agree" string="Perklausti" type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True, 'ask_again': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'agree')]}"/>
+                        <button name="action_agree" string="Tvirtinti (Neapibrėžtos išlaidos)"
+                                type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True, 'force_confirm': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'agree')]}"/>
+                        <button name="action_agree" string="Priskirti neleidžiamiems atskaitymams"
+                                type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True, 'non_deductible': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'agree')]}"/>
+                    </div>
+                    <field name="nbr_of_attachments" invisible="1"/>
+                    <field name="user_attachment_ids" invisible="1"/>
+                    <field name="accountant_validated" invisible="1"/>
+                    <field name="attachment_drop_lock" invisible="1"/>
+                    <widget type="robo_attach_files"/>
+
+                    <sheet string="Invoice" class='position_relative'>
+                        <group colspan="4" col="4" class="no-right-td-padding align-vertical-middle">
+                            <field name="has_not_been_validated_by_accountant_warning" type="html" nolabel="1"/>
+                            <button name="report_invoice_processing_issue"
+                                    string="Pranešti klaidą"
+                                    alt="Pranešti apie dokumentų apdorojimo klaidą" type="object"
+                                    attrs="{'invisible': [('imported_pic','=', False)]}"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    icon="fa-exclamation-circle"
+                                    class="report-issue-button"
+                            />
+                        </group>
+                        <!--<field name="image" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;image_medium&quot;, &quot;size&quot;: [90, 90]}"/>-->
+                        <div class="oe_button_box" name="button_box">
+                            <button name="open_backend" type="object" groups="robo_basic.group_robo_premium_accountant"
+                                    string="BACKEND" class="oe_stat_button" icon="fa-arrow-right"/>
+                        </div>
+                        <div class="bigger-label text-center">
+                            <h1 class="mt0 robo_title_input">
+                                <field name="number" invisible="1"/>
+                                <field class='text-center o_horizontal_separator' name='document_name'
+                                       attrs="{'readonly':1}"/>
+                                <field class='text-center o_horizontal_separator'
+                                       placeholder="Įveskite tiekėjo sąskaitos numerį..." name="reference" nolabel="1"
+                                       help="Tiekėjo sąskaitos numeris"
+                                       attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"
+                                       required="1"/>
+                            </h1>
+                        </div>
+                        <field name="type" invisible="1"/>
+                        <group style="min-height:130px;">
+                            <group></group>
+                            <group>
+                                <field name="purchase_id" string="Pridėti pirkimus į sandėlį" invisible="1"/>
+                                <field string="Sąskaitos data:" name="date_invoice"
+                                       context="{'date': date_invoice, 'vat_date_test': True}"
+                                       attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                                <field string="Išrašymo data" name="operacijos_data" invisible="0" readonly="1"/>
+                                <field string="Registracijos data" name="registration_date" invisible="1"/>
+                                <field string="Mokėjimo terminas:" name="date_due" context="{'robo': True}"
+                                       attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                                <field name="payment_term_id" string="Mokėjimo terminas" invisible="1"
+                                       options="{'no_create':True, 'no_open':True}"/>
+                                <field name="date_due_report"
+                                       attrs="{'invisible': [('show_date_due_report', '=', False)]}"/>
+                                <field name="show_date_due_report" invisible="1"/>
+                                <label for="currency_id" groups="base.group_multi_currency"/>
+                                <div groups="base.group_multi_currency">
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                           attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                                    <field name="company_currency_id" invisible="1"/>
+                                </div>
+                                <field name="main_analytic_id" groups="analytic.group_analytic_accounting"/>
+                                <field name="invoice_header" groups="robo.group_change_invoice_header"/>
+                                <field name="hr_expense_id" string="Čekis"
+                                       attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)], 'invisible': ['|',('with_cheque_form','=',False),('expense_state','in',['draft','open','proforma2'])]}"/>
+                                <field name="account_id" invisible="1"/>
+                                <field name="with_cheque_form" invisible="1"/>
+                                <field name="imported_pic" invisible="1"/>
+                                <field name="allow_change_ap_employee_id" invisible="1"/>
+                                <label for="kaip apmoketa"
+                                       attrs="{'invisible': [('expense_state', 'not in', ['open', 'paid', 'draft', 'imported', 'awaiting'])]}"
+                                       string="Apmokėta"/>
+                                <div name="kaip apmoketa">
+                                    <field name="payment_mode"
+                                           attrs="{'readonly': [('expense_state','not in', ['draft', 'imported', 'awaiting'])], 'invisible': [('expense_state', 'not in', ['open', 'paid', 'draft', 'imported', 'awaiting'])]}"
+                                           widget="radio"/>
+                                    <button name="change_payment_details" string="Keisti" type="object"
+                                            attrs="{'invisible':['|', '|', ('allow_change_ap_employee_id', '=', False), ('accountant_validated', '=', True), ('expense_state', 'not in', ['open', 'paid'])]}"
+                                            nolabel="1" class="oe_inline; oe_link"/>
+                                </div>
+                                <label for="atsakingas_darbuotojas"
+                                       groups="robo_basic.group_robo_premium_manager,robo.group_menu_kita_analitika,robo.group_robo_see_all_expenses"
+                                       attrs="{'invisible':['|', ('expense_state', 'not in', ['open', 'paid', 'draft', 'imported', 'awaiting']),('payment_mode','!=','own_account')]}"
+                                       string="Darbuotojas"/>
+                                <div name="atsakingas_darbuotojas">
+                                    <field name="ap_employee_id" string="Darbuotojas"
+                                           groups="robo_basic.group_robo_premium_manager,robo.group_menu_kita_analitika,robo.group_robo_see_all_expenses"
+                                           attrs="{'readonly': [('expense_state','not in', ['draft', 'imported', 'awaiting'])], 'invisible':['|', ('expense_state', 'not in', ['open', 'paid', 'draft', 'imported', 'awaiting']),('payment_mode','!=','own_account')], 'required':[('payment_mode', '=', 'own_account')]}"
+                                           options="{'no_open': True, 'no_create': True}" nolabel="1"
+                                           class="oe_inline"/>
+                                </div>
+                                <field name="advance_payment" string="Apmokėta (avansinė apyskaita)"
+                                       groups="robo_basic.group_robo_premium_accountant"
+                                       attrs="{'readonly': 1}" invisible="1"/>
+                                <field name="cash_advance_account_id" string="Avansinės apyskaitos sąskaita"
+                                       groups="robo_basic.group_robo_premium_accountant"
+                                       attrs="{'readonly': [('expense_state','!=', 'draft')], 'invisible':['|', ('expense_state', 'not in', ['open', 'paid', 'draft']),('payment_mode','!=','own_account')]}"/>
+                                <field name="fiscal_position_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <group class="text-center">
+                            <group class="left_group" string="Tiekėjas">
+                                <field string="Pavadinimas" name="partner_id"
+                                       context="{'form_view_ref': 'robo.new_clients_customer_form','default_supplier':1,
+                                   'default_company_type': partner_company_type,
+                                   'default_street': partner_street,
+                                   'default_city': partner_city,
+                                   'default_zip': partner_zip,
+                                   'default_country_id': partner_country_id,
+                                   'default_kodas': partner_kodas,
+                                   'default_vat': partner_vat,
+                                   'default_phone': partner_phone,
+                                   'default_email': partner_email,
+                                   'default_supplier': True,
+                                   'default_customer': False,
+                                   'default_category_id': partner_category_id,
+                                   'default_fax': partner_fax,
+                                   'default_mobile': partner_mobile,
+                                   'default_website': partner_website,
+                                   }"
+                                       options="{'always_reload': True,  'no_open': False, 'no_quick_create':False,'no_create_edit':True}"
+                                       domain="[('is_employee','=',False)]" widget="robo_many2one"
+                                       attrs="{'readonly': ['|',('expense_state','not in', ('draft', 'imported')),('with_cheque_form','=', True)]}"/>
+                                <!--, 'create_name_field': 'name' ??????????????????????????????-->
+                                <field name="partner_fax" invisible="1"/>
+                                <field name="partner_mobile" invisible="1"/>
+                                <field name="partner_website" invisible="1"/>
+                                <field name="partner_category_id" invisible="1"/>
+                                <field name="partner_company_type" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                                <label for="partner_street" string="Adresas"/>
+                                <div class="o_address_format">
+                                    <field name="partner_street" placeholder="Gatvė..." class="o_address_street"
+                                           attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                                    <field name="partner_city" placeholder="Miestas" class="o_address_city oe_inline"
+                                           attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                                    <field name="partner_zip" placeholder="Pašto kodas" class="o_address_zip"
+                                           attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                                    <field name="partner_country_id" placeholder="Šalis" class="o_address_country"
+                                           options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"
+                                           attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                                    <br/>
+                                </div>
+                                <field name="show_vat" invisible="1"/>
+                                <field name="partner_parent_id" invisible="1"/>
+                                <field name="partner_kodas" attrs="{
+                                'required': [('partner_parent_id', '=', False),('partner_company_type', '=', 'company'), ('partner_country_id', '=', %(base.lt)d)]
+                                , 'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"
+                                />
+                                <field name="partner_vat"
+                                       attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"
+                                       placeholder="PVM kodas"
+                                />
+                                <field name="partner_phone" widget="phone" placeholder="Telefonas"
+                                       attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                                <field name="partner_email" widget="email" placeholder="El. paštas"
+                                       attrs="{'readonly': ['|',('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"/>
+                            </group>
+                            <group class="right_group" string="Pirkėjas">
+                                <field name="my_company_name"
+                                       options="{'always_reload': True, 'no_open': True, 'no_create': True}"
+                                       attrs="{'readonly': True}"/>
+                                <field name="empty_field"/>
+                                <label for="my_company_street" string="Adresas" attrs="{'readonly': True}"/>
+                                <div class="o_address_format">
+                                    <field name="my_company_street" placeholder="Gatvė..." class="o_address_street"
+                                           attrs="{'readonly': True}"/>
+                                    <field name="my_company_city" placeholder="Miestas" class="o_address_city oe_inline"
+                                           attrs="{'readonly': True}"/>
+                                    <field name="my_company_zip" placeholder="Pašto kodas" class="o_address_zip"
+                                           attrs="{'readonly': True}"/>
+                                    <field name="my_company_country_id" placeholder="Šalis" class="o_address_country"
+                                           options="{'no_open': True, 'no_create': True}" attrs="{'readonly': True}"/>
+                                    <br/>
+                                </div>
+                                <field name="my_company_kodas" placeholder="Kodas" attrs="{'readonly': True}"/>
+                                <field name="my_company_vat" placeholder="PVM kodas" attrs="{'readonly': True}"/>
+                                <field name="my_company_phone" widget="phone" placeholder="Telefonas"
+                                       attrs="{'readonly': True}"/>
+                                <field name="my_company_email" widget="email" placeholder="El. paštas"
+                                       attrs="{'readonly': True}"/>
+                                <field name="move_name" invisible="1"/>
+                                <field name="my_company_bank_account" placeholder="Sąskaita"
+                                       attrs="{'readonly': True}"/>
+                                <field name="my_company_bank_name" placeholder="Pavadinimas"
+                                       attrs="{'readonly': True}"/>
+                                <field name="my_company_bank_BIC" placeholder="BIC" attrs="{'readonly': True}"/>
+                                <field name="force_taxes" placeholder="force_taxes" invisible="1"/>
+                            </group>
+                        </group>
+                        <field name="sent" invisible="1"/>
+                        <field name="journal_id" groups="account.group_account_user" options="{'no_create': True}"
+                               attrs="{'readonly':['|',('move_name','!=',False),('with_cheque_form','=', True)]}"
+                               invisible="1"/>
+                        <field name="has_export_job_ids" invisible="1" groups="robo_basic.group_robo_payment_export"/>
+                        <notebook colspan="4">
+                            <page class="invoice_lines" string="Paslaugos">
+                                <field name="invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id}"
+                                       attrs="{'readonly': ['|','|',('force_taxes','=',True),('expense_state','!=', 'draft'),('with_cheque_form','=', True)]}"
+                                       options="{'always_reload': True}">
+                                    <tree string="Invoice Lines" editable="bottom" class="robo_invoice_edit">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="product_id" string="Paslauga" domain="[('purchase_ok','=',True)]"
+                                               context="{'form_view_ref': 'robo.new_product_form'}"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="origin" invisible="1"/>
+                                        <field name="name" invisible="0"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="account_id" string="Sąskaita" groups="account.group_account_user"
+                                               domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other')]"
+                                               invisible="1"/>
+                                        <field name="account_analytic_id" string="Analitinė sąskaita"
+                                               groups="analytic.group_analytic_accounting"
+                                               domain="[('company_id', '=', parent.company_id)]"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="state" invisible="1"/>
+                                        <button name="action_line_change_analytics" string="Keisti analitinę sąskaitą"
+                                                groups="analytic.group_analytic_accounting"
+                                                domain="[('company_id', '=', parent.company_id)]"
+                                                type="object" icon="fa-pencil-square-o analytic_button"
+                                                states="proforma2,open,paid"/>
+                                        <field name="product_uom_categ_id" invisible="1"/>
+                                        <field name="uom_id" string="Matas"
+                                               domain="[('category_id','=', product_uom_categ_id)]"
+                                               groups="product.group_uom"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="quantity" string="Kiekis"/>
+                                        <field name="price_unit" string="Kaina"/>
+                                        <!--<field name="discount" groups="sale.group_discount_per_so_line"/>-->
+                                        <field name="discount" string="Nuolaida, %"/>
+                                        <field name="invoice_line_tax_ids" string="PVM" widget="many2many_tags"
+                                               context="{'type':parent.type, 'date': parent.operacijos_data, 'vat_date_test': True}"
+                                               groups="robo_basic.group_robo_vat"
+                                               domain="[('type_tax_use','=','purchase'),('company_id', '=', parent.company_id),('price_include', '=', parent.price_include)]"
+                                               options="{'no_create': True}" attrs="{'required': 0}"/>
+                                        <field name="price_subtotal_save_force_value" invisible="1"/>
+                                        <field name="price_subtotal_make_force_step" invisible="1"/>
+                                        <field name="amount_depends" string="Suma" readonly="0"
+                                               context="{'direct_trigger_amount_depends': True}"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                    <form name="account_invoice_line" string="Invoice Line">
+                                        <group>
+                                            <group>
+                                                <label for="product_id"/>
+                                                <div>
+                                                    <field name="product_id" domain="[('purchase_ok','=',True)]"
+                                                           context="parent and {'partner_id': parent.partner_id,
+                                                           'form_view_ref': 'robo.new_product_form'}"
+                                                           options="{'no_create': True, 'no_open': True}"/>
+                                                </div>
+                                                <label for="quantity"/>
+                                                <div>
+                                                    <field name="quantity" class="oe_inline"/>
+                                                    <field name="uom_id" class="oe_inline" groups="product.group_uom"/>
+                                                </div>
+                                                <field name="price_unit"/>
+                                                <field name="discount" groups="base.group_no_one"/>
+                                                <field name="currency_id" invisible="1"/>
+                                            </group>
+                                            <group>
+                                                <field domain="[('company_id', '=', parent.company_id)]"
+                                                       name="account_id" groups="account.group_account_user"
+                                                       options="{'no_create': True, 'no_open': True}"/>
+                                                <field name="invoice_line_tax_ids" context="{'type':parent.get('type')}"
+                                                       domain="[('type_tax_use','!=','none'),('company_id', '=', parent.company_id)]"
+                                                       widget="many2many_tags" groups="robo_basic.group_robo_vat"
+                                                       options="{'no_create': True, 'no_open': True}"/>
+                                                <field domain="[('company_id', '=', parent.company_id)]"
+                                                       name="account_analytic_id"
+                                                       groups="analytic.group_analytic_accounting"/>
+                                                <field name="company_id" groups="base.group_multi_company"
+                                                       readonly="1"/>
+                                            </group>
+                                        </group>
+                                        <label for="name"/>
+                                        <field name="name"/>
+                                    </form>
+                                    <kanban class="o_kanban_mobile">
+                                        <field name="product_id"/>
+                                        <field name="price_subtotal"/>
+                                        <field name="quantity"/>
+                                        <field name="name"/>
+                                        <field name="uom_id" groups="product.group_uom"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.name.value or 'None'"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-8 text-muted">
+                                                            <span>
+                                                                <t t-esc="record.quantity.value"/>
+                                                                <t t-esc="record.uom_id.value"/>
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-xs-4 text-muted">
+                                                            <span class="text-right">
+                                                                <t t-esc="record.price_subtotal.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                                <field name="tax_line_ids" invisible="1">
+                                    <tree editable="bottom" string="Taxes">
+                                        <field name="name"/>
+                                        <!--Need invisible fields for on_change to create all necessary info -->
+                                        <field name="tax_id" invisible="1"/>
+                                        <field name="sequence" invisible="1"/>
+                                        <field name="manual" invisible="1"/>
+                                        <field name="account_id" groups="account.group_account_invoice"/>
+                                        <field name="account_analytic_id"
+                                               domain="[('company_id', '=', parent.company_id)]"
+                                               string="Analitinė sąskaita" groups="analytic.group_analytic_accounting"/>
+                                        <field name="amount"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                </field>
+
+                                <group class="oe_subtotal_footer oe_right oe_subtotal_robo">
+                                    <field name="amount_untaxed" string="Suma be PVM"
+                                           attrs="{'invisible': [('show_vat','=',False)]}"/>
+                                    <field name="amount_tax" string="PVM"
+                                           attrs="{'invisible': [('show_vat','=',False)]}"/>
+                                    <field name="amount_total" class="oe_subtotal_footer_separator" string="Viso"/>
+                                    <field name="show_signed" invisible="1"/>
+                                    <field name="amount_total_company_signed" string="Viso (EUR)"
+                                           attrs="{'invisible': [('show_signed','=',False)]}"/>
+                                    <field name="price_include_selection" style="min-width:150px"
+                                           context="{'date': date_invoice, 'vat_date_test': True}"
+                                           attrs="{'readonly': [('state','!=','draft')] ,'invisible': [('show_vat','=',False)]}"/>
+                                    <field name="price_include" invisible="1"/>
+                                    <field name="payments_widget" colspan="2" nolabel="1" widget="robo_payment"/>
+                                    <field name="residual" string="Viso mokėti" class="oe_subtotal_footer_separator"
+                                           attrs="{'invisible': [('expense_state', '=', 'draft')]}"/>
+                                    <field name="reconciled" invisible="1"/>
+                                    <field name="outstanding_credits_debits_widget" colspan="2" nolabel="1"
+                                           widget="robo_payment"
+                                           attrs="{'invisible': [('state', '!=', 'open'),
+                                                                 '|', ('state', 'not in', ['proforma', 'proforma2']),
+                                                                      ('proforma_paid','=', True)]}"/>
+                                    <field name="has_potential_bank_statement" invisible="1"/>
+                                    <field name="bank_statement_data" colspan="2" nolabel="1"
+                                           widget="robo_bank_statement"
+                                           attrs="{'invisible': [('has_potential_bank_statement', '=', False)]}"/>
+                                    <field name="offsetting_data" colspan="2" nolabel="1"
+                                           widget="robo_offsetting"
+                                           attrs="{'invisible': [('state', '!=', 'open'),
+                                                                 '|', ('state', 'not in', ['proforma', 'proforma2']),
+                                                                      ('proforma_paid','=', True)]}"
+                                           groups="robo_basic.group_robo_premium_manager"/>
+                                </group>
+                                 <group style="display: inline-table;">
+                                    <field name="bank_export_state_alert_html" colspan="4" string=" "/>
+                                </group>
+                            </page>
+                            <page class="invoice_lines" string="Mokesčiai" groups="robo.robo_front_tax_change">
+                                 <field name="tax_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
+                                       context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id}"
+                                       attrs="{'readonly': ['|','|',('force_taxes','=',True),('expense_state','!=', 'draft')]}"
+                                       options="{'always_reload': True, 'no_open': True, 'no_create': True}">
+                                    <tree string="Mokesčių eilutės" editable="bottom" class="robo_invoice_edit"
+                                          create="0" delete="0">
+                                        <field name="name" readonly="1"/>
+                                        <field name="tax_id" invisible="1"/>
+                                        <field name="account_analytic_id" invisible="1"/>
+                                        <field name="sequence" invisible="1"/>
+                                        <field name="manual" invisible="1"/>
+                                        <field name="account_id" groups="account.group_account_user" readonly="1"/>
+                                        <field name="amount" readonly="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <button name="action_change_line_vals" string="Keisti eilutę"
+                                                type="object" icon="fa-pencil-square-o analytic_button"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Buhalterinių operacijų detalizacija" name="robo_usage"
+                                  attrs="{'invisible': [('robo_accounting_usage', '=', [])]}">
+                                <field name="robo_accounting_usage" widget="one2many_list" mode="tree"
+                                       class="robo_form_tree">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="quantity"/>
+                                        <field name="quantity_free"/>
+                                        <field name="quantity_paid" sum="quantity_paid"/>
+                                        <field name="amount_paid" sum="amount_paid"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="PDF" name="pdf" attrs="{'invisible': [('show_pdf','=',False)]}">
+                                <field name="show_pdf" invisible="1"/>
+                                <field name="pdf" widget="pdf_viewer"/>
+                            </page>
+                            <page string="Bankinių mokėjimų eksportas" name="bank_exports"
+                                  attrs="{'invisible': [('has_export_job_ids','=',False)]}"
+                                  groups="robo_basic.group_robo_payment_export">
+                                <field name="bank_export_job_ids" nolabel="1" options="{'always_reload': True}"
+                                       mode="tree,kanban" widget="one2many_list"
+                                       groups="robo_basic.group_robo_payment_export">
+                                    <tree edit="0" create="0" delete="0" class="robo_tree_in_form"
+                                          decoration-success="export_state in ['processed', 'processed_partial']"
+                                          decoration-info="export_state in ['accepted', 'accepted_partial']"
+                                          decoration-danger="export_state in ['rejected', 'rejected_partial', 'rejected_sign']"
+                                          decoration-warning="export_state == 'waiting'">
+                                        <field name="tr_name"/>
+                                        <field name="date_exported"/>
+                                        <field name="tr_amount"/>
+                                        <field name="tr_partner_id"/>
+                                        <field name="tr_currency_id"/>
+                                        <field name="tr_bank_account_id"/>
+                                        <field name="export_state"/>
+                                        <field name="available_for_signing"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <group>
+                            <group>
+                            </group>
+                        </group>
+                        <field name="unique_wizard_id" invisible="1"/>
+                        <!--<div class="dragDrop_above" style="top:2%;left:4%"-->
+                        <!--attrs="{'invisible': ['|', ('with_cheque_picture', '=', False),('computed_attachment','=',True)]}">-->
+                        <field name="with_cheque_picture" invisible="1"/>
+                        <!--<field name="attachment" widget="dragDrop"-->
+                        <!--filename="name_attachment" filemime="mime_attachment"-->
+                        <!--attrs="{-->
+                        <!--'readonly':['|',('state','!=','draft'), ('with_cheque_form','=', True)],-->
+                        <!--'required': [('expense_state','=','draft'),('with_cheque_picture','=',True),('computed_attachment','=',False)]-->
+                        <!--}"-->
+                        <!--/>-->
+                        <!--<field name="name_attachment" invisible="1"/>-->
+                        <!--<field name="mime_attachment" invisible="1"/>-->
+                        <!--</div>-->
+                        <!--<div class="dragDrop_above" style="top:2%;left:4%"-->
+                        <!--attrs="{'invisible': ['|',('with_cheque_picture', '=', False),('computed_attachment','=',False)]}">-->
+                        <!--<field name="computed_attachment" widget="dragDrop" filename="computed_name_attachment"-->
+                        <!--filemime="computed_mime_attachment"-->
+                        <!--readonly="1"-->
+                        <!--required="0"-->
+                        <!--/>-->
+                        <!--<field name="computed_name_attachment" invisible="1"/>-->
+                        <!--<field name="computed_mime_attachment" invisible="1"/>-->
+                        <!--</div>-->
+                        <field name="comment" placeholder="Pastabos..."
+                               attrs="{'readonly':['|',('expense_state','!=','draft'), ('with_cheque_form','=', True)]}"/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <!--<field name="message_follower_ids" widget="mail_followers"/>-->
+                        <field name="message_ids" widget="robo_mail_thread"
+                               context="{'related_front_action': %(robo.robo_expenses_action)d}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="pajamos_fix_payments_view" model="ir.ui.view">
+            <field name="name">pajamos.fix.payments</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='outstanding_credits_debits_widget']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state', '!=', 'open'), '|', ('state', 'not in', ['proforma', 'proforma2']), ('proforma_paid','=', True)]}</attribute>
+                    <attribute name="widget">robo_payment</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payments_widget']" position="attributes">
+                    <attribute name="widget">robo_payment</attribute>
+                </xpath>
+                <xpath expr="//div[@class='alert alert-info']" position="before">
+                    <field name="proforma_paid" invisible="1"/>
+                </xpath>
+                <xpath expr="//div[@class='alert alert-info']" position="replace">
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                         attrs="{'invisible': ['|',('has_outstanding','=',False),'&amp;',('state','in',['proforma', 'proforma2']),('proforma_paid','=',True)]}">
+                        Jūs turite<bold><a class="alert-link" href="#outstanding" role="button">&#032;nepriskirtų mokėjimų&#032;</a></bold>šiam klientui.
+                        <span attrs="{'invisible': [('state','in',['proforma', 'proforma2'])]}">
+                            Galite šiuos mokėjimus priskirti prie šios sąskaitos žemiau paspaudę mygtuką "Pridėti".
+                        </span>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='message_ids']" position="attributes">
+                    <attribute name="widget">robo_mail_thread</attribute>
+                    <attribute name="context">{'related_front_action': %(robo.open_client_invoice)d}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='account_analytic_id']" position="after">
+                    <field name="state" invisible="1"/>
+                    <button name="action_line_change_analytics" string="Keisti analitinę sąskaitą"
+                        groups="analytic.group_analytic_accounting"
+                        domain="[('company_id', '=', parent.company_id)]"
+                        type="object" icon="fa-pencil-square-o analytic_button"
+                        states="proforma2,open,paid"/>
+                </xpath>
+                <xpath expr="//button[@name='%(account.action_account_invoice_payment)d']" position="replace">
+                    <button name="%(robo.action_account_invoice_register_payment)d" type="action" states="open"
+                            string="Registruoti mokėjimą grynais" groups="account.group_account_invoice"
+                            class="oe_highlight"
+                            context="{'default_amount': residual, 'default_currency_id': currency_id}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_draft']" position="after">
+                    <button name="action_invoice_change_number" type="object" states="draft,open,cancel,paid"
+                                string="Keisti numerį" groups="robo_basic.group_robo_premium_accountant"/>
+                    <button name="action_invoice_open_type_change_wizard" type="object" states="draft"
+                                string="Keisti tipą" groups="robo_basic.group_robo_premium_accountant"/>
+                    <button name="action_invoice_change_analytics_all" string="Keisti analitines sąskaitas"
+                                groups="analytic.group_analytic_accounting"
+                                domain="[('company_id', '=', parent.company_id)]"
+                                type="object"
+                                states="proforma2,open,paid"/>
+                    <button name="action_invoice_open_tax_change_wizard"
+                            string="Keisti sąskaitos mokesčius"
+                            type="object"/>
+                    <button name="action_invoice_open_partner_change_wizard"
+                            string="Keisti sąskaitos partnerį"
+                            type="object" states="proforma2,open,paid"/>
+                    <button name="action_open_invoice_financial_account_change_wizard"
+                            string="Keisti eilučių finansines sąskaitas"
+                            type="object" states="proforma2,open,paid,draft"/>
+                    <button name="action_open_invoice_date_change_wizard"
+                            string="Change invoice dates"
+                            type="object" states="proforma2,open,paid,draft"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='price_subtotal']" position="replace">
+                    <field name="price_subtotal_save_force_value" invisible="1"/>
+                    <field name="price_subtotal_make_force_step" invisible="1"/>
+                    <field name="price_subtotal" string="Suma" readonly="0" invisible="1"/>
+                    <field name="amount_depends" context="{'direct_trigger_amount_depends': True}"/>
+                    <field name="state" invisible="1"/>
+                    <button name="action_change_line_vals" string="Keisti eilutę"
+                        type="object" icon="fa-pencil-square-o analytic_button"
+                        states="proforma2,open,paid"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='uom_id']" position="before">
+                    <field name="product_uom_categ_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='uom_id']" position="attributes">
+                    <attribute name="domain">[('category_id','=', product_uom_categ_id)]</attribute>
+                    <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='residual']" position="before">
+                    <field name="show_vat" invisible="1"/>
+                    <field name="price_include" invisible="1"/>
+                    <field name="price_include_selection" style="min-width:150px"
+                           context="{'date': date_invoice, 'vat_date_test': True}"
+                           attrs="{'readonly': [('state','!=','draft')] ,'invisible': [('show_vat','=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='invoice_line_tax_ids']" position="attributes">
+                    <attribute name="domain">[('type_tax_use','=','sale'),('company_id', '=', parent.company_id),('price_include', '=', parent.price_include)]</attribute>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']"  position="after">
+                    <field name="partner_vat" invisible="1"/>
+                    <field name="partner_kodas" invisible="1"/>
+                    <field name="partner_company_type" invisible="1"/>
+                    <field name="partner_parent_id" invisible="1"/>
+                    <field name="partner_street" invisible="1"/>
+                    <field name="partner_zip" invisible="1"/>
+                    <field name="partner_city" invisible="1"/>
+                    <field name="partner_country_id" invisible="1"/>
+                    <field name="partner_phone" invisible="1"/>
+                    <field name="partner_email" invisible="1"/>
+                    <field name="partner_category_id" invisible="1"/>
+                    <field name="partner_fax" invisible="1"/>
+                    <field name="partner_mobile" invisible="1"/>
+                    <field name="partner_website" invisible="1"/>
+                    <field name="partner_lang" invisible="1"/>
+                    <field name="imported_pic" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='date_invoice']" position="attributes">
+                    <attribute name="context">{'date': date_invoice, 'vat_date_test': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='force_taxes']" position="after">
+                    <field name="skip_isaf"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_tax_ids']" position="attributes">
+                    <attribute name="context">{'type': parent.type, 'date': parent.operacijos_data, 'vat_date_test': True}</attribute>
+                </xpath>
+                <xpath expr="//sheet[1]//div[1]" position="before">
+                    <group colspan="4" col="4" class="no-right-td-padding align-vertical-middle">
+                        <button name="report_invoice_processing_issue"
+                                string="Pranešti klaidą"
+                                alt="Pranešti apie dokumentų apdorojimo klaidą" type="object"
+                                attrs="{'invisible': [('imported_pic','=', False)]}"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                icon="fa-exclamation-circle"
+                                class="report-issue-button"
+                        />
+                    </group>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="open_frontend" type="object" string="FRONTEND" class="oe_stat_button"
+                                icon="fa-arrow-right"/>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='outstanding_credits_debits_widget']" position="after">
+                    <field name="offsetting_data" colspan="2" nolabel="1"
+                           widget="robo_offsetting"
+                           attrs="{'invisible': [('state', '!=', 'open'),
+                                                 '|', ('state', 'not in', ['proforma', 'proforma2']),
+                                                      ('proforma_paid','=', True)]}"
+                           groups="robo_basic.group_robo_premium_manager"/>
+                </xpath>
+                <xpath expr="//field[@name='tax_line_ids']" position="replace"/>
+                <xpath expr="//group[@class='oe_subtotal_footer oe_right']" position="before">
+                    <group>
+                        <div class="oe_inline">
+                            <field name="tax_line_ids">
+                                <tree editable="bottom" string="Taxes" create="0">
+                                    <field name="name"/>
+                                    <!--Need invisible fields for on_change to create all necessary info -->
+                                    <field name="tax_id" invisible="1"/>
+                                    <field name="account_analytic_id" invisible="1"/>
+                                    <field name="sequence" invisible="1"/>
+                                    <field name="manual" invisible="1"/>
+                                    <field name="account_id" groups="account.group_account_user"/>
+                                    <field name="amount"/>
+                                    <button name="action_change_line_vals" string="Keisti eilutę"
+                                            type="object" icon="fa-pencil-square-o analytic_button"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </div>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="replace_mail_chatter_supplier_invoice" model="ir.ui.view">
+            <field name="name">replace.mail.chatter.supplier.invoice</field>
+            <field name="model">account.invoice</field>
+            <field name="priority">17</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='message_ids']" position="attributes">
+                    <attribute name="widget">robo_mail_thread</attribute>
+                    <attribute name="context">{'related_front_action': %(robo.robo_expenses_action)d}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_cancel']" position="attributes">
+                    <attribute name="string">Atšaukti sąskaitą faktūrą</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_draft']" position="after">
+                    <button name="action_invoice_change_number" type="object" states="draft,open,cancel,paid"
+                            string="Keisti numerį" groups="robo_basic.group_robo_premium_accountant"/>
+                    <button name="action_invoice_open_type_change_wizard" type="object" states="draft"
+                            string="Keisti tipą" groups="robo_basic.group_robo_premium_accountant"/>
+                    <button name="action_invoice_change_analytics_all" string="Keisti analitines sąskaitas"
+                            groups="analytic.group_analytic_accounting"
+                            domain="[('company_id', '=', parent.company_id)]"
+                            type="object"
+                            states="proforma2,open,paid"/>
+                    <button name="action_invoice_open_partner_change_wizard"
+                            string="Keisti sąskaitos partnerį"
+                            type="object" states="proforma2,open,paid"/>
+                    <button name="action_open_invoice_financial_account_change_wizard"
+                            string="Keisti eilučių finansines sąskaitas"
+                            type="object" states="proforma2,open,paid,draft"/>
+                    <button name="action_open_invoice_date_change_wizard"
+                            string="Change invoice dates"
+                            type="object" states="proforma2,open,paid,draft"/>
+                    <button name="action_open_account_invoice_vat_change_wizard"
+                            groups="robo_basic.group_robo_premium_accountant"
+                            string="Change invoice line VAT codes"
+                            type="object" states="proforma2,open,paid,draft"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="replace">
+                    <field name="state" widget="statusbar" invisible="1"/>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_draft']" position="after">
+                    <field name="expense_state" widget="statusbar" nolabel="1"
+                           statusbar_visible="draft,open,paid,imported"/>
+                </xpath>
+                <xpath expr="//field[@name='type']" position="after">
+                    <field name="tag_ids" invisible="1"/>
+                    <field name="tag_ids_text" attrs="{'invisible': [('tag_ids', '=', False)], 'readonly': True}"/>
+                </xpath>
+                <xpath expr="//header" position="after">
+                    <field name="need_action_info" invisible="1"/>
+                    <div class="alert alert-info robo_need_action_alert" role="alert"
+                         style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('need_action_info', '!=', True), ('expense_state','not in', ['imported', 'awaiting'])]}"
+                    >
+                        <div>
+                            <h4>Kaip apmokėjote?</h4>
+                        </div>
+                        <button name="app_inv_own_select" string="Asmeninės lėšos" type="object"
+                                style="margin-left:15px;"/>
+                        <button name="app_inv_company" string="Įmonės lėšos" type="object" style="margin-left:15px;"/>
+                    </div>
+                    <field name="need_action_repr" invisible="1"/>
+                    <field name="action_shift" invisible="1"/>
+                    <div class="alert alert-info robo_need_action_alert" role="alert"
+                         style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', '|', ('need_action_repr','!=', True),
+                                                        ('expense_state','!=', 'awaiting'),
+                                                        ('action_shift', '!=', 'accountant')]}"
+                         groups="robo_basic.group_robo_premium_accountant">
+                        <div>
+                            <h4>Ar šios sąnaudos yra laikomos įmonės reprezentacinėmis sąnaudomis?</h4>
+                        </div>
+                        <div attrs="{'invisible':['|', ('ceo_state', '=', 'agree'), ('force_taxes', '=', False)]}">
+                            <p>Sąskaita turi priverstinius mokesčius, jeigu ją priskirsite neleidžiamiems atskaitymams,
+                                būtinai patikrinkite ar mokesčių sumos suvaikščiojo tinkamai!
+                            </p>
+                        </div>
+                        <group>
+                            <field name="ceo_state" readonly="1"/>
+                            <field name="need_action_text"/>
+                        </group>
+                        <button name="action_agree" string="Tvirtinti" type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'disagree')]}"/>
+                        <button name="action_agree" string="Priskirti neapibrėžtoms išlaidoms"
+                                type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True, 'force_confirm': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'disagree')]}"/>
+                        <button name="action_agree" string="Perklausti" type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'agree')]}"/>
+                        <button name="action_agree" string="Tvirtinti (Neapibrėžtos išlaidos)"
+                                type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True, 'force_confirm': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'agree')]}"/>
+                        <button name="action_agree" string="Priskirti neleidžiamiems atskaitymams"
+                                type="object" style="margin-left:15px;"
+                                context="{'accountant': True, 'repr': True, 'non_deductible': True}"
+                                attrs="{'invisible':[('ceo_state', '=', 'agree')]}"/>
+                    </div>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_open']" position="after">
+                    <field name="has_export_job_ids" invisible="1"/>
+                    <field name="exported_sepa" invisible="1"/>
+                    <button name="action_invoice_proforma2" type="object" states="draft" string="Išankstinė sąskaita"
+                            groups="account.group_proforma_invoices"/>
+                    <button name="ask_payment" string="Klausti apmokėjimo" type="object"
+                            groups="robo_basic.group_robo_premium_accountant"
+                            attrs="{'invisible':[('expense_state','=','paid')]}"/>
+                    <button name="mark_sepa_non_exported" string="Pažymėti kaip neeksportuotą"
+                            groups="robo_basic.group_robo_premium_accountant"
+                            attrs="{'invisible':['|', '|', ('exported_sepa','=', False),
+                                    ('has_export_job_ids', '=', True), ('state', '=', 'paid')]}"
+                            type="object" states="open,proforma,proforma2,draft"/>
+                    <button name="ask_representation" type="object" string="Klausti ar išlaidos reprezentacinės"
+                            groups="robo_basic.group_robo_premium_accountant"
+                            attrs="{'invisible':[('expense_state','in', ['paid', 'imported', 'awaiting'])]}"/>
+                    <field name="imported_pic" invisible="1"/>
+                </xpath>
+                <xpath expr="//sheet[last()]/div" position="before">
+                    <group colspan="4" col="4" class="no-right-td-padding align-vertical-middle">
+                        <button name="report_invoice_processing_issue"
+                                string="Pranešti klaidą"
+                                alt="Pranešti apie dokumentų apdorojimo klaidą" type="object"
+                                attrs="{'invisible': [('imported_pic','=', False)]}"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                icon="fa-exclamation-circle"
+                                class="report-issue-button"
+                        />
+                    </group>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice_cancel']" position="replace">
+                    <button name="action_invoice_cancel" type="object" states="draft,proforma,proforma2,open"
+                            string="Cancel Invoice" groups="account.group_account_invoice"/>
+                </xpath>
+                <xpath expr="//field[@name='skip_isaf']" position="after">
+                    <field name="expense_split"/>
+                </xpath>
+                <xpath expr="//field[@name='move_id']" position="after">
+                    <field name="gpm_move" attrs="{'invisible': [('gpm_move', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='tax_line_ids']/tree//field[@name='amount']" position="after">
+                    <button name="action_change_line_vals" string="Keisti eilutę"
+                            type="object" icon="fa-pencil-square-o analytic_button"/>
+                </xpath>
+                <xpath expr="//field[@name='outstanding_credits_debits_widget']" position="after">
+                    <field name="offsetting_data" colspan="2" nolabel="1"
+                           widget="robo_offsetting"
+                           attrs="{'invisible': [('state', '!=', 'open'),
+                                                 '|', ('state', 'not in', ['proforma', 'proforma2']),
+                                                      ('proforma_paid','=', True)]}"
+                           groups="robo_basic.group_robo_premium_manager"/>
+                </xpath>
+                <xpath expr="//page" position="after">
+                    <page string="Bankinių mokėjimų eksportas" name="bank_exports"
+                          attrs="{'invisible': [('has_export_job_ids','=',False)]}"
+                          groups="robo_basic.group_robo_payment_export">
+                        <field name="bank_export_job_ids" nolabel="1" options="{'always_reload': True}"
+                               mode="tree,kanban" widget="one2many_list"
+                               groups="robo_basic.group_robo_payment_export">
+                            <tree edit="0" create="0" delete="0" class="robo_tree_in_form"
+                                  decoration-success="export_state in ['processed', 'processed_partial']"
+                                  decoration-info="export_state in ['accepted', 'accepted_partial']"
+                                  decoration-danger="export_state in ['rejected', 'rejected_partial', 'rejected_sign']"
+                                  decoration-warning="export_state == 'waiting'">
+                                <field name="tr_name"/>
+                                <field name="date_exported"/>
+                                <field name="tr_amount"/>
+                                <field name="tr_partner_id"/>
+                                <field name="tr_currency_id"/>
+                                <field name="tr_bank_account_id"/>
+                                <field name="export_state"/>
+                                <field name="available_for_signing"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='outstanding_credits_debits_widget']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state', '!=', 'open'), '|', ('state', 'not in',
+                        ['proforma', 'proforma2']), ('proforma_paid','=', True)]}
+                    </attribute>
+                    <attribute name="widget">robo_payment</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payments_widget']" position="attributes">
+                    <attribute name="widget">robo_payment</attribute>
+                </xpath>
+                <xpath expr="//div[@class='alert alert-info']" position="before">
+                    <field name="proforma_paid" invisible="1"/>
+                </xpath>
+                <xpath expr="//div[@class='alert alert-info']" position="replace">
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                         attrs="{'invisible': ['|',('has_outstanding','=',False),'&amp;',('state','in',['proforma', 'proforma2']),('proforma_paid','=',True)]}">
+                        Jūs turite
+                        <bold>
+                            <a class="alert-link" href="#outstanding" role="button">&#032;nepriskirtų mokėjimų&#032;</a>
+                        </bold>
+                        šiam tiekėjui.
+                        <span attrs="{'invisible': [('state','in',['proforma', 'proforma2'])]}">
+                            Galite šiuos mokėjimus priskirti prie šios sąskaitos žemiau paspaudę mygtuką "Pridėti".
+                        </span>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="partner_vat" invisible="1"/>
+                    <field name="partner_kodas" invisible="1"/>
+                    <field name="partner_company_type" invisible="1"/>
+                    <field name="partner_parent_id" invisible="1"/>
+                    <field name="partner_street" invisible="1"/>
+                    <field name="partner_zip" invisible="1"/>
+                    <field name="partner_city" invisible="1"/>
+                    <field name="partner_country_id" invisible="1"/>
+                    <field name="partner_phone" invisible="1"/>
+                    <field name="partner_email" invisible="1"/>
+                    <field name="partner_category_id" invisible="1"/>
+                    <field name="partner_fax" invisible="1"/>
+                    <field name="partner_mobile" invisible="1"/>
+                    <field name="partner_website" invisible="1"/>
+                    <field name="partner_lang" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_tax_ids']" position="attributes">
+                    <attribute name="context">
+                        {'type': parent.type, 'date': parent.operacijos_data, 'vat_date_test': True}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='price_subtotal']" position="replace">
+                    <field name="price_subtotal_save_force_value" invisible="1"/>
+                    <field name="price_subtotal_make_force_step" invisible="1"/>
+                    <field name="price_subtotal" string="Suma" readonly="0" invisible="1"/>
+                    <field name="amount_depends" context="{'direct_trigger_amount_depends': True}"/>
+                    <field name="state" invisible="1"/>
+                    <button name="action_change_line_vals" string="Keisti eilutę"
+                            type="object" icon="fa-pencil-square-o analytic_button"
+                            states="proforma2,open,paid"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='uom_id']" position="before">
+                    <field name="product_uom_categ_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='uom_id']" position="attributes">
+                    <attribute name="domain">[('category_id','=', product_uom_categ_id)]</attribute>
+                    <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+                </xpath>
+                <xpath expr="//sheet[1]//div[1]" position="before">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="open_frontend" type="object" string="FRONTEND" class="oe_stat_button"
+                                icon="fa-arrow-right"/>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='account_analytic_id']" position="after">
+                    <field name="state" invisible="1"/>
+                    <button name="action_line_change_analytics" string="Keisti analitinę sąskaitą"
+                            groups="analytic.group_analytic_accounting"
+                            domain="[('company_id', '=', parent.company_id)]"
+                            type="object" icon="fa-pencil-square-o analytic_button"
+                            states="proforma2,open,paid"/>
+                </xpath>
+                <xpath expr="//field[@name='reference']" position="replace">
+                    <field name="reference" string="Tiekėjo sąskaitos numeris"/>
+                </xpath>
+                <xpath expr="//button[@name='%(account.action_account_invoice_payment)d']" position="replace">
+                    <button name="%(robo.action_account_invoice_register_payment)d" type="action" states="open"
+                            string="Registruoti mokėjimą grynais" groups="account.group_account_invoice"
+                            class="oe_highlight"
+                            context="{'default_amount': residual, 'default_currency_id': currency_id}"/>
+                </xpath>
+                <xpath expr="//field[@name='expense_move_id']" position="after">
+                    <label for="kaip apmoketa" string="Kaip apmokėjote?"/>
+                    <div name="kaip apmoketa">
+                        <field name="payment_mode" widget="radio"
+                               attrs="{'readonly': [('expense_state','not in', ['draft', 'imported', 'awaiting'])]}"/>
+                        <button name="change_payment_details" string="Keisti" type="object"
+                                groups="robo_basic.group_robo_premium_manager,robo.group_menu_kita_analitika,robo.group_robo_see_all_expenses"
+                                attrs="{'invisible':[('expense_state', 'not in', ['open', 'paid'])]}" nolabel="1"
+                                class="oe_inline; oe_link"/>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='residual']" position="before">
+                    <field name="show_vat" invisible="1"/>
+                    <field name="price_include" invisible="1"/>
+                    <field name="price_include_selection" style="min-width:150px"
+                           context="{'date': date_invoice, 'vat_date_test': True}"
+                           attrs="{'readonly': [('state','!=','draft')] ,'invisible': [('show_vat','=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='invoice_line_tax_ids']" position="attributes">
+                    <attribute name="domain">[('type_tax_use','=','purchase'),('company_id', '=', parent.company_id),('price_include', '=', parent.price_include)]</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Tree-->
+        <record model="ir.ui.view" id="pajamos_tree">
+            <field name="name">Pajamos_tree</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree class="o_short_group_name robo_md_full_size" decoration-info="state == 'open'" decoration-muted="state == 'draft' and not move_name"
+                      decoration-danger="state == 'cancel'" decoration-it="state == 'draft' and move_name"
+                      decoration-success="state == 'paid'"
+                      string="Sąskaitos faktūros" create="0" import="0">
+                    <field name="partner_id" groups="base.group_user" class="oe_partner" string="Klientas"/>
+                    <field name="date_invoice" string="Data" class="oe_date_invoice"/>
+                    <!--<field name="number" string="Numeris" invisible="1"/>-->
+                    <field name="move_name" string="Numeris" invisible="1"/>
+                    <field name="computed_number" class="oe_computed_number" string="Numeris"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="reference" invisible="1"/>
+                    <field name="name" invisible="1"/>
+                    <field name="journal_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"
+                           string="Kompanija"/>
+                    <field name="submitted" string="Pateikė" class="oe_partner"/>
+                    <field name="date_due" string="Terminas" class="oe_date_invoice"/>
+                    <field name="amount_untaxed_signed" string="Suma be PVM" sum="Suma be PVM"
+                           groups="robo.group_amount_untaxed_invoice_tree"/>
+                    <field name="amount_total_signed" string="Suma" sum="Suma"/>
+                    <field name="residual_signed" class="oe_residual_signed" string="Neapmokėta suma"
+                           sum="Neapmokėta suma" widget="roboAddState" multi-col="state"/>
+                    <!--<field name="state_amount" widget="roboInvoiceState"/>-->
+                    <field name="currency_id" invisible="1" string="Valiuta"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="recently_updated" invisible="1"/>
+                    <field name="bank_export_state_html" widget="BankExportState" string=""/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_invoice_tree_pajamos_extend" model="ir.ui.view">
+            <field name="name">account.invoice.tree.pajamos.extend</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='amount_total_signed']" position="before">
+                    <field name="amount_untaxed_signed" sum="total_without_tax"/>
+                    <field name="amount_tax_signed" sum="total_tax"/>
+                </xpath>
+                <xpath expr="//field[@name='number']" position="replace">
+                    <field name="computed_number"/>
+                </xpath>
+                <xpath expr="//field[@name='currency_id']" position="replace">
+                    <field name="currency_id"/>
+                </xpath>
+                <xpath expr="//field[@name='date_invoice']" position="after">
+                    <field name="operacijos_data"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_invoice_tree_expenses_extend" model="ir.ui.view">
+            <field name="name">account.invoice.tree.expenses.extend</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='amount_total_signed']" position="before">
+                    <field name="amount_untaxed_signed" sum="total_without_tax"/>
+                    <field name="amount_tax_signed" sum="total_tax"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="replace">
+                    <field name="state" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="expense_state"/>
+                    <field name="tag_ids_tree_text" widget="roboTags" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='number']" position="replace">
+                    <field name="computed_number"/>
+                </xpath>
+                <xpath expr="//field[@name='type']" position="after">
+                    <button name="exported_sepa_button" icon="fa-check-circle" string="Eksportuotas mokėjimas" attrs="{'invisible': [('exported_sepa','=',False)]}"/>
+                    <field name="exported_sepa" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='currency_id']" position="replace">
+                    <field name="currency_id"/>
+                </xpath>
+                <xpath expr="//field[@name='date_invoice']" position="after">
+                    <field name="operacijos_data"/>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="account_code"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="robo_expenses_tree">
+            <field name="name">Expenses tree</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree class="o_short_group_name robo_md_full_size" decoration-info="expense_state == 'open'"
+                      decoration-muted="expense_state == 'draft'"
+                      decoration-warning="expense_state in ['imported', 'awaiting']"
+                      decoration-danger="expense_state == 'cancel'"
+                      decoration-success="expense_state == 'paid'"
+                      string="Sąskaitos faktūros" create="0" import="0"
+                      multi_open="robo.new_cheque_action:(with_cheque_form==True)and(state in ('draft','proforma2','cancel'))and(not payment_move_line_ids)):hr_expense_id"
+                      recentActive="{
+                        template: '',
+                        domain: '',
+                        new_action: '',
+                        card_action: '',
+                      }"
+                >
+                    <field name="hr_expense_id" invisible="1"/>
+                    <field name="partner_id" groups="base.group_user" string="Tiekėjas" class="oe_partner"/>
+                    <field name="date_invoice" string="Data" class="oe_date_invoice"/>
+                    <field name="number" string="Numeris" invisible="1"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="reference" invisible="0" class="oe_reference_invoice" string="Tiekėjo numeris"/>
+                    <field name="name" invisible="1"/>
+                    <field name="journal_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"
+                           string="Kompanija"/>
+                    <field name="submitted" string="Pateikė" class="oe_partner"/>
+                    <field name="date_due_report" string="Terminas" class="oe_date_invoice"/>
+                    <field name="amount_untaxed_signed" string="Suma be PVM" sum="Suma be PVM"
+                           groups="robo.group_amount_untaxed_invoice_tree"/>
+                    <field name="amount_total_signed" string="Suma"/>
+                    <field name="amount_total_company_signed" string="Suma, EUR" sum="Suma, EUR" help=""/>
+                    <field name="residual_signed" string="Neapmokėta suma" class="oe_residual_signed"
+                           widget="roboAddStateExp" multi-col="expense_state" sum="Neapmokėta suma"/>
+                    <!--<field name="state_amount" widget="roboInvoiceState"/>-->
+                    <field name="currency_id" invisible="1" string="Valiuta"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="payment_move_line_ids" invisible="1"/>
+                    <field name="with_cheque_picture" invisible="0" string="" widget="expenseType_boolean"/>
+                    <field name="bank_export_state_html" widget="BankExportState" string=""/>
+                    <field name="exported_sepa" invisible="1"/>
+                    <field name="bank_export_state" invisible="1"/>
+                    <field name="cash_advance_left_to_repay" invisible="1"/>
+                    <field name="ap_employee_id" invisible="1"/>
+                    <field name="is_cash_advance_repaid" invisible="1"/>
+                    <field name="advance_payment" invisible="1"/>
+                    <field name="expense_move_id" invisible="1"/>
+                    <field name="expense_state" invisible="1"/>
+                    <field name="with_cheque_form" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="recently_updated" invisible="1"/>
+                    <!--<field name="cash_advance_balance"/>-->
+                </tree>
+            </field>
+        </record>
+
+        <!--Search-->
+        <record id="robo_pajamos_action_search_view" model="ir.ui.view">
+            <field name="name">account.invoice.search</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Sąskaitos faktūros">
+                    <field name="number" string="Sąskaita faktūra" filter_domain="['|','|','|', '|', '|', '|', ('computed_number','ilike',self), ('move_name','ilike',self), ('number','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self), ('proforma_number', 'ilike', self)]"/>
+                    <field name="invoice_line_ids" string="Analitinės Sąskaitos (tikslus pavadinimas)" filter_domain="['|', ('invoice_line_ids.account_analytic_id.code', '=ilike', self), ('invoice_line_ids.account_analytic_id.name', '=ilike', self)]"/>
+                    <field name="invoice_line_ids" string="Analitinės Sąskaitos" filter_domain="['|', ('invoice_line_ids.account_analytic_id.code', 'ilike', self), ('invoice_line_ids.account_analytic_id.name', 'ilike', self)]"/>
+                    <field name="main_analytic_id" string="Main analytic account" filter_domain="['|', ('main_analytic_id.code', 'ilike', self), ('main_analytic_id.name', 'ilike', self)]"/>
+                    <field name="invoice_line_ids" string="Produktas"
+                           filter_domain="['|', ('invoice_line_ids.product_id.default_code', 'ilike', self), ('invoice_line_ids.product_id.name', 'ilike', self)]"/>
+                    <field name="journal_id" string="Žurnalas" domain="[('type', '=', 'sale')]"/>
+                    <filter name="draft" string="Juodraštis" domain="[('state','in',('draft', 'proforma'))]"/>
+                    <filter name="proforma" string="Išankstinės sąskaitos" domain="[('state','=','proforma2')]" groups="account.group_proforma_invoices"/>
+                    <filter name="invoices" string="Sąskaitos faktūros" domain="['&amp;', ('state','in',['open','paid']),('type','in',('out_invoice','in_invoice'))]"/>
+                    <filter name="refunds" string="Grąžinimai" domain="['&amp;', ('state','in',['open','paid']),('type','in',('out_refund','in_refund'))]"/>
+                    <filter name="canceled" string="Anuliuotos sąskaitos"
+                            domain="['&amp;', ('state','in',['cancel']),('move_name','!=', False)]"/>
+                    <separator/>
+                    <filter name="wo_analytic" string="Be analitinių sąskaitų" domain="[('invoice_line_ids.account_analytic_id', '=', False)]"/>
+                    <filter name="w_analytic" string="Su analitinėmis sąskaitomis" domain="[('invoice_line_ids.account_analytic_id', '!=', False)]"/>
+                    <separator/>
+                    <filter name="e_invoiced" string="Siųsta eSąskaita"
+                            domain="[('bank_export_state', '!=', 'no_action'), ('type', '=', 'out_invoice')]"
+                            groups="robo.group_robo_e_invoice"/>
+                    <filter name="exported_to_bank" string="Exported to bank"
+                            domain="[('bank_export_state', '!=', 'no_action'), ('type', '=', 'out_refund')]"/>
+                    <separator/>
+                    <filter name="unpaid" string="Nesumokėta" domain="[('state','=','open')]"/>
+                    <filter name="unpaid_and_has_outstanding" string="Nesumokėta su nesudengtu mokėjimu" domain="[('has_outstanding', '=', True), ('state','=','open')]"/>
+                    <filter name="unpaid_w_potential_statement" string="Nesumokėta su nesudengta banko operacija" domain="[('has_potential_bank_statement', '=', True)]"/>
+                    <filter name="unpaid_w_potential_offsetting" string="Nesumokėta su galima užskaita" domain="[('has_potential_offsetting', '=', True), ('state','=','open')]"/>
+                    <filter name="late" string="Pradelsta" domain="['&amp;', ('date_due', '&lt;', time.strftime('%%Y-%%m-%%d')), ('state', 'in', ('open', 'proforma2'))]" help=""/>
+                    <filter name="pay_today" string="Mokėti šiandien" domain="['&amp;', '|', ('date_due','=',context_today().strftime('%Y-%m-%d')), ('date_due', '=', False), ('state', '=', 'open')]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['&amp;',('date_invoice','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date_invoice','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['&amp;',('date_invoice','&lt;=',(context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),('date_invoice','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai"
+                            domain="[
+                             '&amp;',
+                             ('date_invoice', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('date_invoice', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="[
+                             '&amp;',
+                             ('date_invoice', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('date_invoice', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <field name="date_invoice" string="Data nuo" filter_domain="['|',
+                                                                            ('date_invoice', '&gt;=', self),
+                                                                            ('date_invoice', '&gt;=', self)]"/>
+                    <field name="date_invoice" string="Data iki" filter_domain="['|',
+                                                                            ('date_invoice', '&lt;=', self),
+                                                                            ('date_invoice', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="asset" string="Ilg. turtas" domain="[('selling_asset', '=', True)]"/>
+                    <separator/>
+                    <filter name="sent" string="Sąskaita siųsta el. paštu" domain="[('sent', '=', True)]"/>
+                    <filter name="not_sent" string="Sąskaita nesiųsta el. paštu" domain="[('sent', '=', False)]"/>
+                    <separator/>
+                    <field name="partner_id" string="Partneris" operator="child_of"/>
+                    <field name="user_id" string="Kliento vadybininkas"/>
+                    <field name="submitted" string="Pateikęs asmuo"/>
+                    <field name="team_id" string="Pardavimų komanda"/>
+                    <field name="date" string="Periodas"/>
+                    <field name="message_ids" string="Komentarai" filter_domain="[('message_ids.body', 'ilike', self)]"/>
+                    <field name="comment" string="Pastabos" filter_domain="[('comment', 'ilike', self)]"/>
+                    <filter name="not_validated" string="Reikia peržiūrėti" domain="[('accountant_validated','=',False), ('state', 'not in', ['proforma', 'proforma2'])]"/>
+                    <separator/>
+                    <filter domain="[('user_id','=',uid)]" help="Mano sąskaitos"/>
+                    <field name="tax_ids" string="PVM kodas (tikslus atitikmuo)" groups="robo_basic.group_robo_premium_accountant"/>
+                    <group expand="0" string="Grupuoti pagal">
+                        <filter name="group_by_partner_id" string="Partneris" context="{'group_by':'commercial_partner_id'}"/>
+                        <filter string="Kliento vadybininkas" context="{'group_by':'user_id'}"/>
+                        <filter string="Pateikęs asmuo" context="{'group_by':'submitted'}"/>
+                        <filter name="status" string="Būsena" context="{'group_by':'state'}"/>
+                        <!--<filter string="Pardavimų komanda" domain="[]" context="{'group_by':'team_id'}"/>-->
+                        <separator/>
+                        <filter string="Sąskaitos data" context="{'group_by':'date_invoice'}"/>
+                        <filter string="Mokėjimo terminas" context="{'group_by':'date_due'}"/>
+                        <filter string="Žurnalas" context="{'group_by':'journal_id'}"/>
+                        <filter string="Valiuta" context="{'group_by': 'currency_id'}"/>
+                        <filter string="eSąskaitų eksportavimo būsena"
+                                context="{'group_by': 'bank_export_state'}"
+                                groups="robo.group_robo_e_invoice"/>
+                        <filter string="Pagrindinė analitinė sąskaita" context="{'group_by': 'main_analytic_id'}"
+                                groups="analytic.group_analytic_accounting"/>
+                    </group>
+                        <field name="partner_tag_ids" string="Žyma"
+                               filter_domain="[('partner_tag_ids', 'ilike', self)]"/>
+               </search>
+            </field>
+        </record>
+
+        <record id="view_account_invoice_search_extension" model="ir.ui.view">
+            <field name="name">view.account.invoice.search.extension</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="invoice_line_ids" string="Analitinės Sąskaitos (tikslus pavadinimas)" filter_domain="['|', ('invoice_line_ids.account_analytic_id.code', '=ilike', self), ('invoice_line_ids.account_analytic_id.name', '=ilike', self)]"/>
+                    <field name="invoice_line_ids" string="Analitinės Sąskaitos" filter_domain="['|', ('invoice_line_ids.account_analytic_id.code', 'ilike', self), ('invoice_line_ids.account_analytic_id.name', 'ilike', self)]"/>
+                    <field name="invoice_line_ids" string="Produktas"
+                           filter_domain="['|', ('invoice_line_ids.product_id.default_code', 'ilike', self), ('invoice_line_ids.product_id.name', 'ilike', self)]"/>
+                    <field name="invoice_line_ids" string="PVM"
+                           filter_domain="['|', ('invoice_line_ids.invoice_line_tax_ids.code', 'ilike', self), ('invoice_line_ids.invoice_line_tax_ids.name', 'ilike', self)]"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="before">
+                    <filter name="wo_analytic" string="Be analitinių sąskaitų"
+                            domain="[('invoice_line_ids.account_analytic_id', '=', False)]"/>
+                    <filter name="w_analytic" string="Su analitinėmis sąskaitomis"
+                            domain="[('invoice_line_ids.account_analytic_id', '!=', False)]"/>
+                    <separator/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['&amp;',('date_invoice','&lt;=',(context_today()+relativedelta(months=-1,day=31)).strftime('%Y-%m-%d')),('date_invoice','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="[('date_invoice', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                     ('date_invoice', '&lt;', (context_today()+relativedelta( month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="until_previous_year_end" string="Iki praeitų metų galo"
+                            domain="[('date_invoice', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="until_previous_month_end" string="Iki praeito mėnesio galo"
+                            domain="[('date_invoice', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <field name="date_invoice" string="Data nuo" filter_domain="['|',
+                                                                            ('date_invoice', '&gt;=', self),
+                                                                            ('date_invoice', '&gt;=', self)]"/>
+                    <field name="date_invoice" string="Data iki" filter_domain="['|',
+                                                                            ('date_invoice', '&lt;=', self),
+                                                                            ('date_invoice', '&lt;=', self)]"/>
+                    <separator/>
+                    <filter name="notexported" string="Neeksportuotas mokėjimas"
+                            domain="[('exported_sepa','=',False)]"/>
+                    <separator/>
+                    <filter name="sent" string="Sąskaita siųsta el. paštu" domain="[('sent', '=', True)]"/>
+                    <filter name="not_sent" string="Sąskaita nesiųsta el. paštu" domain="[('sent', '=', False)]"/>
+                    <separator/>
+                </xpath>
+                <xpath expr="//filter[@name='unpaid']" position="after">
+                    <filter name="unpaid_and_has_outstanding" string="Nesumokėta su nesudengtu mokėjimu"
+                            domain="[('has_outstanding', '=', True), ('state','=','open')]"/>
+                    <filter name="unpaid_w_potential_statement" string="Nesumokėta su nesudengta banko operacija"
+                            domain="[('has_potential_bank_statement', '=', True)]"/>
+                    <filter name="unpaid_w_potential_offsetting" string="Nesumokėta su galima užskaita"
+                            domain="[('has_potential_offsetting', '=', True), ('state','=','open')]"/>
+                </xpath>
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="comment" string="Pastabos" filter_domain="[('comment', 'ilike', self)]"/>
+                    <separator/>
+                    <filter name="no_attachments" string="Neprisegta"
+                            domain="['|', ('attachment_ids', '=', False), ('attachment_ids', '=', [])]"/>
+                    <field name="tax_ids" string="PVM kodas (tikslus atitikmuo)"/>
+                </xpath>
+                <xpath expr="//filter[@name='unpaid']" position="attributes">
+                    <attribute name="domain">
+                        ['|',
+                            '&amp;',
+                            ('type', 'in', ['in_invoice', 'in_refund']),
+                                '|',
+                                    ('expense_state', 'in', ['open']),
+                                    '&amp;',
+                                        ('state', '=', 'proforma2'),
+                                        ('proforma_paid', '=', False),
+                            '&amp;',
+                            ('type', 'in', ['out_invoice', 'out_refund']),
+                            ('state', '=', 'open'),
+                        ]
+                    </attribute>
+                </xpath>
+                <!--Only grouping in backend form-->
+                <xpath expr="//filter[@name='status']" position="after">
+                    <separator/>
+                    <filter string="Bankinio eksportavimo būsena" context="{'group_by': 'bank_export_state'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="robo_expenses_action_search_view">
+            <field name="name">Išlaidų filtrai</field>
+            <field name="model">account.invoice</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search string="Search Invoice">
+                    <field name="number" string="Sąskaitos faktūros"
+                           filter_domain="['|','|','|', '|', ('move_name','ilike',self), ('number','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/>
+                    <field name="invoice_line_ids" string="Analitinės Sąskaitos (Tikslus pavadinimas)" filter_domain="['|', ('invoice_line_ids.account_analytic_id.code', '=ilike', self), ('invoice_line_ids.account_analytic_id.name', '=ilike', self)]"/>
+                    <field name="invoice_line_ids" string="Analitinės Sąskaitos" filter_domain="['|', ('invoice_line_ids.account_analytic_id.code', 'ilike', self), ('invoice_line_ids.account_analytic_id.name', 'ilike', self)]"/>
+                    <field name="main_analytic_id" string="Main analytic account" filter_domain="['|', ('main_analytic_id.code', 'ilike', self), ('main_analytic_id.name', 'ilike', self)]"/>
+                    <field name="invoice_line_ids" string="Produktas"
+                           filter_domain="['|', ('invoice_line_ids.product_id.default_code', 'ilike', self), ('invoice_line_ids.product_id.name', 'ilike', self)]"/>
+                    <field name="journal_id"/>
+                    <filter name="draft" string="Juodraštis" domain="[('expense_state','in',('draft', 'proforma'))]"/>
+                    <filter name="awaiting" string="Laukiama atsakymo" domain="[('expense_state','=','awaiting')]"/>
+                    <filter name="imported" string="Laukiama papildymo" domain="[('expense_state','=','imported')]"/>
+                    <filter name="proforma" string="Proforma"
+                            domain="[('expense_state','in',['proforma2', 'proforma'])]"/>
+                    <filter name="invoices" string="Sąskaitos faktūros"
+                            domain="['&amp;', ('expense_state','in',['open','paid']),('type','=','in_invoice')]"/>
+                    <filter name="refunds" string="Grąžinimai"
+                            domain="['&amp;', ('expense_state','in',['open','paid']),('type','in',('out_refund','in_refund'))]"/>
+                    <separator/>
+                    <filter name="wo_analytic" string="Be analitinių sąskaitų"
+                            domain="[('invoice_line_ids.account_analytic_id', '=', False)]"/>
+                    <filter name="w_analytic" string="Su analitinėmis sąskaitomis"
+                            domain="[('invoice_line_ids.account_analytic_id', '!=', False)]"/>
+                    <separator/>
+                    <filter name="exported_to_bank" string="Eksportuota į banką"
+                            domain="[('bank_export_job_ids', '!=', False)]"
+                            groups="robo_basic.group_robo_payment_export"/>
+                    <separator/>
+                    <filter name="unpaid" string="Nesumokėta"
+                            domain="['|', ('expense_state','in',['open']), '&amp;', ('state', '=', 'proforma2'), ('proforma_paid', '=', False)]"/>
+                    <filter name="unpaid_and_has_outstanding" string="Nesumokėta su nesudengtu mokėjimu"
+                            domain="[('has_outstanding', '=', True), '|', ('expense_state','in',['open']), '&amp;', ('state', '=', 'proforma2'), ('proforma_paid', '=', False)]"/>
+                    <filter name="unpaid_w_potential_statement" string="Nesumokėta su nesudengta banko operacija"
+                            domain="[('has_potential_bank_statement', '=', True)]"/>
+                    <filter name="unpaid_w_potential_offsetting" string="Nesumokėta su galima užskaita"
+                            domain="[('has_potential_offsetting', '=', True), ('state','=','open')]"/>
+                    <separator/>
+                    <filter name="due_in_less_than_two_days" string="Due in less than two days"
+                            domain="[
+                                '&amp;',
+                                    ('date_due', '&gt;=', context_today().strftime('%Y-%m-%d')),
+                                    ('date_due', '&lt;=', (context_today() + relativedelta(days=2)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="late" string="Pradelsta"
+                            domain="['&amp;', ('date_due', '&lt;', time.strftime('%%Y-%%m-%%d')), ('expense_state', 'in', ['open', 'proforma', 'proforma2'])]"
+                            help="Overdue invoices, maturity date passed"/>
+                    <separator/>
+                    <filter name="notexported" string="Neeksportuotas mokėjimas"
+                            domain="[('exported_sepa','=',False)]"/>
+                    <separator/>
+                    <filter name="own_acc" string="Apmokėta atskaitingo asmens"
+                            domain="[('payment_mode','=', 'own_account')]"/>
+                    <filter name="own_acc" string="Apmokėta atskaitingo asmens (nekompensuota)"
+                            domain="[('payment_mode','=', 'own_account'), ('is_cash_advance_repaid', '=', False)]"/>
+                    <separator/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="user_id" string="Kliento vadybininkas"/>
+                    <field name="submitted" string="Pateikęs asmuo"/>
+                    <field name="date" string="Data"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo"
+                            domain="['&amp;',('date_invoice','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date_invoice','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo"
+                            domain="['&amp;',('date_invoice','&lt;=',(context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),('date_invoice','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai"
+                            domain="[
+                             '&amp;',
+                             ('date_invoice', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('date_invoice', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai"
+                            domain="[
+                             '&amp;',
+                             ('date_invoice', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                             ('date_invoice', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <field name="date_invoice" string="Data nuo" filter_domain="['|',
+                                                                            ('date_invoice', '&gt;=', self),
+                                                                            ('date_invoice', '&gt;=', self)]"/>
+                    <field name="date_invoice" string="Data iki" filter_domain="['|',
+                                                                            ('date_invoice', '&lt;=', self),
+                                                                            ('date_invoice', '&lt;=', self)]"/>
+                    <field name="message_ids" string="Komentarai" filter_domain="[('message_ids.body', 'ilike', self)]"/>
+                    <field name="comment" string="Pastabos" filter_domain="[('comment', 'ilike', self)]"/>
+                    <separator/>
+                    <filter domain="[('user_id','=',uid)]" help="Mano sąskaitos"/>
+                    <field name="tax_ids" string="PVM kodas (tikslus atitikmuo)"  groups="robo_basic.group_robo_premium_accountant"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_partner_id" string="Partneris"
+                                context="{'group_by':'commercial_partner_id'}"/>
+                        <filter string="Kliento vadybininkas" context="{'group_by':'user_id'}"/>
+                        <filter string="Pateikęs asmuo" context="{'group_by':'submitted'}"/>
+                        <filter name="status" string="Būsena" context="{'group_by':'expense_state'}"/>
+                        <separator/>
+                        <filter string="Sąskaitos data" context="{'group_by':'date_invoice'}"/>
+                        <filter string="Mokėjimo terminas" context="{'group_by':'date_due'}"/>
+                        <filter string="Valiuta" context="{'group_by': 'currency_id'}"/>
+                        <filter string="Bankinio eksportavimo būsena"
+                                context="{'group_by': 'bank_export_state'}"
+                                groups="robo_basic.group_robo_premium_manager"/>
+                        <filter string="Pagrindinė analitinė sąskaita" context="{'group_by': 'main_analytic_id'}"
+                                groups="analytic.group_analytic_accounting"/>
+                        <filter string="Atskaitingas asmuo" context="{'group_by': 'ap_employee_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!--ACTIONS-->
+        <record model="ir.actions.server" id="action_e_invoice_export_wizard_multi_ir">
+            <field name="name">Generuoti eSąskaitas</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="group_ids" eval="[(4,ref('robo.group_robo_e_invoice'))]"/>
+            <field name="code">
+                if user.is_manager() and user.sudo().company_id.activate_e_invoices:
+                    action = object.browse(context.get('active_ids', False)).with_context(multi=True).action_e_invoice_export_wizard()
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.pajamos_tree')])]"/>
+        </record>
+        <function name="create_action_e_invoice_export_wizard_multi" model="account.invoice"/>
+        <record model="ir.actions.server" id="action_invoice_open_multi_income">
+            <field name="name">Confirm invoices</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                object.browse(context.get('active_ids', False)).action_invoice_open_multi_preprocess()
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.pajamos_tree')])]"/>
+        </record>
+        <function name="create_action_invoice_open_multi_income" model="account.invoice"/>
+        <record id="action_export_refund_invoices_to_bank" model="ir.actions.server">
+            <field name="name">Pay refunds in the bank</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                if user.has_group('robo_basic.group_robo_payment_export'):
+                    action = object.browse(context.get('active_ids', False)
+                        ).with_context(download=True).call_multiple_invoice_export_wizard(
+                    out_refund_export=True)
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="group_ids" eval="[(4, ref('robo_basic.group_robo_payment_export'))]"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.pajamos_tree')])]"/>
+        </record>
+        <function name="create_action_export_refund_invoices_to_bank" model="account.invoice"/>
+        <record model="ir.actions.server" id="action_invoice_financial_account_change_wizard">
+            <field name="name">Change financial accounts of lines</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).with_context(check_multiple_accounts=True).action_open_invoice_financial_account_change_wizard()
+            </field>
+        </record>
+        <function name="create_action_invoice_financial_account_change_wizard" model="account.invoice"/>
+
+        <record model="ir.actions.act_window" id="new_client_credit_invoice">
+            <field name="name">Kreditinė sąskaita faktūra</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[('type','=','out_refund')]</field>
+            <field name="robo_menu" ref="robo.menu_pajamos"/>
+            <field name="header" ref="robo.robo_button_pajamos"/>
+            <field name="context" eval="{
+                'default_type':'out_refund',
+                'type':'out_refund',
+                'robo_header': {},
+                'front_invoice_creation': True,
+            }"/>
+            <field name="view_id" ref="pajamos_form"/>
+            <field name="help"></field>
+        </record>
+        <record model="ir.actions.act_window" id="new_client_invoice">
+            <field name="name">Sąskaita faktūra</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="header" ref="robo.robo_button_pajamos"/>
+            <field name="domain">[('type','=','out_invoice')]</field>
+            <field name="view_id" ref="pajamos_form"/>
+            <field name="context" eval="{
+                'default_type':'out_invoice',
+                'type':'out_invoice',
+                'journal_type': 'sale',
+                'robo_header': {},
+                'showDuplicate': True,
+                'front_invoice_creation': True,
+             }"/>
+            <field name="help"></field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="open_client_invoice">
+            <field name="name">Kliento sąskaitos faktūros</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="domain">[('type','in',('out_invoice', 'out_refund'))]</field>
+            <field name="context">
+                {'default_type':'out_invoice',
+                'type':'out_invoice',
+                'journal_type': 'sale'}
+            </field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="robo.robo_button_pajamos"/>
+            <field name="search_view_id" ref="robo.robo_pajamos_action_search_view"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('pajamos_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('pajamos_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('pajamos_kanban')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+        <record id="view_account_invoice_filter" model="ir.ui.view">
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="name">account.invoice.select</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]" position="inside">
+                    <filter string="Pagrindinė analitinė sąskaita" context="{'group_by': 'main_analytic_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account.action_invoice_tree1" model="ir.actions.act_window">
+            <field name="name">Customer Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('type','in',('out_invoice', 'out_refund'))]</field>
+            <field name="context">{'type':'out_invoice', 'journal_type': 'sale', 'search_default_invoices': 1, 'search_default_draft': 1}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help"> </field>
+        </record>
+
+        <record id="multi_invoice_print_action" model="ir.actions.server">
+            <field name="name">Spausdinti sąskaitas</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+action = env['report'].get_action(object.browse(context.get('active_ids', False)), 'saskaitos.report_invoice', data={})
+action['report_type'] = 'qweb-pdf'
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.pajamos_tree')])]"/>
+        </record>
+        <function name="create_multi_invoice_print_action" model="account.invoice"/>
+
+        <record model="ir.actions.server" id="invoice_bank_SEPA_download_action">
+            <field name="name">Apmokėti sąskaitas banke</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="code">
+                if user.has_group('robo_basic.group_robo_payment_export'):
+                    action = object.browse(context.get('active_ids', False)).download_sepa()
+            </field>
+            <field name="robo_front" eval="1"/>
+            <field name="group_ids" eval="[(4, ref('robo_basic.group_robo_payment_export'))]"/>
+            <field name="robo_front_view_ids" eval="[(6, 0, [ref('robo.robo_expenses_tree')])]"/>
+        </record>
+        <function name="create_acc_invoice_SEPA_download_action" model="account.invoice"/>
+
+        <record model="ir.actions.act_window" id="robo_expenses_action">
+            <field name="name">Išlaidos</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_expenses_robo,form,kanban</field>
+            <field name="search_view_id" ref="robo.robo_expenses_action_search_view"/>
+            <field name="domain">[('type','in',('in_invoice', 'in_refund'))]</field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="robo.robo_button_islaidos"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_expenses_robo', 'view_id': ref('robo_expenses_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_expenses_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('robo_expenses_kanban')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="context">
+                { 'default_type':'in_invoice',
+                'type':'in_invoice',
+                'journal_type': 'purchase' }
+            </field>
+        </record>
+        <record id="robo_expenses_action_badge" model="ir.actions.server">
+            <field name="name">Expense action badge</field>
+            <field name="sequence" eval="5"/>
+            <field name="state">code</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="robo.model_account_invoice"/>
+            <field name="code">action = model.open_expense_badge_action()</field>
+            <field name="condition">True</field>
+            <field name="robo_front">True</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="new_supplier_invoice">
+            <field name="name">Sąskaita faktūra</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <!--<field name="domain">[('type','=','in_invoice')]</field>-->
+            <field name="header" ref="robo.robo_button_islaidos"/>
+            <field name="view_id" ref="robo_expenses_form"/>
+            <field name="context" eval="{
+                'default_type':'in_invoice',
+                'default_journal_type': 'purchase',
+                'robo_header': {},
+                'showDuplicate': True,
+             }"/>
+            <field name="help"></field>
+        </record>
+        <record model="ir.actions.act_window" id="new_supplier_credit_invoice">
+            <field name="name">Kreditinė sąskaita faktūra</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <!--<field name="domain">[('type','=','in_refund')]</field>-->
+            <field name="header" ref="robo.robo_button_islaidos"/>
+            <field name="context" eval="{
+                'default_type':'in_refund',
+                'robo_header': {},
+                }"/>
+            <field name="view_id" ref="robo_expenses_form"/>
+            <field name="help"></field>
+        </record>
+
+        <record model="ir.actions.act_window" id="new_expenses_with_cheque">
+            <field name="name">Sąskaita faktūra su čekiu</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <!--<field name="domain">[('type','=','in_invoice')]</field>-->
+            <field name="header" ref="robo.robo_button_islaidos"/>
+            <field name="view_id" ref="robo_expenses_form"/>
+            <field name="context" eval="{
+                'default_type':'in_invoice',
+                'default_journal_type': 'purchase',
+                'robo_header': {},
+                'default_with_cheque_picture': True,
+                'default_payment_mode': 'own_account',
+                'showDuplicate': True,
+             }"/>
+            <field name="help"></field>
+        </record>
+
+        <record id="account.action_invoice_tree2" model="ir.actions.act_window">
+            <field name="name">Vendor Bills</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('type','in',('in_invoice', 'in_refund'))]</field>
+            <field name="context">{'default_type': 'in_invoice',
+                'type': 'in_invoice',
+                'journal_type': 'purchase',
+                'code_only': 1,
+                'search_default_invoices': 1,
+                'search_default_refunds': 1,
+                'search_default_draft': 1
+                }
+            </field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help"></field>
+        </record>
+
+        <record model="ir.actions.act_window" id="robo_expenses_action_banner">
+            <field name="name">Išlaidos</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_expenses_robo,form,kanban</field>
+            <field name="search_view_id" ref="robo.robo_expenses_action_search_view"/>
+            <field name="domain">[('type','in',('in_invoice', 'in_refund')), ('partner_id.kodas', '=', '304222026')]</field>
+            <field name="with_settings">True</field>
+            <field name="robo_front">True</field>
+            <field name="header" ref="robo.robo_button_islaidos"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_expenses_robo', 'view_id': ref('robo_expenses_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo_expenses_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('robo_expenses_kanban')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="context">
+                { 'default_type':'in_invoice',
+                'type':'in_invoice',
+                'journal_type': 'purchase',
+                'search_default_late': True}
+            </field>
+        </record>
+
+        <!--MENU ITEMS-->
+        <menuitem id="menu_pajamos" parent="menu_start" name="Pajamos" sequence="20"
+                  force_web_icon="icon-register,none,none"
+                  robo_front="True" action="open_client_invoice"
+                  groups="robo_basic.group_robo_see_income"
+                  searchable="True"
+                  tags="pajamos,klientų,sąskaitos"
+        />
+        <!--Set robo_menu attribute on actions after menuitem init-->
+        <record model="ir.actions.act_window" id="robo.new_client_invoice">
+            <field name="robo_menu" ref="robo.menu_pajamos"/>
+        </record>
+
+        <menuitem id="menu_islaidos" parent="menu_start" name="Išlaidos" sequence="30"
+                  force_web_icon="icon-receipt,none,none"
+                  robo_front="True"
+                  action="robo.robo_expenses_action"
+                  searchable="True"
+                  tags="išlaidos,tiekėjų,sąskaitos"
+        />
+        <!--Set robo_menu attribute on actions after menuitem init-->
+        <record model="ir.actions.act_window" id="robo.new_supplier_invoice">
+            <field name="robo_menu" ref="robo.menu_islaidos"/>
+        </record>
+        <record model="ir.actions.act_window" id="robo.new_supplier_credit_invoice">
+            <field name="robo_menu" ref="robo.menu_islaidos"/>
+        </record>
+        <record model="ir.actions.act_window" id="new_expenses_with_cheque">
+            <field name="robo_menu" ref="robo.menu_islaidos"/>
+        </record>
+
+        <menuitem
+                name="Sąskaitos"
+                id="menu_invoices"
+                parent="account.menu_finance_configuration"
+                sequence="9"
+                groups="robo_basic.group_robo_premium_accountant"
+        />
+
+    </data>
+</odoo>

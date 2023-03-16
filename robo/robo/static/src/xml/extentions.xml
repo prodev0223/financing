@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+    <t t-extend="ControlPanel">
+        <!--Remove ir.values buttons-->
+        <!--<t t-jquery=".o_cp_left .o_cp_sidebar" t-operation="replace"/>-->
+
+        <t t-jquery=".breadcrumb" t-operation="before">
+            <div class="o_cp_robo_header"/>
+            <ol class="robo_breadcrumb breadcrumb"/>
+        </t>
+    </t>
+
+    <t t-name="ViewManager.header">
+        <div class="cp_header_mb container" style="position:relative;">
+            <div class="robo_header">
+                <div class="flex-container head-padding line-below">
+                    <div t-if='header_help == False' class="flex-item">
+                        <h1 class="heading-text">
+                            <t t-esc="title"/>
+                        </h1>
+                    </div>
+                    <div t-if="header_help" class="robo-help-header flex-item ">
+                        <div class="robo-help-header-row flex-container ">
+                            <div class="robo-accountant-picture robo-help-header-col">
+                                <a t-attf-href="mailto:{{help_data.email}}">
+                                    <img t-if="help_data.logo" class="img-circle" t-attf-title="{{help_data.name}}"
+                                         t-attf-src="data:image/*;base64,{{help_data.logo}}" alt="Buhalteris"/>
+                                    <img t-if="!help_data.logo" class="img-circle" t-attf-title="{{help_data.name}}"
+                                         src="/robolabs_logo" alt="Buhalteris"/>
+                                </a>
+                            </div>
+
+                            <div class="robo-help-main-data robo-help-header-mobile-no-show">
+                                <div style="grid-column: 1 / span 2; grid-row: 1;" t-if="help_data.name">
+                                    <div style="display: block;">
+                                        <span style="font-weight: bold;"><t t-esc="help_data.name"/></span>
+                                        <span style="font-style: italic;" t-if="help_data.substitute_accountant">
+                                            (pavaduojantis buhalteris)
+                                        </span>
+                                    </div>
+                                </div>
+                                <div style="grid-column: 1;" t-if="help_data.mobile">
+                                    <div>
+                                        <i class="icon-smartphone"/>
+                                        <span class="info-name">Mobilus tel.:</span>
+                                    </div>
+                                    <span class="info-name" style="padding-left: 7px;" t-esc="help_data.mobile"/>
+                                </div>
+                                <div t-if="help_data.email" style="grid-column: 1;">
+                                    <div>
+                                        <i class="icon-at-sign"/>
+                                        <span class="info-name">Paštas:</span>
+                                    </div>
+                                    <a t-attf-href="mailto:{{help_data.email}}" style="padding-left: 7px;">
+                                        <t t-esc="help_data.email"/>
+                                    </a>
+                                </div>
+                                <div t-if="help_data.tech_email" style="grid-column: 2; grid-row: 2;">
+                                    <div>
+                                        <i class="icon-at-sign"/>
+                                        <span class="info-name">Techninė pagalba:</span>
+                                    </div>
+                                    <a t-attf-href="mailto:{{help_data.tech_email}}" class="info-detail">
+                                        <t t-esc="help_data.tech_email"/>
+                                    </a>
+                                </div>
+                                <div t-if="help_data.customer_support_email" style="grid-column: 2; grid-row: 3;">
+                                    <div>
+                                        <i class="icon-at-sign"/>
+                                        <span class="info-name">Klientų aptarnavimas:</span>
+                                    </div>
+                                    <a t-attf-href="mailto:{{help_data.customer_support_email}}" class="info-detail">
+                                        <t t-esc="help_data.customer_support_email"/>
+                                    </a>
+                                </div>
+                                <div t-if="help_data.tech_email" style="grid-column: 1; grid-row: 4;">
+                                    <div>
+                                        <i class="icon-link"/>
+                                        <span class="info-name">Žinynas:</span>
+                                    </div>
+                                    <a t-attf-href="https://pagalba.robolabs.lt" target="_blank" class="info-detail">
+                                        pagalba.robolabs.lt
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div t-if='header_button' class="robo-help-new-button-container" style="align-self: center;">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success dropdown-toggle btn-my-style btn-header"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <t t-esc="decoder(header_button)"/>
+                                <span class="caret"></span>
+                            </button>
+                            <ul t-if="header_button_items.length > 0" t-attf-class="dropdown-menu menu-align menu {{header_button_class?header_button_class:''}}">
+                                <t t-foreach='header_button_items' t-as="item">
+                                    <!--<li t-if="item['rights'] and robo_rights[item['rights']]" >-->
+                                        <!--&lt;!&ndash;0 - name, 1 - icon class, 2 - action,3 - item class, 4- robo rights&ndash;&gt;-->
+                                        <!--<a href="#" t-attf-class="menu-item {{item['class']}}" t-attf-data-view="{{item['view']}}" t-attf-title="{{decoder(item['title'])}}">-->
+                                            <!--<span t-attf-class="{{item['icon']}} push-left"></span>-->
+                                            <!--<span class="menu-text"><t t-esc="decoder(item['text'])"/></span>-->
+                                        <!--</a>-->
+                                    <!--</li>-->
+                                    <li>
+                                        <!--0 - name, 1 - icon class, 2 - action,3 - item class, 4- robo rights-->
+                                        <a href="#" t-attf-class="menu-item {{item['class']}}" t-attf-data-view="{{item['view']}}" t-attf-title="{{decoder(item['title'])}}">
+                                            <span t-attf-class="{{item['icon']}} push-left"></span>
+                                            <span class="menu-text"><t t-esc="decoder(item['text'])"/></span>
+                                        </a>
+                                    </li>
+                                </t>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <t t-if="switcher">
+                    <div t-attf-class="robo-tabs {{switcher_header_class}}">
+                        <t t-if="switcher_header">
+                            <div class="robo-tabs-header">
+                                <t t-esc="decoder(switcher_header)"/>
+                            </div>
+                        </t>
+                        <t t-set="debug_param" t-value="debug ? '?debug=assets' : ''"/>
+                        <a t-attf-href="/web{{debug_param}}#menu_id={{menu1}}&amp;action={{action1}}"
+                           t-attf-class="tab first_tab {{switcher1_class}}"
+                           t-att-data-menu="menu1"
+                           t-att-data-action-id="action1">
+                            <span>
+                                <t t-esc="decoder(switcher1_name)"/>
+                            </span>
+                        </a>
+                        <a t-attf-href="/web{{debug_param}}#menu_id={{menu2}}&amp;action={{action2}}"
+                           t-attf-class="tab second_tab {{switcher2_class}}"
+                           t-att-data-menu="menu2"
+                           t-att-data-action-id="action2">
+                            <span>
+                                <t t-esc="decoder(switcher2_name)"/>
+                            </span>
+                        </a>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+
+    <input t-name="SearchView.InputView" type="text" class="o_searchview_input" placeholder="Ieškoti..."/>
+
+</template>

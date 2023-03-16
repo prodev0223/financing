@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="executive_deduction_order_tree" model="ir.ui.view">
+            <field name="name">executive.deduction.order.tree</field>
+            <field name="model">executive.deduction.order</field>
+            <field name="arch" type="xml">
+                <tree string="Išskaitų orderiai" decoration-info="state=='draft'">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="state"/>
+                    <field name="percentage_under_mma"/>
+                    <field name="percentage_over_mma"/>
+                </tree>
+            </field>
+        </record>
+        <record id="executive_deduction_order_view" model="ir.ui.view">
+            <field name="name">executive.deduction.order.form</field>
+            <field name="model">executive.deduction.order</field>
+            <field name="arch" type="xml">
+                <form string="Išskaitos">
+                    <header>
+                        <button name="confirm" string="Patvirtinti" states="draft" class="oe_highlight" type="object"/>
+                        <button name="action_draft" string="Atstatyti į juodraštį" states="confirm" type="object"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class=" oe_right oe_button_box">
+                            <field name="deduction_entry_ids" invisible="1"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="action_open_deduction_entry_ids" string="Išskaitų įrašai"
+                                    help="Nueiti į sukurtus išskaitų įrašus" type="object"
+                                    attrs="{'invisible':[('deduction_entry_ids','=',False)]}"
+                                    icon="fa-bars" widget="statinfo"/>
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-check">
+                                <field name="active" widget="boolean_button" options="{'terminology': 'active'}" modifiers="{}"/>
+                            </button>
+                        </div>
+                        <group colspan="4" col="4">
+                            <group colspan="2" col="2">
+                                <field name="name"/>
+                                <field name="employee_id" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="currency_id"/>
+                                <field name="journal_id"/>
+                                <field name="account_id"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="percentage_under_mma"/>
+                                <field name="percentage_over_mma"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="deduction_order_deduction_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="partner_id"/>
+                                    <field name="amount" sum="amount"/>
+                                    <field name="amount_left" sum="amount_left"/>
+                                    <field name="line_of_satisfaction"/>
+                                    <field name="date_start"/>
+                                    <field name="comment"/>
+                                    <field name="ongoing"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group colspan="4">
+                            <field name="ongoing_deduction_amount"/>
+                            <field name="ongoing_deduction_amount_left"/>
+                        </group>
+                        <group>
+                            <group colspan="4" col="4">
+                                <h4 style="color:gray">Reikalavimų patenkinimų eilės</h4>
+                            </group>
+                            <group col="4" colspan="4">
+                                <p style="color:gray">
+                                    Pirma eilė - reikalavimai išieškoti išlaikymą ir reikalavimai atlyginti žalą, padarytą suluošinimu ar kitokiu sveikatos sužalojimu, taip pat atsiradusią dėl maitintojo netekimo.<br/>
+                                    Antra eilė - darbuotojų reikalavimai, atsirandantys iš darbo teisinių santykių.<br/>
+                                    Trečia eilė - visi kiti reikalavimai.
+                                </p>
+                            </group>
+                        </group>
+                        <group>
+                            <group colspan="4" col="4">
+                                <h4 style="color:gray">Išskaitų iš skolininko darbo užmokesčio ir kitų jo pajamų dydis</h4>
+                            </group>
+                            <group col="4" colspan="4">
+                                <p style="color:gray">
+                                    Neviršijančių MMA:<br/>
+
+                                    1) Išieškant išlaikymą periodinėmis išmokomis, žalos, padarytos suluošinimu ar kitokiu sveikatos sužalojimu, taip pat maitintojo gyvybės atėmimu, atlyginimą – trisdešimt procentų, jeigu kitaip nenustatyta pačiame vykdomajame rašte arba ko kita nenustato įstatymai ar teismas;<br/>
+2) Visų kitų rūšių išieškoms, jeigu kitaip nenustatyta pačiame vykdomajame rašte arba ko kita nenustato įstatymai ar teismas, – dvidešimt procentų;<br/>
+3) Pagal kelis vykdomuosius dokumentus – trisdešimt procentų.
+
+                                    <br/><br/>
+                                    Viršijančių MMA:<br/>
+                                    1) Iš darbo užmokesčio ir jam prilygintų išmokų bei davinių dalies, išskaitoma penkiasdešimt procentų, jeigu ko kita nenustato įstatymai ar teismas.
+                                </p>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread" context="{}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="executive_deduction_order_search" model="ir.ui.view">
+            <field name="name">executive.deduction.order.search</field>
+            <field name="model">executive.deduction.order</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <filter string="Juodraštis" domain="[('state','=','draft')]"/>
+                    <filter string="Patvirtinta" domain="[('state','=','confirm')]"/>
+                    <separator/>
+                    <filter name="archived" string="Inactive" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_open_executive_deduction_order" model="ir.actions.act_window">
+            <field name="name">Išskaitų orderiai</field>
+            <field name="res_model">executive.deduction.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        <menuitem id="executive_deduction_order_menu"
+                  name="Išskaitų orderiai"
+                  parent="l10n_lt_payroll.menu_deductions_employee"
+                  action="action_open_executive_deduction_order"
+                  sequence="159"
+                  groups="hr.group_hr_manager"/>
+    </data>
+</odoo>

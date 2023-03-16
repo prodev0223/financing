@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="action_new_asset_sale_invoice" model="ir.actions.act_window">
+            <field name="name">Account Invoice</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.invoice_form"/>
+            <field name="target">current</field>
+            <field name="context">{'show_related_asset':True, 'asset_being_sold_id':active_id}</field>
+        </record>
+
+        <record id="invoice_add_asset" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="asset_id" invisible="not context.get('show_related_asset',False)" create="0"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="invoice_supplier_form_ext" model="ir.ui.view">
+            <field name="name">invoice.supplier.form.il.ext</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet[1]//div[1]" position="before">
+                    <field name="has_assets" invisible="1"/>
+                    <div class="oe_button_box" name="buttons" groups="account.group_account_user">
+                        <button class="oe_inline oe_stat_button" type="object" icon="fa-bars"
+                                name="show_related_assets" string="Ilgalaikis Turtas"
+                                attrs="{'invisible':[('has_assets', '=', False)]}"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_invoice_search_view_extend" model="ir.ui.view">
+            <field name="name">account.invoice.search</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='late']" position="after">
+                    <separator/>
+                    <filter name="asset" string="Asset"
+                            domain="[('selling_asset', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_asset_sales_tree" model="ir.actions.act_window">
+            <field name="name">Customer Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('type','in',('out_invoice', 'out_refund'))]</field>
+            <field name="context">{'default_type':'out_invoice', 'type':'out_invoice', 'journal_type': 'sale',
+                'search_default_asset': True, 'show_related_asset': True}
+            </field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree'}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('account.invoice_form')}),
+            (0, 0, {'view_mode': 'kanban'}),
+            (0, 0, {'view_mode': 'calendar'}),
+            (0, 0, {'view_mode': 'pivot'}),
+            (0, 0, {'view_mode': 'graph'}),
+            ]"/>
+        </record>
+
+        <menuitem id="menu_asset_sales" name="Asset Invoices"
+                  parent="account.menu_finance_receivables"
+                  action="ilgalaikis_turtas.action_asset_sales_tree" sequence="2"/>
+    </data>
+</odoo>

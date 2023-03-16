@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="form_api_query_bank_statements_wizard" model="ir.ui.view">
+            <field name="name">form.api.query.bank.statements.wizard</field>
+            <field name="model">api.query.bank.statements.wizard</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <form string="Sinchronizuoti Banką">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                            Šiame vedlyje rankiniu būdu galite sinchronizuoti banko išrašus tam bankui
+                            kuris yra integruotas su sistema. Paspaudus sinchronizuoti banko išrašus veiksmas
+                            bus atliekamas fone.
+                        </div>
+                        <group attrs="{'invisible': [('display_psd2_warning', '=', False)]}">
+                            <div class="alert alert-warning" role="alert" style="margin-bottom:0px;" colspan="4">
+                                Šiam bankui aktyvuota PSD2 Enable Banking integracija, duomenys
+                                traukiami periodui į kurį patenka SEPA XML failai bus praleidžiami.
+                            </div>
+                        </group>
+                        <group string="Banko sinchronizavimas">
+                            <field name="journal_id" readonly="1"/>
+                            <field name="date_from" required="True"/>
+                            <field name="date_to" required="True"/>
+                            <field name="display_psd2_warning" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="query_bank_statements"
+                                string="Sinchronizuoti banko išrašus" type="object" class="oe_highlight"/>
+                        <button string="Atšaukti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

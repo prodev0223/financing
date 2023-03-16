@@ -1,0 +1,71 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="amazon_sp_configuration_view_form" model="ir.ui.view">
+            <field name="name">amazon.sp.configuration.view.form</field>
+            <field name="model">amazon.sp.configuration</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Amazon SP-API configuration" create="0" delete="0">
+                    <header>
+                        <field name="api_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="Amazon SP-API configuration">
+                            <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                Welcome to the Amazon SP-API integration configuration.
+                                SP-API integration enables order/refund fetching,
+                                and product inventory fetching on sum integration mode.
+                                Configure the base integration settings then activate and
+                                authenticate desired regions to get started.
+                            </div>
+                        </group>
+                        <group colspan="4" col="2" string="Main settings">
+                            <group>
+                                <field name="accounting_threshold_date" required="1"/>
+                                <field name="order_creation_interval" required="1"/>
+                                <field name="strict_batch_creation"/>
+                                <field name="order_date_to_use" required="1"/>
+                            </group>
+                            <group>
+                                <field name="create_individual_order_invoices"/>
+                                <field name="order_fulfillment_channels" required="1"/>
+                                <field name="integration_type"
+                                       groups="robo_basic.group_robo_premium_accountant"/>
+                                <field name="next_order_creation_date" readonly="1"/>
+                            </group>
+                        </group>
+                        <group colspan="4" col="4" string="Inclusion settings">
+                            <field name="include_order_commission_fees"/>
+                            <field name="include_order_shipping_fees"/>
+                            <field name="include_order_gift_wrap_fees"/>
+                            <field name="include_order_promotion_discounts"/>
+                            <field name="include_order_tax"/>
+                        </group>
+                        <group string="App Credentials" groups="base.group_system">
+                            <field name="application_key"/>
+                            <field name="application_arn"/>
+                        </group>
+                        <group string="LWA Credentials" groups="base.group_system">
+                            <field name="lwa_client_id"/>
+                            <field name="lwa_client_secret"/>
+                        </group>
+                        <group string="IAM Credentials" groups="base.group_system">
+                            <field name="access_key_id"/>
+                            <field name="secret_key"/>
+                        </group>
+                        <footer style="text-align: center;">
+                            <button name="action_open_regions" class="oe_highlight" type="object"
+                                    string="Open Amazon regions" default_focus="1"/>
+                            <button name="action_open_marketplaces" class="oe_highlight" type="object"
+                                    string="Open Amazon marketplaces" default_focus="1"/>
+                            <button name="action_open_tax_rules" class="oe_highlight" type="object"
+                                    groups="robo_basic.group_robo_premium_accountant"
+                                    string="Open Amazon tax rules" default_focus="1"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

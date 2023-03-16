@@ -1,0 +1,48 @@
+<odoo>
+    <data>
+        <!--Pivot-->
+        <record id="amazon_order_report_pivot" model="ir.ui.view">
+            <field name="name">amazon.order.report.pivot</field>
+            <field name="model">amazon.order.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <pivot string="Užsakkymų ątaskaita" create="false" delete="false">
+                    <field name="order_date" type="col"/>
+                    <field name="line_amount" type="measure"/>
+                    <field name="marketplace_id" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <!--Searches-->
+        <record id="amazon_order_report_search" model="ir.ui.view">
+            <field name="name">amazon.order.report.search</field>
+            <field name="model">amazon.order.report</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="principal" string="Pagrindinė paslauga" domain="[('line_type','=','principal')]"/>
+                    <filter name="shipping" string="Siuntimo mokesčiai" domain="[('line_type','=','shipping')]"/>
+                    <filter name="promotion" string="Nuolaidos" domain="[('line_type','=','promotion')]"/>
+                    <filter name="gift_wraps" string="Pakavimo mokestis" domain="[('line_type','=','gift_wraps')]"/>
+                    <separator/>
+                    <field name="product_id"/>
+                    <field name="invoice_id"/>
+                    <field name="order_id"/>
+                    <field name="marketplace_id"/>
+                </search>
+            </field>
+        </record>
+        <!--Action-->
+        <record id="action_open_amazon_order_report" model="ir.actions.act_window">
+            <field name="name">Amazon Užsakymų ataskaita</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">amazon.order.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="domain">[]</field>
+            <field name="target">current</field>
+            <field name="search_view_id" ref="amazon_order_report_search"/>
+            <field name="view_id" ref="amazon_order_report_pivot"/>
+        </record>
+    </data>
+</odoo>

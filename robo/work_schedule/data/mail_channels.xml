@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="warn_about_leaving_employees_schedule_submission_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie nepateiktus darbą paliekančių asmenų darbo tvarkaraščius</field>
+            <field name="description">
+                Informuoti el. paštu apie darbą paliekančių asmenų darbo tvarkaraščio pateikimą
+            </field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="work_schedule.group_schedule_super"/>
+            <field name="group_public_ids" eval="[(4, ref('work_schedule.group_schedule_super'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>hr</field>
+        </record>
+
+        <record id="fill_schedule_reminder_mail_channel" model="mail.channel">
+            <field name="name">Reminder to fill in work schedules</field>
+            <field name="description">
+                Reminds 7 days before the month ends that work schedules need to be filled in.
+            </field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="work_schedule.group_schedule_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('work_schedule.group_schedule_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>hr</field>
+        </record>
+    </data>
+</odoo>

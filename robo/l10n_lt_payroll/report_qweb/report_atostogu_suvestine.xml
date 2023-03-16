@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="report_leaves_summary"
+                model="hr.leaves.report.wizard"
+                string="Atostogų suvestinė"
+                report_type="qweb-html"
+                name="l10n_lt_payroll.report_leaves_summary"
+                file="Atostogų suvestine"
+                paperformat="report.paperformat_a4_landscape_narrow"
+        />
+        <template id="template_leaves_summary_document">
+            <style type="text/css">
+                body.container {
+                margin-left: 7px !important;
+                }
+                h3 {
+                text-align: center;
+                }
+                .centras{
+                text-align: center;
+                margin-left:auto;
+                margin-right:auto;
+                }
+                .virsus{
+                border-top: 1px solid black;
+                }
+                .desine{
+                float: right;
+                width: 300px;
+                text-align: justify
+                }
+                .lentele{
+                border: 1px solid black;
+                }
+                .tr, th, td{
+                padding-left: 5px;
+                border: 1px solid black;
+                }
+            </style>
+            <t t-call="report.html_container">
+                <div class="page xls_front" id="main">
+                    <t t-call="report.internal_layout"/>
+                    <table class="centras" align="center" style="border-style:none" width="100%">
+                        <tr style="font-weight:bold; border-style:none">
+                            <td style="border-style:none; text-align:center; font-size:18px;">Atostogų panaudojimo ataskaita</td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <table width="100%" class="lentele main_table" style="padding:10px" border-collapse="collapse">
+                        <tr style="font-size: 16px;">
+                            <th style="border: 1px solid black; text-align: center" rowspan="2"><div>Tabelio nr.</div></th>
+                            <th style="border: 1px solid black; text-align: center" rowspan="2">Darbuotojas</th>
+                            <th style="border: 1px solid black; text-align: center" rowspan="2">Skaičiavimų pradžios data</th>
+                            <th style="border: 1px solid black; text-align: center" rowspan="2">Ataskaitos data</th>
+                            <th style="border: 1px solid black; text-align: center" colspan="2">Likutis</th>
+                            <th style="border: 1px solid black; text-align: center" colspan="4">Atostogos</th>
+                        </tr>
+                        <tr style="border-top: 1px solid black; font-size: 16px;" border-collapse="collapse">
+                            <th style="border: 1px solid black; text-align: center;">Periodo pradžioje</th>
+                            <th style="border: 1px solid black; text-align: center;">Periodo pabaigoje</th>
+                            <th style="border: 1px solid black; text-align: center;">Pradžia</th>
+                            <th style="border: 1px solid black; text-align: center;">Pabaiga</th>
+                            <th style="border: 1px solid black; text-align: center;">Trukmė k.d.</th>
+                            <th style="border: 1px solid black; text-align: center;">Trukmė d.d.</th>
+                        </tr>
+
+                        <t t-foreach="rows" t-as="row">
+                            <tr style="border-top: 2px solid black;">
+                                <td style="padding: 2px">
+                                    <span t-esc="row['tabelio_numeris']"/>
+                                </td>
+                                <td style="padding: 2px">
+                                    <span t-esc="row['employee_name']"/>
+                                </td>
+                                <td style="padding: 2px">
+                                    <span t-esc="row['date_from']"/>
+                                </td>
+                                <td style="padding: 2px">
+                                    <span t-esc="date"/>
+                                </td>
+                                <td style="padding: 2px">
+                                    <span t-esc="formatLang(row['hol_days_left_start'], digits=2)"/>
+                                    <t t-if="row['leaves_accumulation_type_start'] == 'calendar_days'">
+                                        <span> k.d.</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span> d.d.</span>
+                                    </t>
+                                </td>
+                                <td style="padding: 2px">
+                                    <span t-esc="formatLang(row['hol_days_left'], digits=2)"/>
+                                    <t t-if="row['leaves_accumulation_type'] == 'calendar_days'">
+                                        <span> k.d.</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span> d.d.</span>
+                                    </t>
+                                </td>
+                                <td colspan="4"/>
+                            </tr>
+                            <tr t-foreach="row['hol_lines']" t-as="hol_line">
+                                <td style="padding: 2px" colspan="6"/>
+                                <td style="padding: 2px;" t-esc="hol_line['date_from']"/>
+                                <td style="padding: 2px;" t-esc="hol_line['date_to']"/>
+                                <td style="padding: 2px" t-esc="formatLang(hol_line['num_calendar_days'], digits=2)"/>
+                                <t t-if="row['leaves_accumulation_type'] == 'calendar_days'">
+                                    <td style="padding: 2px; text-align: center;"><span> - </span></td>
+                                </t>
+                                <t t-else="">
+                                    <td style="padding: 2px" t-esc="formatLang(hol_line['num_work_days'], digits=2)"/>
+                                </t>
+                            </tr>
+                            <tr t-if="show_leaves_left">
+                                <td style="padding: 2px" colspan="6"/>
+                                <td style="padding: 2px;" align="right" colspan="2">Bendra atostogų trukmė:</td>
+                                <td style="padding: 2px"><span style="font-weight:bold" t-esc="formatLang(row['hol_calendar_days_used'], digits=2)"/></td>
+                                 <t t-if="row['leaves_accumulation_type'] == 'calendar_days'">
+                                    <td style="padding: 2px; text-align: center;"><span style="font-weight:bold"> - </span></td>
+                                </t>
+                                <t t-else="">
+                                    <td style="padding: 2px"><span style="font-weight:bold" t-esc="formatLang(row['hol_work_days_used'], digits=2)"/></td>
+                                </t>
+                            </tr>
+                            <t t-if="row['extra_hol_days_experience'] != 0">
+                                <tr>
+                                    <td style="padding: 2px" colspan="1"/>
+                                    <td style="padding: 2px;" align="right" colspan="3">Darbuotojui už stažą pridėtos atostogų dienos:</td>
+                                    <td style="padding: 2px">
+                                        <span t-esc="formatLang(row['extra_hol_days_experience'], digits=2)"/>
+                                        <t t-if="row['leaves_accumulation_type'] == 'calendar_days'">
+                                            <span> k.d.</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span> d.d.</span>
+                                        </t>
+                                    </td>
+                                    <td colspan="5"/>
+                                </tr>
+                            </t>
+                            <t t-if="row['extra_hol_days_trips'] != 0">
+                                <tr>
+                                    <td style="padding: 2px" colspan="1"/>
+                                    <td style="padding: 2px;" align="right" colspan="3">Darbuotojui už kelionės laiką pridėtos atostogų dienos:</td>
+                                    <td style="padding: 2px">
+                                        <span t-esc="formatLang(row['extra_hol_days_trips'], digits=2)"/>
+                                        <t t-if="row['leaves_accumulation_type'] == 'calendar_days'">
+                                            <span> k.d.</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span> d.d.</span>
+                                        </t>
+                                    </td>
+                                    <td colspan="5"/>
+                                </tr>
+                            </t>
+                        </t>
+                    </table>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

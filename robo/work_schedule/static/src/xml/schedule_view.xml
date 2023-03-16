@@ -1,0 +1,163 @@
+<template>
+    <t t-name="schedule.ScheduleController">
+        <div class="schedule_header_container">
+            <div class="schedule_buttons">
+                <div id="schedule_setters_group">
+                    <div id="main_setter"
+                         class="btn o_schedule_setter_button o_schedule_header_button">
+                        <span class="icon-clock3"/>
+                        <span>Darbo laikas</span>
+                    </div>
+                    <div id="overtime_setter"
+                         class="btn o_schedule_setter_button o_schedule_header_button">
+                        <span class="icon-clock3"/>
+                        <span>Papildomi darbai</span>
+                    </div>
+                    <div id="absence_setter"
+                         class="btn o_schedule_setter_button o_schedule_header_button">
+                        <span class="icon-pills"/>
+                        <span>Neatvykimai</span>
+                    </div>
+                    <div id="holidays_setter"
+                         class="btn o_schedule_setter_button o_schedule_header_button">
+                        <span class="icon-sun"/>
+                        <span>Atostogos</span>
+                    </div>
+                    <div id="delete_time_button"
+                         class="btn o_schedule_setter_button o_schedule_header_button o_schedule_invisible">
+                        <span class="icon-trash"/>
+                        <span>Panaikinti</span>
+                    </div>
+                </div>
+                <div id="schedule_state_changers_group" class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle schedule-dropdown-button" type="button" id="dropdownMenuButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Patvirtinimas <span class="fa fa-angle-down"></span>
+                    </button>
+                    <div class="dropdown-menu schedule-dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <div id="execute_action_check_constraints"
+                             class="btn o_schedule_invisible o_schedule_allow_check_constraints o_schedule_check_button o_schedule_header_button">
+                            <span class="icon-calendar-check"/>
+                            <span>Patikrinti</span>
+                        </div>
+                        <div id="execute_action_check_failed_constraints"
+                             class="btn o_schedule_invisible o_schedule_allow_check_failed_constraints o_schedule_check_button o_schedule_header_button">
+                            <span class="icon-calendar-check"/>
+                            <span>Peržiūrėti eilučių apribojimus</span>
+                        </div>
+
+                        <div id="execute_validate"
+                             class="btn o_schedule_invisible o_schedule_allow_validate o_schedule_next_stage_button o_schedule_header_button">
+                            <span class="icon-calendar-check"/>
+                            <span>Patvirtinti</span>
+                        </div>
+                        <div id="execute_confirm"
+                             class="btn o_schedule_invisible o_schedule_allow_confirm o_schedule_next_stage_button o_schedule_header_button">
+                            <span class="icon-calendar-check"/>
+                            <span>Pateikti</span>
+                        </div>
+                        <div id="execute_action_done"
+                             class="btn o_schedule_invisible o_schedule_allow_done o_schedule_next_stage_button o_schedule_header_button">
+                            <span class="icon-calendar-check"/>
+                            <span>Priimti</span>
+                        </div>
+
+                        <div id="execute_cancel_validate"
+                             class="btn o_schedule_invisible o_schedule_allow_cancel_validate o_schedule_prev_stage_button o_schedule_header_button">
+                            <span class="icon-calendar-cross"/>
+                            <span>Atstatyti į juodraščio būseną</span>
+                        </div>
+                        <div id="execute_cancel_confirm"
+                             class="btn o_schedule_invisible o_schedule_allow_cancel_confirm o_schedule_prev_stage_button o_schedule_header_button">
+                            <span class="icon-calendar-cross"/>
+                            <span>Grąžinti pateiktus grafikus</span>
+                        </div>
+                        <div id="execute_action_cancel_done"
+                             class="btn o_schedule_invisible o_schedule_allow_cancel_done o_schedule_prev_stage_button o_schedule_header_button">
+                            <span class="icon-calendar-cross"/>
+                            <span>Atšaukti priimtus grafikus</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="misc_buttons_group" class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle schedule-dropdown-button" type="button" id="dropdownMenuButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Kiti veiksmai <span class="fa fa-angle-down"></span>
+                    </button>
+                    <div class="dropdown-menu schedule-dropdown-menu" aria-labelledby="dropdownMenuButton" style="">
+                        <div id="execute_action_set_all_as_used"
+                             class="btn o_schedule_invisible o_schedule_allow_set_all_as_used o_schedule_header_button o_schedule_misc_button o_schedule_next_stage_button">
+                            <span class="icon-calendar-check"/>
+                            <span>Naudoti planuojamus grafikus</span>
+                        </div>
+                        <div id="execute_action_set_all_as_unused"
+                             class="btn o_schedule_invisible o_schedule_allow_set_all_as_unused o_schedule_header_button o_schedule_misc_button o_schedule_prev_stage_button">
+                            <span class="icon-calendar-cross"/>
+                            <span>Nenaudoti planuojamų grafikų</span>
+                        </div>
+                        <div id="execute_action_export"
+                             class="btn o_schedule_export o_schedule_header_button o_schedule_misc_button">
+                            <span class="icon-download2"/>
+                            <span>Eksportuoti grafikus</span>
+                        </div>
+                        <div id="execute_action_allow_accountant_can_change"
+                             class="btn o_schedule_invisible o_schedule_allow_accountant_can_change o_schedule_header_button o_schedule_misc_button">
+                            <span class="icon-calendar-user"/>
+                            <span>Įgalinti buhalterių pakeitimus</span>
+                        </div>
+                        <div id="execute_action_allow_accountant_cant_change"
+                             class="btn o_schedule_invisible o_schedule_allow_accountant_cant_change o_schedule_header_button o_schedule_misc_button">
+                            <span class="icon-calendar-user"/>
+                            <span>Neleisti buhalterių pakeitimų</span>
+                        </div>
+                        <div id="go_to_date"
+                             class="btn o_schedule_allow_go_to_date o_schedule_header_button o_schedule_misc_button">
+                            <span class="icon-calendar-31"/>
+                            <span>Pereiti į datą</span>
+                        </div>
+                        <div id="go_to_ziniarastis"
+                             class="btn o_schedule_allow_go_to_ziniarastis o_schedule_header_button o_schedule_misc_button">
+                            <span class="icon-calendar-full"/>
+                            <span>Pereiti į žiniaraštį</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="payroll_busy_label_container" class="o_schedule_invisible">
+                <i class="fa fa-spinner fa-spin"/>
+                <span>Skaičiuojama</span>
+            </div>
+        </div>
+    </t>
+    <t t-name="schedule.selection">
+        <div style="display: flex; padding: 15px 0 0">
+            <div class="schedule-selection-and-month-box">
+                <button class="btn schedule_arrow_previous" type="button">
+                    <span class="fa fa-arrow-left" style="margin-right: 5px"/><span class="previous-month-text"></span>
+                </button>
+                <button class="btn schedule_arrow_next" type="button">
+                    <span class="next-month-text"></span><span class="fa fa-arrow-right" style="margin-left: 5px"/>
+                </button>
+            </div>
+            <div class="schedule-selection-and-month-box" style="padding-left: 40px">
+                <h4 class="schedule_title_label">Darbo grafikas:</h4>
+                <div style="display: inline-block" class="btn-group btn-group-sm drops">
+                    <t t-if="widget._dropdown_fields">
+                        <select t-as="f" t-foreach="widget._dropdown_fields"
+                                t-att-data-index="btn_index"
+                                t-att-name="f.name"
+                                class="schedule_selector">
+                            <option value="">-</option>
+                            <t t-foreach="widget._dropdown_fields[f]['options']" t-as="option">
+                                <option t-att-value="option[0]">
+                                    <t t-esc="option[1]"/>
+                                </option>
+                            </t>
+                        </select>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</template>

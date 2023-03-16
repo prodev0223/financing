@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="pension_payment_order_form" model="ir.ui.view">
+            <field name="name">Įsakymas pervesti papildomas sumas į III pakopos pensijų fondą</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_order_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="action_copy" type="object" string="Kurti kopiją" states="draft,confirm,e_signed"/>
+                </xpath>
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="date_1" string="Transfer date" required="True"/>
+                        <div>
+                            <button name="add_all_employees_as_to_document_lines"
+                                    type="object"
+                                    string="Add All Employees"
+                                    class="oe_highlight"
+                                    attrs="{'invisible': [('state','!=','draft')]}"
+                                    confirm="Are you sure you want to add all employees?"/>
+                        </div>
+                    </group>
+                    <group colspan="4" col="4">
+                        <field name="e_document_line_ids" nolabel="1" widget="one2many_list"
+                               options="{'no_open': True}">
+                            <tree string="Pension Fund Transfer lines" editable="bottom" open="False" class="robo_tree_in_form">
+                                <field name="employee_id2" required="True" string="Employee"
+                                       options="{'no_create':True, 'no_open': True}"/>
+                                <field name="pension_fund_id" string="Pension fund"
+                                   options="{'no_create': True, 'no_open': True}" required="True"/>
+                                <field name="float_1" string="Transfer amount, EUR" required="True"/>
+                            </tree>
+                            <form string="Pension Fund Transfer line">
+                                <group>
+                                    <field name="employee_id2" required="True" string="Employee"
+                                           options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="float_1" required="1" string="Transfer amount, EUR"/>
+                                    <field name="pension_fund_id" options="{'no_create': True, 'no_open': True}" required="True"/>
+                                </group>
+                            </form>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="pension_payment_order_action" model="ir.actions.act_window">
+            <field name="name">Įsakymas pervesti papildomas sumas į III pakopos pensijų fondą</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{
+                u'default_document_type': u'isakymas',
+                u'rec_template_id': u'pension_payment_order_template',
+                u'e_document_view_type': u'rigid'
+            }</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="pension_payment_order_form"/>
+        </record>
+
+        <record id="pension_payment_order_menu" model="ir.ui.menu">
+            <field name="name">Įsakymas pervesti papildomas sumas į III pakopos pensijų fondą</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="True"/>
+            <field name="parent_id" ref="isakymas"/>
+            <field name="action" ref="e_document.pension_payment_order_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">
+                isakymas,pensija,pensiju,fondas,pensiju fondas,pervesti,darbuotojui,investavimas,investuoti,draudimas,ismoka,3,trečios
+            </field>
+            <field name="groups_id" eval="[(6, 0, [
+                ref('robo_basic.group_robo_free_manager'),
+                ref('robo_basic.group_robo_premium_manager'),
+                ref('robo_basic.group_robo_edocument_manager')
+            ])]"/>
+        </record>
+
+        <record id="pension_payment_order_mail_channel" model="mail.channel">
+            <field name="name">Pension payment order notification</field>
+            <field name="description">Notifications when someone signs a pension payment order</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>e_documents</field>
+        </record>
+
+        <record id="pension_payment_order_template" model="e.document.template">
+            <field name="name">Įsakymas pervesti papildomas sumas į III pakopos pensijų fondą</field>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras {
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded {
+                            width: 100px;
+                        }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                </span>
+                                            </p>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                            <p>
+                                                <span>{{ manager_id }}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span style="text-transform: uppercase">
+                                {% if len(e_document_time_line_ids) == 1 %}
+                                    įsakymas pervesti papildomą sumą į III pakopos pensijų fondą.
+                                {% else %}
+                                    įsakymas pervesti papildomas sumas į III pakopos pensijų fondą.
+                                {% endif %}
+                            </span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span t-field="doc.employee_id.work_location"/>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    {% if not e_document_line_ids %}
+                        Įsakau pervesti papildomą {{ placeholder | safe }} EUR sumą į III pakopos
+                        {{ placeholder | safe }} pensijų fondą. {{ placeholder | safe }}
+                    {% else %}
+                        {% if len(e_document_line_ids) == 1 %}
+                            {% set line = e_document_line_ids[0] %}
+                            Įsakau pervesti papildomą {{ line.float_1 | safe }} EUR sumą darbuotojui
+                            {{ kam(line.employee_id2.name, 'Aa') }} į III pakopos
+                            "{{ line.pension_fund_id.name | safe }}" pensijų fondą. {{ extra_text_html }}
+                        {% else %}
+                            Įsakau pervesti papildomas sumas į III pakopos pensijų fondus šiems darbuotojams:
+                            <table style="border: 1px solid black; border-collapse: collapse;">
+                                <tr>
+                                    <th style="border: 1px solid black; padding: 2px;">Darbuotojas</th>
+                                    <th style="border: 1px solid black; padding: 2px;">Pensijų fondas</th>
+                                    <th style="border: 1px solid black; padding: 2px;">Suma, EUR</th>
+                                </tr>
+                                {% for e_document_line_id in e_document_line_ids %}
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 2px;">{{ e_document_line_id.employee_id2.name }}</td>
+                                        <td style="border: 1px solid black; padding: 2px;">{{ e_document_line_id.pension_fund_id.name }}</td>
+                                        <td style="border: 1px solid black; padding: 2px;">{{ e_document_line_id.float_1 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                            <br/>
+                            <br/>
+                            {{ extra_text_html }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.pension_payment_order_form"/>
+            <field name="python_code">obj.pension_payment_order_workflow()</field>
+            <field name="date_from_field_name">date_1</field>
+            <field name="date_to_field_name">date_1</field>
+            <field name="send_manager" eval="False"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+            <field name="allow_copy" eval="True"/>
+            <field name="sign_mail_channel_ids" eval="[(4, ref('e_document.pension_payment_order_mail_channel'))]"/>
+        </record>
+    </data>
+</odoo>

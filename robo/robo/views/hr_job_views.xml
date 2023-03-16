@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="new_job_form">
+            <field name="name">Padalinys</field>
+            <field name="model">hr.job</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Pareigos">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="text-align: center; font-size: 1.2em; margin-top: 1.1em" colspan="4">
+                                Attention: job name adjustment will be applied to all employees, who are subject to this job.<br/>
+                                If this is not the desired result - create a new job record.
+                        </div>
+                        <div>
+                            <label string="Pareigos"/>
+                            <h1 class="mt0">
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="department_id"/>
+                            <field name="domenas1" invisible="1"/>
+                            <field name="domenas2" invisible="1"/>
+                            <field name="domenas3" invisible="1"/>
+                            <field name="kodas1" widget="selection" domain="[('kodas', '=like', '__')]"/>
+                            <field name="kodas2" widget="selection" domain="[('kodas', '=like', domenas1)]" attrs="{'readonly':[('kodas1','=',False)]}"/>
+                            <field name="kodas3" widget="selection" domain="[('kodas', '=like', domenas2)]" attrs="{'readonly':[('kodas2','=',False)]}"/>
+                            <field name="kodas4" widget="selection" domain="[('kodas', '=like', domenas3)]" attrs="{'readonly':[('kodas3','=',False)]}"/>
+                            <field name="male_name"/>
+                            <field name="female_name"/>
+                            <field name="work_norm"/>
+                            <field name="special_job_type"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_job_form_add_gender_labels" model="ir.ui.view">
+            <field name="name">hr.job.form.gender.labels</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='department_id']" position="after">
+                    <field name="male_name"/>
+                    <field name="female_name"/>
+                    <field name="work_norm"/>
+                    <field name="special_job_type"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_job_tree_view">
+            <field name="name">hr.job.tree</field>
+            <field name="priority" eval="99"/>
+            <field name="model">hr.job</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree import="0">
+                    <field name="name" string="Pavadinimas"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="hr_job_kanban_view">
+            <field name="name">hr.job.kanban</field>
+            <field name="priority" eval="99"/>
+            <field name="model">hr.job</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false">
+                    <field name="name" string="Pavadinimas"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.name.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="open_hr_job">
+            <field name="name">Darbuotojų pareigos</field>
+            <field name="res_model">hr.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="context">{'robo_header':{}}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('hr_job_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('robo.new_job_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('hr_job_kanban_view')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

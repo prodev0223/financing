@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Trees-->
+        <record id="nsoft_cash_register_tree" model="ir.ui.view">
+            <field name="name">nsoft.cash.register.tree</field>
+            <field name="model">nsoft.cash.register</field>
+            <field name="arch" type="xml">
+                <tree string="nSoft Kasos aparatai"
+                      decoration-success="state == 'working'"
+                      decoration-danger="state == 'failed'"
+                      create="1" edit="1" delete="1">
+                    <field name="cash_register_number"/>
+                    <field name="state"/>
+                    <field name="cash_register_name"/>
+                    <field name="location_id"/>
+                    <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+        <record id="nsoft_cash_register_front_view_tree" model="ir.ui.view">
+            <field name="name">nsoft.cash.register.front.view.tree</field>
+            <field name="model">nsoft.cash.register</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <tree string="nSoft points of sale"
+                      decoration-success="state == 'working'"
+                      decoration-danger="state == 'failed'"
+                      create="1" edit="1" delete="1">
+                    <field name="cash_register_number"/>
+                    <field name="cash_register_name"/>
+                    <field name="location_id"/>
+                    <field name="partner_id"/>
+                    <field name="journal_id"/>
+                    <field name="cash_journal_id"/>
+                    <field name="spec_register"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="nsoft_cash_register_form" model="ir.ui.view">
+            <field name="name">nsoft.cash.register.form</field>
+            <field name="model">nsoft.cash.register</field>
+            <field name="arch" type="xml">
+                <form string="nSoft Kasos Aparatai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Kasos aparato numeris"/>
+                            <h1 class="mt0">
+                                <field name="cash_register_number" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="cash_register_name"/>
+                            <field name="location_id"/>
+                            <field name="journal_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="nsoft_cash_register_front_view_form" model="ir.ui.view">
+            <field name="name">nsoft.cash.register.form</field>
+            <field name="model">nsoft.cash.register</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="nSoft point of sale" create="1" edit="1" delete="1">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <label string="Point of sale"/>
+                            <h1 class="mt0">
+                                <field name="cash_register_number" class="oe_inline" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group string="Identifier fields" colspan="1" col="2">
+                            <field name="cash_register_name" readonly="1"/>
+                            <field name="spec_register" readonly="1"/>
+                            <field name="ext_id" readonly="1"/>
+                        </group>
+                        <group string="Relational fields" colspan="1" col="2">
+                            <field name="location_id" options="{'no_open': True, 'no_create': True}"
+                                   groups="robo_basic.group_robo_premium_manager"/>
+                            <field name="journal_id" options="{'no_open': True, 'no_create': True}"
+                                   groups="robo_basic.group_robo_premium_manager"/>
+                            <field name="cash_journal_id" options="{'no_open': True, 'no_create': True}"
+                                   groups="robo_basic.group_robo_premium_manager"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="analytic_account_id" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'invisible': [('show_analytic_account_selection', '=', False)]}"/>
+                            <field name="show_analytic_account_selection" invisible="1"/>
+                        </group>
+                        <group string="Point of sale employees"
+                               attrs="{'invisible': [('show_analytic_account_selection', '=', False)]}">
+                            <field name="employee_ids" widget="many2many_tags"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Search-->
+        <record id="nsoft_cash_register_view_search" model="ir.ui.view">
+            <field name="name">nsoft.cash.register.view.search</field>
+            <field name="model">nsoft.cash.register</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="ext_id" filter_domain="[('ext_id', 'ilike', self)]"/>
+                    <field name="cash_register_number"
+                           filter_domain="[('cash_register_number', 'ilike', self)]"/>
+                    <field name="cash_register_name"
+                           filter_domain="[('cash_register_name', 'ilike', self)]"/>
+                    <field name="spec_register"/>
+                    <field name="partner_id"/>
+                    <field name="journal_id"/>
+                    <field name="cash_journal_id"/>
+                    <field name="location_id"/>
+                    <group>
+                        <filter name="group_partner_id" string="Partner"
+                                context="{'group_by':'partner_id'}"/>
+                        <filter name="group_journal_id" string="Journal"
+                                context="{'group_by':'journal_id'}"/>
+                        <filter name="group_location_id" string="Location"
+                                context="{'group_by':'location_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="nsoft_cash_register_action" model="ir.actions.act_window">
+            <field name="name">Kasos aparatai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.cash.register</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="nsoft_cash_register_tree"/>
+        </record>
+        <record id="action_open_nsoft_cash_register_front" model="ir.actions.act_window">
+            <field name="name">Points of sale</field>
+            <field name="res_model">nsoft.cash.register</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree_robo</field>
+            <field name="with_settings">True</field>
+            <field name="header" ref="header_nsoft_front_end_base"/>
+            <field name="search_view_id" ref="nsoft_cash_register_view_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('nsoft_cash_register_front_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('nsoft_cash_register_front_view_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    This request has not returned any results
+                </p>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Kasos Aparatai"
+                id="nsoft_cash_registers"
+                sequence="42"
+                action="nsoft_cash_register_action"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nsoft_data_menu"
+        />
+        <menuitem id="menu_nsoft_cash_register_front"
+                  name="Points of sale"
+                  parent="nsoft.nsoft_root_front"
+                  sequence="1"
+                  robo_front="True"
+                  action="action_open_nsoft_cash_register_front"
+                  groups="nsoft.group_nsoft_front_end_management"
+                  force_web_icon="icon-cashier,none,none"
+                  searchable="True"
+                  tags="nsoft,point,of,sale"
+        />
+    </data>
+</odoo>

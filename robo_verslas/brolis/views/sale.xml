@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sale_order_form_view_extend" model="ir.ui.view">
+            <field name="name">sale.order.form.view.extend</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="robo_stock.robo_sale_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']//tree[1]//field[@name='product_id']" position="attributes">
+                    <attribute name="domain">[]</attribute>
+                </xpath>
+                <xpath expr="//button[@name='sale_order_offer_print']" position="before">
+                    <button name="export_sale_order_excel" string="Spausdinti gamybos užsakymą" type="object"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

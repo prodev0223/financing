@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_approval_approver_and_auditor_see_own_approval_conditions" model="ir.rule">
+            <field name="name">Invoice approvers and auditors see only their own approval conditions</field>
+            <field name="model_id" ref="model_invoice_approval_condition"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('approver_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_approver')),
+                (4, ref('invoice_approval_workflow.invoice_approval_auditor')),
+            ]"/>
+        </record>
+        <record id="invoice_approval_approver_and_auditor_access_own_workflows" model="ir.rule">
+            <field name="name">Invoice approvers and auditors can access workflows</field>
+            <field name="model_id" ref="model_invoice_approval_workflow"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">
+                [('step_ids.matched_approver_ids.approver_id.user_id', 'child_of', [user.id])]
+            </field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_approver')),
+                (4, ref('invoice_approval_workflow.invoice_approval_auditor')),
+            ]"/>
+        </record>
+        <record id="invoice_approval_approver_and_auditor_modify_own_workflow_steps" model="ir.rule">
+            <field name="name">Invoice approvers and auditors can only modify workflow steps they're in</field>
+            <field name="model_id" ref="model_invoice_approval_workflow_step"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('matched_approver_ids.approver_id.user_id', 'child_of', [user.id])]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_approver')),
+                (4, ref('invoice_approval_workflow.invoice_approval_auditor')),
+            ]"/>
+        </record>
+        <record id="invoice_approval_approver_and_auditor_access_own_workflow_step_approver_record" model="ir.rule">
+            <field name="name">Invoice approvers and auditors can see themselves and fellow workflow step approvers</field>
+            <field name="model_id" ref="model_invoice_approval_workflow_step_approver"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                '|',
+                ('approver_id.user_id', '=', user.id),
+                ('workflow_step_id.matched_approver_ids.approver_id.user_id', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_approver')),
+                (4, ref('invoice_approval_workflow.invoice_approval_auditor')),
+            ]"/>
+        </record>
+        <record id="invoice_approval_approver_and_auditor_access_own_workflow_step_matched_conditions" model="ir.rule">
+            <field name="name">Invoice approvers and auditors can see their matched workflow conditions</field>
+            <field name="model_id" ref="model_inv_approval_workflow_condition"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('workflow_approver_id.approver_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_approver')),
+                (4, ref('invoice_approval_workflow.invoice_approval_auditor')),
+            ]"/>
+        </record>
+        <record id="invoice_approval_approver_access_their_invoices" model="ir.rule">
+            <field name="name">Invoice approvers and auditors can access their invoices</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('approval_workflow_ids.step_ids.matched_approver_ids.approver_id.user_id', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_approver')),
+                (4, ref('invoice_approval_workflow.invoice_approval_auditor')),
+            ]"/>
+        </record>
+        <record id="invoice_approval_approver_access_their_invoiceLines" model="ir.rule">
+            <field name="name">Invoice approvers and auditors can access their invoice lines</field>
+            <field name="model_id" ref="account.model_account_invoice_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('invoice_id.approval_workflow_ids.step_ids.matched_approver_ids.approver_id.user_id', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_approver')),
+                (4, ref('invoice_approval_workflow.invoice_approval_auditor')),
+            ]"/>
+        </record>
+
+        <record id="invoice_approval_administrator_access_all_conditions" model="ir.rule">
+            <field name="name">Invoice approval administrators can access all conditions</field>
+            <field name="model_id" ref="model_invoice_approval_condition"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_administrator'))
+            ]"/>
+        </record>
+
+        <record id="invoice_approval_administrator_access_all_workflows" model="ir.rule">
+            <field name="name">Invoice administrators can access all workflows</field>
+            <field name="model_id" ref="model_invoice_approval_workflow"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_administrator'))
+            ]"/>
+        </record>
+
+        <record id="invoice_approval_administrator_access_all_workflow_steps" model="ir.rule">
+            <field name="name">Invoice approval administrator access and write to all workflow steps</field>
+            <field name="model_id" ref="model_invoice_approval_workflow_step"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_administrator'))
+            ]"/>
+        </record>
+
+        <record id="invoice_approval_administrator_access_all_invoice_approvers" model="ir.rule">
+            <field name="name">Invoice approval administrator access all approvers</field>
+            <field name="model_id" ref="model_invoice_approval_workflow_step_approver"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_administrator'))
+            ]"/>
+        </record>
+
+        <record id="invoice_approval_administrator_access_all_workflow_conditions" model="ir.rule">
+            <field name="name">Invoice approval administrator access all workflow conditions</field>
+            <field name="model_id" ref="model_inv_approval_workflow_condition"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_administrator'))
+            ]"/>
+        </record>
+
+        <record id="invoice_approval_administrator_access_all_workflow_invoices" model="ir.rule">
+            <field name="name">Invoice approval administrator access all workflow invoices</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('approval_workflow_ids', '!=', False)
+            ]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_administrator'))
+            ]"/>
+        </record>
+
+        <record id="invoice_approval_administrator_access_all_workflow_invoice_lines" model="ir.rule">
+            <field name="name">Invoice approval administrator access all workflow invoice lines</field>
+            <field name="model_id" ref="account.model_account_invoice_line"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[
+                ('invoice_id.approval_workflow_ids', '!=', False)
+            ]</field>
+            <field name="groups" eval="[
+                (4, ref('invoice_approval_workflow.invoice_approval_administrator'))
+            ]"/>
+        </record>
+    </data>
+</odoo>

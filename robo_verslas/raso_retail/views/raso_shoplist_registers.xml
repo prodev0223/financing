@@ -1,0 +1,54 @@
+<odoo>
+    <data>
+        <record id="raso_shoplist_regs_tree" model="ir.ui.view">
+            <field name="name">raso.shoplist.regs.tree</field>
+            <field name="model">raso.shoplist.registers</field>
+            <field name="arch" type="xml">
+                <tree create="1" edit="1" delete="1">
+                    <field name="name"/>
+                    <field name="pos_no"/>
+                    <field name="shop_id"/>
+                    <field name="partner_id"/>
+                    <field name="journal_id"/>
+                    <field name="location_id"/>
+                    <field name="is_generic"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="raso_pos_action" model="ir.actions.act_window">
+            <field name="name">Kasos aparatų sąrašas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">raso.shoplist.registers</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="raso_shoplist_regs_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="raso_shoplist_register_form" model="ir.ui.view">
+            <field name="name">raso.shoplist.registers.form</field>
+            <field name="model">raso.shoplist.registers</field>
+            <field name="arch" type="xml">
+                <form string="Kasa" create="1" edit="1" delete="1">
+                    <sheet>
+                    <div>
+                        <label string="Kasos Pavadinimas"/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="journal_id"/>
+                            <field name="is_generic"/>
+                            <field name="location_id"/>
+                            <field name="partner_id"/>
+                            <field name="shop_id"/>
+                            <field name="pos_no" attrs="{'invisible': [('is_generic','=', True)]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,46 @@
+<odoo>
+    <data noupdate="1">
+        <record id="cron_raso_export_update" model="ir.cron">
+          <field name="name">Update database with RASO records</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">days</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">raso.export.wizard</field>
+          <field name="function">cron_job_export</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=21, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="args">()</field>
+        </record>
+        <record id="cron_raso_export_recreate" model="ir.cron">
+          <field name="name">Reacreate RASO exports with errors</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">days</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">raso.export.wizard</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=4, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="function">cron_job_recreate</field>
+          <field name="args">()</field>
+        </record>
+        <record id="cron_raso_import_status_update" model="ir.cron">
+          <field name="name">Update RASO records import status</field>
+          <field name="interval_number">10</field>
+          <field name="interval_type">minutes</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">sync.data.import</field>
+          <field name="function">cron_update_import_status</field>
+          <field name="args">()</field>
+        </record>
+        <record id="cron_full_sync_ir" model="ir.cron">
+          <field name="name">Full Sync RASO Objects</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">weeks</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">sync.data.import</field>
+          <field name="function">cron_full_sync</field>
+          <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

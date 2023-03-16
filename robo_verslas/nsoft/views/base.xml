@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Base menu items-->
+        <menuitem
+                name="nSoft"
+                id="nSoft"
+                sequence="48"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="account.menu_finance"
+        />
+        <menuitem
+                name="Duomenys"
+                id="nsoft_data_menu"
+                sequence="49"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nSoft"
+        />
+        <menuitem
+                name="Valdymas"
+                id="nsoft_operation_menu"
+                sequence="55"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nSoft"
+        />
+        <menuitem
+                name="Ataskaitos"
+                id="nsoft_report_menu"
+                sequence="60"
+                groups="robo_basic.group_robo_premium_accountant"
+                parent="nSoft"
+        />
+        <!--SUM INTEGRATION MENUS -->
+        <menuitem
+                name="Suminė Apskaita"
+                id="nsoft_sum_accounting"
+                sequence="70"
+                groups="nsoft.group_nsoft_sum_accounting"
+                parent="nSoft"
+        />
+        <!--Front-end menu items-->
+        <menuitem id="nsoft_root_front"
+                  parent="robo.menu_start"
+                  name="nSoft"
+                  sequence="80"
+                  robo_front="True"
+                  groups="nsoft.group_nsoft_front_end_management"
+                  robo_extended="1"
+                  force_web_icon="icon-cloud-database,none,none"
+        />
+    </data>
+</odoo>

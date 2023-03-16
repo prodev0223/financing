@@ -1,0 +1,934 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="invoice_numbering_form" model="ir.ui.view">
+            <field name="name">company.inv.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group name="last_invoice" string="Sąskaitų faktūrų numeruotė">
+                        <field name="invoice_journal_id" string="Žurnalas" options="{'no_create': True}"
+                               groups="robo_basic.group_robo_select_invoice_journal"/>
+                        <field name="invoice_series" string="Serija"/>
+                        <field name="invoice_number" string="Numeris"/>
+                        <field name="invoice_length" string="Ilgis"/>
+                        <field name="invoice_actual_number" string="Naujai sąskaitai bus suteiktas numeris"/>
+                    </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'invoice': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="invoice_numbering_action" model="ir.actions.act_window">
+            <field name="name">Sąskaitų faktūrų numeruotė</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="invoice_numbering_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="credit_invoice_numbering_form" model="ir.ui.view">
+            <field name="name">company.credit.inv.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group name="last_credit_invoice" string="Kreditinių sąskaitų faktūrų numeruotė">
+                        <field name="credit_invoice_series" string="Serija"/>
+                        <field name="credit_invoice_number" string="Numeris"/>
+                        <field name="credit_invoice_length" string="Ilgis"/>
+                        <field name="credit_invoice_actual_number" string="Naujai sąskaitai bus suteiktas numeris"/>
+                    </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'credit_invoice': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="credit_invoice_numbering_action" model="ir.actions.act_window">
+            <field name="name">Kreditinių sąskaitų faktūrų numeruotė</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="credit_invoice_numbering_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="proforma_numbering_form" model="ir.ui.view">
+            <field name="name">company.proforma.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group name="last_proforma" string="Išankstinių sąskaitų faktūrų numeruotė">
+                        <field name="proforma_series" string="Serija"/>
+                        <field name="proforma_number" string="Numeris"/>
+                        <field name="proforma_length" string="Ilgis"/>
+                        <field name="proforma_actual_number" string="Naujai sąskaitai bus suteiktas numeris"/>
+                    </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'proforma': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="proforma_numbering_action" model="ir.actions.act_window">
+            <field name="name">Išankstinių sąskaitų faktūrų numeruotė</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="proforma_numbering_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="last_in_payment_form" model="ir.ui.view">
+            <field name="name">company.in.payment.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group name="last_in_payment" string="Kasos pajamų orderių numeruotė">
+                        <field name="in_payment_series" string="Serija"/>
+                        <field name="in_payment_number" string="Numeris"/>
+                        <field name="in_payment_length" string="Ilgis"/>
+                        <field name="in_payment_actual_number"
+                               string="Naujam kasos pajamų orderiui bus suteiktas numeris"/>
+                    </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'in_payment': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="last_in_payment_action" model="ir.actions.act_window">
+            <field name="name">Kasos pajamų orderių numeruotė</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="last_in_payment_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+        <record id="last_out_payment_form" model="ir.ui.view">
+            <field name="name">company.out.payment.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group name="last_out_payment" string="Kasos išlaidų orderių numeruotė">
+                        <field name="out_payment_series" string="Serija"/>
+                        <field name="out_payment_number" string="Numeris"/>
+                        <field name="out_payment_length" string="Ilgis"/>
+                        <field name="out_payment_actual_number"
+                               string="Naujam kasos išlaidų orderiui bus suteiktas numeris"/>
+                    </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'out_payment': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="last_out_payment_action" model="ir.actions.act_window">
+            <field name="name">Kasos išlaidų orderių numeruotė</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="last_out_payment_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+        <record id="last_in_cash_receipt_form" model="ir.ui.view">
+            <field name="name">company.in.receipt.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group name="last_in_cash_receipt" string="Grynųjų pinigų žurnalų numeruotė">
+                        <field name="in_cash_journal_id" string="Žurnalas"/>
+                        <field name="in_cash_receipt_series" string="Serija"/>
+                        <field name="in_cash_receipt_number" string="Numeris"/>
+                        <field name="in_cash_receipt_length" string="Ilgis"/>
+                        <field name="in_cash_receipt_actual_number"
+                               string="Naujam pinigų priėmimo kvitui bus suteiktas numeris"/>
+                    </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'in_cash': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="last_in_cash_receipt_action" model="ir.actions.act_window">
+            <field name="name">Grynųjų pinigų žurnalų numeruotė</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="last_in_cash_receipt_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="last_du_form" model="ir.ui.view">
+            <field name="name">company.du.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group name="last_contract" string="Darbo sutarčių/priedų numeruotė">
+                        <field name="contract_series" string="Serija"/>
+                        <field name="contract_number" string="Numeris"/>
+                        <field name="contract_length" string="Ilgis"/>
+                        <field name="contract_actual_number"
+                               string="Naujai sutarčiai/priedui suteiktas numeris"/>
+                    </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'contract': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="last_du_action" model="ir.actions.act_window">
+            <field name="name">Darbuotojų sutarčių/priedų numeruotė</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="last_du_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <record id="last_out_cash_receipt_form" model="ir.ui.view">
+            <field name="name">company.out.receipt.numbering</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group name="last_out_cash_receipt" string="Pinigų išdavimo kvitų numeruotė">
+                            <field name="out_cash_receipt_series" string="Serija"/>
+                            <field name="out_cash_receipt_number" string="Numeris"/>
+                            <field name="out_cash_receipt_length" string="Ilgis"/>
+                            <field name="out_cash_receipt_actual_number"
+                                   string="Naujam pinigų išdavimo kvitui bus suteiktas numeris"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_numberings" string="Išsaugoti"
+                                type="object" class="btn-primary" context="{'out_cash': True}"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="last_out_cash_receipt_action" model="ir.actions.act_window">
+            <field name="name">Pinigų išdavimo kvitų numeruotė</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="last_out_cash_receipt_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+        <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">Kompanijos nustatymai</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Kompanijos nustatymai" class="robo_company_settings">
+                    <header>
+                        <button string="Išsaugoti" type="object" name="execute" class="oe_highlight"/>
+                        <button string="Atšaukti" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                    <sheet>
+                        <field name="company_id" invisible="1"/>
+                        <group name="company_info" string="Kompanijos informacija" class="robo_group_collapsable">
+                            <field name="company_logo" widget="image" string="Įmonės logotipas"/>
+                            <field name="company_name" string="Įmonės pavadinimas"/>
+                            <field name="company_ceo" string="Įmonės vadovas" domain="[('main_accountant', '=', False)]"
+                                   options="{'no_open':True, 'no_create':True}"/>
+                            <field name="company_kodas" string="Įmonės kodas"/>
+                            <field name="company_vat" string="Įmonės PVM kodas"/>
+                            <label for="company_street" string="Įmonės adresas"/>
+                            <div class="o_address_format">
+                                <field name="company_street" placeholder="Adresas..." class="o_address_street"/>
+                                <field name="company_street2" class="o_address_street"/>
+                                <field name="company_city" placeholder="Miestas" class="o_address_city"/>
+                                <field name="company_zip" placeholder="Pašto kodas" class="o_address_zip"/>
+                                <field name="company_country_id" placeholder="Valstybė" class="o_address_country"
+                                       options="{&quot;no_open&quot;: True}"/>
+                            </div>
+                            <field name="company_phone" string="Telefonas"/>
+                            <field name="company_fax" string="Faksas"/>
+                            <field name="company_email" string="El. pašto adresas"/>
+                            <field name="company_website" string="Interneto svetainės adresas"/>
+                            <field name="company_draudejo_kodas" string="Draudėjo kodas"/>
+                            <field name="company_savivaldybe" string="Savivaldybė"/>
+                            <field name="company_evrk" string="EVRK kodas" options="{'no_open':True, 'no_create':True}"/>
+                            <field name="payroll_bank_journal_id" widget="selection"/>
+                            <field name="company_activity_form"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="uab_report_size" attrs="{'invisible': [('company_activity_form','!=','uab')]}" groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="longterm_assets_min_val"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="longterm_non_material_assets_min_val"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="default_msg_receivers" domain="[('is_active_employee', '=', True)]">
+                                <tree editable="bottom" class="robo_tree_in_form">
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group name="company_bank" string="Banko sąskaitos" class="robo_group_collapsable robo_group_collapsed" colspan="3">
+                            <field name="bank_integrations_to_activate" invisible="1"/>
+                            <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                                 attrs="{'invisible': [('bank_integrations_to_activate', '=', False)]}"
+                                 colspan="3">
+                                <field name="bank_integrations_to_activate_html" readonly="True"/>
+                            </div>
+                            <field name="company_bank_accounts" nolabel="1" colspan="3">
+                                <tree editable="bottom" delete="0" class="robo_tree_in_form" colspan="3">
+                                    <field name="company_bank_account" string="Banko sąskaita"
+                                           attrs="{'required': [('journal_id', '=', False)]}"/>
+                                    <field name="company_bank_name" string="Pavadinimas"
+                                           attrs="{'required': [('journal_id', '=', False)]}"/>
+                                    <field name="company_bank_code" string="Kodas"
+                                           attrs="{'required': [('journal_id', '=', False)]}"/>
+                                    <field name="company_bank_bic" string="BIC kodas"
+                                           attrs="{'required': [('journal_id', '=', False)]}"/>
+                                    <field name="company_bank_currency" string="Valiuta"
+                                           options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                    <field name="show_footer"/>
+                                    <field name="journal_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Integracijos" name="api_integrations"
+                               attrs="{'invisible': [('enable_revolut_integration', '=', False),
+                                                     ('enable_paypal_integration', '=', False),
+                                                     ('enable_paysera_integration', '=', False),
+                                                     ('enable_e_banking_integration', '=', False),
+                                                     ('enable_braintree_integration', '=', False),
+                                                     ('enable_seb_integration', '=', False)]}"
+                               class="robo_group_collapsable robo_group_collapsed">
+                            <group>
+                                <button name="btn_open_paypal_settings" string="Paypal nustatymai" class="oe_link"
+                                        attrs="{'invisible': [('enable_paypal_integration', '=', False)]}"
+                                        type="object" groups="robo_basic.group_robo_premium_manager"/>
+                                <newline/>
+                                <button name="btn_open_revolut_settings" string="Revolut nustatymai"  class="oe_link"
+                                        attrs="{'invisible': [('enable_revolut_integration', '=', False)]}"
+                                        type="object" groups="robo_basic.group_robo_premium_manager"/>
+                                <newline/>
+                                <button name="btn_open_paysera_settings"
+                                        string="Paysera nustatymai"  class="oe_link"
+                                        attrs="{'invisible': [('enable_paysera_integration', '=', False)]}"
+                                        type="object" groups="robo_basic.group_robo_premium_manager"/>
+                                <newline/>
+                                <button name="btn_open_seb_settings"
+                                        string="SEB nustatymai"  class="oe_link"
+                                        attrs="{'invisible': [('enable_seb_integration', '=', False)]}"
+                                        type="object" groups="robo_basic.group_robo_premium_manager"/>
+                                <newline/>
+                                <button name="btn_open_braintree_settings"
+                                        string="Braintree nustatymai"  class="oe_link"
+                                        attrs="{'invisible': [('enable_braintree_integration', '=', False)]}"
+                                        type="object" groups="robo_basic.group_robo_premium_manager"/>
+                                <newline/>
+                                <button name="btn_open_enable_banking_settings"
+                                        string="Enable banking settings"  class="oe_link"
+                                        attrs="{'invisible': [('enable_e_banking_integration', '=', False)]}"
+                                        type="object" groups="robo_basic.group_robo_premium_manager"/>
+                            </group>
+                        </group>
+                        <group string="Numeruotės" name="numbering_sequences" groups="robo_basic.group_robo_premium_manager"
+                               class="robo_group_collapsable robo_group_collapsed">
+                            <button name="%(invoice_numbering_action)d" string="Sąskaitų faktūrų numeruotė"
+                        type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                            <button name="%(credit_invoice_numbering_action)d" string="Kreditinių sąskaitų faktūrų numeruotė"
+                        type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                            <button name="%(proforma_numbering_action)d" string="Išankstinių sąskaitų faktūrų numeruotė"
+                        type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                            <button name="%(last_in_payment_action)d" string="Kasos pajamų orderių numeruotė"
+                        type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                            <button name="%(last_out_payment_action)d" string="Kasos išlaidų orderių numeruotė"
+                        type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                            <button name="%(last_in_cash_receipt_action)d" string="Grynųjų pinigų žurnalų numeruotė"
+                        type="action" class="oe_link" groups="robo_basic.group_robo_premium_accountant"/>
+                            <button name="%(last_out_cash_receipt_action)d" string="Pinigų išdavimo kvitų numeruotė"
+                        type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                            <button name="%(last_du_action)d" string="Darbuotojų sutarčių/priedų numeruotė"
+                        type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+                        </group>
+                        <group string="Apskaitos politika" groups="robo_basic.group_robo_premium_accountant"
+                               name="politika" class="robo_group_collapsable robo_group_collapsed">
+                            <label for="fiscalyear_last_day"/>
+                            <div>
+                                <field name="fiscalyear_last_month" class="oe_inline" nolabel="1"/>
+                                <span style="margin-right:5px;"/>
+                                <field name="fiscalyear_last_day" class="oe_inline oe_text_right" nolabel="1"/>
+                            </div>
+                            <field name="isaf_default_day"/>
+                            <field name="substitute_report_partner"
+                                   options="{'no_open':True, 'no_create':True}"/>
+                            <field name="worker_policy"/>
+                            <field name="sumine_apskaita_period_amount"/>
+                            <field name="sumine_apskaita_period_start"/>
+                            <field name="politika_neatvykimai"/>
+                            <field name="accumulated_days_policy"/>
+                            <field name="politika_atostoginiai"/>
+                            <field name="politika_atostogu_suteikimas"/>
+                            <field name="holiday_policy_inform_manager" attrs="{'invisible': [('politika_atostogu_suteikimas', '!=', 'department')]}"/>
+                            <field name="e_documents_enable_advance_setup"/>
+                            <field name="advance_payment_day"/>
+                            <field name="automatic_salary_reconciliation"/>
+                            <field name="e_documents_allow_historic_signing"/>
+                            <field name="e_documents_allow_historic_signing_spec" help="Leidimas formuoti šiuos dokumentus praeities data: Įsakymas dėl atleidimo iš darbo, Įsakymas dėl priėmimo į darbą, Įsakymas dėl darbo užmokesčio pakeitimo"/>
+                            <field name="allow_zero_allowance_business_trip"/>
+                            <field name="form_business_trip_payments_immediately_after_signing"/>
+                            <field name="automatically_send_business_trip_allowance_payments_to_bank"
+                                   attrs="{'invisible': [('form_business_trip_payments_immediately_after_signing', '!=', True)]}"/>
+                            <field name="form_gpm_line_with_holiday_payout" attrs="{'invisible': [('politika_atostoginiai', '=', 'su_du')]}"/>
+                            <field name="inv_due_date_edit"/>
+                            <field name="proforma_show_price_vat_incl"/>
+                            <field name="allow_use_ne_pvm_objektas"/>
+                            <field name="invoice_print_discount_type"/>
+                            <field name="force_need_action_repr"/>
+                            <field name="prevent_duplicate_product_code" groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="prevent_empty_product_code" groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_employment_requests_on_order_sign" groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="print_invoice_partner_balance"/>
+                            <field name="auto_form_employee_advance_balance_document"/>
+                            <field name="holiday_accumulation_usage_policy"/>
+                            <field name="holiday_accumulation_usage_start_date"
+                                   attrs="{
+                                   'invisible': [('holiday_accumulation_usage_policy', '=', False)],
+                                   'required': [('holiday_accumulation_usage_policy', '=', True)]
+                                   }"/>
+                            <div class="alert alert-warning" role="alert" colspan="4"
+                                 attrs="{'invisible': [('holiday_accumulation_usage_policy', '=', False)]}"
+                                 groups="robo_basic.group_robo_premium_accountant">
+                                Warning! You should only enable "Use holiday accumulation and usage records when
+                                calculating holiday payments" when starting holiday balances have been entered. This
+                                setting prevents the use of holiday fixes and uses holiday accumulation records instead.
+                            </div>
+                            <field name="allow_accumulative_work_time_accounting_net_bonus_orders"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="use_latest_product_price"/>
+                            <field name="use_children_records_for_parental_leave_documents"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                        </group>
+                        <group string="Kiti nustatymai" name="other_settings"
+                               class="robo_group_collapsable robo_group_collapsed">
+                            <button name="%(open_hr_department)d" string="Padaliniai" type="action" class="oe_link"/>
+                            <button name="%(open_crm_team)d" string="Pardavimų komandos" type="action" class="oe_link"/>
+                            <button name="%(open_hr_job)d" string="Darbuotojų pareigos" type="action" class="oe_link"/>
+                            <button name="%(open_category_mapping)d" string="Išlaidų skirstymas" type="action" class="oe_link"/>
+                            <button name="%(l10n_lt_payroll.action_open_company_ceo)d" string="Kompanijos vadovai"
+                                    type="action" class="oe_link"/>
+                            <button name="%(action_open_company_shareholder)d" string="Akcininkų sąrašas"
+                                    type="action" class="oe_link"/>
+                            <button name="%(action_open_company_vat_status)d" string="PVM mokėtojo statusas"
+                                    type="action" class="oe_link"/>
+                        </group>
+                        <group string="Sąskaitų faktūrų nustatymai" name="invoice_settings"
+                               class="robo_group_collapsable robo_group_collapsed">
+                            <div class="alert alert-danger" role="alert" style="margin-bottom: 10px;" colspan="4"
+                                 attrs="{'invisible': [('set_default_payment_term_to_all_customers', '=', False)] }"
+                                 groups="robo_basic.group_robo_premium_accountant">
+                                Dėmesio! Pasirinkus nustatymą "Nustatyti visų klientų mokėjimo terminą lygų numatytajam"
+                                visų klientų mokėjimo terminai bus pakeisti į numatytąjį.
+                            </div>
+                            <field name="show_paid_invoice_state_on_printing"/>
+                            <field name="default_payment_term_days"/>
+                            <field name="set_default_payment_term_to_all_customers"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="default_supplier_payment_term_days"/>
+                            <field name="invoice_cc_emails"/>
+                            <field name="invoice_print_only_foreign_currency"/>
+                            <field name="enable_invoice_reconciliation_on_private_consumption"/>
+                            <field name="print_invoice_presenter"/>
+                            <field name="invoice_vat_printing_method" groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="invoice_default_proforma_print"/>
+                            <field name="company_invoice_text"/>
+                            <field name="company_proforma_invoice_text_different_from_regular"/>
+                            <field name="company_invoice_proforma_text"
+                                   attrs="{'invisible': [('company_proforma_invoice_text_different_from_regular', '=', False)]}"/>
+                            <field name="custom_invoice_color_text" widget="colorpicker"/>
+                            <field name="custom_invoice_color_details" widget="colorpicker"/>
+                            <field name="custom_invoice_footer_enabled"/>
+                            <field name="custom_invoice_footer" attrs="{
+                                'invisible': [('custom_invoice_footer_enabled', '=', False)],
+                                'readonly': [('custom_invoice_footer_enabled', '=', False)]
+                            }"/>
+                            <field name="embed_einvoice_xml"/>
+                            <field name="show_machine_readable"
+                                   attrs="{'invisible': [('embed_einvoice_xml', '=', False)]}"/>
+                            <field name="use_last_unit_price_of_account_invoice_line"/>
+                            <field name="invoice_footer_preview"/>
+                        </group>
+                        <group string="Papildomi nustatymai" name="additional_settings" class="robo_group_collapsable robo_group_collapsed">
+                            <field name="module_neopay"/>
+                            <field name="require_2fa"/>
+                            <div class="alert alert-info robo_need_action_alert" role="alert"
+                                 style="margin-bottom:15px;" colspan="4"
+                                 attrs="{'invisible':[('show_2fa_session_kill_warning', '=', False)]}">
+                                <field name="show_2fa_session_kill_warning" invisible="1"/>
+                                <div>
+                                    If you enable 2FA, all users not already using 2FA will be logged out and will need to reconnect with 2FA.
+                                </div>
+                            </div>
+                            <field name="default_action_after_fixed_term_contract_end" required="1"/>
+                            <field name="fixed_term_contract_extension_by_months"
+                                   attrs="{'invisible': [('default_action_after_fixed_term_contract_end', '!=', 'extend')],
+                                           'required': [('default_action_after_fixed_term_contract_end', '=', 'extend')]}"/>
+                            <field name="custom_cash_receipt_header_enabled"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                        </group>
+                        <group string="Įgalinimas" name="activations" groups="robo_basic.group_robo_premium_accountant" class="robo_group_collapsable robo_group_collapsed">
+                            <field name="module_robo_mrp" string="Aktyvuoti gamybą"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="module_robo_stock" string="Aktyvuoti sandėlį"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_product_uom" string="Aktyvuoti matavimo vienetų pasirinkimą"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_periodic_invoices" string="Aktyvuoti periodines sąskaitas"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_periodic_front_statements"
+                                   string="Aktyvuoti periodinius mokėjimo ruošinius"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_cash_registers" string="Aktyvuoti kasos aparatus"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_invoice_journal_selection" string="Įgalinti skirtingas sąskaitų numeruotes"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_paypal_integration" string="Įgalinti Paypal integraciją"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_revolut_integration" string="Įgalinti Revolut integraciją"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="module_amazon_integration" string="Aktyvuoti Amazon integraciją"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_paysera_integration" string="Įgalinti Paysera integraciją"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_e_banking_integration" string="Įgalinti Enable banking integraciją"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_braintree_integration" string="Enable Braintree integration"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="enable_seb_integration" string="Įgalinti SEB integraciją"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="module_mixed_vat_rate" string="Aktyvuoti mišrų PVM"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+<!--                            TODO Issues occur when robo_analytic is uninstalled (Most likely due to moved code)-->
+                            <field name="module_robo_analytic" string="Aktyvuoti analitiką"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="module_work_schedule" string="Aktyvuoti darbo laiko apskaitos grafiką"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="module_work_schedule_analytics"
+                                   string="Aktyvuoti analitiką pagal darbo laiko apskaitos grafikus"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="module_robo_api" string="Aktyvuoti ROBO API"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                            <field name="activate_threaded_front_reports"
+                                   groups="robo_basic.group_robo_premium_accountant"/>
+                        </group>
+                        <group name="automatic_payment_reminders_settings" string="Automatiniai mokėjimų priminimai"
+                               class="robo_group_collapsable robo_group_collapsed" colspan="4" col="4">
+                            <field name="apr_send_reminders" string="Aktyvuoti automatinius priminimus?"
+                                   colspan="4"/>
+                            <field name="apr_enabled_by_default" colspan="4" attrs="{'invisible':[('apr_send_reminders','=',False)]}"/>
+                            <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                                 attrs="{'invisible': ['|', ('apr_enabled_by_default', '=', False), ('apr_send_reminders','=',False)] }">
+                                Jei įjungsite "Aktyvuoti visiems naujai sukurtiems partneriams pagal nutylėjimą", mokėjimo priminimų nustatymai aktyvuosis tik naujai sukurtiems partneriams.
+                            </div>
+                            <field name="apply_default_apr_settings_to_all" colspan="4" attrs="{'invisible':[('apr_send_reminders','=',False)]}"/>
+                            <div class="alert alert-danger" role="alert" style="margin-bottom:0px;" colspan="4"
+                                 attrs="{'invisible': ['|', ('apr_send_reminders', '=', False), ('apply_default_apr_settings_to_all', '=', False)] }">
+                                Jei įjungsite "Taikyti numatytus nustatymus visiems esamiems partneriams", numatytieji nustatymai bus pritaikyti visiems esamiems partneriams ir visi praeiti nustatymai bus pakeisti į naujus!
+                            </div>
+                            <field name="apr_send_before" string="Siųsti priminimus prieš mokėjimo terminą?" colspan="4" attrs="{'invisible':[('apr_send_reminders','=',False)]}"/>
+                            <field name="apr_send_before_ndays" string="Kiek dienų prieš?"
+                                   attrs="{'invisible':['|', ('apr_send_before','=',False), ('apr_send_reminders','=',False)]}" colspan="4"/>
+                            <field name="apr_send_on_date" string="Siųsti mokėjimų priminimus termino dieną?"
+                                   colspan="4" attrs="{'invisible':[('apr_send_reminders','=',False)]}"/>
+                            <field name="apr_send_after" string="Siųsti mokėjimų priminimus praėjus terminui?" colspan="4" attrs="{'invisible':[('apr_send_reminders','=',False)]}"/>
+                            <field name="apr_send_after_ndays" string="Kas kiek dienų kartoti priminimus?"
+                                   attrs="{'invisible':['|', ('apr_send_after','=',False), ('apr_send_reminders','=',False)]}" colspan="4"/>
+                            <field name="apr_min_amount_to_send" string="Nuo kokios sumos (EUR) siųsti priminimus?"
+                                   colspan="4" attrs="{'invisible':[('apr_send_reminders','=',False)]}"/>
+                            <field name="apr_email_reply_to" colspan="4" attrs="{'invisible':[('apr_send_reminders','=',False)]}"/>
+                            <field name="apr_email_cc" colspan="4" attrs="{'invisible':[('apr_send_reminders','=',False)]}"/>
+                        </group>
+                        <group string="Duomenų importas" name="data_import"
+                               groups="robo_basic.group_robo_premium_accountant"
+                               class="robo_group_collapsable robo_group_collapsed" colspan="4">
+                            <div class="alert alert-info" role="alert" style="margin-bottom: 2px;" colspan="4">
+                                XLS Duomenų importavimo veikmai yra atliekami foniniame rėžime.
+                                Informaciją apie importuotą failą (-us) galite rasti pagrindiniame
+                                meniu - 'Kita' -> 'Duomenų importo darbai'.
+                                Baigus importavimo procesą jums bus atsiųsta žinutė.
+                            </div>
+                            <div groups="robo_basic.group_robo_premium_accountant" id="importas" colspan="4">
+                                <div class="import-element-container">
+                                    <a href="robo/static/src/import_examples/Klientų_tiekėjų_informacija.xlsx"
+                                       class="import-download-container">
+                                        <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>Klientų tiekėjų informacija</span>
+                                    </a>
+                                    <field style="border-radius: 4px !important;" name="import_partners"
+                                           string="Importuoti"/>
+                                </div>
+                                <div class="import-element-container">
+                                    <a href="robo/static/src/import_examples/Produktų_informacija.xlsx"
+                                       class="import-download-container">
+                                        <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>Produktų informacija</span>
+                                    </a>
+                                    <field style="border-radius: 4px !important;" name="import_products"
+                                           string="Importuoti"/>
+                                </div>
+                                <div class="import-element-container">
+                                    <a href="robo/static/src/import_examples/Klientų_neapmokėtos_sąskaitos_faktūros.xlsx"
+                                       class="import-download-container">
+                                        <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>Klientų neapmokėtos sąskaitos faktūros</span>
+                                    </a>
+                                    <field style="border-radius: 4px !important;" name="import_customer_invoices"
+                                           string="Importuoti"/>
+                                </div>
+                                <div class="import-element-container">
+                                    <a href="robo/static/src/import_examples/Tiekėjų_neapmokėtos_sąskaitos_faktūros.xlsx"
+                                       class="import-download-container">
+                                        <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>Tiekėjų neapmokėtos sąskaitos faktūros</span>
+                                    </a>
+                                    <field style="border-radius: 4px !important;" name="import_supplier_invoices"
+                                           string="Importuoti"/>
+                                </div>
+                                <div class="import-element-container">
+                                    <a href="robo/static/src/import_examples/Personalo_informacija.xlsx"
+                                       class="import-download-container">
+                                        <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>Personalo informacija</span>
+                                    </a>
+                                    <field style="border-radius: 4px !important;" name="import_employees"
+                                           string="Importuoti"/>
+                                </div>
+                                <div class="import-element-container">
+                                    <a href="robo/static/src/import_examples/Didžiosios_knygos_(DK)_įrašai.xlsx"
+                                       class="import-download-container">
+                                        <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>Didžiosios knygos (DK) įrašai</span>
+                                    </a>
+                                    <field style="border-radius: 4px !important;" name="import_aml"
+                                           string="Importuoti"/>
+                                </div>
+                                <div class="import-element-container">
+                                    <a href="robo/static/src/import_examples/Darbo_užmokesčio_(DU)_istorija.xlsx"
+                                       class="import-download-container">
+                                        <img src='robo/static/src/img/xls-logo.svg' alt='Svg icon' help="Parsisiųsti"/>
+                                        <span>Darbo užmokesčio (DU) istorija</span>
+                                    </a>
+                                    <field style="border-radius: 4px !important;" name="import_du" string="Importuoti"/>
+                                </div>
+                                <!--<group name="import_financials" string="Finansinė atskaitomybė">-->
+                                    <!--<field name="import_financials" string="Importuoti įmonės balansą"/>-->
+                                    <!--<a href="robo/static/src/import_examples/Finansai.xlsx">Atsisiųsti pavyzdį</a>-->
+                                <!--</group>-->
+                            </div>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="robo_company_settings_view_form" model="ir.ui.view">
+            <field name="name">robo.company.settings.view.form</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_select_invoice_journal'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside">
+                    <button name="%(robo.action_account_journal_front)d" string="Žurnalai"
+                            type="action" class="oe_link" />
+                </xpath>
+            </field>
+        </record>
+
+        <!--A menu for all searchable sub-menus-->
+        <menuitem id="menu_company_settings_search"
+                  name="Kompanijos nustatymai"
+                  parent="menu_search_root"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  sequence="100"
+                  robo_front="True"
+        />
+
+        <menuitem id="menu_account_journal_settings_search"
+                  name="Žurnalai"
+                  parent="robo.menu_company_settings_search"
+                  action="robo.action_account_journal_front"
+                  groups="robo_basic.group_robo_select_invoice_journal"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="žurnalai"
+        />
+
+        <record id="robo_company_settings_view_npd" model="ir.ui.view">
+            <field name="name">robo.company.settings.view.npd</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside">
+                    <button name="%(zero_npd_period_action)d" string="NPD netaikymo periodai"
+                            type="action" class="oe_link"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_npd_period_settings_search"
+                  name="NPD netaikymo periodai"
+                  parent="robo.menu_company_settings_search"
+                  action="zero_npd_period_action"
+                  groups="robo_basic.group_robo_premium_accountant"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="NPD,netaikymo,periodai"
+        />
+
+        <record id="action_robo_company_settings" model="ir.actions.act_window">
+            <field name="name">Kompanijos nustatymai</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="company_settings_form"/>
+            <field name="target">inline</field>
+            <field name="context" eval="{'robo_menu_name': ref('robo.menu_start')}"/>
+        </record>
+
+        <record id="create_paypal_settings_action" model="ir.actions.server">
+            <field name="name">Paypal nustatymai</field>
+            <field name="model_id" ref="robo.model_robo_company_settings"/>
+            <field name="code">
+                action = env.get('robo.company.settings').btn_open_paypal_settings()
+            </field>
+            <field name="robo_front">True</field>
+            <field name="group_ids" eval="[(4,ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+
+        <menuitem id="menu_paypal_settings_search"
+                  name="Paypal nustatymai"
+                  parent="robo.menu_company_settings_search"
+                  action="create_paypal_settings_action"
+                  groups="robo_basic.group_robo_premium_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="paypal,nustatymai"
+        />
+
+        <record id="create_revolut_settings_action" model="ir.actions.server">
+            <field name="name">Revolut nustatymai</field>
+            <field name="model_id" ref="robo.model_robo_company_settings"/>
+            <field name="code">
+                action = env.get('robo.company.settings').btn_open_revolut_settings()
+            </field>
+            <field name="robo_front">True</field>
+            <field name="group_ids" eval="[(4,ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+
+        <menuitem id="menu_revolut_settings_search"
+                  name="Revolut nustatymai"
+                  parent="robo.menu_company_settings_search"
+                  action="create_revolut_settings_action"
+                  groups="robo_basic.group_robo_premium_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="revolut,nustatymai"
+        />
+
+        <record id="create_paysera_settings_action" model="ir.actions.server">
+            <field name="name">Paysera nustatymai</field>
+            <field name="model_id" ref="robo.model_robo_company_settings"/>
+            <field name="code">
+                action = env.get('robo.company.settings').btn_open_paysera_settings()
+            </field>
+            <field name="robo_front">True</field>
+            <field name="group_ids" eval="[(4,ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+
+        <menuitem id="menu_paysera_settings_search"
+                  name="Paysera nustatymai"
+                  parent="robo.menu_company_settings_search"
+                  action="create_paysera_settings_action"
+                  groups="robo_basic.group_robo_premium_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="paysera,nustatymai"
+        />
+
+        <record id="create_seb_settings_action" model="ir.actions.server">
+            <field name="name">SEB nustatymai</field>
+            <field name="model_id" ref="robo.model_robo_company_settings"/>
+            <field name="code">
+                action = env.get('robo.company.settings').btn_open_seb_settings()
+            </field>
+            <field name="robo_front">True</field>
+            <field name="group_ids" eval="[(4,ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+
+        <menuitem id="menu_seb_settings_search"
+                  name="SEB nustatymai"
+                  parent="robo.menu_company_settings_search"
+                  action="create_seb_settings_action"
+                  groups="robo_basic.group_robo_premium_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="seb,nustatymai"
+        />
+
+        <menuitem id="menu_hr_department_settings_search"
+                  name="Padaliniai"
+                  parent="robo.menu_company_settings_search"
+                  action="open_hr_department"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="padaliniai"
+        />
+
+        <menuitem id="menu_crm_team_settings_search"
+                  name="Pardavimų komandos"
+                  parent="robo.menu_company_settings_search"
+                  action="open_crm_team"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="pardavimų,komandos"
+        />
+
+        <menuitem id="menu_hr_job_settings_search"
+                  name="Darbuotojų pareigos"
+                  parent="robo.menu_company_settings_search"
+                  action="open_hr_job"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="darbuotojų,pareigos"
+        />
+
+        <menuitem id="menu_category_mapping_settings_search"
+                  name="Išlaidų skirstymas"
+                  parent="robo.menu_company_settings_search"
+                  action="open_category_mapping"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="išlaidų,skirstymas"
+        />
+
+        <menuitem id="menu_company_ceo_settings_search"
+                  name="Kompanijos vadovai"
+                  parent="robo.menu_company_settings_search"
+                  action="l10n_lt_payroll.action_open_company_ceo"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="kompanijos,vadovai"
+        />
+
+        <menuitem id="menu_company_shareholder_settings_search"
+                  name="Akcininkų sąrašas"
+                  parent="robo.menu_company_settings_search"
+                  action="action_open_company_shareholder"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="akcininkų,sąrašas"
+        />
+
+        <menuitem id="menu_company_vat_settings_search"
+                  name="PVM mokėtojo statusas"
+                  parent="robo.menu_company_settings_search"
+                  action="action_open_company_vat_status"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="PVM,mokėtojo,statusas"
+        />
+
+        <template id="mail.message_user_assigned">
+            <p><t t-esc="object.user_id.name"/>,
+            </p>
+            <p>Jums buvo priskirtas
+                <t t-esc="object._description.lower()"/>
+                <t t-esc="object.name_get()[0][1]"/>.
+            </p>
+            <p>
+                <a t-att-href="'/mail/view?model=%s&amp;res_id=%s' % (object._name, object.id)"
+                   style="background-color: #3498DB; margin-top: 10px; padding: 10px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;">
+                    Atidaryti
+                    <t t-esc="object._description.lower()"/>
+                </a>
+            </p>
+            <p style="color:#3498DB;">Išsiųsta iš <a href="https://www.robolabs.lt">Robo</a>.
+            </p>
+        </template>
+
+    </data>
+</odoo>

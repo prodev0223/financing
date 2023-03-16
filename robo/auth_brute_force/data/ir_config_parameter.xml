@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="max_attempt_qty" model="ir.config_parameter">
+            <field name="key">auth_brute_force.max_attempt_qty</field>
+            <field name="value">10</field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]" />
+        </record>
+        <record id="whitelist" model="ir.config_parameter">
+            <field name="key">auth_brute_force.whitelist</field>
+            <field name="value"> </field>
+            <field name="group_ids" eval="[(4, ref('base.group_system'))]" />
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_users_form_simple_modif" model="ir.ui.view">
+            <field name="name">view.users.form.simple.modif</field>
+            <field name="model">res.users</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.view_users_form_simple_modif"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='messaging']" position="after">
+                    <group string="El. laiškų parašas" name="e_mail_settings" col="4" colspan="4">
+                        <field name="custom_email_footer" nolabel='1' attrs="{'readonly': 0}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="2.0" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:x-gpais:bendra"
+        xmlns:gpais="urn:x-gpais:bendra" elementFormDefault="qualified">
+
+    <simpleType name="id">
+        <annotation>
+            <documentation xml:lang="lt">Įrašo identifikatorius.</documentation>
+        </annotation>
+        <restriction base="long">
+        </restriction>
+    </simpleType>
+
+    <simpleType name="kodas">
+        <annotation>
+            <documentation xml:lang="lt">Tipas įvairiems trumpiems kodams.</documentation>
+        </annotation>
+        <restriction base="string">
+            <maxLength value="20"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="produktoKodas">
+        <annotation>
+            <documentation xml:lang="lt">Kodas skirtas prekiniams vienetams ir gaminiams</documentation>
+        </annotation>
+        <restriction base="string">
+            <maxLength value="150"/>
+        </restriction>
+    </simpleType>
+    
+    <simpleType name="pavadinimas">
+        <annotation>
+            <documentation xml:lang="lt">Tipas įvairiems pavadinimams.</documentation>
+        </annotation>
+        <restriction base="string">
+            <maxLength value="100"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="komentaras">
+        <annotation>
+            <documentation xml:lang="lt">Tipas pastaboms ir komentarams.</documentation>
+        </annotation>
+        <restriction base="string">
+            <maxLength value="2000"/>
+        </restriction>
+    </simpleType>
+
+   <simpleType name="kiekisTonomis">
+        <annotation>
+            <documentation xml:lang="lt">Teigiamas skaičius su apibrėžtu tikslumu</documentation>
+        </annotation>
+        <restriction base="decimal">
+            <fractionDigits value="6" />
+            <minInclusive value="0" />
+        </restriction>
+    </simpleType>
+	
+    <simpleType name="kiekisSveikaisVienetais">
+        <annotation>
+            <documentation xml:lang="lt">Teigiamas skaičius</documentation>
+        </annotation>
+        <restriction base="int">
+            <minInclusive value="1" />
+        </restriction>
+    </simpleType>
+    
+    <simpleType name="kiekisVienetais">
+        <annotation>
+            <documentation xml:lang="lt">Teigiamas skaičius su apibrėžtu tikslumu</documentation>
+        </annotation>
+        <restriction base="decimal">
+            <fractionDigits value="6" />
+            <minInclusive value="0" />
+        </restriction>
+    </simpleType>
+	
+    <simpleType name="kiekisLitrais">
+        <annotation>
+            <documentation xml:lang="lt">Teigiamas skaičius su apibrėžtu tikslumu</documentation>
+        </annotation>
+        <restriction base="decimal">
+            <fractionDigits value="3" />
+            <minInclusive value="0" />
+        </restriction>
+    </simpleType>
+	
+	<complexType name="Subjektas">
+        <attribute name="kodas" type="gpais:kodas" use="required"/>
+    </complexType>
+</schema>

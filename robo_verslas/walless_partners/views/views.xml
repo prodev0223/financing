@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="company_settings_walless_partners" model="ir.ui.view">
+            <field name="name">walless.partners.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='automatic_payment_reminders_settings']" position="before">
+                    <group string="Individualios veiklos pažymėjimas" col="4" colspan="4" class="robo_group_collapsable robo_group_collapsed">
+                            <group name="activity_number" col="4" colspan="4">
+                               <field name="activity_number" colspan="4"/>
+                                <field name="activity_number_annotation" colspan="4"/>
+                            </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="company_settings_form_walless" model="ir.ui.view">
+            <field name="name">res.company.walless</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='default_msg_receivers']" position="after">
+                    <field name="activity_number"/>
+                    <field name="activity_number_annotation"/>
+                </xpath>
+            </field>
+        </record>
+
+        <template id="walless_report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//p[@t-if='vat_payer and vat_payer_code']" position="after">
+                <p t-if="o.company_id.activity_number and o.company_id.activity_number_annotation">
+                    <span class="comp_pvm">Ind. veiklos paž. nr.:</span>
+                    <span t-field="o.company_id.activity_number"/>
+                </p>
+            </xpath>
+        </template>
+
+        <record id="robo_pajamos_action_search_view_walless" model="ir.ui.view">
+            <field name="name">account.invoice.search.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_pajamos_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='not_validated']" position="after">
+                    <separator/>
+                    <filter name="api_imported" string="Importuota per API" domain="[('imported_api','=',True)]"/>
+                    <filter name="api_imported" string="Sukurta nenaudojant API" domain="[('imported_api','=',False)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="robo_expenses_action_search_view_walless" model="ir.ui.view">
+            <field name="name">account.invoice.search.expense.walless</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_action_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='previous_month']" position="after">
+                    <separator/>
+                    <filter name="api_imported" string="Importuota per API" domain="[('imported_api','=',True)]"/>
+                    <filter name="api_imported" string="Sukurta nenaudojant API" domain="[('imported_api','=',False)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="tax_analysis_search_walless" model="ir.ui.view">
+            <field name="name">tax.analysis.walless</field>
+            <field name="model">tax.analysis</field>
+            <field name="inherit_id" ref="e_ataskaitos.tax_analysis_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='customer_invoices']" position="after">
+                    <separator/>
+                    <filter name="api_imported" string="Importuota per API" domain="[('invoice_id.imported_api','=',True)]"/>
+                    <filter name="api_imported" string="Sukurta nenaudojant API" domain="[('invoice_id.imported_api','=',False)]"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

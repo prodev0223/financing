@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--<record id="remove_import" model="ir.ui.view">-->
+            <!--<field name="name">remove.import.demo</field>-->
+            <!--<field name="model">robo.company.settings</field>-->
+            <!--<field name="inherit_id" ref="robo.company_settings_form"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//group[@name='automatic_payment_reminders_settings']" position="replace"/>-->
+                <!--<xpath expr="//group[@name='import_partners']" position="replace"/>-->
+                <!--<xpath expr="//group[@name='import_products']" position="replace"/>-->
+                <!--<xpath expr="//group[@name='import_customer_invoices']" position="replace"/>-->
+                <!--<xpath expr="//group[@name='import_supplier_invoices']" position="replace"/>-->
+                <!--<xpath expr="//group[@name='import_financials']" position="replace"/>-->
+                <!--<xpath expr="//group[@name='import_assets']" position="replace"/>-->
+                <!--<xpath expr="//group[@name='import_employees']" position="replace"/>-->
+                <!--<xpath expr="//group[@name='import_aml']" position="replace"/>-->
+                <!--<xpath expr="//group[@name='import_du']" position="replace">-->
+                    <!--<div class="alert alert-info" role="alert">-->
+                        <!--Importo formos ir automatiniai priminimai nėra prieinamos demonstracinėje versijoje.-->
+                    <!--</div>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+        <record id="robo.open_employees_action" model="ir.actions.act_window">
+            <field name="domain">[('main_accountant','=',False),('name', 'not like', 'demo')]</field>
+        </record>
+        <record id="remove_change_password" model="ir.ui.view">
+            <field name="name">remove.change.password.demo</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="robo.view_users_form_simple_modif"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='preference_change_password']" position="replace"/>
+            </field>
+        </record>
+        <record id="remove_access_rights" model="ir.ui.view">
+            <field name="name">remove.access.rights.demo</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='robo_access']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='robo_group']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <function name="demo_install" model="robo.company.settings"/>
+
+        <!--DEMO Project,CRM,Gamyba,Sandelis-->
+<!--        <record id="make_blur_projektai" model="ir.actions.client">-->
+<!--           <field name="name">Demo</field>-->
+<!--           <field name="tag">make.blur</field>-->
+<!--           <field name="target">fullscreen</field>-->
+<!--            <field name="params">{'icon': 'icon-puzzle'}</field>-->
+<!--            <field name="robo_front" eval="True"/>-->
+<!--        </record>-->
+        <record id="make_blur_gamyba" model="ir.actions.client">
+           <field name="name">Demo</field>
+           <field name="tag">make.blur</field>
+           <field name="target">fullscreen</field>
+            <field name="params">{'icon': 'icon-factory'}</field>
+            <field name="robo_front" eval="True"/>
+        </record>
+        <record id="make_blur_crm" model="ir.actions.client">
+           <field name="name">Demo</field>
+           <field name="tag">make.blur</field>
+           <field name="target">fullscreen</field>
+            <field name="params">{'icon': 'icon-group-work'}</field>
+            <field name="robo_front" eval="True"/>
+        </record>
+        <record id="make_blur_sandelys" model="ir.actions.client">
+           <field name="name">Demo</field>
+           <field name="tag">make.blur</field>
+           <field name="target">fullscreen</field>
+            <field name="params">{'icon': 'icon-truck'}</field>
+            <field name="robo_front" eval="True"/>
+        </record>
+
+
+        <!--<menuitem id="demo_menu_projects_parent"-->
+                  <!--parent="robo.menu_start"-->
+                  <!--name="Projektai"-->
+                  <!--sequence="51"-->
+                  <!--action = 'make_blur'-->
+        <!--/>-->
+        <!--<record id="demo_menu_projects_parent" model="ir.ui.menu">-->
+            <!--<field name="web_icon">icon-puzzle,none,none</field>-->
+        <!--</record>-->
+
+<!--        <menuitem id="demo_menu_projects_parent"-->
+<!--                  parent="robo.menu_start"-->
+<!--                  name="Projektai"-->
+<!--                  sequence="51"-->
+<!--                  action = 'make_blur_projektai'-->
+<!--                  robo_front="True"-->
+<!--        />-->
+<!--        <record id="demo_menu_projects_parent" model="ir.ui.menu">-->
+<!--            <field name="web_icon">icon-puzzle,none,none</field>-->
+<!--            <field name="web_enterprice_icon">icon-key</field>-->
+<!--        </record>-->
+
+        <menuitem id="demo_menu_robo_crm"
+                  parent="robo.menu_start"
+                  name="CRM"
+                  sequence="52"
+                  action = 'make_blur_crm'
+                  searchable="True"
+                  tags="crm"
+        />
+        <record id="demo_menu_robo_crm" model="ir.ui.menu">
+            <field name="web_icon">icon-group-work,none,none</field>
+            <field name="web_enterprice_icon">icon-key</field>
+        </record>
+
+        <menuitem id="demo_menu_robo_mrp_start"
+                  parent="robo.menu_start"
+                  name="Gamyba"
+                  sequence="53"
+                  action = 'make_blur_gamyba'
+                  robo_front="True"
+                  searchable="True"
+                  tags="gamyba"
+        />
+        <record id="demo_menu_robo_mrp_start" model="ir.ui.menu">
+            <field name="web_icon">icon-factory,none,none</field>
+            <field name="web_enterprice_icon">icon-key</field>
+        </record>
+
+        <menuitem id="demo_robo_menu_robo_stock"
+                  parent="robo.menu_start"
+                  name="Sandėlis"
+                  sequence="52"
+                  action = 'make_blur_sandelys'
+                  robo_front="True"
+                  searchable="True"
+                  tags="sandėlis"
+        />
+        <record id="demo_robo_menu_robo_stock" model="ir.ui.menu">
+            <field name="web_icon">icon-truck,none,none</field>
+            <field name="web_enterprice_icon">icon-key</field>
+        </record>
+        <record model="ir.cron" id="ir_cron_every_user">
+            <field name="name">Users</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model" eval="'robo.company.settings'"/>
+            <field name="function" eval="'deactivate_demo_accounts'"/>
+            <field name="args">()</field>
+        </record>
+        <record model="ir.actions.act_window" id="robo.robo_client_ticket_action">
+            <field name="header" eval="False"/>
+        </record>
+        <record id="robo_user_management.view_users_form_simple_modif" model="ir.ui.view">
+            <field name="groups_id" eval="[(4, ref('base.group_no_one'))]"/>
+        </record>
+
+        <record id="robo.menu_company_settings_search" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+    </data>
+</odoo>

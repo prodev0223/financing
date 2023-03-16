@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="e_document.isakymas_del_kvalifikacijos_kelimo_template" model="e.document.template">
+            <field name="inherit_id" ref="e_document.isakymas_del_kvalifikacijos_kelimo_template"/>
+            <field name="python_code">
+isakymo_nr = env['ir.sequence'].next_by_code('ISAKYMAS')
+
+holiday_status_id = env.ref('hr_holidays.holiday_status_KV').id
+date_dt = datetime.strptime(obj.date_3, tools.DEFAULT_SERVER_DATE_FORMAT)
+date_year_back = (date_dt - relativedelta(years=1)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+previous_qualification_training = env['hr.holidays'].search([
+    ('holiday_status_id', '=', holiday_status_id),
+    ('employee_id', '=', obj.employee_id2.id),
+    ('date_to_date_format', '&gt;=', date_year_back),
+    ('date_to_date_format', '&lt;=', obj.calc_date_to(obj.date_3)),
+    ('state', '=', 'validate')
+])
+previous_qualification_training_number_of_days = abs(sum(previous_qualification_training.mapped('number_of_days')))
+is_paid_for = True
+if tools.float_compare(previous_qualification_training_number_of_days, 2.0, precision_digits=2) >= 0:
+    holiday_status_id = env.ref('hr_holidays.holiday_status_KVN').id
+    is_paid_for = False
+
+hol_id = env['hr.holidays'].create({
+    'name': 'Kvalifikacijos Kėlimas',
+    'data': obj.date_document,
+    'employee_id': obj.employee_id2.id,
+    'holiday_status_id': holiday_status_id,
+    'date_from': obj.calc_date_from(obj.date_3),
+    'date_to': obj.calc_date_to(obj.date_3),
+    'type': 'remove',
+    'contract_id': obj.employee_id2.contract_id.id,
+    'numeris': isakymo_nr,
+    'is_paid_for': is_paid_for
+})
+hol_id.action_approve()
+obj.inform_about_creation(hol_id)
+obj.write({'record_model':'hr.holidays', 'record_id':hol_id.id, 'document_number': isakymo_nr, 'bool_1': is_paid_for})
+            </field>
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Vadovaudamasis(-i) darbuotojo {{ko(job_id2, 'aa')}} {{ko(employee_id2, 'Aa')}} {{ date_2 }} prašymu,
+                    l e i d ž i u jam(-ai) {{ date_3 }} dalyvauti renginyje {{ text_2 }}, kuris vyks {{kur(text_3,
+                    'Aa')}}, adresu {{ text_5 }}{% if bool_1 %}, mokant jam(-ai) vidutinį darbo užmokestį{% endif %}.
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                        }
+                        .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                        }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{ department_id }}{% if job_id1 %},{% endif %} {{ job_id1}}
+                                                    </span>
+                                                </p>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                                <p>
+                                                    <span>{{ manager_id }}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>ĮSAKYMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                                <br/>
+                                <span>ĮSAKYMAS
+                                    DĖL {{ko(employee_id2.upper(), 'AA')}} KVALIFIKACIJOS KĖLIMO
+                                </span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span t-field="doc.employee_id.work_location"/>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        Vadovaudamasis(-i) darbuotojo {{ko(job_id2, 'aa')}} {{ko(employee_id2, 'Aa')}} {{ date_2 }}
+                        prašymu, l e i d ž i u jam(-ai) {{ date_3 }} dalyvauti renginyje {{ text_2 }}, kuris vyks
+                        {{kur(text_3, 'Aa')}}, adresu {{ text_5 }}
+                        {% if bool_1 %}, mokant jam(-ai) vidutinį darbo užmokestį{% endif %}.
+                        {{ extra_text_html }}
+                    </div>
+
+                    <div>
+                        <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td>
+                                    <span>
+                                        <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                            </tr>
+                        </table>
+                        <table width="65%" align="right" style="float: right; margin-top:40px">
+                            <tr style="border-style:none">
+                                <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                    <span>{{manager_job_id}} {{ manager_id }}</span>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                                <td style="border-style:none;text-align:center" align="center">
+                                    <span>(vardas, pavardė)</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--<record id="account.account_invoices" model="ir.actions.report.xml">-->
+        <!--<field name="groups_id" eval="[(4, ref('base.group_system'))]"/>-->
+        <!--</record>-->
+        <record id="account.account_invoice_action_report_duplicate" model="ir.actions.report.xml">
+            <field name="groups_id" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+        <template id="external_invoice_layout">
+            <!-- Multicompany -->
+            <t t-if="not o and doc">
+                <t t-set="o" t-value="doc"/>
+            </t>
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id"/>
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+
+            <div class="header"></div>
+            <t t-raw="0"/>
+            <t t-call="saskaitos.invoice_footer"/>
+        </template>
+        <template id="invoice_footer">
+            <div class="footer" style="font-size: 12px !important">
+                <div class="text-center" style="border-top: 1px solid black; position: relative; padding-top: 5px !important;">
+                    <t t-if="company.embed_einvoice_xml and company.show_machine_readable">
+                        <img src="https://cdn.robolabs.lt/machine_readable.png"
+                             style="position: absolute; height: 20px; width: auto; bottom:0; right: 0;"/>
+                    </t>
+                    <t t-if="company.custom_invoice_footer_enabled">
+                        <span t-esc="company.custom_invoice_footer"/>
+                    </t>
+                    <t t-else="">
+                        <t t-set="number_of_bank_accounts" t-value="0"/>
+                        <t t-foreach="company.bank_journal_ids" t-as="journal">
+                            <t t-if="journal.display_on_footer">
+                                <t t-set="bank_acc" t-value="journal.bank_account_id"/>
+                                <t t-if="bank_acc.acc_number">
+                                    <t t-set="number_of_bank_accounts" t-value="number_of_bank_accounts+1"/>
+                                </t>
+                            </t>
+                        </t>
+
+                        <ul class="list-inline">
+                            <li>
+                                <ul style="list-style: none;" name="financial_infos">
+                                    <t t-set="company" t-value="company.sudo()"/>
+                                    <li t-if="company.website">Tinklalapis:
+                                        <span t-field="company.website"/>
+                                    </li>
+                                    <li t-if="company.vat" style="word-break: nobreak; page-break-inside: avoid;">
+                                        <span style="display: inline">PVM kodas: <t t-esc="company.vat"/></span>
+                                    </li>
+                                    <t t-if="number_of_bank_accounts &lt; 2">
+                                        <t t-foreach="company.bank_journal_ids" t-as="journal">
+                                            <t t-if="journal.display_on_footer">
+                                                <t t-set="bank_acc" t-value="journal.bank_account_id"/>
+                                                <t t-if="bank_acc.acc_number">
+                                                    <li>
+                                                        <span t-esc="bank_acc.bank_name"/>
+                                                        <t t-if="bank_acc.bank_bic">(<span t-esc="bank_acc.bank_bic"/>)</t>:
+                                                        <span t-esc="bank_acc.acc_number"/>
+                                                    </li>
+                                                </t>
+                                            </t>
+                                        </t>
+                                    </t>
+                                </ul>
+                            </li>
+                            <t t-if="number_of_bank_accounts &gt; 1">
+                                <li>
+                                    <ul style="list-style: none;">
+                                        <t t-set="i" t-value="1"/>
+                                        <t t-foreach="company.bank_journal_ids" t-as="journal">
+                                            <t t-if="journal.display_on_footer">
+                                                <t t-set="bank_acc" t-value="journal.bank_account_id"/>
+                                                <t t-if="bank_acc.acc_number">
+                                                    <t t-if="i &lt; 3">
+                                                        <li>
+                                                            <span t-esc="bank_acc.bank_name"/>
+                                                            <t t-if="bank_acc.bank_bic">(<span t-esc="bank_acc.bank_bic"/>)</t>:
+                                                            <span t-esc="bank_acc.acc_number"/>
+                                                        </li>
+                                                        <t t-set="i" t-value="i+1"/>
+                                                    </t>
+                                                </t>
+                                            </t>
+                                        </t>
+                                    </ul>
+                                </li>
+                            </t>
+                        </ul>
+                    </t>
+                    <ul class="list-inline" style="position:relative">
+                        <li>Puslapis:</li>
+                        <li>
+                            <span class="page" style="float: initial"/>
+                        </li>
+                        <li>/</li>
+                        <li>
+                            <span class="topage"/>
+                        </li>
+                        <div class="robolabs_marketing">
+                            Buhalterija šiuolaikiškai - www.robolabs.lt
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </template>
+        <template id="report.external_layout_header">
+            <div class="header">
+                <div class="row">
+                    <div class="col-xs-3 robo_company_logo">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"/>
+                    </div>
+                    <div class="col-xs-9 text-right" style="margin-top:20px;" t-field="company.rml_header1"/>
+                </div>
+                <div class="row zero_min_height" style="margin-top:10px">
+                    <div class="col-xs-12">
+                        <div style="border-bottom: 1px solid black;"/>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template id="saskaitos.external_layout_footer">
+            <div class="footer" style="font-size: 12px !important">
+                <div class="text-center" style="border-top: 1px solid black; position: relative;">
+                    <t t-if="company.custom_invoice_footer_enabled">
+                        <span t-esc="company.custom_invoice_footer"/>
+                    </t>
+                    <t t-else="">
+                        <t t-set="number_of_bank_accounts" t-value="0"/>
+                        <t t-foreach="company.bank_journal_ids" t-as="journal">
+                            <t t-if="journal.display_on_footer">
+                                <t t-set="bank_acc" t-value="journal.bank_account_id"/>
+                                <t t-if="bank_acc.acc_number">
+                                    <t t-set="number_of_bank_accounts" t-value="number_of_bank_accounts+1"/>
+                                </t>
+                            </t>
+                        </t>
+
+                        <ul class="list-inline">
+                            <li>
+                                <ul style="list-style: none;" name="financial_infos">
+                                    <t t-set="company" t-value="company.sudo()"/>
+                                    <li t-if="company.website">Tinklalapis:
+                                        <span t-field="company.website"/>
+                                    </li>
+                                    <li t-if="company.company_registry"
+                                        style="word-break: nobreak; page-break-inside: avoid;">
+                                        <span style="display: inline">Įmonės kodas:
+                                            <t t-esc="company.company_registry"/>
+                                        </span>
+                                    </li>
+                                    <li t-if="company.vat" style="word-break: nobreak; page-break-inside: avoid;">
+                                        <span style="display: inline">PVM kodas: <t t-esc="company.vat"/></span>
+                                    </li>
+                                    <t t-if="number_of_bank_accounts &lt; 2">
+                                        <t t-foreach="company.bank_journal_ids" t-as="journal">
+                                            <t t-if="journal.display_on_footer">
+                                                <t t-set="bank_acc" t-value="journal.bank_account_id"/>
+                                                <t t-if="bank_acc.acc_number">
+                                                    <li>
+                                                        <span t-esc="bank_acc.bank_name"/>
+                                                        <t t-if="bank_acc.bank_bic">(<span t-esc="bank_acc.bank_bic"/>)</t>:
+                                                        <span t-esc="bank_acc.acc_number"/>
+                                                    </li>
+                                                </t>
+                                            </t>
+                                        </t>
+                                    </t>
+                                </ul>
+                            </li>
+                            <t t-if="number_of_bank_accounts &gt; 1">
+                                <li>
+                                    <ul style="list-style: none;">
+                                        <t t-set="i" t-value="1"/>
+                                        <t t-foreach="company.bank_journal_ids" t-as="journal">
+                                            <t t-if="journal.display_on_footer">
+                                                <t t-set="bank_acc" t-value="journal.bank_account_id"/>
+                                                <t t-if="bank_acc.acc_number">
+                                                    <t t-if="i &lt; 3">
+                                                        <li>
+                                                            <span t-esc="bank_acc.bank_name"/>
+                                                            <t t-if="bank_acc.bank_bic">(<span t-esc="bank_acc.bank_bic"/>)</t>:
+                                                            <span t-esc="bank_acc.acc_number"/>
+                                                        </li>
+                                                        <t t-set="i" t-value="i+1"/>
+                                                    </t>
+                                                </t>
+                                            </t>
+                                        </t>
+                                    </ul>
+                                </li>
+                            </t>
+                        </ul>
+                    </t>
+                    <ul class="list-inline" style="position:relative">
+                        <li>Puslapis:</li>
+                        <li>
+                            <span class="page" style="float: initial"/>
+                        </li>
+                        <li>/</li>
+                        <li>
+                            <span class="topage"/>
+                        </li>
+                        <div class="robolabs_marketing">
+                            Buhalterija šiuolaikiškai - www.robolabs.lt
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </template>
+        <template id="report.external_layout_footer">
+            <t t-call="saskaitos.external_layout_footer"/>
+        </template>
+        <record id="report.paperformat_euro" model="report.paperformat">
+            <field name="margin_top" eval="45"/>
+            <field name="header_spacing" eval="35"/>
+            <field name="margin_left" eval="18"/>
+            <field name="margin_right" eval="11"/>
+            <field name="margin_bottom" eval="24"/>
+        </record>
+    </data>
+</odoo>

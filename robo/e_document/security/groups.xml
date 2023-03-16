@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_robo_business_trip_user" model="res.groups">
+            <field name="name">eDocuments - User Business Trip</field>
+        </record>
+        <record id="group_robo_business_trip_signer" model="res.groups">
+            <field name="name">eDocuments - Sign Business Trips</field>
+            <field name="implied_ids" eval="[(4, ref('e_document.group_robo_business_trip_user'))]"/>
+        </record>
+    </data>
+</odoo>

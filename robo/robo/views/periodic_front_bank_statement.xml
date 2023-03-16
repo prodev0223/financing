@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--List Views-->
+        <record id="tree_periodic_front_bank_statement" model="ir.ui.view">
+            <field name="name">tree.periodic.front.bank.statement</field>
+            <field name="model">periodic.front.bank.statement</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree create="0" import="0" editable="bottom">
+                    <field name="front_statement_id" context="{'form_view_ref': 'robo.robo_payments_report_form_view'}" options="{'no_open': False, 'no_create': True}"/>
+                    <field name="date"/>
+                    <field name="interval"/>
+                    <field name="interval_number"/>
+                    <field name="action"/>
+                    <field name="date_stop"/>
+                    <button name="open_statements" type="object" string="Sukurti ruošiniai" icon="icon-register one_and_half_size"/>
+                    <button name="delete" type="object" string="Ištrinti" icon="fa-remove one_and_half_size"
+                            confirm="Ar tikrai norite ištrinti šį mokėjimo ruošinį?"/>
+                </tree>
+            </field>
+        </record>
+        <record id="kanban_periodic_front_bank_statement" model="ir.ui.view">
+            <field name="name">kanban.periodic.front.bank.statement</field>
+            <field name="model">periodic.front.bank.statement</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" quick_create="false" create="false">
+                    <field name="front_statement_id"/>
+                    <field name="date"/>
+                    <field name="action"/>
+                    <field name="date_stop"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.front_statement_id.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <t t-esc="record.date.value"/>
+                                            <t t-esc="record.action.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_periodic_front_bank_statement" model="ir.actions.act_window">
+            <field name="name">Periodiniai mokėjimo ruošiniai</field>
+            <field name="res_model">periodic.front.bank.statement</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,kanban</field>
+            <field name="context">{'robo_header': {}}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_periodic_front_bank_statement')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('kanban_periodic_front_bank_statement')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <!--Menus-->
+        <menuitem id="menu_periodic_front_statement"
+                  parent="menu_periodic"
+                  name="Periodiniai mokėjimo ruošiniai"
+                  sequence="22"
+                  groups="robo_basic.group_robo_periodic_front_statement"
+                  force_web_icon="icon-credit-card,none,none"
+                  robo_front="True"
+                  action="action_periodic_front_bank_statement"
+                  searchable="True"
+                  tags="periodiniai,mokėjimo,ruošiniai"
+            />
+    </data>
+</odoo>

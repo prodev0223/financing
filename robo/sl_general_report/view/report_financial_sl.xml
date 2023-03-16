@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_financial_sl">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="o">
+            <!--<t t-call="report.internal_layout">-->
+                <div class="page robo_financial_report" id="main">
+                    <div>
+                        <table class="centered" style="margin-left:auto; margin-right:auto; border-style:none" width="50%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none"><h4 class="text_centered" t-esc="data_extend['company_id'][1]"/>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none"><p class="text_centered reduced_text_size">(įmonės teisinė forma, pavadinimas, kodas)</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <table class="centered" style="margin-left:auto; margin-right:auto; border-style:none" width="50%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none"><h4 class="text_centered" t-esc="data_extend['company_address']"/>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none; border-top-style:solid; border-top-width:thin">
+                                <td style="border-style:none"><p class="text_centered reduced_text_size">(buveinė (adresas), registras, kuriame kaupiami ir saugomi duomenys)</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="text_centered"><h1 t-esc="data_extend['form_title']"/><h2> (preliminari ataskaita)</h2></div>
+                    <h4 class="text_centered" t-esc="data_extend['date_now']"/>
+                    <div>
+                            <table style="border-style:none" width="100%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none" width="30%" class="text_centered"><h4 t-esc="data_extend['form_period']"/>
+                                </td>
+                                <td style="border-style:none" width="40%"/>
+                                <td style="border-style:none" width="30%" class="text_centered"><h4 t-esc="data_extend['company_currency']"/>
+                                </td>
+                            </tr>
+                            <tr style="border-style:none;">
+                                <td style="border-top-style:solid; border-top-width:thin"><p class="text_centered reduced_text_size">(ataskaitinis laikotarpis)</p>
+                                </td>
+                                <td style="border-style:none" width="40%"/>
+                                <td style="border-style:none; border-top-style:solid; border-top-width:thin"><p class="text_centered reduced_text_size">(ataskaitos tikslumo lygis ir valiuta)</p>
+                                </td>
+                            </tr>
+                        </table>
+                        </div>
+                    <table class="table table-condensed" t-if="data['debit_credit'] == 1" id="table_body">
+                        <thead>
+                            <tr>
+                                <th width="10%">No.</th>
+                                <th>Straipsniai</th>
+                                <th class="text-right">Debetas</th>
+                                <th class="text-right">Kreditas</th>
+                                <th class="text-right">Ataskaitinis laikotarpis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td class="text-right" style="white-space: text-nowrap;">
+                                        <span style="color: white;" t-esc="'..' * a.get('hierarchy_level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('code')"/>
+                                    </td>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('hierarchy_level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-right" style="white-space: text-nowrap;">
+                                        <span t-if="not a.get('label', 0)" style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-if="not a.get('label', 0)" t-att-style="style" t-esc="a.get('debit')"
+                                              t-esc-options="{'widget': 'monetary',
+                                              'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td class="text-right" style="white-space: text-nowrap;">
+                                        <span t-if="not a.get('label', 0)" t-att-style="style" t-esc="a.get('credit')"
+                                              t-esc-options="{'widget': 'monetary',
+                                              'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td class="text-right" style="white-space: text-nowrap;">
+                                        <span t-if="not a.get('label', 0)" t-att-style="style" t-esc="a.get('balance')"
+                                              t-esc-options="{'widget': 'monetary',
+                                              'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="table table-condensed" t-if="not data['enable_filter'] and not data['debit_credit']" id="table_body">
+                        <thead>
+                            <tr>
+                                <th width="10%">No.</th>
+                                <th>Straipsniai</th>
+                                <th class="text-right">Ataskaitinis laikotarpis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('hierarchy_level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('code')"/>
+                                    </td>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('hierarchy_level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-right"><span t-if="not a.get('label', 0)" t-att-style="style"
+                                                                 t-esc="a.get('balance')"
+                                                                 t-esc-options="{'widget': 'monetary',
+                                                                 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="table table-condensed" t-if="data['enable_filter'] == 1 and not data['debit_credit']" id="table_body">
+                        <thead>
+                            <tr>
+                                <th width="10%">No.</th>
+                                <th>Straipsniai</th>
+                                <th class="text-right">Ataskaitinis laikotarpis</th>
+                                <th class="text-right"><span t-esc="data['label_filter']"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('hierarchy_level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('code')"/>
+                                    </td>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..'"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-right"><span t-if="not a.get('label', 0)" t-att-style="style"
+                                                                 t-esc="a.get('balance')"
+                                                                 t-esc-options="{'widget': 'monetary',
+                                                                 'display_currency': res_company.currency_id}"/></td>
+                                    <td class="text-right"><span t-if="not a.get('label', 0)" t-att-style="style"
+                                                                 t-esc="a.get('balance_cmp')"
+                                                                 t-esc-options="{'widget': 'monetary',
+                                                                 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <br/>
+                    <div class="row">
+                            <table style="border-style:none" width="100%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none" width="45%" class="text_centered"><span style="font-size: 16px; font-weight: bold" t-field="o.company_id.sudo().vadovas.job_id"/></td>
+                                <td style="border-style:none" width="5%" class="text_centered"></td>
+                                <td style="border-style:none" width="15%" class="text_centered"></td>
+                                <td style="border-style:none" width="5%" class="text_centered"></td>
+                                <td style="border-style:none" width="30%" class="text_centered"><span style="font-size: 16px; font-weight: bold" t-field="o.company_id.sudo().vadovas"/></td>
+                            </tr>
+                            <tr style="border-style:none;">
+                                <td style="border-style:none; border-top-style:solid; border-top-width:thin" class="text_centered">(įmonės vadovo pareigų pavadinimas)</td>
+                                <td></td>
+                                <td style="border-style:none; border-top-style:solid; border-top-width:thin" class="text_centered">(parašas)</td>
+                                <td></td>
+                                <td style="border-style:none; border-top-style:solid; border-top-width:thin" class="text_centered">(vardas ir pavardė)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br/>
+                    <div class="row">
+                            <table style="border-style:none" width="100%">
+                            <tr style="border-style:none">
+                                <td style="border-style:none" width="45%" class="text_centered"><span style="font-size: 16px; font-weight: bold">Apskaitos paslaugas teikianti UAB "ROBOLABS"</span></td>
+                                <td style="border-style:none" width="5%" class="text_centered"></td>
+                                <td style="border-style:none" width="15%" class="text_centered"></td>
+                                <td style="border-style:none" width="5%" class="text_centered"></td>
+                                <td style="border-style:none" width="30%" class="text_centered"><span style="font-size: 16px; font-weight: bold" t-field="o.company_id.sudo().findir"/></td>
+                            </tr>
+                            <tr style="border-style:none;">
+                                <td style="border-style:none; border-top-style:solid; border-top-width:thin" class="text_centered">(vyriausiojo buhalterio (buhalterio) arba galinčio tvarkyti apskaitą kito asmens pareigų pavadinimas)</td>
+                                <td></td>
+                                <td style="border-style:none; border-top-style:solid; border-top-width:thin" class="text_centered">(parašas)</td>
+                                <td></td>
+                                <td style="border-style:none; border-top-style:solid; border-top-width:thin" class="text_centered">(vardas ir pavardė)</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            <!--</t>-->
+        </t>
+    </t>
+</template>
+</odoo>

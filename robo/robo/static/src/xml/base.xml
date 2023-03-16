@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+    <t t-name="RoboM2ODialog">
+        <div>
+            <p/>
+            Klientas: <input class="oe_form_m2o_input_name" type="text"/>
+        </div>
+    </t>
+
+    <t t-name="KanbanView.robo_nocontent">
+        <div class="oe_view_robo_nocontent">
+            <t t-raw="content"/>
+        </div>
+    </t>
+   <!--TODO: remove trash?-->
+    <!--<t t-name="PercentageWidget">-->
+        <!--<div>-->
+            <!--<span t-att-class="'oe_form_field '+widget.widget_class" t-att-style="widget.node.attrs.style">-->
+                <!--<span class="oe_form_percentage"  t-if="widget.get('effective_readonly')" >-->
+                    <!--<span class="percentage_filed"></span>-->
+                <!--</span>-->
+                <!--<t t-if="!widget.get('effective_readonly')">-->
+                    <!--<div>-->
+                        <!--<input type="text"-->
+                            <!--t-att-id="widget.id_for_label"-->
+                            <!--t-att-tabindex="widget.node.attrs.tabindex"-->
+                            <!--t-att-autofocus="widget.node.attrs.autofocus"-->
+                            <!--t-att-placeholder="widget.node.attrs.placeholder"-->
+                            <!--t-att-maxlength="widget.field.size"-->
+                        <!--/>-->
+                    <!--</div>-->
+                <!--</t>-->
+            <!--</span>-->
+        <!--</div>-->
+    <!--</t>-->
+    <t t-name="RoboCrashManager.error">
+        <div class="o_error_detail">
+            <pre><t t-esc="error.message"/></pre>
+            <t t-if="session">
+                <div><span>DB: <t t-esc="session.db"/></span></div>
+                <div><span>User: <t t-esc="session.username"/></span> </div>
+                <div t-if="browser"><span>Browser: <t t-esc="browser"/></span> </div>
+                <div t-if="session.last_actions">
+                    <span><strong>Last actions:</strong></span>
+                    <ul t-foreach="session.last_actions" t-as="ha" class="mt16">
+                        <li><t t-esc="ha"/> </li>
+                   </ul>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <t t-extend="ImportView.import_button">
+        <t t-jquery=".o_button_import" t-operation="replace">
+            <button t-if='widget.options.import_enabled and widget.is_action_enabled("import")' type="button" class="btn btn-sm btn-default o_button_import">
+                Import
+            </button>
+        </t>
+    </t>
+
+</template>

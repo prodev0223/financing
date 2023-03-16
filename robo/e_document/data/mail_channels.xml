@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="requests_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie pasirašytus prašymus</field>
+            <field name="description">Informuoti el. paštu, kuomet būna pasirašomas bet koks prašymas</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>e_documents</field>
+        </record>
+        <record id="orders_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie pasirašytus įsakymus</field>
+            <field name="description">Informuoti el. paštu, kuomet būna pasirašomas bet koks įsakymas</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>e_documents</field>
+        </record>
+        <record id="orders_waiting_for_signature_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie atsiradusius naujus įsakymus, laukiančius pasirašymo</field>
+            <field name="description">Informuoti el. paštu, kuomet atsiranda įsakymas, laukiantis pasirašymo</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name="robo_front" eval="True"/>
+            <field name='category'>e_documents</field>
+        </record>
+        <record id="delegate_changes_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie įgaliotinių pasikeitimus</field>
+            <field name="description">
+                Informuoti el. paštu, kuomet paskiriamas naujas, pašalinamas buvęs arba pakeičiamas įgaliotinis
+            </field>
+            <field name="robo_front" eval="True"/>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name='category'>hr</field>
+        </record>
+        <record id="user_rights_changes_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie darbuotojų teisių pasikeitimus</field>
+            <field name="description">Informuoti el. paštu, kuomet pakeičiamos darbuotojo teisės</field>
+            <field name="robo_front" eval="True"/>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name='category'>hr</field>
+        </record>
+        <record id="signed_orders_about_bonus_award_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie pasirašytus priedo skyrimo dokumentus</field>
+            <field name="description">Informuoti el. paštu, kuomet pasirašomas įsakymas, dėl priedo skyrimo</field>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+        </record>
+        <record id="mark_signed_requests_mail_channel" model="mail.channel">
+            <field name="name">Pranešimai apie prašymo pažymėjimą, kaip pasirašytą</field>
+            <field name="description">Informuoti el. paštu, kuomet prašymo dokumentas pažymimas buhalterio, kaip pasirašytas</field>
+            <field name="robo_front" eval="True"/>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_accountant"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+            <field name='category'>e_documents</field>
+        </record>
+        <record id="inform_about_limited_capacity_of_work_documents" model="mail.channel">
+            <field name="name">Messages about signed documents with limited capacity of work set</field>
+            <field name="description">Inform by email, when documents with limited capacity of work set are formed</field>
+            <field name="robo_front" eval="True"/>
+            <field name="email_send" eval="True"/>
+            <field name="group_public_id" ref="robo_basic.group_robo_premium_manager"/>
+            <field name="group_public_ids" eval="[(4, ref('robo_basic.group_robo_premium_manager'))]"/>
+            <field name='category'>e_documents</field>
+        </record>
+    </data>
+</odoo>

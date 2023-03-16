@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_mrp_workcenter_block_wizard_form" model="ir.ui.view">
+            <field name="name">mrp.workcenter.productivity.form</field>
+            <field name="model">mrp.workcenter.productivity</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Block Workcenter">
+                    <group>
+                        <field name="loss_id" class="oe_inline" domain="[('manual','=',True)]"/>
+                        <field name="description" placeholder="Add a description..."/>
+                        <field name="workcenter_id" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button name="button_block" string="Block" type="object" class="btn-danger"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="robo_act_mrp_block_workcenter_wo" model="ir.actions.act_window">
+            <field name="name">Block Workcenter</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">mrp.workcenter.productivity</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" eval="robo_mrp_workcenter_block_wizard_form"/>
+            <field name="target">new</field>
+            <field name="robo_menu" ref="menu_robo_mrp_start"/>
+            <field name="context" eval="{
+                'robo_menu_name': ref('menu_robo_mrp_start'),
+                    'robo_header': {
+                        'fit':True,
+                    },
+                }"/>
+        </record>
+    </data>
+</odoo>

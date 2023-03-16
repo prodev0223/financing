@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="e_debt_account_invoice_extend" model="ir.ui.view">
+            <field name="name">account.invoice.extend.e.debt</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@class='oe_subtotal_footer oe_right oe_subtotal_robo']" position="after">
+                    <group>
+                    <field name="show_debt_tab" invisible="1"/>
+                      <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4" attrs="{'invisible': [('show_debt_tab','=', False)]}" groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_hr_manager">
+                              Vėluojama apmokėti skolą daugiau nei 2mėn. Spauskite mygtuką, kad parduotumėte skolą
+                              <button name="post_debt" string="Parduoti skolą" type="object"/>
+                          </div>
+                    </group>
+                </xpath>
+                <xpath expr="//page" position="after">
+                            <page string="Sąskaitos skolų pastabos" >
+                            <div class="invoice_lines">
+                                <field name="debt_remark_ids" nolabel="1" widget="one2many_list" mode="tree"
+                                       options="{'no_open': True, 'always_reload': True}">
+                                    <tree string="Invoice Lines" class="robo_invoice_edit" editable="bottom">
+                                        <field name="remark"/>
+                                        <field name="date_remark"/>
+                                    </tree>
+                                </field>
+                            </div>
+                            </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="e_debt_tree" model="ir.ui.view">
+            <field name="name">e.debt.tree.view</field>
+            <field name="model">e.debt</field>
+            <field name="type">tree</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Dokumentai" create="0">
+                    <field name="debt_amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_debt_action">
+            <field name="name">Skolų sąrašas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.debt</field>
+            <!--<field name="header" ref="e_document.header_document_upload"/>-->
+            <field name="with_settings">True</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_debt_tree"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('e_debt_tree')})]"/>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'search_default_draft':1,
+                'search_default_confirm':1,
+                'robo_header': {'fit': True},
+                }"
+            />
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+    </record>
+        <record model="ir.actions.act_window" id="open_debtor_action">
+        <field name="name">Skolininkų sąrašas</field>
+        <field name="res_model">e.debtor</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+        <menuitem id="menu_e_debts"
+                  parent="robo.menu_start"
+                  name="eSkolos"
+                  sequence="81"
+                  force_web_icon="icon-cash-euro,none,none"
+                  robo_front="True"
+                  robo_extended="1"
+        />
+        <menuitem id="menu_e_debts_list" parent="menu_e_debts" name="Skolų sąrašas" sequence="1"
+                  force_web_icon="icon-bookmark,none,none"
+                  robo_front="True" action="open_debt_action"
+                  groups="robo_basic.group_robo_see_income"
+        />
+        <menuitem id="menu_e_debtors_list" parent="menu_e_debts" name="Skolininkų sąrašas" sequence="2"
+                  force_web_icon="icon-profile,none,none"
+                  robo_front="True" action="open_debtor_action"
+                  groups="robo_basic.group_robo_see_income"
+        />
+    </data>
+</odoo>

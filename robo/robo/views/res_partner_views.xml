@@ -1,0 +1,1045 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--action 1-->
+        <record model="ir.ui.view" id="clients_tree">
+            <field name="name">Clients tree</field>
+            <field name="model">res.partner</field>
+            <!--<field name="type">tree_robo</field>-->
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Contacts" create="0" import="0">
+                    <field name="display_name" string="Pavadinimas"/>
+                    <field name="function" invisible="1"/>
+                    <field name="phone" string="Telefonas"/>
+                    <field name="email" string="El. paštas"/>
+                    <field name="balance_reconciliation_date" string="Last reconciliation date"
+                           groups="robo_basic.group_robo_premium_accountant,robo.group_debt_reconciliation_reports"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="is_company" invisible="1"/>
+                    <field name="country_id" invisible="1"/>
+                    <field name="parent_id" invisible="1"/>
+                    <field name="active" invisible="1"/>
+                    <field name="e_invoice_service_id_display" groups="robo.group_robo_e_invoice"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="new_contact_form">
+            <field name="name">Kontaktai</field>
+            <field name="model">res.partner</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Kontaktai ir adresai">
+                    <sheet>
+                        <field name="type" required="1" widget="radio"
+                               options="{'horizontal': true}"  />
+                        <hr/>
+                        <group>
+                            <group attrs="{'invisible': [('type','=', 'contact')]}">
+                                <label for="street" string="Adresas"/>
+                                <div>
+                                    <div class="o_address_format" name="div_address">
+                                        <field name="street" placeholder="Gatvė"
+                                               class="o_address_street"/>
+                                        <field name="city" placeholder="Miestas"
+                                               class="o_address_city"/>
+                                        <field name="state_id" class="o_address_state"
+                                               placeholder="Valstija"
+                                               options="{&quot;no_open&quot;: True}"
+                                               context="{'country_id': country_id, 'zip': zip}"
+                                               invisible="1"/>
+                                        <field name="zip" placeholder="Pašto kodas"
+                                               class="o_address_zip"/>
+                                        <field name="country_id" placeholder="Šalis"
+                                               class="o_address_country"
+                                               options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                    </div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="name" string="Pavadinimas"
+                                       attrs="{'required' : [('type', '=', 'contact')]}"/>
+                                <field name="title" invisible="1" placeholder=""/>
+                                <field name="function" placeholder="pvz. pardavimų vadovas"
+                                       attrs="{'invisible': [('type','&lt;&gt;', 'contact')]}"/>
+                                <field name="email"/>
+                                <field name="phone" widget="phone"/>
+                                <field name="mobile" widget="phone"/>
+                                <field name="comment"/>
+                            </group>
+                        </group>
+                        <field name="supplier" invisible="True"/>
+                        <field name="customer" invisible="True"/>
+                        <field name="lang" invisible="True"/>
+                        <field name="image" invisible="True"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="new_clients_customer_form">
+            <field name="name">new_clients_customer_form</field>
+            <field name="model">res.partner</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="New Partners">
+                    <header>
+                        <field name="locked" invisible="1"/>
+                        <field name="has_multiple_bank_accounts" invisible="1"/>
+                        <button name="multiple_debt_reconciliation" type="object" string="Skolų suderinimo aktas"
+                                groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo.group_debt_reconciliation_reports"/>
+                        <button name="btn_send_debt_reconciliation_act" type="object" string="Siųsti skolų suderinimo aktą"
+                                groups="robo_basic.group_robo_premium_accountant"/>
+
+                        <button name="overpay_transfer_request" type="object" string="Overpay transfer request"
+                                groups="robo_basic.group_robo_premium_accountant,robo.group_overpay_transfer_requests"/>
+
+                        <button name="change_lock_status" type="object" string="Užrakinti partnerį"
+                                groups="robo_basic.group_robo_premium_accountant" context="{'lock': True}" attrs="{'invisible': [('locked', '=', True)]}"/>
+
+                        <button name="change_lock_status" type="object" string="Atrakinti partnerį"
+                                groups="robo_basic.group_robo_premium_accountant" context="{'unlock': True}" attrs="{'invisible': [('locked', '=', False)]}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                            <button name="toggle_reminders" help="Automatiniai mokėjimų priminimai" type="object" class="oe_stat_button" attrs="{'invisible': [('enabled_reminders', '=', False)]}"
+                                    groups="robo_basic.group_robo_apr_settings">
+                                <div class="fa fa-fw icon-clock o_button_icon"/>
+                                <field name="apr_send_reminders" widget="boolean_button" options="{&quot;terminology&quot;: &quot;reminders&quot;}"/>
+                            </button>
+                        </div>
+                        <!--<field name="image" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;image_medium&quot;, &quot;size&quot;: [90, 90]}"/>-->
+                        <!---->
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': ['|', '|', ('apr_send_reminders', '=', False), ('email', '!=', False), ('apr_sendto_emails', '!=', False)] }">
+                            Nėra nustatytas el. pašto adresas automatiniams priminimams.
+                        </div>
+                        <div class="oe_title">
+                            <field name="enabled_reminders" invisible="1"/>
+                            <field name="is_company" invisible="1"/>
+                            <field name="commercial_partner_id" invisible="1"/>
+                            <field name="company_type" widget="radio" class="oe_edit_only"
+                                   options="{'horizontal': true}" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
+                            <h1>
+
+                                <field name="name" default_focus="1" placeholder="Pavadinimas" widget="rekvizitai"
+                                       attrs="{'required' : [('type', '=', 'contact')]}"/>
+                                <!--<field name="name" default_focus="1" placeholder="Pavadinimas" attrs="{'required' : [('type', '=', 'contact')], 'invisible': [('is_company','=', False)]}"/>-->
+                            </h1>
+                            <div class="o_row">
+                                <field name="parent_id" placeholder="Įmonė" domain="[('is_company', '=', True)]"
+                                       options="{'no_quick_create': True}"
+                                       context="{'default_is_company': True, 'default_supplier': supplier, 'default_customer': customer}"
+                                       attrs="{'invisible': ['|', '&amp;', ('is_company','=', True),('parent_id', '=', False),('company_name', '!=', False),('company_name', '!=', '')]}"/>
+                                <field name="supplier" invisible="True"/>
+                                <field name="customer" invisible="True"/>
+                                <field name="company_name"
+                                       attrs="{'invisible': ['|', '|', ('company_name', '=', False), ('company_name', '=', ''), ('is_company', '=', True)]}"/>
+                                <button name="create_company" type="object" string="Create company"
+                                        class="btn btn-sm oe_edit_only fa fa-external-link btn btn-link "
+                                        attrs="{'invisible': ['|', '|', ('is_company','=', True), ('company_name', '=', ''), ('company_name', '=', False)]}"/>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="type" attrs="{'invisible': [('parent_id','=', False)]}"/>
+                                <label for="street" string="Adresas"/>
+                                <div class="o_address_format">
+                                    <div class="oe_edit_only">
+                                        <button name="open_parent" type="object" string="(edit)" class="oe_link"
+                                                attrs="{'invisible': ['|', ('parent_id', '=', False), ('type', '!=', 'contact')]}"/>
+                                    </div>
+                                    <field name="street" placeholder="Gatvė..." class="o_address_street"
+                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                    <!--<field name="street2" placeholder="Gatvė 2..." class="o_address_street" attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>-->
+                                    <field name="city" placeholder="Miestas" class="o_address_city"
+                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                    <field name="zip" placeholder="Pašto kodas" class="o_address_zip"
+                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                    <field name="country_id" placeholder="Šalis" class="o_address_country"
+                                           options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"
+                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                    <br/>
+                                </div>
+
+                                <label for="kodas" string="Įmonės/asmens kodas"/>
+                                <div>
+                                    <field name="kodas" attrs="{
+                                    'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)],
+                                    'required': ['|', ('send_e_invoices', '=', True), '&amp;', ('parent_id', '=', False), '&amp;', ('company_type', '=', 'company'), ('country_id', '=', %(base.lt)d)],
+                                    }" placeholder="Įmonės/asmens kodas" nolabel="1"
+                                           class="oe_inline" domain="[('is_company', '=', True)]"/>
+
+                                    <button name="vz_read" type="object" class="oe_edit_only" icon="fa-cloud-download"
+                                            help="Parsisiųsti rekvizitus"
+                                            attrs="{'invisible': [('is_company','=', False)]}"/>
+                                </div>
+
+                                <field name="vat" attrs="{
+                                'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]
+                                }"
+                                       placeholder="PVM kodas"/>
+                                <field name="phone" widget="phone" placeholder="Telefonas"/>
+                                <field name="email" widget="email" placeholder="El. paštas"/>
+                                <field name="category_id" widget="many2many_tags" placeholder="Žymekliai..."/>
+                                <field name="partner_category_id" placeholder="Kategorija"/>
+                                <field name="balance_reconciliation_date" readonly="1"
+                                       groups="robo.group_robo_see_reconciliation_information_partner_cards"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="comment" string="Pastabos">
+                                <field name="comment" nolabel="1" placeholder="Pastabos..."/>
+                            </page>
+                            <page string="Kontaktai ir adresai" groups="sale.group_delivery_invoice_address">
+                                <field name="child_ids" mode="kanban"
+                                       context="{'form_view_ref': 'robo.new_contact_form',
+                                       'default_parent_id': active_id, 'default_street': street,
+                                       'default_city': city, 'default_zip': zip, 'default_country_id': country_id,
+                                       'default_supplier': supplier, 'default_customer': customer,
+                                       'default_lang': lang,}">
+                                    <kanban>
+                                        <field name="color"/>
+                                        <field name="name"/>
+                                        <field name="title"/>
+                                        <field name="type"/>
+                                        <field name="email"/>
+                                        <field name="parent_id"/>
+                                        <field name="is_company"/>
+                                        <field name="function"/>
+                                        <field name="phone"/>
+                                        <field name="street"/>
+                                        <field name="zip"/>
+                                        <field name="city"/>
+                                        <field name="country_id"/>
+                                        <field name="mobile"/>
+                                        <field name="fax"/>
+                                        <field name="image"/>
+                                        <field name="lang"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <t t-set="color" t-value="kanban_color(record.color.raw_value)"/>
+                                                <div t-att-class="color + (record.title.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
+                                                    <a t-if="!read_only_mode" type="delete"
+                                                       class="fa fa-times pull-right"/>
+                                                    <div class="o_kanban_image">
+                                                        <img t-if="record.image.raw_value"
+                                                             t-att-src="'data:image/png;base64,'+record.image.raw_value"/>
+                                                        <t t-if="!record.image.raw_value">
+                                                            <img t-if="record.type.raw_value === 'delivery'"
+                                                                 t-att-src="_s + &quot;/base/static/src/img/truck.png&quot;"/>
+                                                            <img t-if="record.type.raw_value === 'invoice'"
+                                                                 t-att-src="_s + &quot;/base/static/src/img/money.png&quot;"/>
+                                                            <t t-if="record.type.raw_value !== 'invoice' &amp;&amp; record.type.raw_value !== 'delivery'">
+                                                                <img t-if="record.is_company.raw_value === true"
+                                                                     t-att-src="_s + &quot;/base/static/src/img/company_image.png&quot;"/>
+                                                                <img t-if="record.is_company.raw_value === false"
+                                                                     t-att-src="_s + &quot;/base/static/src/img/avatar.png&quot;"/>
+                                                            </t>
+                                                        </t>
+                                                    </div>
+                                                    <div class="oe_kanban_details">
+                                                        <field name="name"/>
+                                                        <div t-if="record.function.raw_value">
+                                                            <field name="function"/>
+                                                        </div>
+                                                        <div t-if="record.email.raw_value">
+                                                            <field name="email"/>
+                                                        </div>
+                                                        <div t-if="record.type.raw_value != 'contact'">
+                                                            <div>
+                                                                <field name="zip"/>
+                                                                <field name="city"/>
+                                                            </div>
+                                                            <field name="country_id"/>
+                                                        </div>
+                                                        <div t-if="record.phone.raw_value">Tel.:
+                                                            <field name="phone"/>
+                                                        </div>
+                                                        <div t-if="record.mobile.raw_value">Mob.:
+                                                            <field name="mobile"/>
+                                                        </div>
+                                                        <div t-if="record.fax.raw_value">Faksas:
+                                                            <field name="fax"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                            <page name="bank" string="Banko sąskaitos"
+                                  groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,
+                                  robo.group_menu_kita_analitika,robo.group_robo_see_all_expenses,
+                                  robo.group_robo_see_all_incomes,robo_basic.group_robo_see_income">
+                                <field name="bank_ids" nolabel="1">
+                                    <tree editable="bottom" class="robo_tree_in_form">
+                                        <field name="acc_number" string="Sąskaitos numeris"/>
+                                        <field name="bank_id" string="Bankas" options="{'no_open': True, 'no_quick_create': True}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="reconciliations" string="Reconciliation acts"
+                                  groups="robo.group_robo_see_reconciliation_information_partner_cards,
+                                  robo_basic.group_robo_premium_accountant">
+                                <field name="balance_reconciliation_attachment_ids" nolabel="1" widget="one2many_list"
+                                       options="{'no_open': True}" mode="tree"
+                                       context="{'form_view_ref': 'robo.view_attachment_form_reconciliation'}">
+                                    <tree editable="bottom" options="{'no_open': True}">
+                                        <field name="name" string="Act name"/>
+                                        <field name="datas" string="Act"/>
+                                        <field name="create_date" string="Date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="automatic_payment_reminders" string="Mokėjimų priminimai" attrs="{'invisible': [('apr_send_reminders', '=', False)]}"
+                                  groups="robo_basic.group_robo_apr_settings">
+                                <group name="APR_settings" string="Nustatymai" attrs="{'invisible':[('apr_send_reminders','=',False)]}">
+                                    <group name="apr_emails">
+                                        <field name="apr_sendto_emails" string="El. pašto adresatai"
+                                               help="Adresatus galima atskirti kabliataškiu" colspan="4"/>
+                                        <field name="apr_min_amount_to_send" string="Mažiausia suma, nuo kurios siųsti mokėjimo priminimus" colspan="4"/>
+                                    </group>
+                                    <group name="apr_emails_cc">
+                                        <field name="apr_email_cc" colspan="4"/>
+                                    </group>
+                                    <group name="apr_before">
+                                       <field name="apr_send_before" help="Jei užstatyta, klientas gaus automatinius mokėjimo priminimus prieš mokėjimo terminą" string="Siųsti automatinius priminimus prieš mokėjimo terminą"/>
+                                       <field name="apr_send_before_ndays" help="Priminimas bus siunčiamas ... dienų iki mokėjimo termino" string="Dienų skaičius iki mokėjimo termino" attrs="{'invisible':[('apr_send_before','=',False)]}"/>
+                                    </group>
+                                    <group name="apr_today">
+                                        <field name="apr_send_on_date" help="Jei užstatyta, klientas gaus automatinius mokėjimo priminimus" string="Siųsti priminimą termino dieną"/>
+                                    </group>
+                                    <group name="apr_after">
+                                        <field name="apr_send_after" help="Jei užstatyta, klientas gaus automatinius mokėjimo priminimus" string="Siųsti automatinius priminimus po mokėjimo termino"/>
+                                        <field name="apr_send_after_ndays" string="Dienų skaičius nuo mokėjimo termino" attrs="{'invisible':[('apr_send_after','=',False)]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="other_settings" string="Kiti nustatymai" colspan="2">
+                                <group>
+                                    <group>
+                                        <field name="customer"/>
+                                        <field name="supplier"/>
+                                        <field name="show_balance_account_invoice_document"/>
+                                        <field name="show_do_not_embed_xml" invisible="1"/>
+                                        <field name="do_not_embed_einvoice_xml"
+                                               attrs="{'invisible': [('show_do_not_embed_xml', '=', False)]}"/>
+                                        <field name="locked" groups="robo_basic.group_robo_premium_accountant"/>
+                                        <field name="user_id" string="Pardavėjas" options="{'no_open': True, 'no_create': True}" groups="robo_basic.group_robo_manage_partners"/>
+                                        <field name="payment_term_days" string="Kliento mokėjimo terminas dienomis"/>
+                                        <field name="supplier_payment_term_days"
+                                               string="Tiekėjo mokėjimo terminas dienomis"/>
+                                        <field name="lang" string="Kalba"/>
+                                        <field name="balance_reconciliation_date" readonly="1" widget="date"
+                                               string="Paskutinio skolų suderinimo akto data"/>
+                                        <field name="substitute_bank_export_partner_id"/>
+                                        <field name="substitute_bank_export_name"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="e_invoice_settings" string="eSąskaitų nustatymai" colspan="2"
+                                  groups="robo.group_robo_e_invoice">
+                                <group>
+                                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                                        eSąskaitas galima siųsti tik iš "Swedbank" banko sąskaitos.
+                                    </div>
+                                </group>
+                                <group>
+                                    <field name="res_partner_bank_e_invoice_id"
+                                           attrs="{'required': ['|', ('automated_payment_agreed', '=', True),
+                                           ('send_e_invoices', '=', True)]}"
+                                            domain="[('bank_id.bic','in', ['INDULT2X', 'CBVILT2X', 'AGBLLT2X',
+                                               'NDEALT2X', 'CBSBLT26XXX', 'HABALT22', 'MDBALT22']),
+                                               ('partner_id', '=', id)]"
+                                            options="{'no_open': True, 'no_create': True}"/>
+                                    <field name="send_e_invoices"/>
+                                    <field name="e_invoice_application_date"
+                                           attrs="{'required': [('send_e_invoices', '=', True)],
+                                           'invisible': [('send_e_invoices', '=', False)]}"/>
+                                    <field name="automated_payment_agreed"/>
+                                    <field name="e_invoice_service_id"/>
+                                    <field name="automated_e_invoice_payment_state"
+                                           attrs="{'invisible': [('automated_payment_agreed', '=', False)]}"
+                                           readonly="1"/>
+                                    <field name="monthly_limit"
+                                           attrs="{'invisible': [('automated_payment_agreed', '=', False)]}"/>
+                                    <field name="monthly_limit_currency_id"
+                                           attrs="{'invisible': [('automated_payment_agreed', '=', False)]}"
+                                            readonly="1"/>
+                                    <field name="has_export_job_ids" invisible="1"
+                                           groups="robo_basic.group_robo_premium_manager"/>
+                                </group>
+                                <group string="Automatinių eSąskaitų mokėjimų pranešimai"
+                                        groups="robo_basic.group_robo_premium_manager"
+                                        attrs="{'invisible': [('has_export_job_ids','=', False)]}">
+                                        <field name="bank_export_job_ids" nolabel="1" options="{'always_reload': True}"
+                                               mode="tree,kanban" widget="one2many_list"
+                                               groups="robo_basic.group_robo_premium_manager">
+                                            <tree edit="0" create="0" delete="0" class="robo_tree_in_form"
+                                                  decoration-success="export_state == 'accepted'"
+                                                  decoration-danger="export_state == 'rejected'"
+                                                  decoration-warning="export_state == 'waiting'">
+                                                <field name="e_invoice_file_id"/>
+                                                <field name="e_invoice_global_unique_id"/>
+                                                <field name="e_invoice_auto_payment_partner_id"/>
+                                                <field name="date_exported"/>
+                                                <field name="export_state"/>
+                                            </tree>
+                                            <kanban class="o_kanban_mobile">
+                                                <field name="e_invoice_file_id"/>
+                                                <field name="date_exported"/>
+                                                <field name="e_invoice_auto_payment_partner_id"/>
+                                                <field name="export_state"/>
+                                                <templates>
+                                                    <t t-name="kanban-box">
+                                                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
+                                                                    <strong>
+                                                                        <span>
+                                                                            <t t-esc="record.e_invoice_auto_payment_partner_id.value"/>
+                                                                        </span>
+                                                                    </strong>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-8 text-muted">
+                                                                    <span>
+                                                                        <t t-esc="record.date_exported.value"/>
+                                                                        <t t-esc="record.export_state.value"/>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col-xs-4 text-muted">
+                                                                    <span class="text-right">
+                                                                        <t t-esc="record.e_invoice_file_id.value"/>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </templates>
+                                            </kanban>
+                                        </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter" groups="robo_basic.group_robo_premium_accountant">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="clients_kanban" model="ir.ui.view">
+            <field name="name">Klientai kanban</field>
+            <field name="model">res.partner</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" quick_create="false" create="false">
+                    <field name="color"/>
+                    <field name="display_name"/>
+                    <field name="title"/>
+                    <field name="email"/>
+                    <field name="parent_id"/>
+                    <field name="is_company"/>
+                    <field name="function"/>
+                    <field name="phone"/>
+                    <field name="street"/>
+                    <field name="street2"/>
+                    <field name="zip"/>
+                    <field name="city"/>
+                    <field name="country_id"/>
+                    <field name="mobile"/>
+                    <field name="state_id"/>
+                    <field name="category_id"/>
+                    <field name="image_small"/>
+                    <field name="type"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_res_partner_kanban">
+                                <div class="o_kanban_tags_section oe_kanban_partner_categories"/>
+                                <div class="o_kanban_image">
+                                    <t t-if="record.image_small.raw_value">
+                                        <img t-att-src="kanban_image('res.partner', 'image_small', record.id.value)"/>
+                                    </t>
+                                    <t t-if="!record.image_small.raw_value">
+                                        <t t-if="record.type.raw_value === 'delivery'">
+                                            <img t-att-src="_s + &quot;/base/static/src/img/truck.png&quot;"
+                                                 class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                        </t>
+                                        <t t-if="record.type.raw_value === 'invoice'">
+                                            <img t-att-src="_s + &quot;/base/static/src/img/money.png&quot;"
+                                                 class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                        </t>
+                                        <t t-if="record.type.raw_value != 'invoice' &amp;&amp; record.type.raw_value != 'delivery'">
+                                            <t t-if="record.is_company.raw_value === true">
+                                                <img t-att-src="_s + &quot;/base/static/src/img/company_image.png&quot;"/>
+                                            </t>
+                                            <t t-if="record.is_company.raw_value === false">
+                                                <img t-att-src="_s + &quot;/base/static/src/img/avatar.png&quot;"/>
+                                            </t>
+                                        </t>
+                                    </t>
+                                </div>
+                                <div class="oe_kanban_details">
+                                    <strong class="oe_partner_heading">
+                                        <field name="display_name"/>
+                                    </strong>
+                                    <ul>
+                                        <li t-if="record.parent_id.raw_value and !record.function.raw_value">
+                                            <field name="parent_id"/>
+                                        </li>
+                                        <li t-if="!record.parent_id.raw_value and record.function.raw_value">
+                                            <field name="function"/>
+                                        </li>
+                                        <li t-if="record.parent_id.raw_value and record.function.raw_value">
+                                            <field name="function"/>
+                                            at
+                                            <field name="parent_id"/>
+                                        </li>
+                                        <li t-if="record.city.raw_value and !record.country_id.raw_value">
+                                            <field name="city"/>
+                                        </li>
+                                        <li t-if="!record.city.raw_value and record.country_id.raw_value">
+                                            <field name="country_id"/>
+                                        </li>
+                                        <li t-if="record.city.raw_value and record.country_id.raw_value"><field
+                                                name="city"/>,
+                                            <field name="country_id"/>
+                                        </li>
+                                        <li t-if="record.email.raw_value" class="o_text_overflow">
+                                            <field name="email"/>
+                                        </li>
+                                    </ul>
+                                    <div class="oe_kanban_partner_links"/>
+                                </div>
+                            </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_board_clients_action_customer">
+            <field name="name">Klientai</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="domain"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('clients_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('new_clients_customer_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('clients_kanban')}),]"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="header" ref="robo.robo_button_customer"/>
+            <field name="with_settings">True</field>
+            <field name="context">
+                {
+                    'default_is_company':1,
+                    'default_customer': 1,
+                    'search_default_customer': 1,
+                }
+            </field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <!--end action 1-->
+
+
+        <!--action 2-->
+        <record model="ir.ui.view" id="new_clients_supplier_form">
+            <field name="name">new_clients_supplier_form</field>
+            <field name="model">res.partner</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="New Partners">
+                    <header>
+                        <button name="multiple_debt_reconciliation" type="object" string="Skolų suderinimo aktas"
+                                groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo.group_debt_reconciliation_reports"/>
+                        <button name="btn_send_debt_reconciliation_act" type="object" string="Siųsti skolų suderinimo aktą"
+                                groups="robo_basic.group_robo_premium_accountant"/>
+                        <button name="overpay_transfer_request" type="object" string="Overpay transfer request"
+                                groups="robo_basic.group_robo_premium_accountant,robo.group_overpay_transfer_requests"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                        </div>
+                        <!--<field name="image" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;image_medium&quot;, &quot;size&quot;: [90, 90]}"/>-->
+                        <!---->
+                        <div class="oe_title">
+                            <field name="is_company" invisible="1"/>
+                            <field name="commercial_partner_id" invisible="1"/>
+                            <field name="company_type" widget="radio" class="oe_edit_only"
+                                   options="{'horizontal': true}"/>
+                            <h1>
+
+                                <field name="name" default_focus="1" placeholder="Pavadinimas" widget="rekvizitai"
+                                       attrs="{'required' : [('type', '=', 'contact')]}"/>
+                                <!--<field name="name" default_focus="1" placeholder="Pavadinimas" attrs="{'required' : [('type', '=', 'contact')], 'invisible': [('is_company','=', False)]}"/>-->
+                            </h1>
+                            <div class="o_row">
+                                <field name="parent_id" placeholder="Įmonė" domain="[('is_company', '=', True)]"
+                                       context="{'default_is_company': True, 'default_supplier': supplier, 'default_customer': customer}"
+                                       attrs="{'invisible': ['|', '&amp;', ('is_company','=', True),('parent_id', '=', False),('company_name', '!=', False),('company_name', '!=', '')]}"/>
+                                <field name="supplier" invisible="True"/>
+                                <field name="customer" invisible="True"/>
+                                <field name="company_name"
+                                       attrs="{'invisible': ['|', '|', ('company_name', '=', False), ('company_name', '=', ''), ('is_company', '=', True)]}"/>
+                                <button name="create_company" type="object" string="Create company"
+                                        class="btn btn-sm oe_edit_only fa fa-external-link btn btn-link "
+                                        attrs="{'invisible': ['|', '|', ('is_company','=', True), ('company_name', '=', ''), ('company_name', '=', False)]}"/>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="type" attrs="{'invisible': [('parent_id','=', False)]}"
+                                       groups="base.group_no_one"/>
+                                <label for="street" class="lnr lnr-home" string=" "/>
+                                <div class="o_address_format">
+                                    <div class="oe_edit_only">
+                                        <button name="open_parent" type="object" string="(edit)" class="oe_link"
+                                                attrs="{'invisible': ['|', ('parent_id', '=', False), ('type', '!=', 'contact')]}"/>
+                                    </div>
+                                    <field name="street" placeholder="Gatvė..." class="o_address_street"
+                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                    <!--<field name="street2" placeholder="Gatvė 2..." class="o_address_street" attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>-->
+                                    <field name="city" placeholder="Miestas" class="o_address_city"
+                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                    <field name="zip" placeholder="Pašto kodas" class="o_address_zip"
+                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                    <field name="country_id" placeholder="Šalis" class="o_address_country"
+                                           options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"
+                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                    <br/>
+                                </div>
+                                <label for="kodas" string=" " class="lnr lnr-apartment"/>
+
+                                <div>
+                                    <field name="kodas" attrs="{
+                                    'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)],
+                                    'required': [('parent_id', '=', False),('company_type', '=', 'company'),('country_id', '=', %(base.lt)d)]
+                                    }" placeholder="Įmonės/asmens kodas" nolabel="1"
+                                           class="oe_inline" domain="[('is_company', '=', True)]"/>
+                                    <button name="vz_read" type="object" class="oe_edit_only" icon="fa-cloud-download"
+                                            help="Parsisiųsti rekvizitus"
+                                            attrs="{'invisible': [('is_company','=', False)]}"/>
+                                </div>
+
+                                <label for="vat" string=" " class="lnr lnr-cog"/>
+                                <field name="vat" attrs="{
+                                'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]
+                                }"
+                                       placeholder="PVM kodas" nolabel="1"/>
+                                <label for="phone" string=" " class="lnr lnr-phone"/>
+                                <field name="phone" widget="phone" placeholder="Telefonas" nolabel="1"/>
+                                <label for="email" string=" " class="lnr lnr-envelope"/>
+                                <field name="email" widget="email" placeholder="E. paštas" nolabel="1"/>
+                                <label for="category_id" string=" " class="icon-tags"/>
+                                <field name="category_id" widget="many2many_tags" placeholder="Žymekliai..."
+                                       nolabel="1"/>
+                                <label for="partner_category_id" string=" " class="lnr lnr-tag"/>
+                                <field name="partner_category_id" nolabel="1" placeholder="Kategorija"/>
+                                <label for="balance_reconciliation_date" string=" " class="lnr lnr-history"
+                                       groups="robo.group_robo_see_reconciliation_information_partner_cards,robo_basic.group_robo_premium_accountant"/>
+                                <field name="balance_reconciliation_date" nolabel="1" readonly="1"
+                                       groups="robo.group_robo_see_reconciliation_information_partner_cards,robo_basic.group_robo_premium_accountant"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="comment" string="Pastabos">
+                                <field name="comment" nolabel="1" placeholder="Pastabos..."/>
+                            </page>
+                            <page string="Kontaktai ir adresai" groups="sale.group_delivery_invoice_address">
+                                <field name="child_ids" mode="kanban"
+                                       context="{'default_parent_id': active_id, 'default_street': street, 'default_city': city, 'default_zip': zip, 'default_country_id': country_id, 'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang,}">
+                                    <kanban>
+                                        <field name="color"/>
+                                        <field name="name"/>
+                                        <field name="title"/>
+                                        <field name="type"/>
+                                        <field name="email"/>
+                                        <field name="parent_id"/>
+                                        <field name="is_company"/>
+                                        <field name="function"/>
+                                        <field name="phone"/>
+                                        <field name="street"/>
+                                        <field name="zip"/>
+                                        <field name="city"/>
+                                        <field name="country_id"/>
+                                        <field name="mobile"/>
+                                        <field name="fax"/>
+                                        <field name="image"/>
+                                        <field name="lang"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <t t-set="color" t-value="kanban_color(record.color.raw_value)"/>
+                                                <div t-att-class="color + (record.title.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
+                                                    <a t-if="!read_only_mode" type="delete"
+                                                       class="fa fa-times pull-right"/>
+                                                    <div class="o_kanban_image">
+                                                        <img t-if="record.image.raw_value"
+                                                             t-att-src="'data:image/png;base64,'+record.image.raw_value"/>
+                                                        <t t-if="!record.image.raw_value">
+                                                            <img t-if="record.type.raw_value === 'delivery'"
+                                                                 t-att-src="_s + &quot;/base/static/src/img/truck.png&quot;"/>
+                                                            <img t-if="record.type.raw_value === 'invoice'"
+                                                                 t-att-src="_s + &quot;/base/static/src/img/money.png&quot;"/>
+                                                            <t t-if="record.type.raw_value !== 'invoice' &amp;&amp; record.type.raw_value !== 'delivery'">
+                                                                <img t-if="record.is_company.raw_value === true"
+                                                                     t-att-src="_s + &quot;/base/static/src/img/company_image.png&quot;"/>
+                                                                <img t-if="record.is_company.raw_value === false"
+                                                                     t-att-src="_s + &quot;/base/static/src/img/avatar.png&quot;"/>
+                                                            </t>
+                                                        </t>
+                                                    </div>
+                                                    <div class="oe_kanban_details">
+                                                        <field name="name"/>
+                                                        <div t-if="record.function.raw_value">
+                                                            <field name="function"/>
+                                                        </div>
+                                                        <div t-if="record.email.raw_value">
+                                                            <field name="email"/>
+                                                        </div>
+                                                        <div t-if="record.type.raw_value != 'contact'">
+                                                            <div>
+                                                                <field name="zip"/>
+                                                                <field name="city"/>
+                                                            </div>
+                                                            <field name="country_id"/>
+                                                        </div>
+                                                        <div t-if="record.phone.raw_value">Tel.:
+                                                            <field name="phone"/>
+                                                        </div>
+                                                        <div t-if="record.mobile.raw_value">Mob.:
+                                                            <field name="mobile"/>
+                                                        </div>
+                                                        <div t-if="record.fax.raw_value">Faksas:
+                                                            <field name="fax"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                    <form string="Kontaktai ir adresai">
+                                        <sheet>
+                                            <field name="type" required="1" widget="radio"
+                                                   options="{'horizontal': true}"/>
+                                            <hr/>
+                                            <group>
+                                                <group attrs="{'invisible': [('type','=', 'contact')]}">
+                                                    <label for="street" string="Address"/>
+                                                    <div>
+                                                        <div class="o_address_format" name="div_address">
+                                                            <field name="street" placeholder="Gatvė..."
+                                                                   class="o_address_street"/>
+                                                            <field name="city" placeholder="Miestas"
+                                                                   class="o_address_city"/>
+                                                            <field name="state_id" class="o_address_state"
+                                                                   placeholder="Valstija"
+                                                                   options="{&quot;no_open&quot;: True}"
+                                                                   context="{'country_id': country_id, 'zip': zip}"
+                                                                   invisible="1"/>
+                                                            <field name="zip" placeholder="Pašto kodas"
+                                                                   class="o_address_zip"/>
+                                                            <field name="country_id" placeholder="Šalis"
+                                                                   class="o_address_country"
+                                                                   options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                                        </div>
+                                                    </div>
+                                                </group>
+                                                <group>
+                                                    <field name="name" string="Pavadinimas"
+                                                           attrs="{'required' : [('type', '=', 'contact')]}"/>
+                                                    <field name="title" invisible="1" placeholder=""/>
+                                                    <field name="function" placeholder="pvz. pardavimų vadovas"
+                                                           attrs="{'invisible': [('type','&lt;&gt;', 'contact')]}"/>
+                                                    <field name="email"/>
+                                                    <field name="phone" widget="phone"/>
+                                                    <field name="mobile" widget="phone"/>
+                                                    <field name="comment" placeholder="pastabos..."/>
+                                                </group>
+                                            </group>
+                                            <field name="supplier" invisible="True"/>
+                                            <field name="customer" invisible="True"/>
+                                            <field name="lang" invisible="True"/>
+                                            <field name="image" invisible="True"/>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </page>
+                            <page name="bank" string="Banko sąskaitos"
+                                  groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,robo.group_menu_kita_analitika,robo.group_robo_see_all_expenses,robo.group_robo_see_all_incomes">
+                                <field name="bank_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="acc_number" string="Sąskaitos numeris"/>
+                                        <field name="bank_id" options="{'no_quick_create': 1}" string="Bankas"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="reconciliations" string="Reconciliation acts"
+                                  groups="robo.group_robo_see_reconciliation_information_partner_cards,
+                                  robo_basic.group_robo_premium_accountant">
+                                <field name="balance_reconciliation_attachment_ids" nolabel="1" widget="one2many_list"
+                                       options="{'no_open': True}" mode="tree"
+                                       context="{'form_view_ref': 'robo.view_attachment_form_reconciliation'}">
+                                    <tree editable="bottom" options="{'no_open': True}">
+                                        <field name="name" string="Act name"/>
+                                        <field name="datas" string="Act"/>
+                                        <field name="create_date" string="Date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="other_settings" string="Kiti nustatymai" colspan="2">
+                                <group>
+                                    <group>
+                                        <field name="customer"/>
+                                        <field name="supplier"/>
+                                        <field name="payment_term_days" string="Kliento mokėjimo terminas dienomis"/>
+                                        <field name="supplier_payment_term_days"
+                                               string="Kliento mokėjimo terminas dienomis"/>
+                                    </group>
+                                    <group>
+                                        <field name="kliento_kodas"/>
+                                        <field name="imokos_kodas"/>
+                                        <field name="substitute_bank_export_partner_id"/>
+                                        <field name="substitute_bank_export_name"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter" groups="robo_basic.group_robo_premium_accountant">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="open_board_clients_action_supplier">
+            <field name="name">Tiekėjai</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_robo,form,kanban</field>
+            <field name="domain"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('clients_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('new_clients_supplier_form')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('clients_kanban')})]"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="header" ref="robo.robo_button_supplier"/>
+            <field name="with_settings">True</field>
+            <field name="context">
+                {
+                    'default_is_company':1,
+                    'default_supplier': 1,
+                     'search_default_supplier': 1,
+                }
+            </field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <!--end action 2-->
+
+
+        <menuitem id="menu_klientai" parent="menu_kita" name="Klientai" sequence="40"
+                  web_icon="icon-profile,none,none" robo_front="True"
+                  action="robo.open_board_clients_action_customer"
+                  searchable="True"
+                  tags="klientai,tiekėjai"
+        />
+
+
+        <record model="ir.actions.act_window" id="new_client_customer">
+            <field name="name">Klientas</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="context" eval="{
+                'default_is_company':1,
+                'default_customer': 1,
+                'default_supplier': 0,
+                'robo_header': {},
+                }"/>
+            <field name="view_id" ref='new_clients_customer_form'/>
+            <field name="domain">[('advance_payment', '=', False), ('ref_company_ids','=',False),
+                ('customer','=',True)]
+            </field>
+            <field name="header" ref="robo.robo_button_customer"/>
+            <field name="with_settings">True</field>
+            <field name="help"></field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="new_client_supplier">
+            <field name="name">Tiekėjas</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+            <field name="header" ref="robo.robo_button_customer"/>
+            <field name="with_settings">True</field>
+            <field name="context" eval="{
+                'default_is_company':1,
+                'default_supplier': 1,
+                'default_customer':0,
+                'robo_header': {},
+                }"/>
+            <field name="view_id" ref='new_clients_supplier_form'/>
+            <field name="domain">[('advance_payment', '=', False),
+                ('ref_company_ids','=',False),('supplier','=',True)]
+            </field>
+            <field name="help"></field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+
+        <record id="partner_add_vz_button" model="ir.ui.view">
+            <field name="name">partneris.kodas.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="imones_kodas.partneris_kodas_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='kodas']" position="replace">
+                    <label for="kodas"/>
+                    <div class="oe_inline">
+                        <field name="kodas" nolabel="1" attrs="{'required': 0}" class="oe_inline"/>
+                        <button name="vz_read" type="object" class="oe_edit_only" icon="fa-cloud-download"
+                                help="Parsisiųsti rekvizitus"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_partner_form_robo_extension" model="ir.ui.view">
+            <field name="name">View partner form robo extension</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="widget">rekvizitai</attribute>
+                </xpath>
+                <xpath expr="//field[@name='lang']" position="after">
+                    <field name="locked" readonly="0" groups="robo_basic.group_robo_premium_accountant"/>
+                    <field name="show_balance_account_invoice_document"/>
+                    <field name="show_do_not_embed_xml" invisible="1"/>
+                    <field name="do_not_embed_einvoice_xml"
+                           attrs="{'invisible': [('show_do_not_embed_xml', '=', False)]}"/>
+                    <field name="send_company_mails" groups="base.group_system"/>
+                    <field name="balance_reconciliation_date" widget="date"/>
+                    <field name="balance_reconciliation_email" widget="email"/>
+                </xpath>
+                <xpath expr="//group" position="after">
+                    <group name="mail_settings" string="Pranešimų nustatymai" col="4">
+                        <field name="opt_out_robo_mails"/>
+                        <field name="opt_out_representation_mails"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='send_company_mails']" position="after">
+                    <field name="substitute_bank_export_partner_id"/>
+                    <field name="substitute_bank_export_name"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="partner_search_mail_search_view" model="ir.ui.view">
+            <field name="name">partner.mail.search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="mail.res_partner_opt_out_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='not_opt_out']" position="replace"/>
+            </field>
+        </record>
+        <record id="view_res_partner_filter" model="ir.ui.view">
+            <field name="name">partner.kodas.search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="kodas" string="Kodas"/>
+                    <field name="vat" string="PVM Kodas"/>
+                    <field name="bank_ids" string="Banko sąskaitos"/>
+                    <field name="balance_reconciliation_date" string="Date from (latest reconciliation)"
+                           filter_domain="[('balance_reconciliation_date', '&gt;=', self)]"
+                           groups="robo_basic.group_robo_premium_accountant,robo.group_debt_reconciliation_reports"/>
+                    <field name="balance_reconciliation_date" string="Date to (latest reconciliation)"
+                           filter_domain="[('balance_reconciliation_date', '&lt;=', self)]"
+                           groups="robo_basic.group_robo_premium_accountant,robo.group_debt_reconciliation_reports"/>
+                    <separator/>
+                    <filter name="active_reminder" string="Aktyvuoti priminimai" domain="[('apr_send_reminders', '=', True)]"/>
+                    <filter string="Partners with multiple bank accounts"
+                            domain="[('has_multiple_bank_accounts', '=', True)]"/>
+                </xpath>
+                <xpath expr="//field[@name='category_id']" position="after">
+                    <field name="partner_category_id"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="add_balance_reconciliation_date_field_tree">
+            <field name="name">partner.add.balance.reconciliation.date.tree</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='email']" position="after">
+                    <field name="balance_reconciliation_date" widget="date"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="base.view_partner_category_form"  model="ir.ui.view">
+            <field name="robo_front" eval="True"/>
+        </record>
+
+        <record model="ir.actions.server" id="action_multi_send_debt_reconciliation_act">
+            <field name="name">Siųsti skolų suderinimo aktą pasirinktiems partneriams</field>
+            <field name="model_id" ref="robo.model_res_partner"/>
+            <field name="group_ids" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).btn_send_debt_reconciliation_act()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="create_action_multi_send_debt_reconciliation_act" model="res.partner"/>
+
+        <record id="partner_reconciliation_comment" model="ir.ui.view">
+            <field name="name">partner.reconciliation.comment</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='fiscal_information']" position="before">
+                     <group name="balance_reconciliation_comment" colspan="2">
+                        <field name="balance_reconciliation_comment"/>
+                     </group>
+              </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

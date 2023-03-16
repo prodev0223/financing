@@ -1,0 +1,303 @@
+<odoo>
+    <data>
+        <!--Frontend Tree-->
+        <record id="robo_stock_product_tree_raso_front" model="ir.ui.view">
+            <field name="name">product.template.raso</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="need_to_update"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">need_to_update</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!--Backend Tree-->
+        <record id="robo_stock_product_tree_raso_back" model="ir.ui.view">
+            <field name="name">product.template.raso</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="need_to_update"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-warning">need_to_update</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!--Frontend Form-->
+        <record id="product_template_raso_form" model="ir.ui.view">
+            <field name="name">product.template.raso</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//br" position="before">
+                    <header>
+                        <button name="import_products" type="object" string="Importuoti į RASO" class="oe_highlight" groups="raso_retail.group_raso_user"/>
+                    </header>
+                    <field name="last_update_state" invisible="1"/>
+                    <field name="need_to_update" invisible="1"/>
+                    <field name="importable_to_raso" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'waiting'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Laukiama atsakymo paskutiniam importuotam įrašui</h4></div>
+                    </div>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('need_to_update', '=', False)]}">
+                        <div><h4>Įrašo versija naujesnė nei RASO serveryje</h4></div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'rejected'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Paskutinis importas į RASO serverį buvo atmestas</h4></div>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='barcode']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('product_variant_count', '&gt;', 1)],
+                                             'required': [('product_variant_count', '=', 1),
+                                                          ('importable_to_raso', '=', True)]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//group[@name='general_information_group']" position="after">
+                    <group name="raso" string="Raso informacija" groups="raso_retail.group_raso_user">
+                        <group>
+                            <field name="max_dic"/>
+                            <field name="vat_code" required="1"/>
+                            <field name="dep_no"/>
+                            <field name="extra_qty"/>
+                            <field name="extra_code"/>
+                            <field name="s_date"/>
+                            <field name="s_number"/>
+                            <field name="min_price"/>
+                            <field name="max_price"/>
+                            <field name="supplier_code"/>
+                            <field name="supplier_name"/>
+                        </group>
+                        <group groups="raso_retail.group_raso_user">
+                            <field name="group_code"/>
+                            <field name="age"/>
+                            <field name="refundable"/>
+                            <field name="comment_required"/>
+                            <field name="discount_status" required="1"/>
+                            <field name="disc_points_status" required="1"/>
+                            <field name="start_time"/>
+                            <field name="end_time"/>
+                            <field name="is_weighing"/>
+                            <field name="scale" attrs="{'invisible': [('is_weighing', '=', False)]}"/>
+                            <field name="use_up" attrs="{'invisible': [('is_weighing', '=', False)]}"/>
+                        </group>
+                    </group>
+                    <group string="Raso Importas" groups="raso_retail.group_raso_user">
+                        <field name="revision_number_display"/>
+                        <field name="raso_revision"/>
+                    </group>
+                </xpath>
+                <xpath expr="//page[@name='invoicing']" position="after">
+                    <page string="Raso" name="raso_price_ids" groups="raso_retail.group_raso_user">
+                    <group name="raso" string="Raso prekės kainos" groups="raso_retail.group_raso_user">
+                    <field name="price_ids" widget="one2many_list" nolabel="1" mode="tree"
+                           options="{'no_open': True, 'no_create': True}" context="{'active_id': active_id}">
+                        <tree editable="bottom" class="robo_tree_in_form">
+                            <field name="shop_id" readonly="0" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="price_no"/>
+                            <field name="qty"/>
+                            <field name="price"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <button name="import_product_price_inline" string="Įkelti kainą" type="object" icon="fa-upload"/>
+                        </tree>
+                    </field>
+                    </group>
+                        <group name="raso" string="Raso prekės nuolaidos" groups="raso_retail.group_raso_user">
+                            <field name="discount_ids" widget="one2many_list" nolabel="1" mode="tree"
+                                   options="{'no_open': True, 'no_create': True}" context="{'active_id': active_id}">
+                            <tree class="robo_tree_in_form">
+                            <field name="shop_id" readonly="0" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="name" required="1"/>
+                            <field name="status" attrs="{'invisible': [('type', '!=', '7')]}"/>
+                            <field name="quantity"/>
+                            <field name="price"/>
+                            <field name="discount_amount"/>
+                            <field name="weekdays"/>
+                            <field name="starts_at"/>
+                            <field name="ends_at"/>
+                            <field name="card_required"/>
+                            <field name="type"/>
+                            <button name="import_product_discount_inline" string="Įkelti nuolaidą" type="object" icon="fa-upload"/>
+                        </tree>
+                    </field>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//sheet" position="after">
+                    <div class="oe_chatter" groups="robo_basic.group_robo_premium_manager">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <!--Backend Form-->
+        <record id="product_template_raso_form_back" model="ir.ui.view">
+            <field name="name">product.template.raso.back</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="import_products" type="object" string="Importuoti į RASO" class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//header" position="after">
+                    <field name="last_update_state" invisible="1"/>
+                    <field name="need_to_update" invisible="1"/>
+                    <field name="importable_to_raso" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'waiting'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Laukiama atsakymo paskutiniam importuotam įrašui</h4></div>
+                    </div>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':[('need_to_update', '=', False)]}">
+                        <div><h4>Įrašo versija naujesnė nei RASO serveryje</h4></div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom:15px;" colspan="4"
+                         attrs="{'invisible':['|', ('last_update_state', '!=', 'rejected'),
+                         ('importable_to_raso', '=', False)]}">
+                        <div><h4>Paskutinis importas į RASO serverį buvo atmestas</h4></div>
+                    </div>
+                </xpath>
+                <xpath expr="//page[@name='general_information']" position="before">
+                    <page string="Raso" name="raso_back_product">
+                        <group name="raso" string="Raso informacija">
+                        <group>
+                            <field name="max_dic"/>
+                            <field name="vat_code" required="1"/>
+                            <field name="dep_no"/>
+                            <field name="extra_qty"/>
+                            <field name="extra_code"/>
+                            <field name="s_date"/>
+                            <field name="s_number"/>
+                            <field name="min_price"/>
+                            <field name="max_price"/>
+                            <field name="supplier_code"/>
+                            <field name="supplier_name"/>
+                        </group>
+                        <group>
+                            <field name="group_code"/>
+                            <field name="age"/>
+                            <field name="refundable"/>
+                            <field name="comment_required"/>
+                            <field name="discount_status" required="1"/>
+                            <field name="disc_points_status" required="1"/>
+                            <field name="start_time"/>
+                            <field name="end_time"/>
+                            <field name="is_weighing"/>
+                            <field name="scale" attrs="{'invisible': [('is_weighing', '=', False)]}"/>
+                            <field name="use_up" attrs="{'invisible': [('is_weighing', '=', False)]}"/>
+                        </group>
+                    </group>
+                        <group string="Raso Importas">
+                        <field name="revision_number_display"/>
+                        <field name="raso_revision"/>
+                    </group>
+                    <group name="raso" string="Raso prekių kainos">
+                    <field name="price_ids" widget="one2many_list" nolabel="1" mode="tree"
+                           options="{'no_open': True, 'no_create': True}">
+                        <tree editable="bottom">
+                            <field name="shop_id"/>
+                            <field name="price_no"/>
+                            <field name="qty"/>
+                            <field name="price"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </tree>
+                        <form>
+                            <field name="shop_id"/>
+                            <field name="price_no"/>
+                            <field name="qty"/>
+                            <field name="price"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </form>
+                    </field>
+                    </group>
+                        <group name="raso" string="Raso prekių nuolaidos">
+                            <field name="discount_ids" widget="one2many_list" nolabel="1" mode="tree"
+                                   options="{'no_open': True, 'no_create': True}">
+                        <tree editable="bottom">
+                            <field name="product_id" attrs="{'readonly': True}"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                            <field name="shop_id"/>
+                            <field name="name" required="1"/>
+                            <field name="status"/>
+                            <field name="quantity"/>
+                            <field name="price"/>
+                            <field name="discount_amount"/>
+                            <field name="amount"/>
+                            <field name="weekdays"/>
+                            <field name="starts_at"/>
+                            <field name="ends_at"/>
+                            <field name="card_required"/>
+                        </tree>
+                        <form>
+                            <field name="product_id" attrs="{'readonly': True}"/>
+                            <field name="shop_id"/>
+                            <field name="name"/>
+                            <field name="status"/>
+                            <field name="quantity"/>
+                            <field name="price"/>
+                            <field name="discount_amount"/>
+                            <field name="amount"/>
+                            <field name="weekdays"/>
+                            <field name="starts_at"/>
+                            <field name="ends_at"/>
+                            <field name="card_required"/>
+                        </form>
+                    </field>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        <!--Functions-->
+        <record model="ir.actions.server" id="import_raso_products_rec_force">
+            <field name="name">Importuoti į Raso (Force)</field>
+            <field name="model_id" ref="raso_retail.model_product_template"/>
+            <field name="code">
+                if user.is_manager():
+                    action = object.browse(context.get('active_ids', False)).with_context(force=True).import_products()
+            </field>
+            <field name="robo_front" eval="0"/>
+        </record>
+        <function name="import_raso_products_action_force" model="product.template"/>
+        <record model="ir.actions.server" id="import_raso_products_rec">
+            <field name="name">Importuoti į Raso</field>
+            <field name="model_id" ref="raso_retail.model_product_template"/>
+            <field name="code">
+                action = object.browse(context.get('active_ids', False)).import_products()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="import_raso_products_action" model="product.template"/>
+        <!--Searches-->
+        <record id="raso_product_template_filter" model="ir.ui.view">
+            <field name="name">raso.product.template.filter</field>
+            <field name="model">product.template</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='pricelist_id']" position="after">
+                    <separator/>
+                    <filter name="need_to_update" domain="[('need_to_update','=', True)]" string='Reikia atnaujinti'/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

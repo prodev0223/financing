@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="e_document_tree_view" model="ir.ui.view">
+            <field name="name">e.document.tree.view</field>
+            <field name="model">e.document</field>
+            <field name="type">multiple_form_tree</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <tree string="Dokumentai" create="0"
+                decoration-danger="display_warning_decorator == True">
+                    <field name="name"/>
+                    <button name="open_related_document" string=""
+                            type="object" icon="fa-link"
+                            groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,
+                            robo_basic.group_robo_edocument_manager"/>
+                    <field name="doc_partner_id" string="Darbuotojas"/>
+                    <field name="document_number"
+                           groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,
+                           robo_basic.group_robo_edocument_manager"/>
+                    <field name="date_from_display"/>
+                    <field name="date_to_display"/>
+                    <field name="create_date" string="Sukūrimo data"/>
+                    <field name="date_signed" string="Pasirašymo data"/>
+                    <field name="approve_status" string="Tiesioginio vadovo tvirtinimas" invisible="0"/>
+                    <field name="state" widget="documentStatus"/>
+                    <field name="view_id" invisible="1"/>
+                    <field name="rejected" invisible="1"/>
+                    <field name="susijes_isakymas_pasirasytas" invisible="1"/>
+                    <field string="Pasirašyti iki" name="reikia_pasirasyti_iki"
+                           groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"/>
+                    <field name="display_warning_decorator" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="e_document_kanban_view" model="ir.ui.view">
+            <field name="name">e.document.kanban.view</field>
+            <field name="model">e.document</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <kanban string="Dokumentai" create="0">
+                    <field name="name"/>
+                    <field name="doc_partner_id" string="Darbuotojas"/>
+                    <field name="create_date" string="Sukūrimo data"/>
+                    <field name="date_signed" string="Pasirašymo data"/>
+                    <field name="state" widget="documentStatus"/>
+                    <field name="view_id" invisible="1"/>
+                    <field name="rejected" invisible="1"/>
+                    <field name="susijes_isakymas_pasirasytas" invisible="1"/>
+                    <field name="reikia_pasirasyti_iki" string="Pasirašyti iki" invisible="1"
+                           groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <span>
+                                            <t t-esc="record.name.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-8">
+                                        <strong>
+                                            <span>
+                                                <t t-esc="record.doc_partner_id.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+                                    <div t-if="record.susijes_isakymas_pasirasytas.value" class="col-xs-4 text-right">
+                                        <strong>
+                                            <i class="icon-checkmark-circle openClass reject-document-icon"
+                                               title="Isakymas pasirašytas"/>
+                                        </strong>
+                                    </div>
+                                    <div t-if="record.rejected.value" class="col-xs-4 text-right">
+                                        <strong>
+                                            <i class="icon-cross-circle cancelClass reject-document-icon"
+                                               title="Atmesta"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span>
+                                            <t t-esc="moment(record.create_date.value).format('YYYY MM DD')"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span class="pull-right text-right">
+                                            <field name="state" widget="kanban_label_selection"
+                                                   options="{'classes': {'draft': 'robo-draft', 'confirm': 'robo-confirm', 'e_signed': 'robo-e_signed', 'cancel': 'robo-cancel'}}"/>
+                                            <!--<field name="state" widget="documentStatus"/>-->
+                                        </span>
+                                    </div>
+                                </div>
+                                <div t-if="record.reikia_pasirasyti_iki and record.reikia_pasirasyti_iki.value"
+                                     class="row mt8"
+                                     groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager">
+                                    <div class="col-xs-7">Reikia pasirašyti iki:</div>
+                                    <div class="col-xs-5">
+                                        <t t-esc="record.reikia_pasirasyti_iki.value"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="e_document_search_view" model="ir.ui.view">
+            <field name="name">e.document.search.view</field>
+            <field name="model">e.document</field>
+            <field name="arch" type="xml">
+                <search string="Dokumentai">
+                    <field name="name"/>
+                    <field name="document_number" string="Dokumento numeris" filter_domain="[('document_number', 'like', self)]"/>
+                    <field name="related_employee_ids" string="Darbuotojas"/>
+                    <!--<field name="doc_partner_id" string="Darbuotojas"/>-->
+                    <!--<field name="e_document_line_ids" string="Darbuotojas grupėje" filter_domain="[('e_document_line_ids.employee_id2', 'ilike', self)]"/>-->
+                    <field name="create_date" string="Sukūrimo data"/>
+                    <field name="date_signed" string="Pasirašymo data"/>
+                    <field name="state" widget="documentStatus"/>
+                    <field name="date_from_display" string="Data nuo" filter_domain="['|',
+                                                                            ('date_from_display', '&gt;=', self),
+                                                                            ('date_to_display', '&gt;=', self)]"/>
+                    <field name="date_to_display" string="Data iki" filter_domain="['|',
+                                                                            ('date_from_display', '&lt;=', self),
+                                                                            ('date_to_display', '&lt;=', self)]"/>
+                    <filter name="draft" string="Laukiantys suformavimo" domain="[('state','=','draft')]"/>
+                    <filter name="confirm" string="Laukiantys pasirašymo"
+                            domain="[('state','=','confirm'), ('multi_user_state', '=', 'pending')]"/>
+                    <filter name="waiting_approval" string="Laukiantys patvirtinimo"
+                            domain="[('approve_status','=','waiting_approval')]"/>
+                    <filter name="e_signed" string="Pasirašyti" domain="['|', ('state','=','e_signed'),
+                                                                        ('multi_user_state', '=', 'signed')]"/>
+                    <separator/>
+                    <filter name="prasymai" string="Prašymai" domain="[('document_type', '=', 'prasymas')]"/>
+                    <filter name="isakymai" string="Įsakymai" domain="[('document_type', '=', 'isakymas')]"/>
+                    <filter name="aktai" string="Aktai" domain="[('document_type', '=', 'act')]"/>
+                    <filter name="kiti" string="Kiti" domain="[('document_type', '=', 'other')]"/>
+                    <separator/>
+                    <filter name="pending_direct_action" string="Laukia tiesioginio veiksmo"
+                            domain="['&amp;',
+                            '|',
+                            '|',
+                            ('state','=','draft'),
+                            '&amp;',
+                            ('state','=','confirm'),
+                            ('multi_user_state', '=', 'pending'),
+                            ('approve_status','=','waiting_approval'),
+                            '|',
+                            ('employee_id1.user_id', '=', uid),
+                            '|',
+                            ('document_type', '!=', 'prasymas'),
+                            '|',
+                            ('employee_id1.department_id.manager_id.user_id', '=', uid),
+                            ('current_user_department_delegate', '=', True)]"/>
+                    <separator/>
+                    <filter name="this_month" string="Šis mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_from_display', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from_display', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_to_display', '&gt;=', (context_today()+relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_to_display', '&lt;=', (context_today()+relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Praeitas mėnuo" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_from_display', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from_display', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_to_display', '&gt;=', (context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_to_display', '&lt;=', (context_today()+relativedelta(months=-1, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="this_year" string="Šie metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_from_display', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from_display', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_to_display', '&gt;=', (context_today()+relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_to_display', '&lt;=', (context_today()+relativedelta(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_year" string="Praeiti metai" domain="['|',
+                                                                        '&amp;',
+                                                                            ('date_from_display', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_from_display', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d')),
+                                                                        '&amp;',
+                                                                            ('date_to_display', '&gt;=', (context_today()+relativedelta(years=-1, month=1, day=1)).strftime('%Y-%m-%d')),
+                                                                            ('date_to_display', '&lt;=', (context_today()+relativedelta(years=-1, month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter name="rejected" string="Atmesti" domain="[('rejected', '=', True)]"/>
+                    <filter name="notrejected" string="Neatmesti" domain="[('rejected', '=', False)]"/>
+                    <separator/>
+                    <filter name="active" string="Aktyvūs" domain="[('active', '=', True)]" groups="base.group_system"/>
+                    <filter name="inactive" string="Neaktyvūs" domain="[('active', '=', False)]"
+                            groups="base.group_system"/>
+                    <group>
+                        <filter name="group_state" string="Būsena" context="{'group_by':'state'}"/>
+                        <filter name="group_create_date" string="Sukūrimo data" context="{'group_by':'create_date'}"/>
+                        <filter name="group_date_signed" string="Pasirašymo data" context="{'group_by':'date_signed'}"/>
+                        <filter name="group_doc_partner_id" string="Darbuotojas"
+                                context="{'group_by':'doc_partner_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="e_document_action" model="ir.actions.act_window">
+            <field name="name">Dokumentai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="header" ref="e_document.header_document_upload"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">multiple_form_tree,kanban,form</field>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'search_default_draft':1,
+                'search_default_confirm':1,
+                'search_default_waiting_approval':1,
+                'search_default_pending_direct_action':1,
+                'search_default_department_delegate_action':1,
+                'robo_header': {'fit': True},
+                }"
+            />
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="e_document_action_badge" model="ir.actions.server">
+            <field name="sequence" eval="5"/>
+            <field name="state">code</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="code">action = model.open_badge_action()</field>
+            <field name="condition">True</field>
+            <field name="name">eDocument badge Action</field>
+            <field name="robo_front">True</field>
+        </record>
+        <record id="e_document_action_badge1" model="ir.actions.act_window">
+            <field name="name">Dokumentai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="header" ref="e_document.header_document_upload"/>
+            <field name="view_mode">multiple_form_tree,kanban,form</field>
+            <field name="robo_menu" ref="e_document_root"/>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'robo_header': {'fit':True},
+                'default_order': 'reikia_pasirasyti_iki,date_signed desc, create_date desc',
+                'search_default_waiting_approval':1,
+                }"
+            />
+            <field name="domain">[
+                '|',
+                    '|',
+                        '|',
+                            '&amp;',
+                                ('approve_status', '=', 'waiting_approval'),
+                                ('user_id', '=', uid),
+                            '&amp;',
+                                ('state', '=', 'confirm'),
+                                '|',
+                                    ('user_ids.user_id', '=', uid),
+                                    ('user_id', '=', uid),
+                        '&amp;',
+                            ('state', 'in', ('confirm', 'draft')),
+                            ('document_type', '=', 'isakymas'),
+                    '&amp;',
+                        '&amp;',
+                            ('state', '=', 'draft'),
+                            ('employee_id1.user_id', '=', uid),
+                        ('template_id.name', '=', 'Prašymas dėl priėmimo į darbą ir atlyginimo mokėjimo'),
+            ]
+            </field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="e_document_action_badge2" model="ir.actions.act_window">
+            <field name="name">Dokumentai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="header" ref="e_document.header_document_upload"/>
+            <field name="view_mode">multiple_form_tree,kanban,form</field>
+            <field name="robo_menu" ref="e_document_root"/>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'robo_header': {'fit':True},
+                'default_order': 'reikia_pasirasyti_iki,date_signed desc, create_date desc',
+                'search_default_waiting_approval':1,
+                }"
+            />
+            <field name="domain">[
+                '|',
+                    '|',
+                        '&amp;',
+                            ('state', '=', 'confirm'),
+                            '|',
+                                ('user_ids.user_id', '=', uid),
+                                ('user_id', '=', uid),
+                        '&amp;',
+                            '&amp;',
+                                '&amp;',
+                                    ('state', '=', 'e_signed'),
+                                    ('approve_status', '=', 'waiting_approval'),
+                                ('document_type', '=', 'prasymas'),
+                            ('template_id.send_manager', '=', True),
+                    '&amp;',
+                        '&amp;',
+                            ('state', '=', 'draft'),
+                            ('employee_id1.user_id', '=', uid),
+                        ('template_id.name', '=', 'Prašymas dėl priėmimo į darbą ir atlyginimo mokėjimo'),
+           ]
+            </field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="e_document_action_badge3" model="ir.actions.act_window">
+            <field name="name">Dokumentai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="header" ref="e_document.header_document_upload"/>
+            <field name="view_mode">multiple_form_tree,kanban,form</field>
+            <field name="robo_menu" ref="e_document_root"/>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'robo_header': {'fit':True},
+                'default_order': 'reikia_pasirasyti_iki,date_signed desc, create_date desc',
+                'search_default_waiting_approval':1,
+                }"
+            />
+            <field name="domain">[
+                '|',
+                    '|',
+                        ('state', 'in', ('confirm', 'draft')),
+                        ('approve_status', '=', 'waiting_approval'),
+                    '&amp;',
+                        '&amp;',
+                            ('state', '=', 'draft'),
+                            ('employee_id1.user_id', '=', uid),
+                        ('template_id.name', '=', 'Prašymas dėl priėmimo į darbą ir atlyginimo mokėjimo'),
+            ]
+            </field>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+        </record>
+        <record id="e_document_template_tree_view" model="ir.ui.view">
+            <field name="name">e.document.template.tree</field>
+            <field name="model">e.document.template</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="e_document_template_form_view" model="ir.ui.view">
+            <field name="name">e.document.template.form</field>
+            <field name="model">e.document.template</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <h2 colspan="2">
+                                <field nolabel="1" name="name"/>
+                            </h2>
+                            <field name="date_from_field_name"/>
+                            <field name="date_to_field_name"/>
+                            <field name="header"/>
+                            <field name="body"/>
+                            <field name="footer"/>
+                            <field name="force_header"/>
+                            <field name="force_body"/>
+                            <field name="force_footer"/>
+                            <field name="python_code"/>
+                            <field name="send_manager"/>
+                            <field name="is_signable_by_delegate"/>
+                            <field name="sign_mail_channel_ids" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="e_document_template_tree_action" model="ir.actions.act_window">
+            <field name="name">E document template</field>
+            <field name="res_model">e.document.template</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record id="general_document_view" model="ir.ui.view">
+            <field name="name">E document</field>
+            <field name="model">e.document</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Document">
+                    <header>
+                        <button name="confirm" type="object" string="Patvirtinti" states="draft"/>
+                        <button name="sign" type="object" class="oe_highlight" string="Pasirašyti"
+                                confirm="Patvirtinu, kad perskaičiau ir susipažinau."
+                                attrs="{'invisible': ['|',('signed_multiple', '=', True),('state','!=','confirm')]}"/>
+                        <button name="open_invite_to_sign_wizard" type="object" class="oe_highlight"
+                                string="Kviesti pasirašyti"
+                                groups="robo_basic.group_robo_free_manager, robo_basic.group_robo_premium_manager"
+                                attrs="{'invisible': ['|', ('uploaded_document', '=', False), ('state', '!=', 'confirm')]}"/>
+                        <field name="signed_multiple" invisible="1"/>
+                        <!--<button name="set_draft" type="object" string="Atstatyti į juodraštį" states="confirm"/>-->
+                        <field name="uploaded_document" invisible="1"/>
+                        <button name="action_download_signing_summary" type="object" string="Spausdinti"
+                                attrs="{'invisible': ['|', ('uploaded_document', '=', False), ('state', 'not in', ['confirm', 'e_signed'])]}"/>
+                        <button name="cancel" type="object" string="Atšaukti"
+                                confirm="Ar tikrai norite atšaukti dokumentą?" states="draft,confirm"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class=" oe_right oe_button_box">
+                            <button name="toggle_active" type="object"
+                                    groups="base.group_system"
+                                    class="oe_stat_button"
+                                    icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                        </div>
+                        <notebook>
+                            <page name="document" string="Dokumentas">
+                                <field name="generated_document" widget="pdf_viewer" states="confirm,e_signed"
+                                       filename="file_name"/>
+                                <field name="file_name" invisible="1"/>
+                                <label for="generated_document" string="Atsisiųsti" states="confirm,e_signed"/>
+                                <field name="generated_document_download" string="" states="confirm,e_signed"
+                                       filename="file_name"/>
+                            </page>
+                            <page name="signed_users" string="Pasirašymas" attrs="{'invisible': [('user_ids', '=', [])]}">
+                                <field name="user_ids" nolabel="1">
+                                    <tree decoration-muted="signed_by_delegate" create="0">
+                                        <field name="user_id" readonly="1"/>
+                                        <field name="date"/>
+                                        <field name="state"/>
+                                        <field name="signed_by_delegate" invisible="1"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="user_id" readonly="1" options="{'no_open':1, 'no_create':1}"/>
+                                            <field name="date"/>
+                                            <field name="state"/>
+                                            <field name="signed_by_delegate" invisible="1"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <menuitem id="e_document_root" parent="robo.menu_start"
+                  name="eDokumentai"
+                  sequence="11"
+                  web_icon="e_document,static/description/icon.png"
+                  action="e_document_action"
+                  force_web_icon="icon-files,none,none"
+                  robo_front="True"
+                  searchable="True"
+                  tags="edokumentai"
+        />
+        <!--<record model="ir.ui.menu" id="e_document_root">-->
+            <!--<field name="web_icon">icon-files,none,none</field>-->
+        <!--</record>-->
+        <menuitem id="e_document_tree_menu"
+                  name="All documents"
+                  parent="e_document_root"
+                  action="e_document_action"
+                  sequence="1"
+                  robo_front="True"
+        />
+
+        <record id="robo_issue_form" model="ir.ui.view">
+            <field name="name">robo.issue.form</field>
+            <field name="model">robo.issue</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Kiti klausimai" class="robo_other_questions">
+                    <sheet>
+                        <h1 class="mt0">
+                            <span class='text-center o_horizontal_separator'>Pateikti užklausą</span>
+                        </h1>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="body" required="0"/>
+                            <field name="file" widget="dragDrop" filename="name_attachment" filemime="mime_attachment"/>
+                            <field name="name_attachment" invisible="1"/>
+                            <field name="mime_attachment" invisible="1"/>
+                            <button name="submit" class="oe_highlight" type="object" string="Pateikti"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="robo_issue_form_done" model="ir.ui.view">
+            <field name="name">robo.issue.form.done</field>
+            <field name="model">robo.issue</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form string="Kiti klausimai">
+                    <sheet>
+                        <group colspan="2">
+                            <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="2">
+                                Jūsų užklausa priimta. Susisieksime artimiausiu metu.
+                            </div>
+                            <button name="get_back" type="object" string="Grįžti į pradžią" colspan="2"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="robo_issue_action" model="ir.actions.act_window">
+            <field name="name">Kiti klausimai</field>
+            <field name="res_model">robo.issue</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="view_id" ref="robo_issue_form"/>
+        </record>
+        <record id="robo_issue_action_done" model="ir.actions.act_window">
+            <field name="name">Kiti klausimai</field>
+            <field name="res_model">robo.issue</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="view_id" ref="robo_issue_form_done"/>
+        </record>
+        <menuitem id="menu_robo_issue"
+                  name="Kiti klausimai"
+                  parent="e_document_root"
+                  action="robo_issue_action"
+                  robo_front="True"
+        />
+        <menuitem id="menu_robo_client_ticket_wizard"
+                  name="Kiti klausimai"
+                  parent="e_document_root"
+                  action="robo.robo_client_ticket_wizard_action"
+                  robo_front="True"
+        />
+        <record id="menu_robo_client_ticket_wizard" model="ir.ui.menu">
+            <field name="searchable" eval="False"/>
+            <field name="sequence" eval="100"/>
+        </record>
+        <record id="menu_robo_issue" model="ir.ui.menu">
+            <field name="searchable" eval="False"/>
+            <field name="sequence" eval="100"/>
+        </record>
+        <record id="nutraukimo_kodai_tree_view" model="ir.ui.view">
+            <field name="name">dk.nutraukimo.straipsniai.tree.view</field>
+            <field name="model">dk.nutraukimo.straipsniai</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Nutraukimo straipsniai" create="0">
+                    <field name="straipsnis"/>
+                    <field name="dalis"/>
+                    <field name="punktas"/>
+                    <field name="straipsnio_pav"/>
+                    <field name="detalizavimas"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="e_document_backend_view_tree" model="ir.ui.view">
+            <field name="inherit_id" ref="e_document.e_document_tree_view"/>
+            <field name="mode">primary</field>
+            <field name="model">e.document</field>
+            <field name="name">eDocuments</field>
+            <field name="robo_front">False</field>
+            <field name="type">multiple_form_tree</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field" position="after"/>
+            </field>
+        </record>
+
+        <record id="e_document_backend_action" model="ir.actions.act_window">
+            <field name="name">eDocuments</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">multiple_form_tree,form</field>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'search_default_draft':1,
+                'search_default_confirm':1,
+                'search_default_waiting_approval':1,
+                'search_default_pending_direct_action':1,
+                'search_default_department_delegate_action':1,
+                'robo_header': {'fit': True},
+                }"
+            />
+            <field name="header" eval="False"/>
+        </record>
+
+        <menuitem id="menu_e_document_backend_root"
+            name="eDocuments"
+            web_icon="e_document,static/description/icon.png"
+            groups="robo_basic.group_robo_premium_accountant"
+            action="e_document_backend_action"
+            sequence="10"
+        />
+
+        <menuitem id="menu_e_document_backend_tree"
+                  name="eDocuments"
+                  action="e_document_backend_action"
+                  parent="menu_e_document_backend_root"
+                  sequence="1"
+                  groups="robo_basic.group_robo_premium_accountant"/>
+
+        <menuitem id="menu_edocument_templates"
+                  name="eDocument templates"
+                  parent="menu_e_document_backend_root"
+                  action="e_document_template_tree_action"
+                  sequence="2"
+                  groups="base.group_system"/>
+    </data>
+    <record id="delegate_form_view" model="ir.ui.view">
+        <field name="name">e.document.delegate.form</field>
+        <field name="model">e.document.delegate</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="employee_id"/>
+                        <field name="date_start"/>
+                        <field name="date_stop"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="delegate_tree_view" model="ir.ui.view">
+        <field name="name">e.document.delegate.tree</field>
+        <field name="model">e.document.delegate</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom" import="0">
+                <field name="employee_id"/>
+                <field name="date_start"/>
+                <field name="date_stop"/>
+            </tree>
+        </field>
+    </record>
+    <record id="e_document_delegate_action" model="ir.actions.act_window">
+        <field name="name">Įgaliotiniai</field>
+        <field name="res_model">e.document.delegate</field>
+        <field name="view_mode">tree_robo,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('delegate_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('delegate_form_view')})]"/>
+        <field name="robo_help" type="html">
+            <p class="oe_view_robo_nocontent_search">
+                Ši jūsų užklausa negrąžino jokių rezultatų
+            </p>
+        </field>
+        <field name="context">{'robo_header':{}}</field>
+    </record>
+
+    <record id="e_document_template_settings_form" model="ir.ui.view">
+            <field name="name">e.document.template.settings.form</field>
+            <field name="model">robo.company.settings</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="eDokumentų šablonų nustatymai">
+                            <field name="manager_restricted_document_templates"
+                                   domain="[('is_signable_by_delegate', '=', True)]">
+                                <tree editable="bottom" class="robo_tree_in_form">
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="save_e_document_template_settings" string="Išsaugoti"
+                                type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    <record id="e_document_template_settings_action" model="ir.actions.act_window">
+            <field name="name">eDokumentų šablonų nustatymai</field>
+            <field name="res_model">robo.company.settings</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="e_document_template_settings_form"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+    <record id="delegate_company_settings" model="ir.ui.view">
+        <field name="name">e.document.delegate.company.settings</field>
+        <field name="model">robo.company.settings</field>
+        <field name="inherit_id" ref="robo.company_settings_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='other_settings']" position="inside">
+                <button name="%(e_document.e_document_delegate_action)d" string="Įgaliotiniai"
+                        type="action" class="oe_link" groups="robo_basic.group_robo_premium_manager"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="company_settings_form" model="ir.ui.view">
+            <field name="name">company.settings.form</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='other_settings']" position="inside">
+                    <button name="%(e_document.e_document_template_settings_action)d"
+                        string="eDokumentų šablonų nustatymai" type="action" class="oe_link"/>
+                </xpath>
+            </field>
+        </record>
+
+    <menuitem id="menu_delegate_settings_search"
+                  name="Įgaliotiniai"
+                  parent="robo.menu_company_settings_search"
+                  action="e_document.e_document_delegate_action"
+                  groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="įgaliotiniai"
+        />
+    <menuitem id="menu_edocument_template_settings_search"
+                  name="eDokumentų šablonų nustatymai"
+                  parent="robo.menu_company_settings_search"
+                  action="e_document.e_document_template_settings_action"
+                  groups="robo_basic.group_robo_premium_accountant"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="edokumentų,šablonų,nustatymai"
+        />
+
+    <record id="avansine_apyskaita_sign_report" model="ir.ui.view">
+        <field name="name">avansine.apyskaita.sign.report</field>
+        <field name="model">cashbalance.wizard</field>
+        <field name="inherit_id" ref="avansine_apyskaita.cashbalance_wizard"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='print_report']" position="after">
+                <field name="show_button_to_manager" invisible="1"/>
+                <button name="invite_sign" string="Kviesti pasirašyti" type="object" class="oe_highlight"
+                        groups="robo_basic.group_robo_premium_accountant"/>
+                <button name="invite_sign" string="Kviesti pasirašyti" type="object" class="oe_highlight"
+                        groups="robo_basic.group_robo_premium_manager"
+                        attrs="{'invisible': [('show_button_to_manager', '=', False)]}"
+                        confirm="By inviting to sign You confirm that data recorded on advance accounting is correct. If You are unsure, contact the accountant."/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="document_upload_form">
+            <field name="name">Įkelti Dokumentus</field>
+            <field name="model">e.document.upload</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirm" type="object" string="Kviesti pasirašyti" class="oe_highlight"/>
+                        <button name="delete_employees" type="object" string="Ištrinti darbuotojus" class="oe_highlight"/>
+                    </header>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                              Šiame vedlyje galite įkelti pasirinktą .pdf dokumentą ir pakviesti darbuotojus pasirašyti.
+                    </div>
+                    <br/>
+                    <field name="nbr_of_attachments" invisible="1"/>
+                    <field name="user_attachment_ids" invisible="1"/>
+                    <field name="attachment_drop_lock" invisible="1"/>
+                    <field name="unique_wizard_id" invisible="1"/>
+                    <widget type="robo_attach_files"/>
+                    <sheet string="Document Upload">
+                        <group string="Dokumento informacija" colspan="4">
+                            <field name="topic"/>
+                            <field name="invite_to_sign_new_users"/>
+                        </group>
+                        <field name="user_ids" invisible="1"/>
+                        <group string="Darbuotojų sąrašas" colspan="4">
+                            <field name="user_items" nolabel="1" widget="one2many_list">
+                                <tree editable="bottom" options="{'no_create': True, 'no_open': True}"
+                                      class="robo_tree_in_form">
+                                    <field name="user_id" options="{'no_create': True, 'no_open': True}"
+                                           domain="[('id', 'not in', parent.user_ids and parent.user_ids[0][2])]"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+    </record>
+
+    <record id="upload_document_action" model="ir.actions.act_window">
+            <field name="name">Dokumentų įkėlimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document.upload</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="header" ref="e_document.header_document_upload"/>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="view_id" ref="document_upload_form"/>
+            <field name="context" eval="{
+                'search_add_custom': False,
+                'search_default_draft':1,
+                'search_default_confirm':1,
+                'robo_header': {'fit': True},
+                }"
+            />
+        </record>
+    <record model="ir.actions.server" id="server_action_download_f">
+            <field name="name">Atsisiųsti PDF</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="code">
+                    action = object.browse(context.get('active_ids', False)).action_download()
+            </field>
+            <field name="robo_front" eval="1"/>
+        </record>
+        <function name="server_action_download" model="e.document"/>
+
+    <record model="ir.actions.server" id="create_confirm_all_documents_action">
+        <field name="name">Confirm All</field>
+        <field name="model_id" ref="e_document.model_e_document"/>
+        <field name="code">
+objects = object.browse(context.get('active_ids', False)).filtered(lambda d: d.state == 'e_signed' and d.allow_approve)
+objects.action_approve()
+        </field>
+        <field name="robo_front" eval="1"/>
+    </record>
+    <function name="create_confirm_all_documents_action" model="e.document"/>
+
+    <record model="ir.actions.server" id="create_reject_all_documents_action">
+        <field name="name">Reject All</field>
+        <field name="model_id" ref="e_document.model_e_document"/>
+        <field name="code">
+objects = object.browse(context.get('active_ids', False))
+objects.filtered(lambda d: (d.state == 'e_signed' or d.document_type == 'prasymas') and d.allow_reject)
+objects.action_reject()
+        </field>
+        <field name="robo_front" eval="1"/>
+    </record>
+    <function name="create_reject_all_documents_action" model="e.document"/>
+
+    <record id="employee_business_trip_line_form" model="ir.ui.view">
+            <field name="name">e.document.business.trip.employee.line.form</field>
+            <field name="model">e.document.business.trip.employee.line</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form name="Darbuotojo komandiruot&#x117;s nustatymai" create="false">
+                    <group colspan="4" col="4" attrs="{'readonly': [('line_is_editable', '=', False)]}">
+                        <field name="line_is_editable" invisible="1"/>
+                        <field name="e_document_id" invisible="1"/>
+                        <group colspan="4" col="4" attrs="{'readonly': [('line_is_editable', '=', False)]}">
+                            <group colspan="2" col="2">
+                                <field name="employee_id" options="{'no_open': True, 'no_create': True}" readonly="1"/>
+                                <field name="allowance_amount" readonly="1"/> <!-- TODO self is new_obj in this view, thus no e_doc_id, thus onchange doesn't work, tempfix - readonly-->
+                                <field name="allowance_percentage" readonly="1"/> <!-- TODO self is new_obj in this view, thus no e_doc_id, thus onchange doesn't work, tempfix - readonly-->
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="journey_time" attrs="{'readonly': [('line_is_editable', '=', False)]}"/>
+                                <field name="departure_journey_start" attrs="{'readonly': [('line_is_editable', '=', False)], 'invisible': [('journey_time', '!=', 'other')], 'required': [('journey_time', '=', 'other')]}"/>
+                                <field name="departure_journey_end" attrs="{'readonly': [('line_is_editable', '=', False)], 'invisible': [('journey_time', '!=', 'other')], 'required': [('journey_time', '=', 'other')]}"/>
+                                <field name="return_journey_start" attrs="{'readonly': [('line_is_editable', '=', False)], 'invisible': [('journey_time', '!=', 'other')], 'required': [('journey_time', '=', 'other')]}"/>
+                                <field name="return_journey_end" attrs="{'readonly': [('line_is_editable', '=', False)], 'invisible': [('journey_time', '!=', 'other')], 'required': [('journey_time', '=', 'other')]}"/>
+                            </group>
+                        </group>
+                        <group colspan="4" col="4" attrs="{'readonly': [('line_is_editable', '=', False)]}">
+                            <field name="extra_worked_day_ids" colspan="4" attrs="{'readonly': [('line_is_editable', '=', False)]}">
+                                <tree create="false" editable="top" delete="false" open="false">
+                                    <field name="date" attrs="{'readonly': True}"/>
+                                    <field name="worked" attrs="{'readonly': False}"/>
+                                    <field name="pay_allowance" attrs="{'readonly': False}"/>
+                                </tree>
+                            </field>
+                            <field name="any_extra_days_worked" invisible="1" colspan="4"/>
+                            <field name="journey_has_to_be_compensated" invisible="1" colspan="4"/>
+                            <field name="overtime_compensation" attrs="{'invisible': [('any_extra_days_worked', '=', False)], 'readonly': [('line_is_editable', '=', False)], 'required': [('any_extra_days_worked', '=', True)]}" colspan="4"/>
+                            <field name="journey_compensation" attrs="{'invisible': [('journey_has_to_be_compensated', '=', False)], 'readonly': [('line_is_editable', '=', False)], 'required': [('journey_has_to_be_compensated', '=', True)]}" colspan="4"/>
+                            <field name="journey_amount_to_be_compensated" attrs="{'invisible': [('journey_has_to_be_compensated', '=', False)]}" colspan="4"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+    <data noupdate="1">
+        <record id="robo_central_server" model="ir.config_parameter">
+            <field name="key">robo.central_server</field>
+            <field name="value">http://10.8.0.1:8069</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_system')])]"/>
+        </record>
+        <record id="robo_server_database" model="ir.config_parameter">
+            <field name="key">robo.robo_server_database</field>
+            <field name="value">robo_internal</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_system')])]"/>
+        </record>
+        <record id="robo_server_username" model="ir.config_parameter">
+            <field name="key">robo.robo_server_username</field>
+            <field name="value">robo</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_system')])]"/>
+        </record>
+        <record id="robo_server_password" model="ir.config_parameter">
+            <field name="key">robo.robo_server_password</field>
+            <field name="value">robo</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_system')])]"/>
+        </record>
+    </data>
+</odoo>

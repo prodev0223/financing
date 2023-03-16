@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.actions.act_window" id="sl_general_report.open_cash_flow">
+            <field name="header" ref="robo.front_wizard_default_header"/>
+            <field name="robo_menu" ref="robo.menu_kita"/>
+        </record>
+
+        <menuitem id="menu_cash_flow_search_report"
+                  name="Pinigų srautai"
+                  groups="robo_basic.group_robo_premium_manager"
+                  parent="robo.menu_ataskaitos_search"
+                  action="sl_general_report.open_cash_flow"
+                  robo_front="True"
+                  sequence="50"
+                  searchable="True"
+                  tags="pinigų,srautai"
+        />
+    </data>
+</odoo>

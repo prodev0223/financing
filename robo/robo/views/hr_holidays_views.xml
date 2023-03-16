@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_holidays_bank_extensions" model="ir.ui.view">
+            <field name="name">hr.holidays.bank.extensions.form</field>
+            <field name="model">hr.holidays</field>
+            <field name = "type">form</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_refuse']" position="after">
+                    <button string="Generuoti mokėjimą"
+                            name="sepa_download" states="validate"
+                            type="object"
+                            class="oe_highlight"
+                            context="{'sepa':1}"
+                            attrs="{'invisible': [('ismokejimas', '!=', 'before_hand')]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

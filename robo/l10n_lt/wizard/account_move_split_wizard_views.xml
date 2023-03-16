@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_move_split_wizard_form" model="ir.ui.view">
+            <field name="name">account.move.split.wizard.form</field>
+            <field name="model">account.move.split.wizard</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Skaidyti žurnalo įrašą">
+                    <sheet>
+                        <group string="Skaidyti žurnalo įrašą">
+                            <div>
+                                <p>
+                                    Šis vedlys išskaidys pasirinktą žurnalo įrašą nustatytam periodui.
+                                </p>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="date_from" required="1"/>
+                            <field name="number_of_months" required="1"/>
+                            <field name="account_id" required="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="split_account_move" type="object" string="Skaidyti" class="oe_highlight"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

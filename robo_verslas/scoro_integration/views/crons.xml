@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--Cron jobs-->
+        <record id="cron_re_create_daily_data_ir" model="ir.cron">
+          <field name="name">Re-create SCORO Data</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">days</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">scoro.data.fetcher</field>
+          <field name="function">cron_data_recreate</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=23, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="args">()</field>
+        </record>
+        <record id="cron_fetch_daily_data_ir" model="ir.cron">
+          <field name="name">Fetch SCORO Data</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">days</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">scoro.data.fetcher</field>
+          <field name="function">cron_fetch_daily_data</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=21, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="args">()</field>
+        </record>
+        <record id="cron_fetch_partner_list_ir" model="ir.cron">
+          <field name="name">Fetch SCORO Partners</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">weeks</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">scoro.data.fetcher</field>
+          <field name="function">cron_fetch_partner_list</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=21, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="args">()</field>
+        </record>
+        <record id="cron_fetch_tax_list_ir" model="ir.cron">
+          <field name="name">Fetch SCORO Taxes</field>
+          <field name="interval_number">2</field>
+          <field name="interval_type">weeks</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">scoro.data.fetcher</field>
+          <field name="function">cron_fetch_tax_list</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=21, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

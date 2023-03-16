@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<t t-name="Rekvizitai">
+<t t-if="widget.get('effective_readonly')">
+    <!--<a t-if="!widget.options.no_open" class="o_form_uri" href="#"/>-->
+    <!--<span t-if="widget.options.no_open"/>-->
+    <span/>
+</t>
+<div t-if="!widget.get('effective_readonly')" t-att-class="'o_form_field_many2one' + ((widget.options.no_open)? '' : ' o_with_button')">
+    <div class="o_form_input_dropdown">
+        <input type="text" class="o_form_input"
+            t-att-barcode_events="widget.options.barcode_events"
+            t-att-id="widget.id_for_label"
+            t-att-tabindex="widget.node.attrs.tabindex"
+            t-att-autofocus="widget.node.attrs.autofocus"
+            t-att-placeholder="widget.node.attrs.placeholder"/>
+        <!--<span class="o_dropdown_button" draggable="false"/>-->
+    </div>
+    <!--<button type="button" t-if="!widget.options.no_open" class="fa fa-external-link btn btn-default o_external_button" tabindex="-1" draggable="false"/>-->
+</div>
+</t>
+
+</templates>

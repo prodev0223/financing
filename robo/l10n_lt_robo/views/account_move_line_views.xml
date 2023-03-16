@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="l10n_lt.account_move_line_robo_front_view_form" model="ir.ui.view">
+            <field name="robo_front" eval="True"/>
+        </record>
+        <record id="l10n_lt.account_move_line_robo_front_view_tree" model="ir.ui.view">
+            <field name="robo_front" eval="True"/>
+        </record>
+
+        <record id="l10n_lt.account_move_line_robo_front_action" model="ir.actions.act_window">
+            <field name="view_mode">tree_robo,form</field>
+            <field name="robo_front" eval="True"/>
+            <field name="context" eval="{'robo_header': {'fit':True},}"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('l10n_lt.account_move_line_robo_front_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('l10n_lt.account_move_line_robo_front_view_form')})]"/>
+        </record>
+    </data>
+</odoo>

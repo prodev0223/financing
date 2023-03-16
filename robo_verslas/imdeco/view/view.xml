@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="res_partner_rivile_kodas">
+            <field name="name">res.partner.rivile.kodas</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='category_id']" position="before">
+                    <field name="rivile_kodas"/>
+                    <field name="rivile_saskaitu_rysys"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="rivile_export_wizard_form">
+            <field name="name">rivile.export.wizard.form</field>
+            <field name="model">rivile.export.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Pirkimų eksportas EIP formatu">
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <footer>
+                        <button name="export" string="Generuoti" type="object"/>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_rivile_export_wizard">
+            <field name="name">Pirkimų eksportas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">rivile.export.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="rivile_export_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem
+                name="Rivilė eksportas"
+                id="menu_rivile_export_wizard"
+                parent="account.menu_finance_entries"
+                sequence="99"
+                action="action_rivile_export_wizard"
+        />
+        <record model="ir.ui.view" id="rivile_export_wizard_download_form">
+            <field name="name">rivile.export.wizard.download.form</field>
+            <field name="model">rivile.export.wizard.download</field>
+            <field name="arch" type="xml">
+                <form string="EIP atsisiuntimas">
+                    <group>
+                        <field name="data_invoices" nolabel="1" filename="filename_invoices"/>
+                        <field name="filename_invoices" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="data_partners" nolabel="1" filename="filename_partners"/>
+                        <field name="filename_partners" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Uždaryti" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="department_code_form_view">
+            <field name="name">department.code.form</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="robo.new_department_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="code" string="Kodas"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="account_invoice_department_code_form_view">
+            <field name="name">department.code.extension.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.robo_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fiscal_position_id']" position="after">
+                    <field name="department_id" string="Skyrius" groups="robo_basic.group_robo_premium_accountant" readonly="0" context="{'form_view_ref':'robo.new_department_form'}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="cron_imdeco_assign_departments" model="ir.cron">
+            <field name="name">Assign departments to invoices</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+            <field name="model">account.invoice</field>
+            <field name="function">cron_assign_departments</field>
+            <field name="args">()</field>
+        </record>
+        <record model="ir.ui.view" id="hr_employee_add_rivile_avansine_saskaita">
+            <field name="name">hr.employee.rivile.avansine.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="rivile_avansine_saskaita" string="Rivilės avansinė sąskaita"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

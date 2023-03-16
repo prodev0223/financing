@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="base_view_action_act_window_robo_front" model="ir.ui.view">
+            <field name="name">base.view.action.act.window.robo.front</field>
+            <field name="model">ir.actions.act_window</field>
+            <field name="inherit_id" ref="base.view_window_action_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='target']" position="after">
+                    <field name="robo_front"/>
+                </xpath>
+            </field>
+        </record>
+
+        <delete id="account.action_cash_box_out" model="ir.actions.act_window"/>
+        <delete id="account.action_cash_box_in" model="ir.actions.act_window"/>
+    </data>
+</odoo>

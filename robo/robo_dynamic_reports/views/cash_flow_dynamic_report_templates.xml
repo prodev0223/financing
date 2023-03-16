@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="CashFlowPDFHeader">
+            <h2>Cash Flow Statement</h2>
+            <h4>(Preliminary report)</h4>
+        </template>
+
+        <template id="CashFlowPDFFooter">
+            <div class="row mt32 xls_include">
+                    <div class="col-xs-10">
+                        <strong>
+                            <p>Net increase in cash and cash equivalents:</p>
+                        </strong>
+                    </div>
+                    <div class="col-xs-2">
+                        <span t-esc="period_balance"
+                              t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/>
+                    </div>
+                </div>
+                <div class="row mt32 xls_include">
+                    <div class="col-xs-10">
+                        <strong>
+                            <p>Cash and Cash equivalents, beginning of year:</p>
+                        </strong>
+                    </div>
+                    <div class="col-xs-2">
+                        <span t-esc="beginning_balance"
+                              t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/>
+                    </div>
+                </div>
+                <div class="row mt32 xls_include">
+                    <div class="col-xs-10">
+                        <strong>
+                            <p>Cash and cash equivalents, closing balance:</p>
+                        </strong>
+                    </div>
+                    <div class="col-xs-2">
+                        <span t-esc="end_balance"
+                              t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/>
+                    </div>
+                </div>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="guru_account_invoice_extend" model="ir.ui.view">
+            <field name="name">account.invoice.extend.guru</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='first_column']" position="inside">
+                    <field name="batch_number"/>
+                    <field name="unloading_address_type"/>
+                    <field name="unloading_address" attrs="{'invisible':[('unloading_address_type', '!=', 'enter')]}"/>
+                    <field name="unloading_address_id" attrs="{'invisible':[('unloading_address_type', '!=', 'select')]}"/>
+                    <field name="butchery_id" required="True"/>
+                    <field name="loading_time"/>
+                    <field name="estimated_delivery_time"/>
+                    <field name="courier_id" context="{'form_view_ref': 'robo.open_employees_action_new_form'}"
+                           options="{'no_create': True}"/>
+                    <field name="carrier_id" options="{'no_create': True, 'no_open': True}"/>
+                    <field name="vehicle_driver_id" options="{'no_create': True, 'no_open': True}"/>
+                    <field name="vehicle_name"/>
+                    <field name="expiration_date"/>
+                </xpath>
+            </field>
+        </record>
+        <template id="guru_report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+            <xpath expr="//div[@class='mt32'][1]" position="attributes">
+                <attribute name="class"> </attribute>
+                <attribute name="style">font-size: 13px;</attribute>
+            </xpath>
+            <xpath expr="//div[@class='companies']" position="attributes">
+                <attribute name="style">font-size: 13px;</attribute>
+            </xpath>
+            <xpath expr="//t[@t-if='show_description == 1']" position="after">
+                <br> </br>
+                <div class="companies" >
+                    <p><span style="font-style: italic; font-size: 13px;">
+                        UAB “Jautienos guru” produkciją ruošia pagal įdiegtą mėsos išpjaustymo cecho "Rizikos veiksnių analizės ir svarbiųjų valdymo taškų sistemą" ir patvirtintą Valstybinės maisto ir veterinarijos tarnybos veterinarinį numerį LT84-11 EB.
+                    </span></p>
+                    <div class="left" style="font-size: 12px;">
+                            <p><span>Gimė - Lietuva</span></p>
+                            <p><span>Užauginta - Lietuva</span></p>
+                            <p><span>Paskersta - <span t-field="o.butchery_id"/></span></p>
+                            <p><span>Išpjaustyta - Lietuva 84-11 EB</span></p>
+                            <p><span>Laikymo sąlygos: 0-+2C; 0-+4C</span></p>
+                        <t t-if="o.batch_number">
+                            <p><span>Partijos numeris: <b>JG<span t-field="o.batch_number"/></b></span></p>
+                        </t>
+                        <t t-if="o.expiration_date">
+                             <p><span>Tinka vartoti iki: <span t-field="o.expiration_date"/></span></p>
+                        </t>
+                            <p><span>Siuntėjas: UAB "Jautienos guru"</span></p>
+                        <t t-if="o.partner_id.display_name">
+                            <p><span>Gavėjas:  <span t-field="o.partner_id.name"/></span></p>
+                        </t>
+                        <t t-if="o.carrier_id">
+                            <p><span>Vežėjas: <span t-field="o.carrier_id.display_name"/></span></p>
+                        </t>
+                    </div>
+                    <div class="right" style="font-size: 12px;">
+                        <p><span>Pakrovimo vieta: Valių g. 25B, Giedručiai, Šakių r.</span></p>
+                        <t t-if="o.loading_time">
+                            <p><span>Pakrovimo laikas: <span t-field="o.loading_time"/></span></p>
+                        </t>
+                        <t t-if="o.unloading_address_type == 'enter'">
+                        <t t-if="o.unloading_address">
+                            <p><span style="font-weight: bold;">Iškrovimo vieta: <span t-field="o.unloading_address"/></span></p>
+                        </t>
+                        </t>
+                        <t t-if="o.unloading_address_type == 'select'">
+                        <t t-if="o.unloading_address_id">
+                            <p><span style="font-weight: bold;">Iškrovimo vieta: <span t-field="o.unloading_address_id.name"/></span></p>
+                        </t>
+                        </t>
+                        <t t-if="o.estimated_delivery_time">
+                            <p><span>Numatomas pristatymo laikas: <span t-field="o.estimated_delivery_time"/></span></p>
+                        </t>
+                        <t t-if="o.courier_id">
+                            <p><span>Krovinį išdavė: <span t-field="o.courier_id"/></span></p>
+                        </t>
+                        <t t-if="o.vehicle_driver_id">
+                            <p><span>Vairuotojas: <span t-field="o.vehicle_driver_id.display_name"/></span></p>
+                        </t>
+                        <t t-if="o.vehicle_name">
+                            <p><span>Automobilis: <span t-field="o.vehicle_name"/></span></p>
+                        </t>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

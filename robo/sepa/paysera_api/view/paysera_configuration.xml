@@ -1,0 +1,135 @@
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="form_paysera_configuration" model="ir.ui.view">
+            <field name="name">form.paysera.configuration</field>
+            <field name="model">paysera.configuration</field>
+            <field name="arch" type="xml">
+                <form string="Paysera configuration" create="0" delete="0">
+                    <header>
+                        <button name="reset_api_settings" string="Reset API settings"
+                                type="object" class="oe_highlight"
+                                confirm="This action will reset API settings to default, do you wish to continue?"/>
+                        <button name="deactivate_api" string="Deactivate API" type="object"
+                                attrs="{'invisible': [('api_state', 'not in', ['working', 'expired_keys'])]}"
+                                class="oe_highlight"/>
+                        <field name="api_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="Paysera API key configuration">
+                            <group>
+                                <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                    Welcome to the Paysera integration configuration wizard.
+                                    <br/>
+                                    To initiate integration, you must first select what mode of integration you will be
+                                    using, partial integration or full integration.
+                                    Partial integration is used only to collect statements and real time balance,
+                                    while full integration also enables you to make transfers from the system.
+                                    If you want to use full integration you must enter the Paysera API keys - Client ID
+                                    and MAC key.
+                                    (You can receive these keys by signing a personal contract with Paysera)
+                                    After entering the keys, click the button below
+                                    - You will be redirected to Paysera Bank, then you will have to log in
+                                    and confirm access so Robolabs can reach this information.
+                                    <b>IMPORTANT!</b>
+                                    After authentication in the Paysera system and confirmation of the access,
+                                    you <b>MUST</b> return to Robolabs by
+                                    using the link provided by us, if you do not do so, the configuration may fail.
+                                </div>
+                            </group>
+                            <group col="2">
+                                <field name="api_mode" required="1"/>
+                                <field name="paysera_tr_api_client_id"
+                                       attrs="{'invisible': [('api_mode', '!=', 'full_integration')],
+                                               'required': [('api_mode', '=', 'full_integration')]}"/>
+                                <field name="paysera_tr_api_mac_key" password="1"
+                                       attrs="{'invisible': [('api_mode', '!=', 'full_integration')],
+                                               'required': [('api_mode', '=', 'full_integration')]}"/>
+                            </group>
+                            <group col="2">
+                                <button name="initiate_oauth" class="oe_highlight" type="object"
+                                        string="Click here to authorize Robolabs access to your Paysera account!"/>
+                            </group>
+                        </group>
+                        <group>
+                            <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;">
+                                After external authentication
+                                <b>IGNORE THE WARNING THAT PAYSERA SHOWS REGARDING THE RETURN ADDRESS.</b>
+                                Continue with the provided link.
+                            </div>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'failed')]}">
+                            <group col="1">
+                                <div class="alert alert-danger"
+                                     role="alert" style="margin-bottom: 2px;">
+                                    API initialization failed ...
+                                    Repeat the steps and contact the administrators if it fails again.
+                                </div>
+                            </group>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'expired_keys')]}">
+                            <group col="1">
+                                <div class="alert alert-danger"
+                                     role="alert" style="margin-bottom: 2px;">
+                                    API keys are expired.. Please re-authorize access.
+                                </div>
+                            </group>
+                        </group>
+                        <group colspan="4" col="1" attrs="{'invisible': [('api_state', '!=', 'working')]}">
+                            <group col="1">
+                                <div class="alert alert-success"
+                                     role="alert" style="margin-bottom: 2px;">
+                                    API successfully configured.
+                                </div>
+                            </group>
+                        </group>
+                        <group string="Wallet configuration" colspan="4" col="1">
+                            <group col="1">
+                                <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;">
+                                    Wallets that are associated with your Paysera account are displayed in this section.
+                                    Each wallet can have up to several bank accounts that are linked
+                                    to journals in the Robolabs system.
+                                </div>
+                            </group>
+                            <group col="1">
+                                <field name="paysera_wallet_ids" nolabel="1" widget="one2many_list"
+                                       mode="tree,kanban" options="{'no_open': True, 'always_reload': True}">
+                                    <tree class="robo_tree_in_form" create="0" delete="0" edit="0"
+                                          decoration-success="state == 'configured'"
+                                          decoration-warning="state == 'non_configured'"
+                                          decoration-danger="state == 'configuration_error'">
+                                        <field name="wallet_id"/>
+                                        <field name="paysera_account_number"/>
+                                        <field name="state"/>
+                                        <field name="error_message"/>
+                                        <field name="paysera_wallet_iban_display"/>
+                                    </tree>
+                                </field>
+                            </group>
+                            <field name="failed_wallets" invisible="1"/>
+                            <group col="1" attrs="{'invisible': [('failed_wallets', '=', False)]}">
+                                <div class="alert alert-danger" role="alert" style="margin-bottom: 2px;">
+                                    If you're having trouble authenticating the wallets, try
+                                    resetting the configuration. Action -> Reset API settings.
+                                    After this action initiate the authentication again.
+                                </div>
+                            </group>
+                            <group col="2">
+                                <button name="get_wallets" class="oe_highlight"
+                                        string="Renew wallet data" type="object"/>
+                            </group>
+                        </group>
+                        <group string="System settings" groups="base.group_system">
+                            <field name="allow_external_signing"/>
+                            <field name="external_signing_daily_limit"
+                                   attrs="{'invisible': [('allow_external_signing', '=', False)],
+                                   'required': [('allow_external_signing', '=', True)]}"/>
+                            <field name="external_signing_daily_limit_residual" readonly="1"
+                                   attrs="{'invisible': [('allow_external_signing', '=', False)]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

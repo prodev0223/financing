@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="act_hr_contract_2_hr_contract_appointment" model="ir.actions.act_window">
+            <field name="name">Appointments</field>
+            <field name="res_model">hr.contract.appointment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_contract_id': [active_id], 'default_contract_id': active_id}</field>
+        </record>
+
+        <record id="hr_contract_struct_not_rquired" model="ir.ui.view">
+            <field name="name">hr.contract.struct</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_payroll.hr_contract_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='struct_id']" position="attributes">
+                    <attribute name="required">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='schedule_pay']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_appointment_view_search" model="ir.ui.view">
+            <field name="name">hr.contract.appointment.search</field>
+            <field name="model">hr.contract.appointment</field>
+            <field name="arch" type="xml">
+                <search string="Search Appointment">
+                    <field name="name" string="Appointments"/>
+                    <field name="contract_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="state"/>
+                    <separator />
+                    <filter string="Current Employee" name="current_employee" domain="[('employee_id.active','=',True)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="Job" domain="[]" context="{'group_by':'job_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_contract_appointment_view_form" model="ir.ui.view">
+            <field name="name">hr.contract.appointment.form</field>
+            <field name="model">hr.contract.appointment</field>
+            <field name="arch" type="xml">
+                <form string="Appointment" create="false">
+                    <header>
+                        <field name="is_voluntary_internship" invisible="1"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Appointment Reference"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Pagrindinė informacija">
+                                <field name="contract_id"/>
+                                <field name="employee_id"/>
+                                <field name="job_id"/>
+                                <field name="department_id"/>
+                            </group>
+                            <group string="Laikotarpis">
+                                <label for="trial_date_start" string="Trial Period Duration"/>
+                                <div>
+                                    <field name="trial_date_start" class="oe_inline"/> - <field name="trial_date_end" class="oe_inline"/>
+                                </div>
+                                <label for="date_start" string="Duration"/>
+                                <div>
+                                    <field name="date_start" class="oe_inline"/> - <field name="date_end" class="oe_inline"/>
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Information" name="information">
+                                <group>
+                                    <group name="salary" string="Salary"
+                                           attrs="{'invisible': [('is_voluntary_internship', '=', True)]}">
+                                        <field name="wage"/>
+                                        <field name="neto_monthly"/>
+                                        <field name="hypothetical_hourly_wage"/>
+                                    </group>
+                                    <group name="duration_group" string="Grafikas">
+                                        <field name="struct_id"/>
+                                        <field name="schedule_template_id"/>
+                                    </group>
+                                    <group string="SODRA informacija"
+                                           attrs="{'invisible': [('is_voluntary_internship', '=', True)]}">
+                                        <field name="sodra_papildomai"/>
+                                        <field name="sodra_papildomai_type"
+                                               attrs="{
+                                                    'invisible': [
+                                                        '|',
+                                                        ('sodra_papildomai', '=', False),
+                                                        ('date_start', '&lt;', '2019-01-01')
+                                                    ],
+                                                    'required': [
+                                                        ('date_start', '!=', False),
+                                                        ('sodra_papildomai','=', True),
+                                                        ('date_start', '&gt;', '2018-12-31')
+                                                    ]
+                                                }" context="{'date': date_start}"
+                                               options="{'no_open': False, 'no_create': True}"/>
+                                    </group>
+                                </group>
+                                <separator string="Notes"/>
+                                <field name="notes"/>
+                            </page>
+                            <page string="Atostogos" name="holiday_info_page"
+                                  attrs="{'invisible': [('is_voluntary_internship', '=', True)]}">
+                                <group>
+                                    <group>
+                                        <field name="leaves_accumulation_type"/>
+                                    </group>
+                                    <group>
+                                        <field name="num_leaves_per_year"/>
+                                        <field name="additional_leaves_per_year"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Avansas" name="advance_info_page" groups="hr.group_hr_user"
+                                  attrs="{'invisible': [('is_voluntary_internship', '=', True)]}">
+                                <group>
+                                    <field name="avansu_politika" groups="hr.group_hr_user"/>
+                                    <field name="avansu_politika_suma"
+                                           attrs="{'invisible':[('avansu_politika','!=', 'fixed_sum')]}"
+                                           groups="hr.group_hr_user"/>
+                                    <field name="avansu_politika_proc"
+                                           attrs="{'invisible':[('avansu_politika','=','fixed_sum')]}"
+                                           groups="hr.group_hr_user"/>
+                                </group>
+                            </page>
+                            <page string="Kita" name="other_info_page">
+                                <group attrs="{'invisible': [('is_voluntary_internship', '=', True)]}">
+                                    <field name="paid_overtime"/>
+                                    <field name="freeze_net_wage"/>
+                                    <field name="use_npd"/>
+                                    <field name="contract_priority" attrs="{
+                                        'invisible': [('use_npd', '=', True)],
+                                    }"/>
+                                    <field name="contract_terms_date_end"/>
+                                </group>
+                                <group>
+                                    <field name="invalidumas"/>
+                                    <field name="darbingumas" attrs="{'invisible': [('invalidumas', '=', False)]}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_contract_appointment_view_tree" model="ir.ui.view">
+            <field name="name">hr.contract.appointment.tree</field>
+            <field name="model">hr.contract.appointment</field>
+            <field name="arch" type="xml">
+                <tree string="Appointments" create="false">
+                    <field name="name"/>
+                    <field name="tabelio_numeris"/>
+                    <field name="employee_id"/>
+                    <field name="employee_identification_id"/>
+                    <field name="type_id" invisible="1"/>
+                    <field name="job_id"/>
+                    <field name="contract_date_start"/>
+                    <field name="contract_date_end"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="contract_id"/>
+                    <field name="wage"/>
+                    <field name="neto_monthly"/>
+                    <field name="struct_id"/>
+                    <field name="schedule_template_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_hr_contract_appointment" model="ir.actions.act_window">
+            <field name="name">Appointments</field>
+            <field name="res_model">hr.contract.appointment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_current':1}</field>
+            <field name="search_view_id" ref="hr_appointment_view_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_contract_appointment_view_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('hr_contract_appointment_view_form')})]"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create new appointments.
+              </p>
+            </field>
+        </record>
+
+        <menuitem
+            id="hr_menu_contract_apponment"
+            name="Appointments"
+            action="action_hr_contract_appointment"
+            parent="hr.menu_hr_root"
+            sequence="5"
+            groups="hr.group_hr_manager"/>
+
+        <record id="payslip_line_appointment" model="ir.ui.view">
+            <field name="name">hr.payslip.appointment</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='worked_days_line_ids']//tree[1]//field[@name='number_of_days']" position="after">
+                    <field name="number_of_work_days"/>
+                </xpath>
+                <xpath expr="//field[@name='worked_days_line_ids']//tree[1]//field[@name='contract_id']" position="after">
+                    <field name="appointment_id"/>
+                    <!--<field name="amount"/>-->
+                </xpath>
+                <xpath expr="//field[@name='worked_days_line_ids']//form[1]//field[@name='contract_id']" position="after">
+                    <field name="appointment_id"/>
+                </xpath>
+                <xpath expr="//field[@name='struct_id']" position="replace">
+                    <field name="struct_id"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="contract_remove_journal" model="ir.ui.view">
+            <field name="name">hr.contract.journal.remove</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_payroll_account.hr_contract_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='working_hours']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_contract_terminate_form" model="ir.ui.view">
+            <field name="name">hr.contract.terminate.form</field>
+            <field name="model">hr.contract.terminate</field>
+            <field name="arch" type="xml">
+                <form string="Sutarties nutraukimas">
+                    <group>
+                        <field name="contract_id" invisible="1"/>
+                        <field name="date"/>
+                    </group>
+                    <footer>
+                        <button name="end_contract" string="Nutraukti sutartį" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record id="cron_recalculate_leaves_num" model="ir.cron">
+            <field name="name">Recalculate num of leaves per year</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">hr.contract.appointment</field>
+            <field name="function">cron_recalculate_leaves_num</field>
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=04, minute=00, second=00)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

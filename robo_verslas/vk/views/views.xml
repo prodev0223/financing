@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="vk_account_invoice_extend" model="ir.ui.view">
+            <field name="name">account.invoice.extend.vk</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="robo.pajamos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='team_id']" position="after">
+                    <field name="al_annotation" placeholder="Spausdinti alkoholinių gėrimų pastabą"/>
+                </xpath>
+                <!--TODO remove next week-->
+                <xpath expr="//field[@name='partner_email']" position="after">
+                    <field name="client_licence" placeholder="Licencijos Numeris"
+                           attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_id'][1]" position="attributes">
+                    <attribute name="context">{'form_view_ref': 'robo.new_clients_customer_form','default_customer':1,
+                                   'default_company_type': partner_company_type,
+                                   'default_street': partner_street,
+                                   'default_city': partner_city,
+                                   'default_zip': partner_zip,
+                                   'default_country_id': partner_country_id,
+                                   'default_kodas': partner_kodas,
+                                   'default_vat': partner_vat,
+                                   'default_phone': partner_phone,
+                                   'default_email': partner_email,
+                                   'default_supplier': False,
+                                   'default_customer': True,
+                                   'default_category_id': partner_category_id,
+                                   'default_fax': partner_fax,
+                                   'default_mobile': partner_mobile,
+                                   'default_website': partner_website,
+                                   'default_lang': partner_lang,
+                                    'default_client_licence': client_licence}
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+        <!--TODO remove next week-->
+        <record id="vk_company_settings" model="ir.ui.view">
+            <field name="name">vk.company.settings</field>
+            <field name="model">robo.company.settings</field>
+            <field name="inherit_id" ref="robo.company_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_vat']" position="after">
+                    <field name="licence" string="Kompanijos licencijos numeris"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="vk_extend_customer_form" model="ir.ui.view">
+            <field name="name">vk.extend.customer</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="robo.new_clients_customer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_category_id']" position="after">
+                    <label for="partner_category_id" string=" " class="lnr lnr-license"/>
+                    <field name="client_licence" string="Licencijos numeris" placeholder="# Licencijos numeris" nolabel="1"/>
+                </xpath>
+            </field>
+        </record>
+        <!--TODO remove next week-->
+        <template id="vk_report_invoice_document" inherit_id="saskaitos.report_invoice_document">
+
+            <!--TODO remove next week-->
+            <xpath expr="//p[@t-if='o.company_id.company_registry']" position="after">
+                <p t-if="o.company_id.licence">
+                    <span class="comp_pvm">Licencija:</span>
+                    <span t-field="o.company_id.licence"/>
+                </p>
+            </xpath>
+
+            <xpath expr="//p[@t-if='o.partner_id.name']" position="after">
+                <p t-if="o.delivery_address">
+                    <span class="comp_pvm">Pristatymo adresas:</span>
+                    <span t-field="o.delivery_address"/>
+                </p>
+            </xpath>
+            <!--TODO remove next week-->
+            <xpath expr="//p[@t-if='o.partner_id.kodas']" position="after">
+                <p t-if="o.partner_id.client_licence">
+                    <span class="comp_pvm">Licencija:</span>
+                    <span t-field="o.partner_id.client_licence"/>
+                </p>
+            </xpath>
+
+            <xpath expr="//t[@t-if='show_description == 1']" position="after">
+                <br> </br>
+                <br> </br>
+                <br> </br>
+                <div style="width:50%">
+                    <table width="80%">
+                        <tr style="border-style:none;page-break-inside: avoid">
+                            <td style="text-align:left; border-style:none;">
+                                <span style="text-align:left;">Prekes išdavė:</span>
+                            </td>
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align:center">
+                                <span t-field="user.name"/>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none;page-break-inside: avoid">
+                            <td style="border-style:none; border-top-style:none; border-top-width:none"></td>
+                            <td style="border-style:none; border-top-style:solid; border-top-width:thin; text-align:center" align="center">
+                                <span>(vardas, pavardė, parašas)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br></br>
+                <br></br>
+                <div style="width:50%">
+                    <table width="80%">
+                        <tr style="border-style:none">
+                            <td style="text-align:left; border-style:none;">
+                                <span style="text-align:left;">Prekes priėmė:</span>
+                            </td>
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align:center">
+                                <span> </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none;">
+                            <td style="border-style:none; border-top-style:none; border-top-width:none"></td>
+                            <td style="border-style:none;text-align:center; border-top-style:solid; border-top-width:thin" align="center">
+                                <span>(vardas, pavardė, parašas)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br> </br>
+                <p t-if="o.al_annotation">
+                    <span style="font-style: italic;">
+                    PASTABA: Šiame dokumente išvardinti alkoholiniai gėrimai atitinka Lietuvos
+                    Respublikoje galiojančių teisės aktų reikalavimus, turi atitiktį patvirtinačius
+                    dokumentus ir yra tinkami vartoti žmonėms.
+                    </span>
+                </p>
+            </xpath>
+
+             <xpath expr="//thead[@t-attf-class='robo-custom-text invoice_{{o.state}}']//tr//th" position="after">
+                <th class="text-left">Barkodas</th>
+            </xpath>
+
+            <xpath expr="//tr[@t-foreach='o.invoice_line_ids']//td" position="after">
+                <td>
+                    <span t-field="l.product_id.barcode"/>
+                </td>
+            </xpath>
+        </template>
+    </data>
+</odoo>

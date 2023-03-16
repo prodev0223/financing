@@ -1,0 +1,57 @@
+<template>
+    <t t-name="futureTaxesTable">
+        <div class="future-taxes-table">
+            <div class="future-taxes-table-data">
+                <t t-if="tax_events.length">
+                    <t t-foreach="tax_events" t-as="tax_event">
+                        <div class="future-taxes-table-row" t-attf-categ="{{tax_event.category}}"
+                             t-attf-prelim="{{tax_event.preliminary}}">
+                            <div class="future-taxes-date">
+                                <p style="white-space: nowrap">
+                                    <span t-esc="tax_event.day"/>
+                                    d.
+                                </p>
+                                <p class="days-left-p">
+                                    <span t-esc="tax_event.days_left_string"/>
+                                </p>
+                            </div>
+                            <div class="future-taxes-info">
+                                <h4>
+                                    <span t-esc="tax_event.title"/>
+                                </h4>
+                            </div>
+                            <div class="future-taxes-amount">
+                                <p class="preliminary-amount-p">
+                                    <t t-if="tax_event.preliminary">
+                                        <span class="preliminary-amount-span">Preliminari suma</span>
+                                    </t>
+                                    <span style="white-space: nowrap">
+                                        <t t-esc="tax_event.amount_string"/>
+                                    </span>
+                                </p>
+                                <p class="taxes-state">
+                                    <t t-if="tax_event.state == 'paid'">
+                                        <span class="future-taxes-paid ">Apmokėta</span>
+                                    </t>
+                                    <t t-elif="tax_event.state == 'unpaid'">
+                                        <span class="future-taxes-unpaid ">Laukiama apmokėjimo</span>
+                                    </t>
+                                    <t t-elif="tax_event.state == 'waiting_for_approval'">
+                                        <span class="future-taxes-waiting-for-approval ">Laukiama patvirtinimo</span>
+                                    </t>
+                                    <t t-elif="tax_event.state == 'canceled'">
+                                        <span class="future-taxes-canceled ">Atšaukta</span>
+                                    </t>
+                                    <t t-else=""></t>
+                                </p>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+                <t t-else="">
+                    <h3 style="padding: 20px; margin: 0;">Už pasirinktą laikotarpį duomenų nėra.</h3>
+                </t>
+            </div>
+        </div>
+    </t>
+</template>

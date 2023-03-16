@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <template id="minimal_layout" inherit_id="report.minimal_layout">
+            <xpath expr="//t[@t-if='subst is True']" position="replace">
+                <t t-if="subst is True">
+                    <script>
+                        function subst() {
+                            var vars = {};
+                            var x = document.location.search.substring(1).split('&amp;');
+                            for (var i in x) {
+                                var z = x[i].split('=', 2);
+                                vars[z[0]] = unescape(z[1]);
+                            }
+                            var x=['frompage', 'topage', 'page', 'webpage', 'section', 'subsection', 'subsubsection'];
+                            for (var i in x) {
+                                var y = document.getElementsByClassName(x[i]);
+                                for (var j=0; j&lt;y.length; ++j)
+                                    y[j].textContent = vars[x[i]];
+                            }
+                            var operations = {
+                                'last-page': function (elt) {
+                                    elt.style.visibility = (vars.page === vars.topage) ? "visible" : "hidden";
+                                },
+                            };
+                            for (var klass in operations) {
+                                var y = document.getElementsByClassName(klass);
+                                for (var j=0; j&lt;y.length; ++j)
+                                    operations[klass](y[j]);
+                            }
+                        }
+                    </script>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="report_assets_common" name="saskaitos reports" inherit_id="report.assets_common">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/less" href="/superhow/static/src/less/invoice.less"/>
+            </xpath>
+        </template>
+
+        <record id="paperformat_a4_superhow" model="report.paperformat">
+            <field name="name">Superhow A4 for invoices</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top" eval="16"/>
+            <field name="header_spacing" eval="50"/>
+            <field name="margin_left" eval="10"/>
+            <field name="margin_right" eval="7"/>
+            <field name="margin_bottom" eval="50"/>
+            <field name="dpi" eval="75"/>
+            <field name="format">A4</field>
+        </record>
+        <record id="saskaitos.account_invoices_sl" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="superhow.paperformat_a4_superhow"/>
+        </record>
+
+        <template id="invoice_footer">
+            <div class="footer last-page">
+                <table class="superhow-invoice-footer">
+                        <tr>
+                            <td>Thanks for your business</td>
+                            <td></td>
+                            <td></td>
+                            <td rowspan="3" style="position: relative; vertical-align: bottom; text-align: right;">
+                                <img src="/superhow/static/src/img/lightning.png" class="lightning-icon"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span style="text-transform: uppercase;">Superhow?</span>
+                            </td>
+                            <td>
+                                <span>Contact</span>
+                            </td>
+                            <td>
+                                <span>E-mail</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span t-esc="o.inline_company_address"/>
+                            </td>
+                            <td>
+                                <span t-esc="o.company_id.phone"/>
+                            </td>
+                            <td>
+                                <span t-esc="o.company_id.email"/>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+            </div>
+        </template>
+
+        <template id="superhow.external_invoice_layout">
+            <!-- Multicompany -->
+            <t t-if="not o and doc">
+                <t t-set="o" t-value="doc"/>
+            </t>
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id"/>
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+
+            <div class="header"></div>
+            <t t-raw="0"/>
+            <t t-call="superhow.invoice_footer"/>
+        </template>
+
+        <template id="superhow.report_invoice_document">
+
+            <t t-call="superhow.external_invoice_layout">
+
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_lang})"/>
+                <t t-set="invoice-color" t-value="o.state"/>
+                <t t-set="vat_payer" t-value="o.company_id.with_context(date=o.date_invoice).vat_payer"/>
+                <t t-set="vat_payer_code" t-value="o.company_id.with_context(date=o.date_invoice).vat"/>
+                <t t-set="print_only_foreign_currency" t-value="o.company_id.invoice_print_only_foreign_currency"/>
+
+
+                <t t-if="o.state in ['proforma', 'proforma2']">
+                    <t t-if="o.company_id.proforma_show_price_vat_incl or o.company_id.invoice_vat_printing_method=='B2C'">
+                        <t t-set="incl_vat" t-value="True"/>
+                    </t>
+                    <t t-else="">
+                        <t t-set="incl_vat" t-value="False"/>
+                    </t>
+                </t>
+                <t t-else="">
+                    <t t-if="o.price_include_selection=='inc' and o.company_id.invoice_vat_printing_method=='B2C'">
+                        <t t-set="incl_vat" t-value="True"/>
+                    </t>
+                    <t t-else="">
+                        <t t-set="incl_vat" t-value="False"/>
+                    </t>
+                </t>
+
+
+                <div class="page superhow-invoice" style="width: 100% !important;">
+
+                    <img src="/superhow/static/src/img/logo.png" class="superhow-logo"/>
+
+                    <table class="superhow-invoice-data invoice_amount_words">
+                        <tr>
+                            <td class="invoice-type">
+                                <span name="invoice_header" t-if="o.type == 'out_invoice' and not vat_payer">
+                                    Invoice
+                                </span>
+                                <span name="vat_invoice_header" t-if="o.type == 'out_invoice' and vat_payer">
+                                    VAT Invoice
+                                </span>
+                            </td>
+                            <td colspan="4">
+                                <span t-field="o.date_invoice"/>
+                                <span style="padding-left: 25px;">
+                                    Nr.
+                                    <t t-if="o.number">
+                                        <span t-field="o.number"/>
+                                    </t>
+                                    <t t-elif="o.move_name">
+                                        <span t-field="o.move_name"/>
+                                    </t>
+                                    <t t-elif="o.type == 'out_invoice' and o.state == 'proforma2' and o.sale_ids">
+                                        <span t-field="o.sale_ids[0].name"/>
+                                    </t>
+                                    <t t-elif="o.type == 'out_invoice' and o.state == 'proforma2' and not o.sale_ids">
+                                        <span t-esc="o.proforma_number"/>
+                                    </t>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="invoice-contacts">
+                            <td>Kontaktai:</td>
+                            <td>
+                                Pardavėjas:
+                                <br/>
+                                <span style="font-weight: 600" t-field="o.company_id.name"/>
+                                <br/>
+
+                                <t t-if="o.company_id.company_registry">
+                                    Įmonės kodas:
+                                    <span t-field="o.company_id.company_registry"/>
+                                    <br/>
+                                </t>
+
+                                <t t-if="vat_payer and vat_payer_code">
+                                    PVM mokėtojo kodas:
+                                    <span t-field="o.company_id.vat"/>
+                                    <br/>
+                                </t>
+
+                                <t t-if="o.inline_company_address">
+                                    Adresas:
+                                    <span t-esc="o.inline_company_address"/>
+                                    <br/>
+                                </t>
+
+                                <t t-foreach="o.company_id.sudo().bank_journal_ids" t-as="bankas">
+                                    <t t-if="bankas.display_on_footer and bankas.bank_acc_number">
+                                        <t t-if="bankas.bank_acc_number">
+                                            Banko Sąsk.:
+                                            <span t-field="bankas.bank_acc_number"/>
+                                            <br/>
+                                        </t>
+                                        <t t-if="bankas.bank_id.name">
+                                            Bankas:
+                                            <span t-field="bankas.bank_id.name"/>
+                                            <br/>
+                                        </t>
+                                    </t>
+                                </t>
+                            </td>
+                            <td colspan="3">
+                                Pirkėjas:
+                                <br/>
+                                <span style="font-weight: 600" t-field="o.partner_id.name"/>
+                                <br/>
+                                <t t-if="o.partner_id.kodas">
+                                    Įmonės kodas:
+                                    <span t-field="o.partner_id.kodas"/>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.vat">
+                                    PVM mokėtojo kodas:
+                                    <span t-field="o.partner_id.vat"/>
+                                    <br/>
+                                </t>
+                                <t t-if="o.inline_partner_address">
+                                    Adresas:
+                                    <span t-esc="o.inline_partner_address"/>
+                                    <br/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr class="invoice-line-table-header">
+                            <td></td>
+                            <td></td>
+                            <td>Kiekis</td>
+                            <td style="text-align: left;">Kaina</td>
+                            <td style="text-align: right;">Suma</td>
+                        </tr>
+                        <t t-set="i" t-value="0"/>
+                        <tr t-foreach="o.invoice_line_ids" t-as="l" class="invoice-line">
+                            <td>
+                                <t t-if="i == 0">Paslaugos:</t>
+                                <t t-set="i" t-value="i+1"/>
+                            </td>
+                            <td>
+                                <span t-field="l.name"/>
+                            </td>
+                            <td>
+                                <span t-field="l.print_qty"/>
+                            </td>
+                            <td>
+                                <t t-if="print_only_foreign_currency">
+                                    <span t-field="l.price_unit_tax_excluded"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="l.price_unit_tax_excluded_company"/>
+                                </t>
+                            </td>
+                            <td>
+                                <t t-if="print_only_foreign_currency">
+                                    <span t-field="l.print_price_subtotal"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="l.print_price_subtotal_company"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr class="total-line">
+                            <td></td>
+                            <td colspan="3">Iš viso:</td>
+                            <td style="text-align: right;">
+                                <span t-field="o.amount_untaxed"/>
+                            </td>
+                        </tr>
+                        <t t-if="(o.state not in ['proforma', 'proforma2'] or not o.company_id.proforma_show_price_vat_incl or display_discount and discount_type == 'currency') and vat_payer">
+                            <t t-if="o.invoice_type == 'imt'">
+                                <tr class="vat-line">
+                                    <td></td>
+                                    <td colspan="3">PVM (<span t-field="o.imt_tax_rate"/>%):
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <span t-field="o.imt_tax_amount"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-elif="o.invoice_type == 'invoice'">
+                                <t t-if="o.proforma_vat_visibility != 'dont_show'">
+                                    <t t-if="o.tax_line_ids and not o.margin_scheme_used">
+                                        <tr class="vat-line">
+                                            <td></td>
+                                            <td colspan="3" t-if="len(o.tax_line_ids) == 1">
+                                                PVM (<span
+                                                    t-esc="', '.join([ lt.tax_id.description if lt.tax_id and lt.tax_id.description else lt.name or '' for lt in o.tax_line_ids ])"/>):
+                                            </td>
+                                            <td style="white-space: normal" t-if="len(o.tax_line_ids) &gt; 1">
+                                                PVM:
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <t t-if="print_only_foreign_currency">
+                                                    <span t-field="o.print_amount_tax"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="o.print_amount_tax_company"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="not o.tax_line_ids and not o.margin_scheme_used">
+                                        <tr class="vat-line">
+                                            <td></td>
+                                            <td colspan="3">PVM (0%):</td>
+                                            <td style="text-align: right;">
+                                                <t t-if="print_only_foreign_currency">
+                                                    <span t-field="o.print_amount_tax"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="o.print_amount_tax_company"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </t>
+                        </t>
+                        <tr class="price-with-vat-line">
+                            <td></td>
+                            <td colspan="2">Suma
+                                <t t-if="o.tax_line_ids">su PVM:</t>
+                            </td>
+                            <td style="text-align: right;" colspan="2">
+                                <t t-if="print_only_foreign_currency">
+                                    <span t-field="o.print_amount_total"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="o.print_amount_total_company"/>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </t>
+        </template>
+
+        <template id="saskaitos.report_invoice">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="superhow.report_invoice_document" t-lang="o.partner_lang"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Forms-->
+        <record id="nsoft_import_data_wizard" model="ir.ui.view">
+            <field name="name">nsoft.import.wizard</field>
+            <field name="model">nsoft.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Duomenų importas">
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4">
+                            Paspaudę importuoti, rankiniu būdų galite sinchronizuoti nSoft pateikiamus duomenis.
+                            Importavus duomenis bus sukurtos sąskaitos faktūros, kasos aparatai ir pardavimo eilutės.
+                            Duomenys importuojami atsižvelgiant į paskutinę sincrhonizavimo datą,
+                            Jeigu norite importuoti senesnius duomenis, pažymėkite laukelį ir įveskite datas.
+                            PASTABA: Šis veiksmas atliekamas automatiškai kas dieną.
+                        </div>
+                        <group>
+                            <field name="import_type" required="True"/>
+                            <field name="use_date"/>
+                            <field name="date_from" attrs="{'invisible': [('use_date', '=', False)]}"/>
+                            <field name="date_to" attrs="{'invisible': [('use_date', '=', False)]}"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Importuoti Duomenis" name="button_get_data" type="object" class="btn-primary"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="open_import_wizard_nsoft" model="ir.actions.act_window">
+            <field name="name">Duomenų Importavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">nsoft.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        <!--Menus-->
+        <menuitem
+                name="Duomenų importavimas"
+                id="nsoft_import_data"
+                sequence="50"
+                action="open_import_wizard_nsoft"
+                parent="nsoft_operation_menu"
+        />
+    </data>
+</odoo>

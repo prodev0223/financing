@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_move_line_reconcile_different_wizard_form" model="ir.ui.view">
+            <field name="name">account.move.line.reconcile.different.wizard.form</field>
+            <field name="model">account.move.line.reconcile.different.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="journal_id"  options="{'no_open':True, 'no_create':True}"/>
+                        <field name="ref"/>
+                        <field name="reconciliation_date"/>
+                        <field name="writeoff_journal_id"/>
+                        <field name="writeoff_account_id"/>
+                    </group>
+                    <group>
+                        <field name="lines_to_reconcile" nolabel="1" options="{'always_reload': True}" readonly="1">
+                            <tree create="0">
+                                <field name="date"/>
+                                <field name="move_id" required="0"/>
+                                <field name="name"/>
+                                <field name="ref"/>
+                                <field name="partner_id"/>
+                                <field name="account_id" options="{'no_open': True, 'no_Create': True}"
+                                       domain="[('company_id', '=', company_id)]"/>
+                                <field name="amount_residual"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <field name="multiple_partners" invisible="1"/>
+                        <button name="create_reconciliation" string="Reconcile" type="object" class="oe_highlight"
+                                attrs="{'invisible': [('multiple_partners', '=', True)]}"/>
+                        <button name="create_reconciliation" string="Reconcile" type="object"
+                                confirm="Are you sure that you want to reconcile between different partners?"
+                                class="oe_highlight" attrs="{'invisible': [('multiple_partners', '=', False)]}"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

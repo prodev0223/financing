@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="akcininku_sprendimas_del_sprendimo_panaikinimo_form" model="ir.ui.view">
+            <field name="inherit_id" ref="e_document.shareholders_decisions_base_view"/>
+            <field name="model">e.document</field>
+            <field name="mode">primary</field>
+            <field name="robo_front" eval="True"/>
+            <field name="name">Akcininkų sprendimas dėl ankstesnio sprendimo panaikinimo</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id2']" position="replace"/>
+                <xpath expr="//field[@name='extra_text']" position="before">
+                    <field name="cancel_number" options="{'no_create': True, 'no_open': True}"
+                           string="Atšaukiamo įsakymo numeris" required="True" invisible="True"/>
+                    <field name="cancel_name" options="{'no_create': True, 'no_open': True}"
+                           string="Atšaukiamo įsakymo pavadinimas" required="True"
+                           invisible="True"/>
+                    <field name="cancel_date" options="{'no_create': True, 'no_open': True}"
+                           string="Atšaukiamo įsakymo data" required="True" invisible="True"/>
+                    <field name="cancel_body" options="{'no_create': True, 'no_open': True}"
+                           string="Atšaukiamo įsakymo tekstas" required="True" invisible="True"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="akcininku_sprendimas_del_sprendimo_panaikinimo_action" model="ir.actions.act_window">
+            <field name="name">Akcininkų sprendimas dėl sprendimo panaikinimo action</field>
+            <field name="res_model">e.document</field>
+            <field name="view_id" ref="e_document.akcininku_sprendimas_del_sprendimo_panaikinimo_form"/>
+            <field name="context">{
+                u'default_document_type': u'akcininku_sprendimas',
+                u'rec_template_id': u'akcininku_sprendimas_del_sprendimo_panaikinimo_template',
+                u'e_document_view_type': u'rigid'
+            }</field>
+        </record>
+
+        <record id="akcininku_sprendimas_del_sprendimo_panikinimo_menu" model="ir.ui.menu">
+            <field name="name">Akcininkų sprendimas dėl sprendimo panaikinimo</field>
+            <field name="action" ref="e_document.akcininku_sprendimas_del_sprendimo_panaikinimo_action"/>
+            <field name="parent_id" ref="e_document.akcininku_sprendimas"/>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="False"/>
+            <field name="tags">akcininkai, akcininku sprendimas, sprendimas, nuspresti, įsakymas, direktorius, vadovas, atsaukti, atšaukti, panaikinti, cancel</field>
+        </record>
+
+        <record id="akcininku_sprendimas_del_sprendimo_panikinimo_template" model="e.document.template">
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Akcininkų sprendimu panaikinamas {{ date_string(cancel_date, 'ko') }} pasirašytas akcininkų
+                    sprendimas nr. {{ cancel_number }} "{{ cancel_name}}".
+                    <br/><br/>
+                    “{{ cancel_body }}”.
+                    <br/><br/>
+                    {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="name">Akcininkų sprendimas dėl ankstesnio sprendimo panaikinimo</field>
+            <field name="footer" type="html">
+                <div style="margin-top: 20px;">
+                    {{ shareholder_sign_footer }}
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.akcininku_sprendimas_del_sprendimo_panaikinimo_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                            width: 100px;
+                        }
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                                <tr style="border-style:none">
+                                    <td style="border-style:none">
+                                        <center>
+                                            <p style="font-weight:bold">
+                                                <span>{{company_id}}</span>
+                                            </p>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            <span>AKCININKŲ SPRENDIMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                            <br/>
+                            <span>DĖL ANKSTESTNIO SPRENDIMO PANAIKINIMO</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="template" type="html">
+                <div class="page">
+                    <style type="text/css">
+                        .centras{
+                            text-align: center;
+                            margin-left:auto;
+                            margin-right:auto;
+                        }
+                        .desine{
+                            float: right;
+                            width: 300px;
+                            text-align: justify
+                            .img-rounded{
+                                width: 100px;
+                            }
+                        }
+                    </style>
+                    <div>
+                        <center>
+                            <div class="centras">
+                                <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                                <table width="40%" class="centras"
+                                       style="margin-left:auto; margin-right:auto; border-style:none">
+                                    <tr style="border-style:none">
+                                        <td style="border-style:none">
+                                            <center>
+                                                <p style="font-weight:bold">
+                                                    <span>{{company_id}}</span>
+                                                </p>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </center>
+                        <center>
+                            <p style="font-weight:bold">
+                                <span>AKCININKŲ SPRENDIMAS{% if document_number != '-' %} - {{ document_number }}{% endif %}</span>
+                                <br/>
+                                <span>DĖL ANKSTESTNIO SPRENDIMO PANAIKINIMO</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ date_document }}</span>
+                            </p>
+                            <p class="centras">
+                                <span>{{ vieta }}</span>
+                            </p>
+                        </center>
+                    </div>
+
+                    <div style="padding-left: 20px;" id="body">
+                        Akcininkų sprendimu panaikinamas {{ date_string(cancel_date, 'ko') }} pasirašytas akcininkų
+                        sprendimas nr. {{ cancel_number }} "{{ cancel_name}}".
+                        <br/><br/>
+                        “{{ cancel_body }}”.
+                        <br/><br/>
+                        {{ extra_text_html }}
+                    </div>
+                    <div style="margin-top: 20px;">
+                        {{ shareholder_sign_footer }}
+                    </div>
+                </div>
+            </field>
+            <field name="python_code">obj.akcininku_sprendimas_del_sprendimo_panaikinimo_workflow()</field>
+            <field name="date_from_field_name" eval="False"/>
+            <field name="date_to_field_name" eval="False"/>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="False"/>
+        </record>
+    </data>
+</odoo>

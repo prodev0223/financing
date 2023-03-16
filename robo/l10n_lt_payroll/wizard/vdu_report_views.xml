@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="vdu_report_wizard_view_form" model="ir.ui.view">
+            <field name="name">vdu.report.wizard.form</field>
+            <field name="model">vdu.report.wizard</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="VDU Ataskaita">
+                    <sheet>
+                        <group colspan="4">
+                            <field name="is_manager" attrs="{'invisible': 1}"/>
+                            <field name="date"/>
+                            <field name="all_employees"
+                                   attrs="{
+                                       'invisible': [('is_manager', '=', False)],
+                                       'readonly': [('is_manager', '=', False)]
+                                   }"
+                            />
+                            <field name="employee_ids" attrs="{
+                                'readonly': [('is_manager', '=', False)],
+                                'invisible': [('all_employees', '=', True)]
+                            }" widget="many2many_tags"/>
+                        </group>
+                        <footer>
+                            <button name="open_report" string="Formuoti ataskaitą" type="object" class="oe_highlight"/>
+                            <button name="open_xls_report" string="Formuoti XLS ataskaita" type="object" class="oe_highlight"></button>
+                            <button string="Atšaukti" class="oe_link" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_open_vdu_report_wizard_history">
+            <field name="name">VDU Ataskaita</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">vdu.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('vdu_report_wizard_view_form')})]"/>
+        </record>
+
+        <menuitem
+                name="VDU ataskaita"
+                action="action_open_vdu_report_wizard_history"
+                id="menu_vdu_report_wizard"
+                parent="l10n_lt_payroll.meniu_payrol_reports"
+                groups="hr_payroll.group_hr_payroll_user"
+                sequence="99"
+        />
+    </data>
+</odoo>

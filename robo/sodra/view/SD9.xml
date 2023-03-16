@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="sodra_sd9">
+            <field name="name">sd9.sodra.form</field>
+            <field name="model">e.sodra.sd9</field>
+            <field name="arch" type="xml">
+             <form string="SD-9">
+                 <field name="is_sent" invisible="1"/>
+                 <group>
+                     <div class="alert alert-success" role="alert" style="margin-bottom: 2px;"
+                          attrs="{'invisible': [('is_sent', '!=', True)]}">
+                        9-SD successfully sent to SoDra
+                     </div>
+                 </group>
+                 <group>
+                     <group>
+                         <field name="registration_date" />
+                     </group>
+                     <group>
+                         <field name="date_from" />
+                         <field name="date_to" />
+                     </group>
+                 </group>
+                 <group>
+                    <field name="employee_ids" nolabel="1">
+                        <tree create="0" widget="one2many_list" editable="bottom" options="{'reload_on_button': True}">
+                            <field name="employee_id" />
+                            <field name="holiday_start" />
+                            <field name="holiday_end" />
+                            <field name="child_birthdate" />
+                            <field name="child_person_code" />
+                            <field name="file_name" invisible="1" />
+                            <field name="leave_id" invisible="1" />
+                            <field name="file" nolabel="1" filename="file_name"/>
+                            <field name="url" widget="roboAnchor" attrs="{'invisible': [('url', '=', False)]}"/>
+                        </tree>
+                    </field>
+                 </group>
+                 <footer>
+                     <button string="Siųsti į SODRA" name="sd9_upload" type="object" class="btn-primary"/>
+                     <button string="Close" class="btn-default" special="cancel" />
+                 </footer>
+              </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_sodra_sd9_wizard">
+          <field name="name">SODRA SD-9</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">e.sodra.sd9</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="view_id" ref="sodra_sd9"/>
+          <field name="target">new</field>
+        </record>
+        <record id="action_sodra_sd9_wizard_create" model="ir.actions.server">
+            <field name="name">SD9</field>
+            <field name="model_id" ref="sodra.model_e_sodra_sd9"/>
+            <field name="code">
+                    action = env.get('e.sodra.sd9').action_create_wizard()
+            </field>
+        </record>
+        <menuitem
+                  name="SD-9"
+                  id="meniu_e_ataskaitos_SODRA_sd9"
+                  parent="meniu_e_ataskaitos_SODRA_root"
+                  sequence="5"
+                  action="action_sodra_sd9_wizard_create"
+                  />
+        <record id="view_hr_holiday_form_extend" model="ir.ui.view">
+            <field name="name">view.hr.holidays.form.extend</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='holiday_status_id']" position="after">
+                    <field name="holiday_status_code" invisible="1" />
+                    <field name="child_birthdate" attrs="{'invisible': [('holiday_status_code', 'not in', ['TA', 'VP'])]}"/>
+                    <field name="child_person_code" attrs="{'invisible': [('holiday_status_code', 'not in', ['TA', 'VP'])]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

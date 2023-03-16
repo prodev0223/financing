@@ -1,0 +1,176 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="cron_fetch_statements_daily_all_banks" model="ir.cron">
+            <field name="name">All Banks: Fetch statements (Daily)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">api.bank.integrations</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=04, minute=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_daily</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_fetch_statements_weekly_all_banks" model="ir.cron">
+            <field name="name">All Banks: Fetch statements (weekly)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">weeks</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">api.bank.integrations</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=05, minute=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_weekly</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_fetch_statements_monthly_all_banks" model="ir.cron">
+            <field name="name">All Banks: Fetch statements (monthly)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">api.bank.integrations</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(months=1, day=1, hour=06, minute=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_monthly</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_execute_fetch_job_sequentially" model="ir.cron">
+            <field name="name">Bank statement fetch job: Execute</field>
+            <field name="interval_number">8</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">bank.statement.fetch.job</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(hour=01, minute=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_execute_fetch_job_sequentially</field>
+            <field name="args">()</field>
+        </record>
+        <record id="cron_bank_statement_fetch_job_cleanup" model="ir.cron">
+              <field name="name">Bank statement fetch job: Cleanup</field>
+              <field name="interval_number">1</field>
+              <field name="interval_type">days</field>
+              <field name="numbercall">-1</field>
+              <field name="doall" eval="False"/>
+              <field name="model">bank.statement.fetch.job</field>
+              <field name="nextcall"
+                     eval="(DateTime.now() + relativedelta(hour=01, minute=30)).strftime('%Y-%m-%d %H:%M:%S')" />
+              <field name="function">cron_bank_statement_fetch_job_cleanup</field>
+              <field name="args">()</field>
+        </record>
+        <record id="cron_automatic_reconciliation" model="ir.cron">
+          <field name="name">Cron Automatic Reconciliation</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">days</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">account.move.line</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=01, minute=30, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="function">cron_automatic_reconciliation</field>
+          <field name="args">()</field>
+        </record>
+        <record id="cron_apply_new_import_rules" model="ir.cron">
+          <field name="name">Cron Apply New Import Rules</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">days</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">account.bank.statement</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=02, minute=30, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="function">cron_apply_new_import_rules</field>
+          <field name="args">()</field>
+        </record>
+        <record id="cron_query_daily_revolut_transaction" model="ir.cron">
+          <field name="name">Query Revolut Transactions</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">days</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">account.journal</field>
+          <field name="nextcall" eval="(DateTime.utcnow() + relativedelta(days=1, hour=0, minute=45, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="function">cron_fetch_revolut_transactions</field>
+          <field name="args">()</field>
+          <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_query_weekly_revolut_transaction" model="ir.cron">
+          <field name="name">Query Revolut Transactions (weekly refetch)</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">weeks</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">account.journal</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=21, minute=30, weekday=6)).strftime('%Y-%m-%d %H:%M:%S')"/>
+          <field name="function">cron_revolut_weekly_transaction_refetch</field>
+          <field name="args">()</field>
+          <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_update_pending_transactions" model="ir.cron">
+          <field name="name">Update pending Revolut transactions</field>
+          <field name="interval_number">1</field>
+          <field name="interval_type">days</field>
+          <field name="numbercall">-1</field>
+          <field name="doall" eval="False"/>
+          <field name="model">revolut.api.transaction</field>
+          <field name="nextcall" eval="(DateTime.now() + relativedelta(days=1, hour=4, minute=30, second=0)).strftime('%Y-%m-%d %H:%M:%S')" />
+          <field name="function">cron_update_pending_transactions</field>
+          <field name="args">()</field>
+        </record>
+        <record id="cron_fetch_account_balances_paypal" model="ir.cron">
+            <field name="name">Paypal: Fetch account balances</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">paypal.api</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(minute=15, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_account_balances</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_query_daily_paypal_transaction" model="ir.cron">
+            <field name="name">Query PayPal Transactions (Daily)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">paypal.api</field>
+            <field name="nextcall"
+                   eval="(DateTime.utcnow() + relativedelta(days=1, hour=1, minute=30, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_daily</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_query_weekly_paypal_transaction" model="ir.cron">
+            <field name="name">Query PayPal Transactions (Weekly refetch)</field>
+            <field name="interval_number">7</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">paypal.api</field>
+            <field name="nextcall"
+                   eval="(DateTime.utcnow() + relativedelta(hour=15, minute=30, weekday=6)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_fetch_statements_weekly</field>
+            <field name="args">()</field>
+            <field name="run_as_queue_job" eval="True"/>
+        </record>
+        <record id="cron_export_job_batch_cleanup" model="ir.cron">
+            <field name="name">Bank export batch: Cleanup</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">bank.export.job.batch</field>
+            <field name="nextcall"
+                   eval="(DateTime.now() + relativedelta(days=1, hour=05)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="function">cron_export_job_batch_cleanup</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

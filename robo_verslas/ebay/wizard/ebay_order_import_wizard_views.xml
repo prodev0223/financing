@@ -1,0 +1,52 @@
+<odoo>
+    <data>
+        <!--FORMS-->
+        <record id="ebay_order_import_wizard" model="ir.ui.view">
+            <field name="name">ebay.order.import.wizard.form</field>
+            <field name="model">ebay.order.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="eBay CSV Import">
+                    <sheet>
+                        <group>
+                            <div class="alert alert-info" role="alert" style="margin-bottom:10px;" colspan="4">
+                                In this wizard you can import eBay CSV files. Orders that are already
+                                in the system will be updated according to this CSV file.
+                            </div>
+                        </group>
+                        <group string="Main parameters">
+                            <field name="file_data" filename="file_name" required="1"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="origin_country_id" required="1"
+                                   options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                        <group string="Execution parameters">
+                            <field name="update_present_data"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Import data" name="button_data_import" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--ACTIONS-->
+        <record id="action_open_ebay_order_import_wizard" model="ir.actions.act_window">
+            <field name="name">CSV Data import</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ebay.order.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        <!--MENUS-->
+        <menuitem
+                id="menu_ebay_data_import"
+                name="CSV Data import"
+                sequence="3"
+                parent="menu_ebay_management_root"
+                action="action_open_ebay_order_import_wizard"
+        />
+    </data>
+</odoo>

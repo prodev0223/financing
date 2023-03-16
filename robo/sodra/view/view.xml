@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="sodra_credentials">
+            <field name="name">res.users.sodra.credentials</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='lang']" position="after">
+                    <field name="sodra_username" readonly="0"/>
+                    <field name="sodra_password" readonly="0" password="True"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="tree_sodra_document_export">
+            <field name="name">sodra.document.export.tree</field>
+            <field name="model">sodra.document.export</field>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0" decoration-info="state == 'sent'"
+                      decoration-success="state == 'confirmed'"
+                      decoration-danger="state == 'rejected'">
+                    <field name="signing_url" widget="roboAnchor"/>
+                    <field name="ext_id"/>
+                    <field name="upload_date"/>
+                    <field name="last_update_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+       <record model="ir.actions.act_window" id="action_sodra_document_export">
+           <field name="name">Įkelti dokumentai</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">sodra.document.export</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="tree_sodra_document_export"/>
+           <field name="target">current</field>
+       </record>
+        <menuitem
+              name="Įkelti dokumentai"
+              id="menu_sodra_document_export"
+              parent="meniu_e_ataskaitos_SODRA_root"
+              sequence="99"
+              action="action_sodra_document_export"
+              groups="robo_basic.group_robo_premium_accountant"
+              />
+        <record id="cron_update_sodra_docs" model="ir.cron">
+            <field name="name">Update SODRA Doc state</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">sodra.document.export</field>
+            <field name="function">cron_data_update</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</odoo>

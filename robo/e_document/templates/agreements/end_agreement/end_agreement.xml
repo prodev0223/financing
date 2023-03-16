@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="end_agreement_view_form" model="ir.ui.view">
+            <field name="name">end.agreement.view.form</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="inherit_id" ref="e_document.e_document_agreement_base_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_document_info']" position="inside">
+                    <group>
+                        <field name="date_from" string="Agreement cancellation date" required="True"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="end_agreement_action" model="ir.actions.act_window">
+            <field name="name">Agreement cancellation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="context">{
+                u'default_document_type': u'agreement',
+                u'rec_template_id': u'end_agreement_template',
+                u'e_document_view_type': u'rigid'
+            }
+            </field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.end_agreement_view_form"/>
+        </record>
+
+        <record id="end_agreement_template" model="e.document.template">
+            <field name="name">Susitarimo nutraukimas</field>
+            <field name="body" type="html">
+                <div style="padding-left: 20px;" id="body">
+                    Nuo {{ date_from }} nutraukiu ankstesnį {{ cancel_date }} susitarimą nr. {{ cancel_number }}
+                    "{{ cancel_name }}".
+                    <br/>
+                    <br/>
+                    “{{ cancel_body }}”. {{ extra_text_html }}
+                </div>
+            </field>
+            <field name="footer" type="html">
+                <div>
+                    <table width="25%" align="right" style="float: right; margin-left:10px; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td>
+                                <span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">(parašas)</td>
+                        </tr>
+                    </table>
+                    <table width="65%" align="right" style="float: right; margin-top:40px">
+                        <tr style="border-style:none">
+                            <td style="border-style:none; margin-left:auto; margin-right:auto; text-align: center;">
+                                <span>{{manager_job_id}} {{ manager_id }}</span>
+                            </td>
+                        </tr>
+                        <tr style="border-style:none; border-top-style:solid; border-top-width:1px">
+                            <td style="border-style:none;text-align:center" align="center">
+                                <span>(vardas, pavardė)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </field>
+            <field name="view_id" ref="e_document.end_agreement_view_form"/>
+            <field name="header" type="html">
+                <style type="text/css">
+                    .centras{
+                        text-align: center;
+                        margin-left:auto;
+                        margin-right:auto;
+                    }
+                    .desine{
+                        float: right;
+                        width: 300px;
+                        text-align: justify
+                        .img-rounded{
+                        width: 100px;
+                    }
+                </style>
+                <div>
+                    <center>
+                        <div class="centras">
+                            <img src="/web/binary/company_logo" style="max-height:200px; padding-bottom:15px;"/>
+                            <table width="40%" class="centras"
+                                   style="margin-left:auto; margin-right:auto; border-style:none">
+                            </table>
+                        </div>
+                    </center>
+                    <center>
+                        <p style="font-weight:bold">
+                            SUSITARIMO NR. {{ cancel_number.upper() }} NUTRAUKIMAS
+                        </p>
+                        <p class="centras">
+                            <span>{{ date_document }}</span>
+                        </p>
+                        <p class="centras">
+                            <span>{{ vieta }}</span>
+                        </p>
+                    </center>
+                </div>
+            </field>
+            <field name="python_code">obj.end_agreement_workflow()</field>
+            <field name="date_from_field_name">date_from</field>
+            <field name="date_to_field_name" eval="False"/>
+            <field name="send_manager" eval="False"/>
+            <field name="allow_copy" eval="True"/>
+            <field name="is_signable_by_delegate" eval="True"/>
+        </record>
+    </data>
+</odoo>

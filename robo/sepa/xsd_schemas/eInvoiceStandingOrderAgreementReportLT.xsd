@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!-- ========== ROOT ELEMENT ========== -->
+  <xs:element name="EInvoiceStandingOrderAgreementReport">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Agreement" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="date" type="DateType" use="required"/>
+      <xs:attribute name="fileId" type="ShortTextType" use="required"/>
+      <xs:attribute name="appId" type="AppIdType" use="required"/>
+      <xs:attribute name="senderId" type="ShortTextType" use="optional"/>
+      <xs:attribute name="receiverId" type="ShortTextType" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <!-- ========== SCHEMA STRUCTURE ========== -->
+  <xs:element name="Agreement">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="SellerRegNumber" type="RegType"/>
+        <xs:element name="GlobalSellerContractId" type="NormalTextType"/>
+        <xs:element name="Action" type="ActionType"/>
+        <xs:element name="ServiceId" type="ShortTextWithoutSpacesType"/>
+        <xs:element name="PayerName" type="NormalTextType" minOccurs="0"/>
+        <xs:element name="PayerRegNumber" type="RegType" minOccurs="0"/>
+        <xs:element name="PayerIBAN" type="AccountType"/>
+        <xs:element name="PartialDebiting" type="YesNoType"/>
+        <xs:element name="MonthLimit" type="LimitWithCurrencyType"/>
+        <xs:element name="DaysLookForFunds" type="DaysLookForFundsType"/>
+        <xs:element name="PaymentDay" type="PaymentDayType"/>
+        <xs:element name="StartDate" type="DateType"/>
+        <xs:element name="EndDate" type="EmptyDateType"/>
+        <xs:element name="TimeStamp" type="xs:dateTime"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="AgreementNameType" use="required"/>
+      <xs:attribute name="sequenceId" type="xs:integer" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <!-- ========== DESCRIPTION OF THE DATA TYPES ========== -->
+  <xs:simpleType name="AppIdType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EAPREP"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ActionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ADD"/>
+      <xs:enumeration value="UPD"/>
+      <xs:enumeration value="DEL"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="DaysLookForFundsType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="3"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PaymentDayType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(ReceivedDay\+[2]|InvoiceDueDate\-[2]|InvoiceDueDate){1}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="LimitType">
+    <xs:restriction base="xs:decimal">
+      <xs:minExclusive value="0"/>
+      <xs:fractionDigits value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="EmptyLimitType">
+    <xs:union memberTypes="LimitType">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value=""/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:complexType name="LimitWithCurrencyType">
+    <xs:simpleContent>
+      <xs:extension base="EmptyLimitType">
+        <xs:attribute name="currency" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="EUR"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="AccountType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AgreementNameType">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="40"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="DateType">
+    <xs:restriction base="xs:date"/>
+  </xs:simpleType>
+  <xs:simpleType name="EmptyDateType">
+    <xs:union memberTypes="xs:date">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value=""/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="NormalTextType">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="RegType">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="15"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ShortTextType">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="35"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ShortTextWithoutSpacesType">
+    <xs:restriction base="ShortTextType">
+      <xs:pattern value="[^\s]+(\s+[^\s]+)*"/>
+      <xs:minLength value="1"/>
+      <xs:maxLength value="35"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="YesNoType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:pattern value="YES"/>
+      <xs:pattern value="NO"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

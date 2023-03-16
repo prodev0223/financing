@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+         <record id="robo_see_incomes_code_t_rule" model="ir.rule">
+            <field name="name">see incomes allow out invoices of code T</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="domain_force">[('type','in',['out_invoice', 'out_refund']), ('journal_id.code','=','T')]</field>
+            <field name="groups" eval="[(4,ref('etaksi.group_robo_analytic_see_journal_t'))]"/>
+        </record>
+        <record id="robo_see_incomes_invoice_lines_code_t_rule" model="ir.rule">
+            <field name="name">see incomes allow out invoices of code T</field>
+            <field name="model_id" ref="account.model_account_invoice_line"/>
+            <field name="domain_force">[('invoice_id.type','in',['out_invoice', 'out_refund']), ('invoice_id.journal_id.code','=','T')]</field>
+            <field name="groups" eval="[(4,ref('etaksi.group_robo_analytic_see_journal_t'))]"/>
+        </record>
+        <record id="robo_see_incomes_invoice_tax_code_t_rule" model="ir.rule">
+            <field name="name">robo see incomes allow invoice of code T tax</field>
+            <field name="model_id" ref="account.model_account_invoice_tax"/>
+            <field name="domain_force">[('invoice_id.journal_id.code','=','T')]</field>
+            <field name="groups" eval="[(4,ref('etaksi.group_robo_analytic_see_journal_t'))]"/>
+        </record>
+        <record id="robo_see_incomes_account_move_code_t_rule" model="ir.rule">
+            <field name="name">robo see incomes allow invoice of code T moves</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="domain_force">[('line_ids.invoice_id.journal_id.code','=','T'), '|', ('line_ids.invoice_id.type', 'in', ['out_invoice', 'out_refund']), ('line_ids.payment_id.invoice_ids', '!=', False)]</field>
+            <field name="groups" eval="[(4,ref('etaksi.group_robo_analytic_see_journal_t'))]"/>
+        </record>
+        <record id="robo_see_incomes_account_move_line_code_t_rule" model="ir.rule">
+            <field name="name">robo see incomes allow invoice of code T moves</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="domain_force">[('invoice_id.journal_id.code','=','T'), '|', ('invoice_id.type', 'in', ['out_invoice', 'out_refund']), ('payment_id.invoice_ids', '!=', False)]</field>
+            <field name="groups" eval="[(4,ref('etaksi.group_robo_analytic_see_journal_t'))]"/>
+        </record>
+        <record id="account_partial_reconcile_invoices_user_code_t_rule" model="ir.rule">
+            <field name="name">Invoices can see invoice records of code T</field>
+            <field name="model_id" ref="account.model_account_partial_reconcile"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[('debit_move_id.invoice_id.journal_id.code','=','T'), '|', '|', '|', '|', '|', '|', '|', ('debit_move_id.receipt_id', '!=', False), ('debit_move_id.move_id.expense_invoice_id', '!=', False), ('debit_move_id.payment_id.invoice_ids', '!=', False), ('debit_move_id.invoice_id','!=', False), ('credit_move_id.receipt_id', '!=', False), ('credit_move_id.move_id.expense_invoice_id', '!=', False), ('credit_move_id.payment_id.invoice_ids', '!=', False), ('credit_move_id.invoice_id','!=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_analytic_see_journal_t'))]"/>
+        </record>
+        <record id="account_full_reconcile_invoices_user_code_t_rule" model="ir.rule">
+            <field name="name">Group invoices of code T can invoice related full reconciles</field>
+            <field name="model_id" ref="account.model_account_full_reconcile"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[('reconciled_line_ids.invoice_id.journal_id.code','=','T'), '|', '|', '|', ('reconciled_line_ids.receipt_id', '!=', False), ('reconciled_line_ids.move_id.expense_invoice_id', '!=', False), ('reconciled_line_ids.payment_id.invoice_ids', '!=', False), ('reconciled_line_ids.invoice_id','!=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_robo_analytic_see_journal_t'))]"/>
+        </record>
+        <record id="robo_see_incomes_account_move_line_payments_code_t_rule" model="ir.rule">
+            <field name="name">robo see incomes allow account move lines related to receivables/payables of code T</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="domain_force">[('journal_id.code','=','T'), ('account_id.code', 'in', ['4430', '2410'])]</field>
+            <field name="groups" eval="[(4,ref('etaksi.group_robo_analytic_see_journal_t'))]"/>
+        </record>
+        <record id="robo_see_incomes_account_move_payments_code_t_rule" model="ir.rule">
+            <field name="name">robo see incomes allow account moves related to receivables/payables of code T</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="domain_force">[('line_ids.journal_id.code','=','T'), ('line_ids.account_id.code', 'in', ['4430', '2410'])]</field>
+            <field name="groups" eval="[(4,ref('etaksi.group_robo_analytic_see_journal_t'))]"/>
+        </record>
+    </data>
+</odoo>

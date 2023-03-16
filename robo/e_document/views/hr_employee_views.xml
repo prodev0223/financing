@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="open_employees_action_new_form" model="ir.ui.view">
+            <field name="name">hr.employee.open.employees.action.new.form.extend</field>
+            <field name="model">hr.employee</field>
+            <field name="robo_front">True</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='signup_valid']" position="before">
+                    <field name="show_ending_fixed_term_contract_box" invisible="1"/>
+                    <div class="alert alert-info text-center" role="alert" style="margin-bottom: 0px;"
+                         colspan="4" attrs="{'invisible': [('show_ending_fixed_term_contract_box','=',False)]}"
+                         groups="robo_basic.group_robo_premium_manager,robo_basic.group_robo_free_manager,robo_basic.group_robo_hr_manager">
+                        <p>
+                            The employee's fixed term contract is coming to an end.
+                            Choose a course of action for this work relation:
+                        </p>
+                        <div class="btn-group btn-sm" style="margin-top: 10px;">
+                            <button class="oe_highlight" name="action_after_fixed_term_contract_end"
+                                    string="Extend fixed term duration" type="object" style="margin-left: 5px;"
+                                    context="{'action': 'extend'}"/>
+                            <button class="oe_highlight" name="action_after_fixed_term_contract_end"
+                                    string="Change to indefinite duration" type="object" style="margin-left: 5px;"
+                                    context="{'action': 'change_type'}"/>
+                            <button class="oe_highlight" name="action_after_fixed_term_contract_end"
+                                    string="Terminate work relation" type="object" style="margin-left: 5px;"
+                                    context="{'action': 'terminate'}"/>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

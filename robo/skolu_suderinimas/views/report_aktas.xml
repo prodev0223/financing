@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="skolu_suderinimas_report" name="skolu suderinimas" inherit_id="report.assets_common">
+            <xpath expr="." position="inside">
+                    <link rel="stylesheet" type="text/less" href="/skolu_suderinimas/static/src/less/report.less"/>
+            </xpath>
+        </template>
+        <template id="external_layout_header" inherit_id="report.external_layout_header">
+            <xpath expr="//div[@class='header']" position="replace">
+                <div class="header">
+                    <div class="row">
+                        <div class="col-xs-3 robo_company_logo">
+                            <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+        <template id="report_aktas">
+            <t t-name="skolu_suderinimas.report_aktas">
+                <style type="text/css">
+                    h3 {
+                    text-align: center;
+                    }
+                    .centras{
+                    text-align: center;
+                    font-weight: bold;
+                    }
+                    .virsus{
+                    border-top: 1px solid black;
+                    }
+                </style>
+                <t t-call="report.external_layout">
+                    <t t-set="partner" t-value="partner.with_context({'lang':partner.lang})"/>
+                    <div class="page">
+                        <p>
+                            <h3>
+                                <t t-if="type=='unreconciled'">
+                                    <strong>Tarpusavio skolų suderinimo aktas</strong>
+                                </t>
+                                <t t-if="type=='all'">
+                                    <strong>Apyvartos</strong>
+                                </t>
+                            </h3>
+                            <h4>
+                                <span t-esc="date"/>
+                            </h4>
+                        </p>
+                        <p class="mt48">
+                            <strong>Gavėjas:</strong>
+                            <p>
+                                <strong>
+                                    <span t-field="partner.display_name"/>
+                                </strong>
+                            </p>
+                            <p>
+                                <span t-esc="partner"
+                                      t-esc-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': true}"/>
+                            </p>
+                            <t t-if="partner.phone">Tel:
+                                <span t-field="partner.phone"/>
+                                <t t-if="partner.fax">; fax:
+                                    <span t-field="partner.fax"/>
+                                </t>
+                                <br/>
+                            </t>
+                            <t t-if="partner.email">
+                                <span t-field="partner.email"/>
+                                <br/>
+                            </t>
+                        </p>
+                        <t t-if="type=='unreconciled' and not payment_reminder">
+                            <p class="mt16">
+                                Prašome patvirtinti
+                                <b>likutį</b>
+                                <span t-esc="date"/>
+                                apskaitos duomenimis.
+                            </p>
+                        </t>
+                        <t t-if="type=='all'">
+                            <p class="mt16">
+                                Apyvartos
+                                <span t-esc="date_from"/>
+                                -
+                                <span t-esc="date_to"/>
+                                laikotarpiui.
+                            </p>
+                        </t>
+                        <t t-set="lang" t-value="partner.lang or 'lt_LT'"/>
+                        <t t-set="partner_data" t-value="data_by_partner_id[partner.id]"/>
+                        <t t-foreach="partner_data" t-as="currency">
+                            <t t-if="partner_data[currency]['lines'] or len(partner_data) == 1">
+                                <t t-value="get_currency_name(currency)" t-set="currency_name"/>
+                                <t t-if="type=='all'">
+                                    <p>
+                                        <strong>Skolos likutis pradžioje:
+                                            <t t-esc="formatLang(partner_data[currency]['start_balance'] or 0.00,
+                                            digits=2)"/>
+                                            <t t-esc="currency_name"/>
+                                        </strong>
+                                    </p>
+                                    <p>
+                                        <strong>Skolos likutis pabaigoje:
+                                            <t t-esc="formatLang(partner_data[currency]['end_balance'] or 0.00,
+                                            digits=2)"/>
+                                            <t t-esc="currency_name"/>
+                                        </strong>
+                                    </p>
+                                </t>
+                                <table class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th t-att-colspan="7 + show_original_amounts + show_accounts">
+                                                <strong>
+                                                    <h4 class="centras" t-esc="company.name"/>
+                                                </strong>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="centras">Data</th>
+                                            <th class="centras">Išrašymo data</th>
+                                            <th class="centras">Mokėjimo terminas</th>
+                                            <th class="centras">Dokumento tipas</th>
+                                            <th class="centras">Dokumento numeris</th>
+                                            <t t-if="show_accounts">
+                                                <th class="centras">Sąskaita</th>
+                                            </t>
+                                            <th class="centras">Debetas</th>
+                                            <th class="centras">Kreditas</th>
+                                            <t t-if="show_original_amounts">
+                                                <th class="centras">Originali suma</th>
+                                            </t>
+                                        </tr>
+                                    </thead>
+                                    <t t-if="detail_level=='detail'">
+                                        <tr t-foreach="partner_data[currency]['lines']" t-as="line">
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:left" align="center"
+                                                     t-esc="line['date']"/>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:left" align="center"
+                                                     t-esc="line['date_operation']"/>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:left" align="center"
+                                                     t-esc="line['date_maturity']"/>
+                                            </td>
+                                            <td>
+                                                <t t-set="doc_type" t-value="partner.get_doc_type(line['doc_type'])"/>
+                                                <div style="text-align:left" align="center" t-esc="doc_type"/>
+                                            </td>
+                                            <td>
+                                                <div style="text-align:left" align="center" t-raw="format_text(line['ref'])"/>
+                                            </td>
+                                            <t t-if="show_accounts">
+                                                <td style="white-space: nowrap;">
+                                                    <div style="text-align:left" align="center"
+                                                        t-esc="get_account_name(line['account_code'])"/>
+                                                </td>
+                                            </t>
+                                            <t t-if="forced_amount is not None">
+                                                <td>
+                                                    <div style="text-align:right" align="center"
+                                                         t-esc="formatLang(0.0, digits=2)"/>
+                                                </td>
+                                                <td>
+                                                    <div style="text-align:right" align="center"
+                                                         t-esc="formatLang(0.0, digits=2)"/>
+                                                </td>
+                                            </t>
+                                            <t t-else="">
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:right" align="center"
+                                                     t-esc="formatLang(line['debit'], digits=2)"/>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:right" align="center"
+                                                     t-esc="formatLang(line['credit'], digits=2)"/>
+                                            </td>
+                                            </t>
+                                            <t t-if="show_original_amounts">
+                                                <td style="white-space: nowrap;">
+                                                    <div style="font-weight: bold;" align="center">(
+                                                        <span t-esc="formatLang(line['orig_amount'], digits=2) +
+                                                                ' ' + line['orig_currency'].name"/>
+                                                        )
+                                                    </div>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td style="font-weight: bold; white-space: nowrap;">Viso (<t t-esc="currency_name"/>):
+                                        </td>
+                                        <td/>
+                                        <td/>
+                                        <td/>
+                                        <td/>
+                                        <t t-if="show_accounts">
+                                            <td/>
+                                        </t>
+                                        <t t-if="forced_amount is not None">
+                                            <t t-if="forced_amount &gt; 0">
+                                                <td style="white-space: nowrap;">
+                                                    <div style="font-weight: bold;" align="right"
+                                                         t-esc="formatLang(abs(forced_amount), digits=2)"/>
+                                                </td>
+                                                <td style="white-space: nowrap;">
+                                                    <div style="font-weight: bold;" align="right"
+                                                         t-esc="formatLang(0.0, digits=2)"/>
+                                                </td>
+                                            </t>
+                                            <t t-elif="forced_amount &lt; 0">
+                                                <td style="white-space: nowrap;">
+                                                    <div style="font-weight: bold;" align="right"
+                                                         t-esc="formatLang(0.0, digits=2)"/>
+                                                </td>
+                                                <td style="white-space: nowrap;">
+                                                    <div style="font-weight: bold;" align="right"
+                                                         t-esc="formatLang(abs(forced_amount), digits=2)"/>
+                                                </td>
+                                            </t>
+                                        </t>
+                                        <t t-else="">
+                                            <td style="white-space: nowrap;">
+                                                <div style="font-weight: bold;" align="right"
+                                                     t-esc="formatLang(partner_data[currency]['debit'], digits=2)"/>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <div style="font-weight: bold;" align="right"
+                                                     t-esc="formatLang(partner_data[currency]['credit'], digits=2)"/>
+                                            </td>
+                                        </t>
+                                        <t t-if="show_original_amounts">
+                                            <td/>
+                                        </t>
+                                    </tr>
+                                    <br/>
+                                </table>
+                                <t t-if="type=='unreconciled'">
+                                    <t t-if="forced_amount is not None">
+                                        <t t-set="skola"
+                                         t-value="forced_amount"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-set="skola"
+                                           t-value="partner_data[currency]['debit']-partner_data[currency]['credit']"/>
+                                    </t>
+                                    <strong>Skolos likutis <t t-esc="date"/>:
+                                        <t t-esc="formatLang(skola, digits=2)"/>
+                                        <t t-if="skola &gt; 0">
+                                            ('<span t-field="partner.display_name"/>' skolingi '<span
+                                                t-field="company.display_name"/>')
+                                        </t>
+                                        <t t-if="skola &lt; 0">
+                                            ('<span t-field="company.display_name"/>' skolingi '<span
+                                                t-field="partner.display_name"/>')
+                                        </t>
+                                    </strong>
+                                </t>
+                            </t>
+                        </t>
+                        <br/>
+                        <br/>
+                        <t t-if="type=='unreconciled' and not payment_reminder">
+                            <table class="table table-condensed table-sm">
+                                <col width="45%"/>
+                                <col width="10%"/>
+                                <col width="45%"/>
+                                <tr>
+                                    <td style="border-top: none">
+                                        <div align="center">
+                                            <t t-esc="company.name"/>
+                                        </div>
+                                    </td>
+                                    <td style="border-top: none"/>
+                                    <td style="border-top: none">
+                                        <div align="center">
+                                            <t t-esc="partner.name"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <div align="center">
+                                                Buhalteris(-ė)
+                                                <t t-esc="accountant.name"/>
+                                            </div>
+                                        </strong>
+                                    </td>
+                                    <td style="border-top: none"/>
+                                    <td/>
+                                </tr>
+                                <tr>
+                                    <td style="border-top: 1px solid black;">
+                                        <div align="center">(pareigos, vardas, pavardė, parašas)</div>
+                                    </td>
+                                    <td style="border-top: none"/>
+                                    <td style="border-top: 1px solid black;">
+                                        <div align="center">(pareigos, vardas, pavardė, parašas)</div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div t-if="user.id == accountant.id" style="float:left; margin-right: 10px;">
+                                <table style="border: 1px solid black; page-break-inside: avoid;">
+                                    <tbody>
+                                        <tr>
+                                            <td style="padding-top: 10px; padding-left: 10px; padding-right: 10px;">
+                                                <span>Pasirašė: UAB „Robolabs“ įgaliotas(-a)</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding-left: 10px; padding-right: 10px;">
+                                                <span>buhalteris(-ė)</span>
+                                                <span t-esc="accountant.name.upper()"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding-left: 10px; padding-right: 10px;">
+                                                <span>Laiko žyma:</span>
+                                                <span t-esc="current_user_timestamp"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding-bottom: 10px; padding-left: 10px; padding-right: 10px;">
+                                                <span>Pasirašyta RoboLabs sistemoje</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div t-if="not payment_reminder">Dokumentas yra siunčiamas elektroniniu būdu ir jis turi
+                                tokią pat galią, kaip ir
+                                originalus
+                                dokumentas. Prašome 10-ies dienų laikotarpyje grąžinti pasirašytą aktą. Negavus
+                                numatytu
+                                laiku iš Jūsų tarpusavio atsiskaitymų suderinimo akto, savo likutį laikysime teisingu.
+                            </div>
+                        </t>
+                        <p class="mt32" style="page-break-inside: avoid;" t-if="not payment_reminder">
+                            <!--<div><strong><span>Pastabos:</span></strong></div>-->
+                            <table class="table table-condensed" style="page-break-inside: avoid;">
+                                <thead>
+                                    <th>
+                                        Pastabos:
+                                    </th>
+                                    <th>
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div style="min-height:20px"/>
+                                        </td>
+                                        <td/>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="min-height:20px"/>
+                                        </td>
+                                        <td/>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="min-height:20px"/>
+                                        </td>
+                                        <td/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <template id="report_aktas_multi_minimal">
+            <t t-name="skolu_suderinimas.report_aktas_multi_minimal">
+                <t t-call="report.html_container">
+                    <style type="text/css">
+                        h3 {
+                        text-align: center;
+                        }
+                        .centras{
+                        text-align: center;
+                        font-weight: bold;
+                        }
+                        .virsus{
+                        border-top: 1px solid black;
+                        }
+                    </style>
+                    <div class="page xls_front" id="main">
+                        <h3>
+                            <strong>Skolos likučiai</strong>
+                        </h3>
+                        <t t-if="type == 'all'">
+                            <h4>
+                                <span t-esc="date_from"/> -
+                                <span t-esc="date_to"/>
+                            </h4>
+                        </t>
+                        <t t-if="type != 'all'">
+                            <h4>
+                                <span t-esc="date"/>
+                            </h4>
+                        </t>
+                        <br/>
+                        <t t-if="detail_level == 'sum' and show_accounts">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="centras">Sąskaita</th>
+                                        <th class="centras">Partneris</th>
+                                        <th class="centras" style="text-align:right;">Suma</th>
+                                    </tr>
+                                </thead>
+                                <t t-foreach="data_by_account_code" t-as="account">
+                                        <tr>
+                                            <td style="border-top: 1pt solid black; white-space: nowrap;">
+                                                <div style="font-weight: bold; white-space: nowrap; text-align:left"
+                                                     align="center" t-esc="get_account_name(account)"/>
+                                            </td>
+                                            <td style="border-top: 1pt solid black;"></td>
+                                            <td style="border-top: 1pt solid black;"></td>
+                                        </tr>
+                                    <t t-foreach="account_value" t-as="partner">
+                                    <t t-set="partner_data" t-value="get_partner_data(partner)"/>
+                                    <t t-set="lang" t-value="partner_data.lang or 'lt_LT'"/>
+                                    <tr t-foreach="partner_value" t-as="currency">
+                                        <t t-value="get_bare_currency_data(currency)" t-set="currency_data"/>
+                                        <t t-set="balance"
+                                           t-value="partner_value[currency]['debit'] -
+                                           partner_value[currency]['credit']"/>
+                                        <td style="white-space: nowrap;">
+                                            <div style="white-space: nowrap; text-align:left" align="center"
+                                                 t-esc="get_account_name(account)"/>
+                                        </td>
+                                        <td style="white-space: nowrap;">
+                                            <div style="white-space: nowrap; text-align:left" align="center"
+                                                 t-esc="partner_data.display_name"/>
+                                        </td>
+                                        <td>
+                                            <div style="text-align:right" align="center"
+                                                 t-esc="formatLang(balance, digits=2) + currency_data['symbol']"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                </t>
+                            </table>
+                        </t>
+                        <t t-if="detail_level == 'sum' and not show_accounts">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="centras">Partneris</th>
+                                        <th class="centras" style="text-align:right;">Suma</th>
+                                    </tr>
+                                </thead>
+                                <t t-foreach="docs" t-as="partner">
+                                    <t t-set="lang" t-value="partner.lang or 'lt_LT'"/>
+                                    <t t-set="partner_data" t-value="data_by_partner_id[partner.id]"/>
+                                    <tr t-foreach="partner_data" t-as="currency">
+                                        <t t-value="get_bare_currency_data(currency)" t-set="currency_data"/>
+                                        <t t-set="skola"
+                                           t-value="partner_data[currency]['debit']-partner_data[currency]['credit']"/>
+                                        <td style="white-space: nowrap;">
+                                            <div style="white-space: nowrap; text-align:left" align="center"
+                                                 t-esc="partner.display_name"/>
+                                        </td>
+                                        <td>
+                                            <div style="text-align:right" align="center"
+                                                 t-esc="formatLang(skola, digits=2) + currency_data['symbol']"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </t>
+                        <t t-if="detail_level == 'detail'">
+                            <table class="table table-condensed main_table">
+                                <thead>
+                                    <tr style="border-bottom: 1pt solid black;">
+                                        <th class="centras" style="border-bottom: 1pt solid black;">Partneris/Data</th>
+                                        <th class="centras" style="border-bottom: 1pt solid black;">Išrašymo data</th>
+                                        <th class="centras" style="border-bottom: 1pt solid black;">Mokėjimo terminas</th>
+                                        <th class="centras" style="border-bottom: 1pt solid black;">Dokumento tipas</th>
+                                        <th class="centras" style="border-bottom: 1pt solid black;">Dokumento numeris</th>
+                                        <t t-if="show_accounts">
+                                            <th class="centras" style="border-bottom: 1pt solid black;">Sąskaita</th>
+                                        </t>
+                                        <t t-if="original_amount_group_by">
+                                            <th class="centras"
+                                                style="border-bottom: 1pt solid black;">Suma (Originali valiuta)</th>
+                                        </t>
+                                        <t t-else="">
+                                            <th class="centras"
+                                                style="border-bottom: 1pt solid black;">Suma (EUR)</th>
+                                        </t>
+                                        <th class="centras" style="border-bottom: 1pt solid black;">Debetas</th>
+                                        <th class="centras" style="border-bottom: 1pt solid black;">Kreditas</th>
+                                        <t t-if="original_amount_group_by">
+                                            <th class="centras"
+                                                style="border-bottom: 1pt solid black;">Skolos likutis (Originali valiuta)</th>
+                                        </t>
+                                        <t t-else="">
+                                            <th class="centras"
+                                                style="border-bottom: 1pt solid black;">Skolos likutis (EUR)</th>
+                                        </t>
+                                    </tr>
+                                </thead>
+                                <t t-foreach="docs" t-as="partner">
+                                    <t t-set="lang" t-value="partner.lang or 'lt_LT'"/>
+                                    <t t-set="partner_data" t-value="data_by_partner_id[partner.id]"/>
+                                    <t t-foreach="partner_data" t-as="currency">
+                                        <t t-value="get_bare_currency_data(currency)" t-set="currency_data"/>
+                                        <t t-set="skola"
+                                           t-value="partner_data[currency]['debit']-partner_data[currency]['credit']"/>
+                                        <tr>
+                                            <td style="border-top: 1pt solid black; white-space: nowrap;">
+                                                <div style="font-weight: bold; white-space: nowrap; text-align:left"
+                                                     align="center"
+                                                     t-esc="partner.display_name"/>
+                                            </td>
+                                            <td style="border-top: 1pt solid black;"></td>
+                                            <td style="border-top: 1pt solid black;"></td>
+                                            <td style="border-top: 1pt solid black;"></td>
+                                            <td style="border-top: 1pt solid black;"></td>
+                                            <t t-if="show_accounts">
+                                                <td style="border-top: 1pt solid black;"></td>
+                                            </t>
+                                            <td style="border-top: 1pt solid black;"></td>
+                                            <td style="border-top: 1pt solid black;">
+                                                <div style="font-weight: bold;" align="right"
+                                                     t-esc="formatLang(partner_data[currency]['debit'], digits=2)"/>
+                                            </td>
+                                            <td style="border-top: 1pt solid black;">
+                                                <div style="font-weight: bold;" align="right"
+                                                     t-esc="formatLang(partner_data[currency]['credit'], digits=2)"/>
+                                            </td>
+                                            <td style="border-top: 1pt solid black;">
+                                                <t t-if="original_amount_group_by">
+                                                    <div style="font-weight: bold; text-align:right" align="center"
+                                                         t-esc="formatLang(skola, digits=2) + currency_data['symbol']"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <div style="font-weight: bold; text-align:right" align="center"
+                                                         t-esc="formatLang(skola, digits=2)"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr t-foreach="partner_data[currency]['lines']" t-as="line">
+                                            <t t-set="original_value_currency_data" t-value="get_bare_currency_data(line['orig_currency'].id)"/>
+                                            <t t-set="skolos_likutis" t-value="line['debit']-line['credit']"/>
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:left" align="center"
+                                                     t-esc="line['date']"/>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:left" align="center"
+                                                     t-esc="line['date_operation']"/>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:left" align="center"
+                                                     t-esc="line['date_maturity']"/>
+                                            </td>
+                                            <td>
+                                                <t t-set="doc_type" t-value="partner.get_doc_type(line['doc_type'])"/>
+                                                <div style="text-align:left" align="center" t-esc="doc_type"/>
+                                            </td>
+                                            <td>
+                                                <div style="text-align:left" align="center" t-esc="line['ref']"/>
+                                            </td>
+                                            <t t-if="show_accounts">
+                                                <td>
+                                                    <div style="text-align:left" align="center"
+                                                         t-esc="get_account_name(line['account_code'])"/>
+                                                </td>
+                                            </t>
+                                            <td style="white-space: nowrap;">
+                                                <t t-if="line['display_original']">
+                                                    <div align="right"
+                                                         t-esc="formatLang(line['orig_amount'], digits=2) +
+                                                         original_value_currency_data['symbol']"/>
+                                                </t>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:right" align="center"
+                                                     t-esc="formatLang(line['debit'], digits=2)"/>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <div style="text-align:right" align="center"
+                                                     t-esc="formatLang(line['credit'], digits=2)"/>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <t t-if="line['display_original']">
+                                                    <div style="text-align:right" align="center"
+                                                         t-esc="formatLang(skolos_likutis, digits=2) +
+                                                         original_value_currency_data['symbol']"/>
+                                                </t>
+                                                <t t-else="">
+                                                     <div style="text-align:right" align="center"
+                                                         t-esc="formatLang(skolos_likutis, digits=2)"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <template id="report_aktas_multi">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="partner">
+                    <t t-call="skolu_suderinimas.report_aktas" t-lang="partner.lang or 'lt_LT'"/>
+                </t>
+            </t>
+        </template>
+
+        <record id="minimal_partner_debts_wizard_form_view" model="ir.ui.view">
+            <field name="name">minimal.partner.debts.wizard.form.view</field>
+            <field name="model">debt.act.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Debt Coordination">
+                    <group>
+                        <field name="type"/>
+                        <field name="date" attrs="{'invisible': [('type', '!=', 'unreconciled')], 'required': [('type', '=', 'unreconciled')]}"/>
+                        <field name="date_from" attrs="{'invisible': [('type', '!=', 'all')], 'required': [('type', '=', 'all')]}"/>
+                        <field name="date_to" attrs="{'invisible': [('type', '!=', 'all')], 'required': [('type', '=', 'all')]}"/>
+                    </group>
+                    <group>
+                        <field name="all_partners"/>
+                        <field name="partner_ids" attrs="{'invisible': [('all_partners', '=', True)]}"
+                               widget="many2many_tags" string="Pasirinkti Partneriai"/>
+                        <field name="account_type_filter"/>
+                        <field name="detail_level"/>
+                        <field name="show_original_amounts"/>
+                        <field name="show_accounts"/>
+                        <field name="dont_show_zero_values"/>
+                        <field name="dont_show_zero_debts"/>
+                    </group>
+                    <footer>
+                        <button name="generate_minimal_debt_act" string="Kurti ataskaitą (PDF)" type="object"
+                                class="oe_highlight"/>
+                        <button name="xls_export" type="object"
+                                    string="Kurti ataskaitą (XLS)" class="oe_highlight"/>
+                        <button string="Atšaukti" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="minimal_partner_debts_wizard_action" model="ir.actions.act_window">
+            <field name="name">Visų partnerių skolos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">debt.act.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="minimal_partner_debts_wizard_form_view"/>
+            <field name="target">new</field>
+            <field name="context">{'default_all_partners': True}</field>
+        </record>
+
+        <menuitem
+                name="Visų partnerių skolos"
+                id="menu_partner_debts"
+                sequence="-10"
+                parent="account.menu_finance_legal_statement"
+                action="minimal_partner_debts_wizard_action"
+        />
+    </data>
+</odoo>

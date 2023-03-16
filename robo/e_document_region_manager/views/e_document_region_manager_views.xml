@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="e_document_region_manager_form" model="ir.ui.view">
+            <field name="name">e.document.region.manager.form</field>
+            <field name="model">e.document.region.manager</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="department_ids" widget="many2many_tags"/>
+                            <field name="e_document_template_ids" widget="many2many_tags"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="date_start"/>
+                            <field name="date_stop"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="e_document_region_manager_tree" model="ir.ui.view">
+            <field name="name">e.document.region.manager.tree</field>
+            <field name="model">e.document.region.manager</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" import="0">
+                    <field name="employee_id"/>
+                    <field name="department_ids" widget="many2many_tags"/>
+                    <field name="e_document_template_ids" widget="many2many_tags"
+                           options="{'no_create': True, 'no_open': True}"/>
+                    <field name="date_start"/>
+                    <field name="date_stop"/>
+                </tree>
+            </field>
+        </record>
+        <record id="e_document_region_manager_action" model="ir.actions.act_window">
+            <field name="name">Region managers</field>
+            <field name="res_model">e.document.region.manager</field>
+            <field name="view_mode">tree_robo,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('e_document_region_manager_tree')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('e_document_region_manager_form')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    This request has not returned any results
+                </p>
+            </field>
+            <field name="context">{'robo_header':{}}</field>
+        </record>
+    </data>
+</odoo>

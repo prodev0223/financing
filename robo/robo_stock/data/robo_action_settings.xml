@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--Picking-->
+        <record id="open_robo_stock_picking_settings" model="ir.actions.act_window.settings">
+            <field name="action" ref="robo_stock.open_robo_stock_picking"/>
+            <field name="cards_template">RecentPicking</field>
+            <field name="cards_template_subtype"></field>
+            <field name="cards_domain"></field>
+            <field name="cards_force_order"></field>
+            <field name="search_add_custom">True</field>
+            <field name="cards_new_action" ref="robo_stock.new_open_robo_stock_picking"/>
+            <field name="show_duplicate">True</field>
+        </record>
+        <!--end Picking-->
+
+        <!--Sale order-->
+        <record id="open_robo_sale_orders_settings" model="ir.actions.act_window.settings">
+            <field name="action" ref="robo_stock.open_robo_sale_orders"/>
+            <field name="cards_template">RecentSaleOrders</field>
+            <field name="cards_template_subtype"></field>
+            <field name="cards_domain"></field>
+            <field name="cards_force_order"></field>
+            <field name="search_add_custom">True</field>
+            <field name="cards_new_action" ref="robo_stock.new_open_robo_sale_orders"/>
+            <field name="show_duplicate">True</field>
+        </record>
+        <!--end Sale order-->
+
+        <!--Purchase order-->
+        <record id="open_robo_purchase_orders_settings" model="ir.actions.act_window.settings">
+            <field name="action" ref="robo_stock.open_robo_purchase_orders"/>
+            <field name="cards_template">RecentPurchaseOrders</field>
+            <field name="cards_template_subtype"></field>
+            <field name="cards_domain"></field>
+            <field name="cards_force_order"></field>
+            <field name="search_add_custom">True</field>
+            <field name="cards_new_action" ref="robo_stock.new_open_robo_purchase_orders"/>
+            <field name="show_duplicate">True</field>
+        </record>
+        <!--end Purchase order-->
+
+    </data>
+</odoo>

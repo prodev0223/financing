@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="timesheet_view_grid_validate" model="ir.ui.view">
+            <field name="name">Remove submit button from timesheet grid</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="robo_projects.timesheet_view_grid_validate"/>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <xpath expr="//grid/button[@name='validate']" position="replace">
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

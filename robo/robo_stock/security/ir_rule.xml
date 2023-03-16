@@ -1,0 +1,44 @@
+<odoo>
+    <data>
+        <record id="rule_stock_reason_line_manager" model="ir.rule">
+            <field name="name">Stock Reason Line: Manager</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="model_id" ref="robo_stock.model_stock_reason_line"/>
+            <field name="domain_force">[('robo_front', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_user'))]"/>
+        </record>
+        <record id="rule_stock_reason_line_accountant" model="ir.rule">
+            <field name="name">Stock Reason Line: Accountant</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="model_id" ref="robo_stock.model_stock_reason_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+        </record>
+        <record id="rule_stock_inventory_manager" model="ir.rule">
+            <field name="name">Stock Inventory: Manager</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="model_id" ref="robo_stock.model_stock_inventory"/>
+            <field name="domain_force">['|', ('reason_line', '=', False), ('reason_line.robo_front', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+        </record>
+        <record id="rule_stock_inventory_accountant" model="ir.rule">
+            <field name="name">Stock Inventory: Accountant</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="model_id" ref="robo_stock.model_stock_inventory"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+        </record>
+    </data>
+</odoo>

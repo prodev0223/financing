@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <record id="product_expiry.extend_product_template_product_expiry" model="ir.ui.view">
+            <field name="name">product.template.inherit.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_template_property_form" />
+            <field name="arch" type="xml">
+                <group name="stock_property" position="after">
+                    <group name="expiry_and_lots" groups="stock.group_production_lot">
+<!--                        <field name="life_time" string="Produkto galiojimo laikas (d.)" help=""/>-->
+<!--                        <field name="use_time" string="Produkto naudojimo laikas (d.)" help=""/>-->
+                        <field name="removal_time" string="Produkto galiojimo laikas (d.)" help=""/>
+<!--                        <field name="alert_time" string="Įspėjimo laikas (d.)" help=""/>-->
+                    </group>
+                </group>
+            </field>
+        </record>
+     <record id="extend_product_template_product_expiry" model="ir.ui.view">
+            <field name="name">product.template.inherit.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="robo_stock.robo_stock_product_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tracking']" position="before">
+                    <field name="removal_time" string="Produkto galiojimo laikas (d.)" help=""/>
+                </xpath>
+<!--                <group name="stock_property" position="after">-->
+<!--                    <group name="expiry_and_lots" groups="stock.group_production_lot">-->
+<!--                        <field name="life_time" string="Produkto galiojimo laikas (d.)" help=""/>-->
+<!--                        <field name="use_time" string="Produkto naudojimo laikas (d.)" help=""/>-->
+<!--                        <field name="removal_time" string="Produkto galiojimo laikas (d.)" help=""/>-->
+<!--                        <field name="alert_time" string="Įspėjimo laikas (d.)" help=""/>-->
+<!--                    </group>-->
+<!--                </group>-->
+            </field>
+        </record>
+</odoo>

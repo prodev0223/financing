@@ -1,0 +1,244 @@
+<odoo>
+    <data>
+        <!--<record id="robo_projects.view_project_kanban_extend" model="ir.ui.view">-->
+            <!--<field name="name">project.project.kanban.extend</field>-->
+            <!--<field name="model">project.project</field>-->
+            <!--<field name="inherit_id" ref="project.view_project_kanban"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//div[@class='o_primary']" position="after">-->
+                    <!--<field name="code"/>-->
+                    <!-- - -->
+                    <!--<field name="user_id"/>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//a[@type='edit']/.." position="replace">-->
+                    <!--<field name="allow_edit" invisible="1"/>-->
+                    <!--<div>-->
+                        <!--<a type="edit">Settings</a>-->
+                    <!--</div>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//a[@name='%(project.action_project_task_user_tree_filtered)d']" position="attributes">-->
+                    <!--<attribute name="groups">project.group_project_manager</attribute>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+        <record id="hr_employee_job_code" model="ir.ui.view">
+            <field name="name">hr.employee.job_code</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='job_id']" position="after">
+                    <field name="job_code"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_analytic_job_code" model="ir.ui.view">
+            <field name="name">hr_timesheet_sheet.sheet.job_code</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='timesheet_ids']//tree[1]//field[@name='name']" position="after">
+                    <field name="job_code_compute"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--<record id="hr_holidays_company_name_view" model="ir.ui.view">-->
+            <!--<field name="name">hr.holidays.company.name</field>-->
+            <!--<field name="model">hr.holidays</field>-->
+            <!--<field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//field[@name='employee_id']" position="after">-->
+                    <!--<field name="company_name"/>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--<record model="ir.ui.view" id="project.view_project_kanban">-->
+            <!--<field name="arch" type="xml">-->
+                <!--<kanban class="oe_background_grey o_kanban_dashboard o_project_kanban" default_group_by="stage_id" on_create="project.open_create_project">-->
+                    <!--<field name="name"/>-->
+                    <!--<field name="use_tasks"/>-->
+                    <!--<field name="color"/>-->
+                    <!--<field name="task_count"/>-->
+                    <!--<field name="task_needaction_count"/>-->
+                    <!--<field name="label_tasks"/>-->
+                    <!--<field name="alias_id"/>-->
+                    <!--<field name="alias_name"/>-->
+                    <!--<field name="alias_domain"/>-->
+                    <!--<field name="doc_count"/>-->
+                    <!--<field name="is_favorite"/>-->
+                    <!--<field name="stage_id"-->
+                           <!--options='{"group_by_tooltip": {"description": "Stage Description", "legend_priority": "Use of stars"}}'/>-->
+                    <!--<templates>-->
+                        <!--<t t-name="kanban-box">-->
+                            <!--<div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">-->
+                                <!--<div class="o_project_kanban_main">-->
+                                    <!--<div class="o_kanban_card_content o_visible">-->
+                                        <!--<div class="o_kanban_primary_left">-->
+                                            <!--<div class="o_primary">-->
+                                                <!--<span><t t-esc="record.name.value"/></span>-->
+                                            <!--</div>-->
+                                            <!--<div t-if="record.alias_name.value and record.alias_domain.value">-->
+                                                <!--<span><i class="fa fa-envelope"/> <t t-esc="record.alias_id.value"/></span>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="o_kanban_card_manage_pane o_invisible">-->
+                                        <!--<div class="o_kanban_card_manage_section o_kanban_manage_reports">-->
+                                            <!--<div groups="project.group_project_manager">-->
+                                                <!--<a type="edit">Settings</a>-->
+                                            <!--</div>-->
+                                            <!--<div attrs="{'invisible': [('use_tasks', '=', False)]}">-->
+                                                <!--<a name="807" type="action">Tasks</a>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div t-if="widget.editable" class="o_project_kanban_colorpicker">-->
+                                            <!--<ul class="oe_kanban_colorpicker" data-field="color"/>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="o_project_kanban_manage">-->
+                                        <!--<a class="o_kanban_manage_toggle_button o_left" href="#">More <i class="fa fa-caret-down"/></a>-->
+                                        <!--<a type="object" name="toggle_favorite" class="o_right"><i t-attf-class="oe_inline fa o_dashboard_star #{record.is_favorite.raw_value ? 'fa-star' : 'fa-star-o'}" title="Add/remove from favorite"/></a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                                <!--<div class="o_project_kanban_boxes">-->
+                                    <!--<div t-if="record.use_tasks.raw_value" class="o_project_kanban_box">-->
+                                        <!--<a name="808" type="action">-->
+                                            <!--<span class="o_value"><t t-esc="record.task_count.value"/></span>-->
+                                            <!--<span class="o_label"><t t-esc="record.label_tasks.value"/></span>-->
+                                        <!--</a>-->
+                                        <!--<a t-if="record.task_needaction_count.raw_value" class="o_needaction" name="808" type="action" context="{'search_default_message_needaction': 1}">-->
+                                            <!--<t t-esc="record.task_needaction_count.raw_value"/>-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                    <!--<div t-if="record.doc_count.raw_value" class="o_project_kanban_box">-->
+                                        <!--<a name="attachment_tree_view" type="object">-->
+                                            <!--<span class="o_value"><t t-esc="record.doc_count.value"/></span>-->
+                                            <!--<span class="o_label">Documents</span>-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</t>-->
+                    <!--</templates>-->
+                <!--</kanban>-->
+            <!--</field>-->
+        <!--</record>-->
+        <!--<record id="project_is_billable_extend" model="ir.ui.view">-->
+            <!--<field name="name">project.project.is.bilable</field>-->
+            <!--<field name="model">project.project</field>-->
+            <!--<field name="inherit_id" ref="project.edit_project"/>-->
+            <!--<field name="arch" type="xml">               -->
+                <!--<xpath expr="//button[@name='toggle_active']" position="before">-->
+                    <!--<button name="open_stages" type="object" string="Edit stages" icon="fa-file-text" class="oe_stat_button"/>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//field[@name='partner_id']" position="after">-->
+                    <!--<field name="project_is_billable"/>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+        <!--<record id="project_stage_tree" model="ir.ui.view">-->
+            <!--<field name="name">project.stage.tree</field>-->
+            <!--<field name="model">project.stage</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<tree string="Project Stages">-->
+                    <!--<field name="sequence" widget="handle"/> &lt;!&ndash; groups="base.group_no_one" &ndash;&gt;-->
+                    <!--<field name="name"/>-->
+                    <!--<field name="fold"/>-->
+                <!--</tree>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--&lt;!&ndash; Adding PROJECT STAGES menu, LIST and FORM views &ndash;&gt;-->
+        <!--<record id="open_project_stage_form" model="ir.actions.act_window">-->
+            <!--<field name="name">Project Stages</field>-->
+            <!--<field name="res_model">project.stage</field>-->
+            <!--<field name="view_type">form</field>-->
+            <!--<field name="view_id" ref="project_stage_tree"/>-->
+            <!--<field name="help" type="html">-->
+                <!--<p class="oe_view_nocontent_create">-->
+                    <!--Click to add a project stage in the projects pipeline.-->
+                <!--</p>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--<record id="project_stage_edit" model="ir.ui.view">-->
+            <!--<field name="name">project.stage.form</field>-->
+            <!--<field name="model">project.stage</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<form string="Project Stages">-->
+                    <!--<group>-->
+                        <!--<group>-->
+                            <!--<field name="name"/>-->
+                            <!--<field name="sequence"/>-->
+                            <!--<field name="fold"/>-->
+                            <!--<field name="description"/>-->
+                        <!--</group>-->
+                    <!--</group>-->
+                <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--<record id="project_stage_search" model="ir.ui.view">-->
+            <!--<field name="name">project.stage.search</field>-->
+            <!--<field name="model">project.stage</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<search string="Project Stages">-->
+                    <!--<field name="name" string="Project Stages"/>-->
+                <!--</search>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <!--<menuitem action="open_project_stage_form" id="menu_project_stages" name="Project Stages"-->
+                  <!--parent="project.menu_project_config" sequence="1"/>-->
+
+        <record id="hr_employee_job_code_extend" model="ir.ui.view">
+            <field name="name">hr.employee.job.code</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="robo.open_employees_action_new_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='job_id']" position="after">
+                    <field name="job_code"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="res_partner_job_code_extend" model="ir.ui.view">
+            <field name="name">res.partner.job.code</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="robo.new_clients_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='supplier_payment_term_days']" position="after">
+                    <field name="job_code"/>
+                    <field name="force_timesheet_cost" string="Priverstinis valandinis įkainis"/>
+                    <field name="timesheet_cost" string="Valandinis įkainis"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="robo.open_board_clients_action_supplier">
+            <field name="domain">['|', ('supplier','=',True), ('customer', '=', False)]
+            </field>
+        </record>
+
+        <template id="contact" inherit_id="base.contact">
+            <xpath expr="//span[@itemprop='streetAddress']" position="replace">
+                <span itemprop="streetAddress" t-raw="address.replace('\n', options.get('no_tag_br') and ', ' or ('&lt;br/&gt;%s' % ('' if options.get('no_marker') else '&amp;nbsp; &amp;nbsp; ')), 1).replace('\n',' ')"/>
+            </xpath>
+        </template>
+<!--71 61 34 16 15-->
+        <record id="report.paperformat_euro" model="report.paperformat">
+            <field name="margin_top" eval="71.0"/>
+            <field name="header_spacing" eval="61.0"/>
+            <field name="margin_bottom" eval="34"/>
+            <!--do arch picture gives additional white left 4mm-->
+            <field name="margin_left" eval="16"/>
+            <field name="margin_right" eval="15"/>
+        </record>
+        <record id="robo_projects.analytic_line_user_rule" model="ir.rule">
+            <field name="active" eval="False"/>
+        </record>
+    </data>
+</odoo>

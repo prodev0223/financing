@@ -1,0 +1,59 @@
+<odoo>
+    <data>
+        <record id="raso_payment_type_tree" model="ir.ui.view">
+            <field name="name">payment.type.tree</field>
+            <field name="model">raso.payment.type</field>
+            <field name="arch" type="xml">
+                 <tree string="Mokėjimai" create="1" edit="1" delete="1"
+                       decoration-danger="state == 'warning'"
+                       decoration-success="state == 'active'" >
+                     <field name="payment_type_name"/>
+                     <field name="payment_type_code"/>
+                     <field name="is_active"/>
+                     <field name="do_reconcile"/>
+                     <field name="journal_id"/>
+                     <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="raso_payment_type_action" model="ir.actions.act_window">
+            <field name="name">Mokėjimų tipai</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">raso.payment.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="raso_payment_type_tree"/>
+        </record>
+        <!--Forms-->
+        <record id="raso_payment_type_form" model="ir.ui.view">
+            <field name="name">raso.payment.type.form</field>
+            <field name="model">raso.payment.type</field>
+            <field name="arch" type="xml">
+                <form string="Mokėjimo tipai" create="1" edit="1" delete="1">
+                    <header>
+                        <button name="recompute_fields" type="object" string="Perskaičiuoti laukus"/>
+                        <button name="unlink" type="object" string="Ištrinti"/>
+                    <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                    <div>
+                        <label string="Mokėjimo kodas"/>
+                        <h1 class="mt0">
+                            <field name="payment_type_code" class="oe_inline"/>
+                        </h1>
+                    </div>
+                        <group>
+                            <field name="payment_type_name"/>
+                             <field name="is_active"/>
+                             <field name="do_reconcile"/>
+                             <field name="journal_id"/>
+                             <field name="state"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

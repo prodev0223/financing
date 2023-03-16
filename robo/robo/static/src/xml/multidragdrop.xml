@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+
+    <div class='multiDragDrop' t-name="MultiDragDropXML">
+        <div class="dropzone">
+            <div class="dz-message needsclick">
+                <t t-if="widget.is_screen_big">
+                    <i class="icon-cloud-upload"/>
+                    <span class="dragDropMessage">Sukelkite dokumentus buhalteriui</span><br/>
+                </t>
+                <t t-else="">
+                    <i class="icon-camera2"/>
+                    <span class="dragDropMessage">Nuotrauka buhalteriui</span><br/>
+                </t>
+            </div>
+        </div>
+        <div class="robo-additional-info">
+            <span class="robo-text">Arba siųskite:</span>
+            <span class="robo-upload-emails">
+                <a class="robo-alias-email" t-attf-href="mailto:{{widget.robo_alias}}"><t t-esc="widget.robo_alias"/></a>
+            </span>
+            <span class="doc-processing-info" style="margin-left: 20px; font-size: 18px;"><i class="icon-question-circle"/></span>
+        </div>
+        <div class="robo-statistics">
+            <div class="accepted" title="Priimti"><span class="statistics-name"><i class="icon-sync"/></span><span class="statistics-number"></span></div>
+            <div class="done" title="Apdoroti"><span class="statistics-name"><i class="icon-checkmark-circle"/></span><span class="statistics-number"></span></div>
+            <div class="rejected" title="Atmesti"><span class="statistics-name"><i class="icon-cross-circle"/></span><span class="statistics-number"></span></div>
+            <div class="need_action" title="Reikia papildymo"><span class="statistics-name"><i class="icon-question-circle"/></span><span class="statistics-number"></span></div>
+        </div>
+    </div>
+
+    <div t-attf-id='{{uniq_id}}' t-name="robo.dragDrop.tooltip" class="table-responsive" style="border: none">
+        <table class="table" style='table-layout: fixed;' t-if="files.length > 0">
+            <thead>
+                <tr>
+                    <th style="width: 120px">Failo pavadinimas</th>
+                    <th t-if='is_screen_big' style="width: 120px">Pateikė</th>
+                    <th style="width: 60px">Statusas</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr t-foreach="files" t-as="file">
+                        <td>
+                            <span style="display:block;overflow:hidden;text-overflow: ellipsis;"> <t t-esc="file.datas_fname"/></span>
+                        </td>
+                        <td t-if='is_screen_big'>
+                            <span style="display:block;overflow:hidden;text-overflow: ellipsis;"> <t t-esc="file.person"/></span>
+                        </td>
+                        <td t-attf-class="text-right {{file.state}}">
+                            <span> <t t-esc="states[file.state]"/></span>
+                        </td>
+                </tr>
+            </tbody>
+        </table>
+        <div t-else="">
+            <span><strong>Nėra pateiktų dokumentų</strong></span>
+        </div>
+        <div t-if="files.length > 0" class="text-center"><span><a href="#" class="show_all_files">Visi dokumentai</a></span></div>
+    </div>
+    <t t-name="doc-processing-info-dragdrop">
+        <div t-name="doc-processing-info.popup" class="doc-processing-info-popup table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Siunčiant dokumentus galite naudoti šiuos raktažodžius el. laiško temoje:</th>
+                </tr>
+            </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span>{AP} - iškart po apdorojimo suformuoti mokėjimo ruošinį.
+                                Turint aktyvią banko integraciją, galima naudoti žymas {SWED} ir {PAYSERA}. Atitinkamai Swedbank ir Paysera interneto banke bus suformuotas mokėjimo ruošinys.
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>{A} - apmokėta asmeninėmis siuntėjo lėšomis</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>{K} - apmokėta įmonės lėšomis</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>{SF} - dokumentas bus apdorotas kaip sąskaita faktūra.</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </t>
+</templates>

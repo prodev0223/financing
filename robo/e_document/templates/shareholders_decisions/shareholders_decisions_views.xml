@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="shareholders_decisions_base_view" model="ir.ui.view">
+            <field name="name">Akcininkų sprendimas</field>
+            <field name="model">e.document</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header attrs="{'invisible': [('locked', '=', True)]}">
+
+                        <!--ONLY ACCOUNTANTS CAN CONFIRM/CANCEL DOC-->
+                        <button name="confirm_shareholders_decision" type="object"
+                                string="Patvirtinti akcininkų sprendimą"
+                                confirm="Ar tikrai norite patvirtinti šį akcininkų sprendimą?"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                attrs="{'invisible': [('state','!=','confirm')]}"/>
+                        <button name="cancel_shareholders_decision" type="object"
+                                string="Atšaukti akcininkų sprendimą"
+                                confirm="Ar tikrai norite atšaukti akcininkų sprendimą?"
+                                groups="robo_basic.group_robo_premium_accountant"
+                                attrs="{'invisible': ['|', ('state','!=','e_signed'), ('cancelled_ids', '!=', [])]}"/>
+
+                        <button name="confirm" type="object" string="Formuoti" states="draft"/>
+                        <button name="set_draft" type="object" string="Atstatyti į juodraštį" states="confirm"/>
+
+                        <field name="cancelled_ids" invisible="1"/>
+                        <field name="cancel_id" invisible="1"/>
+                        <button name="create_cancelling_shareholders_decision" type="object"
+                                string="Suformuoti atšaukimo dokumentą"
+                                confirm="Ar tikrai norite suformuoti dokumentą atšaukiantį šį dokumentą?"
+                                attrs="{'invisible': ['|', ('state','!=','e_signed'), ('cancelled_ids', '!=', [])]}"/>
+
+                        <button name="action_download" type="object" string="Atsisiųsti"
+                                states="confirm,e_signed"/>
+
+                        <field name="state" widget="statusbar"/>
+                        <field name="rejected" invisible="1"/>
+                        <field name="show_reset_running_button" invisible="1"/>
+                    </header>
+                    <field name="failed_workflow" invisible="1"/>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('running', '=', False)]}">
+                        Dokumentas šiuo metu yra pasirašinėjamas, prašome palaukti, jis turėtų būti paruoštas netrukus
+                    </div>
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': [('failed_workflow','=', False)]}"
+                         groups="robo_basic.group_robo_premium_accountant">
+                        Nepavyko įvykdyti dokumento darbo eigos
+                    </div>
+                    <div class="alert robo-alert-info-red" role="alert" style="margin-bottom:0px;" colspan="4"
+                         attrs="{'invisible': ['|', ('state','!=','e_signed'), ('rejected', '!=', True)]}">
+                        ŠIS DOKUMENTAS BUVO ATMESTAS IR NEBEGALIOJA
+                    </div>
+                    <sheet>
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;" colspan="4"
+                             attrs="{'invisible': [('state','!=','confirm')]}">
+                            Atsispausdinkite šį akcininkų sprendimą, pasirašykite akcininkų susirinkime, ir informuokite
+                            savo buhalterį apie šio sprendimo patvirtinimą palikdami žinutę bei prisegdami
+                            pasirašytą sprendimą prie žinutės dokumento apačioje.
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <div class=" oe_right oe_button_box">
+                            <field name="record_id" attrs="{'invisible':1}"/>
+                            <field name="record_model" attrs="{'invisible':1}"/>
+                            <button name="toggle_active" type="object" groups="base.group_system" class="oe_stat_button"
+                                    icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{'terminology': 'archive'}"/>
+                            </button>
+                            <button name="reset_running" type="object" groups="robo_basic.group_robo_premium_accountant"
+                                    class="oe_stat_button" icon="fa-history"
+                                    attrs="{'invisible': [('show_reset_running_button', '=', False)]}">
+                                <field name="running" widget="boolean_button" options="{
+                                    'terminology': {
+                                        'string_true': 'Pasirašoma',
+                                        'hover_true': 'Atstatyti',
+                                        }
+                                    }"/>
+                            </button>
+
+                            <button class="oe_inline oe_stat_button oe_right" name="open_cancelled_ids"
+                                    string="Atšaukiantis dokumentas"
+                                    help="Nueiti į atšaukiantį įsakymą" type="object"
+                                    attrs="{'invisible':[('cancelled_ids', '=', [])]}" icon="fa-link" widget="statinfo"
+                                    groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,
+                                    robo_basic.group_robo_edocument_manager"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_cancel_id"
+                                    string="Atšaukiamas dokumentas"
+                                    help="Nueiti į atšaukiamą įsakymą" type="object"
+                                    attrs="{'invisible':[('cancel_id', '=', False)]}" icon="fa-link" widget="statinfo"
+                                    groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,
+                                    robo_basic.group_robo_edocument_manager"/>
+
+                            <button class="oe_inline oe_stat_button oe_right" name="open_related_document"
+                                    string="Dokumentai" help="Nueiti į susijusius dokumentus" type="object"
+                                    attrs="{'invisible':['|', ('record_id','=',0), ('record_model', '!=', 'e.document')]}"
+                                    icon="fa-link" widget="statinfo"
+                                    groups="robo_basic.group_robo_free_manager,robo_basic.group_robo_premium_manager,
+                                    robo_basic.group_robo_edocument_manager"/>
+                            <button class="oe_inline oe_stat_button oe_right" name="open_related_record"
+                                    string="Įrašai" help="Nueiti į susijusius įrašus"
+                                    type="object"
+                                    attrs="{'invisible':['|',('record_id','=',0), ('record_model', '=', 'e.document')]}"
+                                    icon="fa-link" widget="statinfo" groups="robo_basic.group_robo_premium_accountant"/>
+                        </div>
+                        <group attrs="{'invisible': [('locked', '=', True)]}">
+                            <group>
+                                <field name="locked" invisible="1"/>
+                                <field name="cancel_uid" attrs="{'invisible': [('state', '!=', 'cancel')]}"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="company_id" options="{'no_create': True, 'no_open': True}"
+                                       string="Įmonės pavadinimas" required="True" invisible="1"/>
+                                <field name="date_document" string="Dokumento pildymo data" required="True"
+                                       invisible="0"/>
+                                <field name="document_number" string="Dokumento numeris" required="True" invisible="0"/>
+                                <field name="vieta" string="Dokumento pildymo vieta" required="True" invisible="0"/>
+                            </group>
+                            <group>
+                                <!--TODO employee_id2 should not be in this "base" view but rather extended where needed because not all shareholders decisions need employee_id2-->
+                                <field name="employee_id2" options="{'no_create': True}"
+                                       string="Darbuotojas" required="True" invisible="0"
+                                       context="{'form_view_ref': 'robo.open_employees_action_new_form'}"/>
+                                <field name="extra_text"/>
+                            </group>
+                            <group colspan="4" col="4">
+                                <group colspan="4" col="4">
+                                    <span style="font-weight: bold">Pasirašinėjantys akcininkai</span>
+                                </group>
+                                <group colspan="4" col="4">
+                                    <field name="shareholder_ids" nolabel="1">
+                                        <tree editable="bottom">
+                                            <field name="shareholder_name"/>
+                                        </tree>
+                                        <form>
+                                            <group>
+                                                <field name="shareholder_name"/>
+                                                <field name="shareholder_address"/>
+                                                <field name="shareholder_personcode"/>
+                                                <field name="shareholder_shares"/>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </group>
+                            </group>
+                        </group>
+                        <field name="final_document" widget="html" states="draft" readonly="1"/>
+                        <field name="generated_document" widget="pdf_viewer" states="confirm,e_signed"
+                               filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                        <label for="generated_document" string="Atsisiųsti" states="confirm,e_signed"/>
+                        <field name="generated_document_download" string="" states="confirm,e_signed"
+                               filename="file_name"/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="robo_mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="shareholders_decisions_base_action" model="ir.actions.act_window">
+            <field name="name">Akcininkų sprendimas action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">e.document</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="robo_menu" ref="e_document.e_document_root"/>
+            <field name="context">{
+                u'default_document_type': u'akcininku_sprendimas',
+                u'e_document_view_type': u'rigid'
+            }</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="e_document.shareholders_decisions_base_view"/>
+        </record>
+
+        <record id="shareholders_decisions_base_menu" model="ir.ui.menu">
+            <field name="name">Akcininkų sprendimas menu</field>
+            <field name="robo_front" eval="True"/>
+            <field name="searchable" eval="False"/>
+            <field name="parent_id" ref="e_document.akcininku_sprendimas"/>
+            <field name="action" ref="e_document.shareholders_decisions_base_action"/>
+            <field name="sequence">2</field>
+            <field name="tags">akcininkai, akcininku sprendimas, sprendimas, nuspresti, įsakymas</field>
+            <field name="groups_id" eval="[(6, 0, [
+                ref('robo_basic.group_robo_free_manager'),
+                ref('robo_basic.group_robo_premium_manager'),
+                ref('robo_basic.group_robo_edocument_manager')]
+            )]"/>
+        </record>
+
+    </data>
+</odoo>

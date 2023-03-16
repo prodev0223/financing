@@ -1,0 +1,39 @@
+<odoo>
+    <data>
+        <record id="gemma_import_form" model="ir.ui.view">
+            <field name="name">gemma.data.import.form</field>
+            <field name="model">gemma.data.import</field>
+            <field name="arch" type="xml">
+                <form string="Duomenų importas">
+                <div>
+                    <p>
+                        Paspaudę importuoti, rankiniu būdų galite susinchronizuoti ROBO duomenų bazę su Polis duomenimis<br/>
+                        Importavus duomenis bus sukurtos sąskaitos faktūros, mokėjimai ir pardavimo eilutės<br/>
+                        Duomenys importuojami atsižvelgiant į paskutinę sincrhonizavimo datą,<br/>
+                        Jeigu norite importuoti senesnius duomenis, pažymėkite laukelį ir įveskite datas <br/>
+                        PASTABA: Šis veiksmas atliekamas automatiškai kas dieną
+                    </p>
+                </div>
+                <group>
+                    <field name="use_date"/>
+                            <field name="date_from" attrs="{'invisible': [('use_date', '=', False)]}"/>
+                            <field name="date_to" attrs="{'invisible': [('use_date', '=', False)]}"/>
+                </group>
+                <footer>
+                    <button string="Importuoti Duomenis" name="data_import_cron" type="object" class="btn-primary"/>
+                    <button string="Atšaukti" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+            </field>
+        </record>
+        <record id="gemma_import_action" model="ir.actions.act_window">
+            <field name="name">Duomenų Importavimas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">gemma.data.import</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="gemma_import_form"/>
+        </record>
+    </data>
+</odoo>

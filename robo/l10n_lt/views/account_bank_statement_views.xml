@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_bank_statement_extend" model="ir.ui.view">
+            <field name="name">account.bank.statement.extend</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='bank_account_id']" position="attributes">
+                    <attribute name="context">{'default_partner_id': partner_id}</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class">extended_form</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//field[@name='amount']" position="attributes">
+                    <attribute name="sum"> </attribute>
+                </xpath>
+                <xpath expr="//button[@name='button_cancel']" position="attributes">
+                <!--We only hide it and not remove it, as it is used in other xpath expressions-->
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

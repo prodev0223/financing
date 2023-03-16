@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="vmi_saf_t_form" model="ir.ui.view">
+            <field name="name">vmi.saf.t.form</field>
+            <field name="model">vmi.saf.t</field>
+            <field name="arch" type="xml">
+                <form string="SAF-T">
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="data_type"/>
+                        <field name="saf_t_tax_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="entity"/>
+                    </group>
+                    <footer>
+                        <button name="button_generate_saft" string="Generate" type="object"/>
+                        <button string="Close" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="vmi_saf_t_download_form" model="ir.ui.view">
+            <field name="name">vmi.saf.t.download.form</field>
+            <field name="model">vmi.saf.t</field>
+            <field name="arch" type="xml">
+                <form string="SAF-T">
+                    <group string="Download SAF-T">
+                        <field name="generated_file" nolabel="1" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Close" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_vmi_saf_t_wizard" model="ir.actions.act_window">
+            <field name="name">SAF-T</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">vmi.saf.t</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vmi_saf_t_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

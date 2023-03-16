@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="report_pinigu_kvitas"
+                model="cash.receipt"
+                string="Pinigų kvitas"
+                report_type="qweb-pdf"
+                name="l10n_lt.report_pinigu_kvitas_template"
+                file="l10n_lt.report_pinigu_kvitas_template"
+        />
+        <template id="report_pinigu_kvitas_template">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-lang="doc.company_id.partner_id.lang"
+                       t-call="l10n_lt.report_pinigu_kvitas_template_document"/>
+                </t>
+            </t>
+        </template>
+        <template id="report_pinigu_kvitas_template_document">
+
+            <t t-call="report.html_container">
+                <div class="page">
+                    <t t-set="o" t-value="doc"/>
+
+                    <t t-if="o.payment_type == 'inbound'">
+
+                        <div class="row mb64">
+                            <div class="col-xs-offset-7 col-xs-4">
+                                Pinigų priėmimo ir pinigų išmokėjimo kvitų naudojimo, išrašymo ir apskaitos taisyklių
+                                1 priedas (Lietuvos Respublikos finansų ministro 2012 m. spalio 25d. įsakymo Nr. 1K-359
+                                redakcija)
+                            </div>
+                        </div>
+
+                        <div class="row text-center mb32">
+                            <span t-field="o.company_id"/>
+                            <hr style="padding:0;margin:0;"/>
+                            (prekes ar paslaugas parduodančio ūkio subjekto pavadinimas)
+                        </div>
+
+                        <div class="row text-center mb32">
+                            <div class="col-xs-3">
+                                <span t-field="o.company_id.partner_id.kodas"/>
+                                <hr style="padding:0;margin:0;"/>
+                                (ūkio subjekto kodas)
+                            </div>
+                        </div>
+
+                        <div class="centras mb64">
+                            <table class="centras" style="margin:0 auto; border-style:none" width="50%">
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <h3>
+                                            <span>PINIGŲ PRIĖMIMO KVITAS</span>
+                                        </h3>
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <strong>
+                                        <td style="border-style:none">Nr.
+                                            <span t-field="o.cash_receipt_name"/>
+                                        </td>
+                                    </strong>
+                                </tr>
+                                <tr style="border-style:none" class="text-center">
+                                    <td style="border-style:none">
+                                        <span t-esc="o.payment_date"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="row mb32">
+                            <table style="width:100%">
+                                <tr style="border-style:none">
+                                    <td style="width:13%">
+                                        <span>
+                                            Sumokėti už
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.communication"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="border-top-width:thin;border-top-style: solid;" class="text-center">
+                                        <span>(prekių ar paslaugų pavadinimai, kiekiai, matavimo vienetai, vieneto
+                                            kaina)
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="row mb32">
+                            <table style="width:100%">
+                                <tr>
+                                    <td width="15%">
+                                        <span>
+                                            Sumokėta suma
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o._convert_sum_to_words(o.amount,'lt', o.currency_id.name)"/>
+                                    </td>
+                                    <td width="1%"></td>
+                                    <td width="10%">
+                                        <span t-field="o.amount"/>
+                                    </td>
+                                    <!--<td>-->
+                                        <!--<span t-esc="o.currency_id.name"/>-->
+                                    <!--</td>-->
+
+                                </tr>
+                                <tr>
+                                    <td style="border-style:none"></td>
+                                    <td style="border-top-style:solid; border-top-width:thin" class="text-center">
+                                        <span>(už prekes ar paslaugas sumokėta suma žodžiais)</span>
+                                    </td>
+                                    <td></td>
+                                    <td style="border-top-style:solid; border-top-width:thin"></td>
+                                    <!--<td></td>-->
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="row mb32">
+                            <table style="width:100%">
+                                <tr style="border-style:none">
+                                    <td style="width:10%">
+                                        <span>
+                                            Sumokėjau
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.partner_id"/>
+                                        <t t-if="o.partner_id.kodas">
+                                            (<span t-field="o.partner_id.kodas"/>)
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="border-top-width:thin;border-top-style: solid;" class="text-center">
+                                        <t t-if="o.partner_id.is_company">
+                                            <span>(pirkėjo vardas, pavardė, parašas)</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span>(pirkėjo parašas)</span>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="row mb32">
+                            <table style="width:100%">
+                                <tr style="border-style:none">
+                                    <td style="width:13%">
+                                        <span>
+                                            Pinigus gavau
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.cashier_id"/>
+                                        <t t-if="o.cashier_id.job_id">
+                                            (<span t-field="o.cashier_id.job_id"/>)
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="border-top-width:thin;border-top-style: solid;" class="text-center">
+                                        <span>(pardavėjo vardas, pavardė, pareigų pavadinimas, parašas)</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </t>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

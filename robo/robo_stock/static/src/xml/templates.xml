@@ -1,0 +1,139 @@
+<template>
+    <t t-extend="doc-processing-info-dragdrop">
+        <t t-jquery=".doc-processing-info-popup tbody" t-operation="append">
+            <tr>
+                <td>
+                    <span>@XXX - priimti prekes į sandėlį, kurio kodas XXX, pvz. @WH </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>{S} - apdoroti dokumentą su eilutėmis kiekiškai </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>{NS} - apdoroti dokumentą sumiškai </span>
+                </td>
+            </tr>
+        </t>
+    </t>
+    <t t-name="RecentSaleOrders">
+        <t t-call="RecentDataBoxes">
+            <div class="box-template box-sale-order r-cursor create-record">
+                <div class="create-new-text">
+                    <i class="lnr lnr-plus-circle"></i>
+                    <span>Naujas pardavimas</span>
+                </div>
+            </div>
+            <div t-attf-data-id="{{record.id}}" class="box-active box-sale-order box-face r-cursor" t-foreach="records" t-as="record">
+                <div class="box-content">
+                    <div class="sale-number r-truncate">
+                        <t t-esc="record.name or ''"/>
+                    </div>
+                    <div class="sale-client r-truncate">
+                        <t t-esc="record.partner_id[1]"/>
+                    </div>
+                    <div class="sale-date r-truncate">
+                        <t t-esc="moment(record.date_order).format('YYYY MM DD')"/>
+                    </div>
+                    <div class="sale-amount">
+                        <t t-esc="format(record.amount_total,1)"/>
+                        <t t-esc="' ' + getCurrency(record.currency_id[1])"/>
+                    </div>
+                    <div class="sale-products">
+                         <t t-if="record.products_inside">
+                            <t t-raw="record.products_inside"></t>
+                        </t>
+                        <t t-else="">
+                            <t t-raw=" "></t>
+                        </t>
+                    </div>
+                </div>
+                <span t-attf-class="{{stateClass[record.state]}}">
+                    <t t-esc="stateNames[record.state]"/>
+                </span>
+            </div>
+        </t>
+
+    </t>
+     <t t-name="RecentPurchaseOrders">
+        <t t-call="RecentDataBoxes">
+            <div class="box-template box-purchase-order r-cursor create-record">
+                <div class="create-new-text">
+                    <i class="lnr lnr-plus-circle"></i>
+                    <span>Naujas pirkimas</span>
+                </div>
+            </div>
+            <div t-attf-data-id="{{record.id}}" class="box-active box-purchase-order box-face r-cursor" t-foreach="records" t-as="record">
+                <div class="box-content">
+                    <div class="purchase-number r-truncate">
+                        <t t-esc="record.name or ''"/>
+                    </div>
+                    <div class="purchase-client r-truncate">
+                        <t t-esc="record.partner_id[1]"/>
+                    </div>
+                    <div class="purchase-date r-truncate">
+                        <t t-esc="moment(record.date_order).format('YYYY MM DD')"/>
+                    </div>
+                    <div class="purchase-amount">
+                        <t t-esc="format(record.amount_total,1)"/>
+                        <t t-esc="' ' + getCurrency(record.currency_id[1])"/>
+                    </div>
+                    <div class="purchase-products">
+                         <t t-if="record.products_inside">
+                            <t t-raw="record.products_inside"></t>
+                        </t>
+                        <t t-else="">
+                            <t t-raw=" "></t>
+                        </t>
+                    </div>
+                </div>
+                <span t-attf-class="{{stateClass[record.state]}}">
+                    <t t-esc="stateNames[record.state]"/>
+                </span>
+            </div>
+        </t>
+
+    </t>
+   <t t-name="RecentPicking">
+        <t t-call="RecentDataBoxes">
+            <div class="box-template box-purchase-order r-cursor create-record">
+                <div class="create-new-text">
+                    <i class="lnr lnr-plus-circle"></i>
+                    <span>Naujas važtaraštis</span>
+                </div>
+            </div>
+            <div t-attf-data-id="{{record.id}}" class="box-active box-picking box-face r-cursor" t-foreach="records" t-as="record">
+                <div class="box-content">
+                    <div class="picking-number r-truncate">
+                        <t t-esc="record.name or ''"/>
+                    </div>
+                    <div class="picking-client r-truncate">
+                        <t t-esc="record.partner_id[1]"/>
+                    </div>
+                    <div class="picking-date r-truncate">
+                        <t t-esc="moment(record.min_date).format('YYYY MM DD')"/>
+                    </div>
+                    <div class="picking-weight">
+                        <t t-esc="format(record.weight, 1)" class="oe_inline"/>
+                        <t t-esc="record.weight_uom_id[1]" class="oe_inline"/>
+                    </div>
+                    <div class="move-line-products">
+                        <t t-if="record.products_inside">
+                            <t t-raw="record.products_inside"></t>
+                        </t>
+                        <t t-else="">
+                            <t t-raw=" "></t>
+                        </t>
+
+                    </div>
+                </div>
+                <span t-attf-class="{{stateClass[record.state]}}">
+                    <t t-esc="stateNames[record.state]"/>
+                </span>
+            </div>
+        </t>
+
+    </t>
+</template>

@@ -1,0 +1,102 @@
+<odoo>
+    <data>
+        <!--Tree-->
+        <record id="tree_front_procurement_rule" model="ir.ui.view">
+            <field name="name">form.front.procurement.rule</field>
+            <field name="model">procurement.rule</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <tree string="Planinio užsakymo taisyklės" create="0" import="0">
+                    <field name="name"/>
+                    <field name="action"/>
+                    <field name="picking_type_id"/>
+                </tree>
+            </field>
+        </record>
+        <!--Form-->
+        <record id="form_front_procurement_rule" model="ir.ui.view">
+            <field name="name">form.front.procurement.rule</field>
+            <field name="model">procurement.rule</field>
+            <field name="robo_front" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Planinio užsakymo taisyklės">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" string="Taisyklės pavadinimas"
+                                       placeholder="Pvz. Pirkimas..."/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="action"/>
+                            <field name="mts_rule_id"
+                                   string="Atsargų nurašymo taisyklė (MTS)"
+                                   groups="stock.group_adv_location"
+                                   attrs="{'invisible': [('action', '!=', 'split_procurement')]}"/>
+                            <field name="mto_rule_id"
+                                   string="Planinio užsakymo taisyklė (MTO)"
+                                   groups="stock.group_adv_location"
+                                   attrs="{'invisible': [('action', '!=', 'split_procurement')]}"/>
+                        </group>
+                        <group>
+                            <group string="Taikoma">
+                                <field name="location_id"/>
+                            </group>
+                            <group string="Atliekami veiksmai">
+                                <field name="location_src_id"
+                                       attrs="{'required': [('action', '=', 'move')],
+                                            'invisible':[('action', '!=', 'move')]}" domain="[('usage','!=','view')]"/>
+                                <field name="procure_method" string="Tiekimo metodas"
+                                       attrs="{'invisible': [('action', '!=', 'move')]}"/>
+                                <field name="picking_type_id" attrs="{'required': [('action', '!=', 'manufacture')]}"/>
+                                <field name="partner_address_id" string="Gavėjas"
+                                       context="{'show_address': 1}" options="{'always_reload': 1}"
+                                       attrs="{'invisible': [('action', '!=', 'move')]}"/>
+                                <label for="delay" string="Vėlavimas" groups="stock.group_adv_location"
+                                       attrs="{'invisible': [('action', '!=', 'move')]}"/>
+                                <div attrs="{'invisible': [('action', '!=', 'move')]}">
+                                    <field name="delay" class="oe_inline"/>
+                                    days
+                                </div>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Actions-->
+        <record id="action_open_procurement_rule" model="ir.actions.act_window">
+            <field name="name">Planinio užsakymo taisyklės</field>
+            <field name="res_model">procurement.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="tree_front_procurement_rule"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree_robo', 'view_id': ref('tree_front_procurement_rule')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('form_front_procurement_rule')})]"/>
+            <field name="robo_help" type="html">
+                <p class="oe_view_robo_nocontent_search">
+                    Ši jūsų užklausa negrąžino jokių rezultatų
+                </p>
+            </field>
+            <field name="robo_menu" ref="menu_advanced_stock_locations"/>
+            <field name="header" ref="header_procurement_rule"/>
+        </record>
+        <record id="action_open_procurement_rule_new" model="ir.actions.act_window">
+            <field name="name">Nauja planinio užsakymo taisyklė</field>
+            <field name="res_model">procurement.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+            <field name="view_id" ref="form_front_procurement_rule"/>
+        </record>
+    </data>
+</odoo>

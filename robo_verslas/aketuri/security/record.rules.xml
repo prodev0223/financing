@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_e_document_manager" model="res.groups">
+            <field name="name">Edocument manager</field>
+        </record>
+        <record id="e_document.e_document_premium_manager" model="ir.rule">
+            <field name="name">eDocument CEO</field>
+            <field name="model_id" ref="e_document.model_e_document"/>
+            <field name="domain_force">[
+                ('active', '=', True),
+                ]
+            </field>
+            <field name="groups" eval="[(6, 0, [ref('group_e_document_manager'),ref('robo_basic.group_robo_edocument_manager'),ref('robo_basic.group_robo_premium_manager')])]"/>
+        </record>
+
+        <!--Edocuments-->
+
+        <record id="e_document.isakymas_del_kasmetiniu_atostogu_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_atleisti_nuo_darbo_valstybinems_(visuomeninems)_pa_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+
+        </record>
+        <record id="e_document.isakymas_del_3_menesiu_atostogu_vaikui_priziureti_suteikimo_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_atleidimo_is_darbo_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_kvalifikacijos_kelimo_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_darbo_grafiko_pakeitimo_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_darbo_uzmokescio_mokejimo_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_isskaitu_is_darbo_uzmokescio_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_komandiruotes_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_kurybiniu_atostogu_suteikimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_leidimo_neatvykti_i_darba_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_materialines_pasalpos_skyrimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/>
+        </record>
+        <record id="e_document.isakymas_del_mokymosi_atostogu_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_mokymosi_atostogu_dalyvauti_neformaliojo_suaug_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_nemokamu_atostogu_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_papildomos_lengvatos_suteikimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_papildomos_poilsio_dienos_suteikimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_priemimo_i_darba_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_tevystes_atostogu_suteikimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_vaiko_prieziuros_atostogu_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_atsaukimo_is_kasmetiniu_atostogu_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_bendroves_kasininko_paskyrimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_darbo_apmokejimo_padidinus_darbu_masta_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_darbo_uzmokescio_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_darbuotojo_skyrimo_dirbti_poilsio_diena_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_darbuotojo_skyrimo_dirbti_sventine_diena_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_nestumo_ir_gimdymo_atostogu_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_nuobaudos_skyrimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_papildomos_poilsio_dienos_suteikimo_atsaukimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_paskyrimo_laikinai_eiti_pareigas_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_pastabos_skyrimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_poilsio_dienos_perkelimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_premijos_skyrimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_priedo_skyrimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_skatinimo__menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.laisvos_formos_isakymas_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_kasos_darbo_organizavimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.prasymas_del_darbo_uzmokescio_pervedimo_i_banko_saskaita_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.prasymas_del_pavardes_pakeitimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+        <record id="e_document.isakymas_del_pavardes_keitimo_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_e_document_manager'))]"/></record>
+
+
+    </data>
+</odoo>

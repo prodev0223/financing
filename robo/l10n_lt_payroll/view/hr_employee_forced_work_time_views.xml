@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_employee_forced_work_time_view_form" model="ir.ui.view">
+            <field name="name">hr.employee.forced.work.time.view.form</field>
+            <field name="model">hr.employee.forced.work.time</field>
+            <field name="robo_front" eval="True"/>
+            <field name="arch" type="xml">
+                <form string="Forced work time">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="time_from" widget="float_time"/>
+                                <field name="time_to" widget="float_time"/>
+                                <field name="duration" widget="float_time"/>
+                                <field name="marking_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_employee_forced_work_time_view_tree" model="ir.ui.view">
+            <field name="name">hr.employee.forced.work.time.view.tree</field>
+            <field name="model">hr.employee.forced.work.time</field>
+            <field name="arch" type="xml">
+                <tree string="Forced work time" edit="1" editable="top">
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <field name="marking_id"/>
+                    <field name="time_from" widget="float_time"/>
+                    <field name="time_to" widget="float_time"/>
+                    <field name="duration" widget="float_time" sum="duration"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_employee_forced_work_time_view_search" model="ir.ui.view">
+            <field name="name">hr.employee.forced.work.time.view.search</field>
+            <field name="model">hr.employee.forced.work.time</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="employee_id" string="Employee"/>
+                    <field name="date" string="Date"/>
+                    <field name="marking_id" string="Schedule marking"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="Date" domain="[]" context="{'group_by':'date'}"/>
+                        <filter string="Schedule marking" domain="[]" context="{'group_by':'marking_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="hr_employee_forced_work_time_action" model="ir.actions.act_window">
+            <field name="name">Employee forced work time</field>
+            <field name="res_model">hr.employee.forced.work.time</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="hr_employee_forced_work_time_view_tree"/>
+            <field name="search_view_id" ref="hr_employee_forced_work_time_view_search"/>
+        </record>
+
+        <menuitem
+                id="hr_employee_forced_work_time_menu_action"
+                name="Employee forced work times"
+                parent="l10n_lt_payroll.meniu_ziniarastis"
+                action="hr_employee_forced_work_time_action"
+                sequence="12"
+                groups="robo_basic.group_robo_premium_accountant"
+        />
+    </data>
+</odoo>

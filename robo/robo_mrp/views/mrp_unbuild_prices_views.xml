@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="robo_mrp_unbuild_prices_form_view" model="ir.ui.view">
+            <field name="name">mrp.unbuild.prices.form</field>
+            <field name="model">mrp.unbuild.prices</field>
+            <field name="robo_front">True</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="product_id" context="{'form_view_ref': 'robo_stock.robo_stock_product_form'}"
+                               options="{'no_create': True}"/>
+                        <field name="price_unit"/>
+                        <field name="qty"/>
+                        <field name="total_value"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

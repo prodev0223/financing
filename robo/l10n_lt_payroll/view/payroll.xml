@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+            name="Payments to Employees"
+            id="menu_payment_employee"
+            parent="hr_payroll.menu_hr_payroll_root"
+            sequence="11"
+            />
+        <menuitem
+            name="Išskaitos"
+            id="menu_deductions_employee"
+            parent="hr_payroll.menu_hr_payroll_root"
+            sequence="12"
+            />
+        <menuitem
+              name="Payslips"
+              id="menu_payment_1"
+              parent="hr_payroll.menu_hr_payroll_root"
+              sequence="9"
+            />
+
+        <!--<menuitem action="hr_payroll.action_hr_payslip_run_tree" id="hr_payroll.menu_hr_payslip_run" parent="l10n_lt_payroll.menu_payment_1" sequence="10"/>-->
+        <record model="ir.ui.menu" id="hr_payroll.menu_hr_payslip_run">
+            <field name="parent_id" eval="ref('l10n_lt_payroll.menu_payment_1')"/>
+        </record>
+
+        <record model="ir.ui.menu" id="hr_payroll.menu_department_tree">
+            <field name="parent_id" eval="ref('l10n_lt_payroll.menu_payment_1')"/>
+        </record>
+
+        <menuitem action="hr_payroll.action_view_hr_payslip_form" id="hr_payroll.menu_department_tree" parent="l10n_lt_payroll.menu_payment_1" sequence="11"/>
+
+    </data>
+</odoo>

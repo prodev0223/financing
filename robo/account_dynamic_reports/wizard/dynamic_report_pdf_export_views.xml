@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="dynamic_report_pdf_export_view_form" model="ir.ui.view">
+            <field name="name">Report PDF Export</field>
+            <field name="model">dynamic.report.pdf.export</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="PDF Export" edit="0">
+                    <sheet>
+                        <group colspan="4" col="4" string="Header and Footer">
+                            <field name="show_header"/>
+                            <field name="show_footer"/>
+                            <field name="show_company_info_in_header"/>
+                            <field name="report_purpose" attrs="{
+                                'invisible': [('show_company_info_in_header', '=', False)],
+                                'required': [('show_company_info_in_header', '=', True)],
+                            }"/>
+                        </group>
+                        <group colspan="4" col="4" string="Filters">
+                            <field name="show_filters"/>
+                            <field name="filter_location" attrs="{
+                                'invisible': [('show_filters', '=', False)],
+                                'required': [('show_filters', '=', True)]
+                            }"/>
+                        </group>
+                        <group colspan="4" col="4" string="Other Options">
+                            <field name="show_groups_in_separate_tables"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="export_pdf" type="object" string="Export" class="oe_highlight"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="dynamic_report_pdf_export_action" model="ir.actions.act_window">
+            <field name="name">Report PDF Export</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dynamic.report.pdf.export</field>
+            <field name="view_mode">form</field>
+            <field name="view_type">form</field>
+            <field name="target">new</field>
+            <field name="view_ids" eval="[
+                (5,0,0), (0,0, {'view_mode': 'form', 'view_id': ref('dynamic_report_pdf_export_view_form')})
+            ]"/>
+        </record>
+    </data>
+</odoo>

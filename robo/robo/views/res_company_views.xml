@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="company_default_message_receivers" model="ir.ui.view">
+            <field name="name">company.invoice.default.message.receiver</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="groups_id" eval="[(4, ref('robo_basic.group_robo_premium_accountant'))]"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='website']" position="after">
+                        <field name="default_msg_receivers" widget="many2many_tags"
+                               domain="[('is_active_employee','=', True)]"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <function name="install_vat" model="res.company"/>
+    </data>
+</odoo>

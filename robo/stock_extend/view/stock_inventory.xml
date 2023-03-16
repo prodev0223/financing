@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <act_window name="Taisyti klaidas"
+                    res_model="stock.return.picking"
+                    view_mode="form"
+                    target="new"
+                    id="act_stock_return_picking_fix_mistake"
+                    context="{'error': True, 'default_error': True}"/>
+        <record id="action_picking_related_moves" model="ir.actions.act_window">
+            <field name="name">Stock Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('picking_id', '=', active_id)]</field>
+        </record>
+        <record id="stock_picking_moves_button" model="ir.ui.view">
+            <field name="name">stock.picking.moves.view</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="%(action_picking_related_moves)d"
+                            type="action"
+                            icon="fa-truck"
+                            class="oe_stat_button"
+                            attrs="{'invisible': [('move_count','=',True)]}">
+                        <field name="move_count" widget="statinfo" string="Moves"/>
+                    </button>
+                    <field name="show_accounting" invisible="1"/>
+                    <button name="open_account_move_lines" type="object" class="oe_stat_button" icon="fa-bars"
+                            string="Accounting Entries"
+                            attrs="{'invisible': [('show_accounting','=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='force_assign']" position="after">
+                    <field name="allow_force_assign" invisible="1"/>
+                </xpath>
+                <xpath expr="//button[@name='force_assign']" position="attributes">
+                    <attribute name="attrs">{'invisible':['|',('allow_force_assign','=',False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="shipping_type"/>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                    <attribute name="domain">[('usage', '!=', 'view')]</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                    <attribute name="domain">[('usage', '!=', 'view')]</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="sotck_picking_moves_button" model="ir.ui.view">
+            <field name="name">stock.picking.moves.view</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(stock.act_stock_return_picking)d']" position="after">
+                    <button name="%(act_stock_return_picking_fix_mistake)d"
+                            string="Taisyti klaidas"
+                            states="done"
+                            type="action"
+                            groups="stock.group_stock_user"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_move_picking_tree" model="ir.ui.view">
+            <field name="name">stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_uom_qty']" position="replace">
+                    <field name="product_uom_qty" string="Originalus kiekis"/>
+                    <field name="non_error_qty" string="Kiekis"/>
+                </xpath>
+            </field>
+        </record>
+        <!--<record id="stock_inventory_line_sign" model="ir.ui.view">-->
+        <!--<field name="name">stock.inventory.line.changes</field>-->
+        <!--<field name="model">stock.inventory.line</field>-->
+        <!--<field name="inherit_id" ref="stock.stock_inventory_line_tree"/>-->
+        <!--<field name="arch" type="xml">-->
+        <!--<xpath expr="//tree[1]" position="inside">-->
+        <!--<field name="changed" invisible="1"/>-->
+        <!--</xpath>-->
+        <!--<xpath expr="//field[@name='product_id']" position="after">-->
+        <!--<field name="account_id"/>-->
+        <!--</xpath>-->
+        <!--</field>-->
+        <!--</record>-->
+        <record id="stock_move_quant_value" model="ir.ui.view">
+            <field name="name">stock.move.quant.view</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='quant_ids']" position="after">
+                    <group>
+                        <field name="current_value" groups="base.group_system" colspan="2"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock_inventory_add_consumed_column" model="ir.ui.view">
+            <field name="name">stock.inventory.consumed.column.form</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='theoretical_qty']" position="after">
+                    <field name="consumed_qty"/>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel_draft']" position="after">
+                    <button name="cancel_state_done" string="Cancel" type="object"
+                            confirm="Are you sure you want to cancel validated inventory?" states="done"
+                            groups="account.group_account_manager, stock.group_stock_manager"/>
+                </xpath>
+                <xpath expr="//field[@name='theoretical_qty']" position="after">
+                    <field name="changed" invisible="1"/>
+                </xpath>
+                <xpath expr="//div[@class='oe_title']" position="inside">
+                    <h2>
+                        <field name="number"/>
+                    </h2>
+                </xpath>
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="account_id"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//field[@name='product_qty']" position="after">
+                    <field name="changed" invisible="1"/>
+                    <field name="account_id"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']" position="attributes">
+                    <attribute name="context">{'default_location_id': location_id,
+                        'default_product_id': product_id,
+                        'default_prod_lot_id': lot_id,
+                        'default_package_id': package_id,
+                        'default_partner_id': partner_id,
+                        'default_account_id': account_id}</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="inventory_tree_add_number" model="ir.ui.view">
+            <field name="name">inventory.tree.number</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="number"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="total_value"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock_inventory_add_search_view" model="ir.ui.view">
+            <field name="name">stock.inventory.add.search.view</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <filter name="current_month" string="Current month"
+                            domain="['&amp;',('date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="previous_month" string="Previous month"
+                            domain="['&amp;',('date','&lt;=',(context_today()-relativedelta(months=1, day=31)).strftime('%Y-%m-%d')),('date','&gt;=',(context_today()-relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="error_field_return_picking" model="ir.ui.view">
+            <field name="name">error.field.return.picking</field>
+            <field name="model">stock.return.picking</field>
+            <field name="inherit_id" ref="stock.view_stock_return_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="replace">
+                    <form string="Taisyti klaidas">
+                        <sheet>
+                        <field name="move_dest_exists" invisible="1"/>
+                        <group attrs="{'invisible': [('move_dest_exists', '=', False)]}">
+                            <div class="oe_grey">
+                                <p>Būkite atidūs, važtaraštis turi susijusių operacijų.</p>
+                            </div>
+                        </group>
+                    <field name="deny_picking_return" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 2px;"
+                         attrs="{'invisible': [('deny_picking_return', '=', False)]}">
+                        <field name="deny_return_message"/>
+                    </div>
+                        <group>
+                            <field name="product_return_moves" nolabel="1" attrs="{'readonly': [('error', '=', True)]}">
+                                <tree editable="top" create="0" class="robo_tree_in_form">
+                                    <field name="product_id" readonly="1" string="Produktas"/>
+                                    <field name="quantity" string="Kiekis"/>
+                                    <field name="to_refund_so" string="Grąžinimas" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="parent_location_id" invisible="1"/>
+                            <field name="original_location_id" invisible="1"/>
+                            <field name="error" invisible="1"/>
+                            <field name="mistake_type" string="Taisymo metodas" attrs="{'invisible': [('error', '=', False)]}" required="True"/>
+                            <field name="location_id" options="{'no_create': True, 'no_open': True}" attrs="{'invisible':[('error', '=', True)]}"
+                                   groups="stock.group_stock_multi_locations" string="Grąžinimo vieta"/>
+                        </group>
+                        </sheet>
+                        <footer>
+                            <button name="create_returns" string="Taisyti" type="object" class="btn-primary"
+                                    attrs="{'invisible': [('deny_picking_return', '=', True)]}"/>
+                            <button string="Atšaukti" class="btn-default" special="cancel"/>
+                        </footer>
+
+                    </form>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_template_view_account_scrap">
+            <field name="name">product.template.view.scrap</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='taxes_id']" position="after">
+                    <field name="account_scrap"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_template_view_account_scrap">
+            <field name="name">product.template.view.hide.button</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.product_template_form_view_procurement_button"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_view_stock_moves']" position="attributes">
+                    <attribute name="attrs">{'invisible':['|', ('type', 'not in', ['product', 'consu', 'service']), ('active', '=', False)]}</attribute>
+                </xpath>
+<!--                <xpath expr="//button[@name='action_view_stock_moves']" position="before">-->
+<!--                    <field name="active" invisible="1"/>-->
+<!--                </xpath>-->
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_template_acc_product_type">
+            <field name="name">product.template.acc_product_type</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='type']" position="after">
+                    <field name="acc_product_type"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_product_view_default_accounts">
+            <field name="name">product.product.view.accounts</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='taxes_id']" position="after">
+                    <field name="account_scrap"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_product_category_additional_account" model="ir.ui.view">
+            <field name="name">product.category.form.account.extend</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="account.view_category_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_account_expense_categ_id']" position="after">
+                    <field name="account_scrap"/>
+                </xpath>
+                <xpath expr="//field[@name='type']" position="after">
+                    <field name="acc_product_type"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock_production_lot_extend_tree" model="ir.ui.view">
+            <field name="name">stock.production.lot.extend</field>
+            <field name="model">stock.production.lot</field>
+            <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="quant_location_id"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock_location_complete_name" model="ir.ui.view">
+            <field name="name">stock.location.complete.name</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_tree2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="complete_name"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
+
